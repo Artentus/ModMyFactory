@@ -57,8 +57,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DragDropReadyListBox.cs" />
+    <Compile Include="DragDropReadyListBoxItem.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Modpack.cs" />
+    <Compile Include="MultiplyConverter.cs" />
     <Compile Include="Win32\User32.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

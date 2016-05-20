@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModMyFactory
 {
@@ -14,16 +9,23 @@ namespace ModMyFactory
 
         public static MainViewModel Instance => instance ?? (instance = new MainViewModel());
 
-        public BindingList<Mod> Mods { get; }
+        public ObservableCollection<Mod> Mods { get; }
 
-        public BindingList<Modpack> Modpacks { get; }
+        public ObservableCollection<Modpack> Modpacks { get; }
 
         private MainViewModel()
         {
-            Mods = new BindingList<Mod>();
-            Modpacks = new BindingList<Modpack>();
+            Mods = new ObservableCollection<Mod>();
+            Modpacks = new ObservableCollection<Modpack>();
 
-            Mods.Add(new Mod("aaa", new FileInfo("a")));
+            Mod mod1 = new Mod("aaa", new FileInfo("a"));
+            Mod mod2 = new Mod("bbb", new FileInfo("b"));
+            Mods.Add(mod1);
+            Mods.Add(mod2);
+            Modpack modpack = new Modpack("aaa");
+            //modpack.Mods.Add(mod1);
+            //modpack.Mods.Add(mod2);
+            Modpacks.Add(modpack);
         }
     }
 }

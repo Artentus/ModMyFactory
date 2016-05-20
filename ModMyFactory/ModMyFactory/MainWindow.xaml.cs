@@ -1,8 +1,14 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using ModMyFactory.Win32;
 
 namespace ModMyFactory
@@ -10,41 +16,16 @@ namespace ModMyFactory
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        readonly IntPtr handle;
-
-        double oldX, oldY;
-        double oldWidth, oldHeight;
-
-        bool maximized;
-        public bool Maximized
-        {
-            get { return maximized; }
-            set
-            {
-                if (value != maximized)
-                {
-                    maximized = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs("Maximized"));
-                }
-            }
-        }
+        Point dragStartPoint;
+        bool dragging;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            var interopHelper = new WindowInteropHelper(this);
-            interopHelper.EnsureHandle();
-            handle = interopHelper.Handle;
-        }
-
-        void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            PropertyChanged?.Invoke(this, e);
+            dragging = false;
         }
 
         void CanExecuteCommandDefault(object sender, CanExecuteRoutedEventArgs e)
@@ -53,74 +34,101 @@ namespace ModMyFactory
             e.Handled = true;
         }
 
-        void TitleBarMouseDownHandler(object sender, MouseButtonEventArgs e)
-        {
-            if (!Maximized) this.DragMove();
-        }
-
-        //void TitelBarDoubleClickHandler(object sender, EventArgs e)
-        //{
-        //    Maximize();
-        //}
-
-        void WindowResizeHandler(object sender, MouseButtonEventArgs e)
-        {
-            User32.SendMessage(handle, 0x112, (IntPtr)61448, IntPtr.Zero);
-        }
-
         void Close(object sender, ExecutedRoutedEventArgs e)
         {
             this.Close();
             e.Handled = true;
         }
 
-        //void Maximize()
-        //{
-        //    if (Maximized)
-        //    {
-        //        Maximized = false;
-        //        MaximizeItem.Icon = Resources["MaximizeMenuIcon"];
-        //        MaximizeItem.Header = "Maximize";
-
-        //        this.Left = oldX;
-        //        this.Top = oldY;
-        //        this.Width = oldWidth;
-        //        this.Height = oldHeight;
-        //    }
-        //    else
-        //    {
-        //        Maximized = true;
-        //        MaximizeItem.Icon = Resources["RestoreMenuIcon"];
-        //        MaximizeItem.Header = "Restore";
-
-        //        oldX = this.Left;
-        //        oldY = this.Top;
-        //        oldWidth = this.Width;
-        //        oldHeight = this.Height;
-
-        //        var currentScreen = System.Windows.Forms.Screen.FromHandle(handle);
-        //        this.Left = currentScreen.WorkingArea.Left;
-        //        this.Top = currentScreen.WorkingArea.Top;
-        //        this.Width = currentScreen.WorkingArea.Width;
-        //        this.Height = currentScreen.WorkingArea.Height;
-        //    }
-        //}
-
-        //void Maximize(object sender, ExecutedRoutedEventArgs e)
-        //{
-        //    Maximize();
-        //    e.Handled = true;
-        //}
-
-        void Minimize()
+        private void ModpackListBoxDropHandler(object sender, DragEventArgs e)
         {
-            this.WindowState = WindowState.Minimized;
+            ListBox listBox = sender as ListBox;
+            if (listBox == null) return;
+
+            ListBoxItem item = null;
+            for (int i = 0; i < ((IList)listBox.ItemsSource).Count; i++)
+            {
+                item = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromIndex(i);
+                if (VisualTreeHelper.GetDescendantBounds(item).Contains(e.GetPosition(item)))
+                    break;
+                item = null;
+            }
+
+            if (item != null && e.Data.GetDataPresent(typeof(List<Mod>)))
+            {
+                var mods = (List<Mod>)e.Data.GetData(typeof(List<Mod>));
+                Modpack modpack = (Modpack)listBox.ItemContainerGenerator.ItemFromContainer(item);
+                foreach (Mod mod in mods)
+                {
+                    if (!modpack.Mods.Contains(mod))
+                        modpack.Mods.Add(mod);
+                }
+            }
         }
 
-        void Minimize(object sender, ExecutedRoutedEventArgs e)
+        private void ModpackListBoxDragOverHandler(object sender, DragEventArgs e)
         {
-            Minimize();
-            e.Handled = true;
+            ListBox listBox = sender as ListBox;
+            if (listBox == null) return;
+
+            int index = -1;
+            for (int i = 0; i < ((IList)listBox.ItemsSource).Count; i++)
+            {
+                var item = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromIndex(i);
+                if (VisualTreeHelper.GetDescendantBounds(item).Contains(e.GetPosition(item)))
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            e.Effects = (index >= 0 && e.Data.GetDataPresent(typeof(List<Mod>))) ? DragDropEffects.Link : DragDropEffects.None;
+        }
+
+        private void ModpackListBoxMouseMoveHandler(object sender, MouseEventArgs e)
+        {
+            
+        }
+
+        private void ModsListBoxMouseDownHandler(object sender, MouseButtonEventArgs e)
+        {
+            ListBox listBox = sender as ListBox;
+            if (listBox == null) return;
+
+            ListBoxItem item = null;
+            for (int i = 0; i < ((IList)listBox.ItemsSource).Count; i++)
+            {
+                item = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromIndex(i);
+                if (VisualTreeHelper.GetDescendantBounds(item).Contains(e.GetPosition(item)))
+                    break;
+                item = null;
+            }
+
+            if (item != null && item.IsSelected)
+            {
+                dragStartPoint = e.GetPosition(null);
+                dragging = true;
+            }
+            else
+            {
+                dragging = false;
+            }
+        }
+
+        private void ModsListBoxMouseMoveHandler(object sender, MouseEventArgs e)
+        {
+            ListBox listBox = sender as ListBox;
+            if (listBox == null) return;
+
+            Vector dragDistance = e.GetPosition(null) - dragStartPoint;
+            if (e.LeftButton == MouseButtonState.Pressed && dragging &&
+                (Math.Abs(dragDistance.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(dragDistance.Y) > SystemParameters.MinimumVerticalDragDistance))
+            {
+                var mods = new List<Mod>();
+                mods.AddRange(listBox.SelectedItems.Cast<Mod>());
+                DragDrop.DoDragDrop(listBox, mods, DragDropEffects.Link);
+                dragging = false;
+            }
         }
     }
 }

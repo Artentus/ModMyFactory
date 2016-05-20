@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
 
 namespace ModMyFactory
 {
@@ -8,7 +11,8 @@ namespace ModMyFactory
     class Modpack : NotifyPropertyChangedBase
     {
         string name;
-        bool active;
+        bool? active;
+        bool activeChanging;
 
         /// <summary>
         /// The name of the modpack.
@@ -29,7 +33,7 @@ namespace ModMyFactory
         /// <summary>
         /// Indicates whether the modpack is currently active.
         /// </summary>
-        public bool Active
+        public bool? Active
         {
             get { return active; }
             set
@@ -37,8 +41,13 @@ namespace ModMyFactory
                 if (value != active)
                 {
                     active = value;
-                    foreach (var mod in Mods)
-                        mod.Active = active;
+                    activeChanging = true;
+                    if (active.HasValue)
+                    {
+                        foreach (var mod in Mods)
+                            if (mod.Active != active.Value) mod.Active = active.Value;
+                    }
+                    activeChanging = false;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
                 }
             }
@@ -47,12 +56,60 @@ namespace ModMyFactory
         /// <summary>
         /// The mods in this modpack.
         /// </summary>
-        public BindingList<Mod> Mods { get; }
+        public ObservableCollection<Mod> Mods { get; }
 
-        private void AddingNewModHandler(object sender, AddingNewEventArgs e)
+        private void SetActive()
         {
-            Mod mod = (Mod) e.NewObject;
-            mod.Active = active;
+            if (Mods.Count == 0 || activeChanging)
+                return;
+
+            bool? newValue = Mods[0].Active;
+            for (int i = 1; i < Mods.Count; i++)
+            {
+                if (Mods[i].Active != newValue.Value)
+                {
+                    newValue = null;
+                    break;
+                }
+            }
+
+            if (newValue != active)
+            {
+                active = newValue;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
+            }
+        }
+
+        private void ModPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Mod.Active))
+            {
+                SetActive();
+            }
+        }
+
+        private void ModsChangedHandler(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (Mod mod in e.NewItems)
+                        mod.PropertyChanged += ModPropertyChanged;
+                    SetActive();
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (Mod mod in e.OldItems)
+                        mod.PropertyChanged -= ModPropertyChanged;
+                    SetActive();
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    foreach (Mod mod in e.NewItems)
+                        mod.PropertyChanged += ModPropertyChanged;
+                    foreach (Mod mod in e.OldItems)
+                        mod.PropertyChanged -= ModPropertyChanged;
+                    SetActive();
+                    break;
+            }
         }
 
         /// <summary>
@@ -62,8 +119,10 @@ namespace ModMyFactory
         public Modpack(string name)
         {
             this.name = name;
-            Mods = new BindingList<Mod>();
-            Mods.AddingNew += AddingNewModHandler;
+            active = false;
+            activeChanging = false;
+            Mods = new ObservableCollection<Mod>();
+            Mods.CollectionChanged += ModsChangedHandler;
         }
     }
 }
