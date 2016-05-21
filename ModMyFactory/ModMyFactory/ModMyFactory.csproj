@@ -62,7 +62,6 @@
     <Compile Include="Mod.cs" />
     <Compile Include="Modpack.cs" />
     <Compile Include="MultiplyConverter.cs" />
-    <Compile Include="Win32\User32.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -228,12 +228,12 @@
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="{x:Type local:DragDropReadyListBox}" TargetType="{x:Type local:DragDropReadyListBox}">
+        <Style x:Key="{x:Type ListBox}" TargetType="{x:Type ListBox}">
             <Setter Property="SnapsToDevicePixels" Value="true"/>
             <Setter Property="OverridesDefaultStyle" Value="true"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type local:DragDropReadyListBox}">
+                    <ControlTemplate TargetType="{x:Type ListBox}">
                         <Border BorderBrush="LightGray" BorderThickness="1">
                             <ScrollViewer Focusable="false" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" CanContentScroll="False">
                                 <VirtualizingStackPanel Margin="2,1,2,2" IsItemsHost="True"/>
@@ -244,12 +244,14 @@
             </Setter>
         </Style>
 
-        <Style x:Key="{x:Type local:DragDropReadyListBoxItem}" TargetType="{x:Type local:DragDropReadyListBoxItem}">
+        <Style x:Key="{x:Type local:DragDropReadyListBox}" TargetType="{x:Type local:DragDropReadyListBox}" BasedOn="{StaticResource {x:Type ListBox}}"/>
+
+        <Style x:Key="{x:Type ListBoxItem}" TargetType="{x:Type ListBoxItem}">
             <Setter Property="SnapsToDevicePixels" Value="true"/>
             <Setter Property="OverridesDefaultStyle" Value="true"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type local:DragDropReadyListBoxItem}">
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
                         <Border Padding="0,1,0,0" SnapsToDevicePixels="true">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -311,6 +313,8 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="{x:Type local:DragDropReadyListBoxItem}" TargetType="{x:Type local:DragDropReadyListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}"/>
 
         <Style TargetType="ContextMenu">
             <Setter Property="SnapsToDevicePixels" Value="True"/>

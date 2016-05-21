@@ -136,8 +136,9 @@
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Mods" Margin="2"/>
                 <Rectangle Grid.Row="1" Grid.Column="0" Fill="LightSkyBlue"/>
             </Grid>
-            <local:DragDropReadyListBox Grid.Row="1" Grid.Column="0" SelectionMode="Extended" ItemsSource="{Binding Mods}"
-                                        MouseDown="ModsListBoxMouseDownHandler" MouseMove="ModsListBoxMouseMoveHandler">
+            <local:DragDropReadyListBox Grid.Row="1" Grid.Column="0" SelectionMode="Extended" AllowDrop="True" ItemsSource="{Binding Mods}"
+                      PreviewMouseDown="ModsListBoxPreviewMouseDownHandler" PreviewMouseMove="ModsListBoxPreviewMouseMoveHandler"
+                      PreviewMouseUp="ModsListBoxPreviewMouseUpHandler" DragOver="ModsListBoxDragOverHander" DragLeave="ModsListBoxDragLeaveHandler">
                 <local:DragDropReadyListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type local:Mod}">
                         <Expander>
@@ -185,9 +186,10 @@
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Modpacks" Margin="2"/>
                 <Rectangle Grid.Row="1" Grid.Column="0" Fill="LightSkyBlue"/>
             </Grid>
-            <local:DragDropReadyListBox Grid.Row="1" Grid.Column="2" SelectionMode="Extended" ItemsSource="{Binding Modpacks}"
-                                        AllowDrop="True" Drop="ModpackListBoxDropHandler" DragOver="ModpackListBoxDragOverHandler"
-                                        MouseMove="ModpackListBoxMouseMoveHandler">
+            <local:DragDropReadyListBox Grid.Row="1" Grid.Column="2" SelectionMode="Extended" AllowDrop="True" ItemsSource="{Binding Modpacks}"
+                      PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler" PreviewMouseMove="ModpackListBoxPreviewMouseMoveHandler"
+                      PreviewMouseUp="ModpackListBoxPreviewMouseUpHandler" Drop="ModpackListBoxDropHandler" DragOver="ModpackListBoxDragOverHandler"
+                      DragLeave="ModpackListBoxDragLeaveHandler">
                 <local:DragDropReadyListBox.Resources>
                     <ControlTemplate x:Key="SmallCloseButton" TargetType="Button">
                         <Grid>
@@ -239,9 +241,10 @@
                         </Grid>
                     </DataTemplate>
                 </local:DragDropReadyListBox.Resources>
-                
-                <ListBox.ItemTemplate>
+
+                <local:DragDropReadyListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type local:Modpack}">
+
                         <Expander>
 
                             <Expander.Header>
@@ -256,10 +259,10 @@
                                 </Grid>
                             </Expander.Header>
 
-                            <ItemsControl Margin="20,0,4,0" ItemsSource="{Binding Mods}" ItemTemplate="{StaticResource SubitemTemplate}"/>
+                            <ItemsControl Margin="20,0,4,0" ItemsSource="{Binding ViewSource.View}" ItemTemplate="{StaticResource SubitemTemplate}"/>
                         </Expander>
                     </DataTemplate>
-                </ListBox.ItemTemplate>
+                </local:DragDropReadyListBox.ItemTemplate>
             </local:DragDropReadyListBox>
         </Grid>
     </Grid>

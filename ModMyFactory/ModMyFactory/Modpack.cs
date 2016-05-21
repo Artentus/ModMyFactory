@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
+using System.Windows.Data;
 
 namespace ModMyFactory
 {
@@ -57,6 +57,11 @@ namespace ModMyFactory
         /// The mods in this modpack.
         /// </summary>
         public ObservableCollection<Mod> Mods { get; }
+
+        /// <summary>
+        /// The mods wrapped as view source.
+        /// </summary>
+        public CollectionViewSource ViewSource { get; }
 
         private void SetActive()
         {
@@ -123,6 +128,10 @@ namespace ModMyFactory
             activeChanging = false;
             Mods = new ObservableCollection<Mod>();
             Mods.CollectionChanged += ModsChangedHandler;
+
+            ViewSource = new CollectionViewSource();
+            ViewSource.Source = Mods;
+            ViewSource.SortDescriptions.Add(new SortDescription(nameof(Name), ListSortDirection.Ascending));
         }
     }
 }
