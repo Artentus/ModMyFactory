@@ -724,5 +724,56 @@
                 </Setter>
             </Style.Setters>
         </Style>
+
+        <Style x:Key="{x:Type Button}" TargetType="{x:Type Button}">
+            <Style.Setters>
+                <Setter Property="MinWidth" Value="75"/>
+                <Setter Property="MinHeight" Value="23"/>
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border x:Name="Border1" BorderBrush="#FFADADAD" BorderThickness="1" Background="#FFE1E1E1">
+
+                                <Border x:Name="Border2" BorderBrush="Transparent" BorderThickness="2" Background="Transparent" Margin="-1">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup Name="CommonStates">
+                                        <VisualState Name="Normal"/>
+                                        <VisualState Name="MouseOver">
+                                            <Storyboard>
+                                                <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderThickness" To="1" Duration="0"/>
+                                                <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderBrush.Color" To="#FF0078D7" Duration="0"/>
+                                                <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Background.Color" To="#FFE5F1FB" Duration="0:0:0:0.3"/>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState Name="Pressed">
+                                            <Storyboard>
+                                                <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderThickness" To="1" Duration="0"/>
+                                                <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderBrush.Color" To="#FF005499" Duration="0"/>
+                                                <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Background.Color" To="#FFCCE4F7" Duration="0:0:0:0.3"/>
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+
+                                    <VisualStateGroup Name="FocusStates">
+                                        <VisualState Name="Unfocused"/>
+                                        <VisualState Name="Focused">
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="Border1" Storyboard.TargetProperty="BorderBrush.Color" To="#FF0078D7" Duration="0:0:0:0.3"/>
+                                                <ThicknessAnimation Storyboard.TargetName="Border1" Storyboard.TargetProperty="BorderThickness" To="2" Duration="0:0:0:0.3"/>
+                                                <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Margin" To="-2" Duration="0:0:0:0.3"/>
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+        </Style>
     </Application.Resources>
 </Application>

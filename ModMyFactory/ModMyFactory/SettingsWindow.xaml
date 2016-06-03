@@ -1,0 +1,32 @@
+﻿<Window x:Class="ModMyFactory.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ModMyFactory"
+        mc:Ignorable="d"
+        Title="Settings" Height="300" Width="300"
+        WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
+        Icon=".\Images\Factorio_Icon.ico"
+        DataContext="{x:Static local:SettingsViewModel.Instance}">
+    
+    <Grid Margin="4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="0" Text="Mod database file:"/>
+        <DockPanel Grid.Row="1">
+            <Button DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="3" Content="Select" Command="{Binding SelectDatabaseFileCommand}"/>
+            <TextBox Margin="3" Padding="2" MaxLines="1" Text="{Binding ModDatabaseFile, Mode=TwoWay}"/>
+        </DockPanel>
+        
+        <DockPanel Grid.Row="3" LastChildFill="False">
+            <Button DockPanel.Dock="Right" Margin="3" Content="OK" IsDefault="True" Click="OKButtonClickHandler"/>
+            <Button DockPanel.Dock="Right" Margin="3" Content="Cancel" IsCancel="True"/>
+        </DockPanel>
+    </Grid>
+</Window>

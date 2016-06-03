@@ -1,5 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Json;
+using System.Windows;
 
 namespace ModMyFactory
 {
@@ -13,10 +17,14 @@ namespace ModMyFactory
 
         public ObservableCollection<Modpack> Modpacks { get; }
 
+        public RelayCommand OpenSettingsCommand { get; }
+
         private MainViewModel()
         {
             Mods = new ObservableCollection<Mod>();
             Modpacks = new ObservableCollection<Modpack>();
+
+            OpenSettingsCommand = new RelayCommand(OpenSettings);
 
             Mod mod1 = new Mod("aaa", new FileInfo("a"));
             Mod mod2 = new Mod("bbb", new FileInfo("b"));
@@ -36,6 +44,20 @@ namespace ModMyFactory
             Modpacks.Add(modpack1);
             Modpacks.Add(modpack2);
             Modpacks.Add(modpack3);
+
+            //var fi = new FileInfo(@"C:\Users\Mathis\AppData\Roaming\Factorio\mods\mod-list.json");
+            //using (var fs = fi.OpenRead())
+            //{
+            //    var serializer = new DataContractJsonSerializer(typeof(ModTemplateList));
+            //    var templates = (ModTemplateList)serializer.ReadObject(fs);
+            //    MessageBox.Show(string.Join("\n", templates.Mods.Select(template => template.Name + ";" + template.Enabled)));
+            //}
+        }
+
+        private void OpenSettings()
+        {
+            var settingsWindow = new SettingsWindow();
+            settingsWindow.ShowDialog();
         }
     }
 }
