@@ -101,6 +101,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="4"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -143,13 +145,18 @@
                             </Expander.Header>
                             
                             <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 
-                                <TextBlock Grid.Column="0" Margin="20,0,0,0" Text="{Binding File.Name}"/>
-                                <Button Grid.Column="1">
+                                <TextBlock Grid.Column="0" Grid.Row="1" Margin="20,0,0,0" Text="{Binding File.Name}"/>
+                                <Button Grid.Column="1" Grid.Row="1">
                                     <TextBlock Margin="2,0" Text="Edit"/>
                                 </Button>
                             </Grid>
@@ -259,6 +266,22 @@
                     </DataTemplate>
                 </local:DragDropReadyListBox.ItemTemplate>
             </local:DragDropReadyListBox>
+            
+            <!-- Factorio Versions-->
+            <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <ComboBox Grid.Column="0" Margin ="2" Width="100">
+                    
+                </ComboBox>
+                <Button Grid.Column="1" Margin ="2" Content="Add version" Command="{Binding OpenVersionListCommand}"/>
+                <Button Grid.Column="3" Margin ="2" Content="Start game"/>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

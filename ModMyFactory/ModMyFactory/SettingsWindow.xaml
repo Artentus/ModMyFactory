@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="Settings" Height="300" Width="300"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon=".\Images\Factorio_Icon.ico"
         DataContext="{x:Static local:SettingsViewModel.Instance}">
     

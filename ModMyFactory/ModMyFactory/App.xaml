@@ -729,6 +729,7 @@
             <Style.Setters>
                 <Setter Property="MinWidth" Value="75"/>
                 <Setter Property="MinHeight" Value="23"/>
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
 
                 <Setter Property="Template">
                     <Setter.Value>
