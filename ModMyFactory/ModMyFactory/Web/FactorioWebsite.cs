@@ -4,7 +4,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +11,7 @@ using System.Threading.Tasks;
 namespace ModMyFactory.Web
 {
     /// <summary>
-    /// Represents the Factorio.com website.
+    /// Represents the factorio.com website.
     /// </summary>
     static class FactorioWebsite
     {
@@ -42,6 +41,20 @@ namespace ModMyFactory.Web
             if (!document.Contains("logout")) return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// Ensures a session is logged in at the website.
+        /// </summary>
+        /// <param name="container">The cookie container the session cookie is stored in.</param>
+        /// <returns>Returns true if the session is logged in, otherwise false.</returns>
+        public static bool EnsureLoggedIn(CookieContainer container)
+        {
+            const string mainPage = "https://www.factorio.com";
+
+            string document;
+            if (!WebHelper.TryGetDocument(mainPage, container, out document)) return false;
+            return document.Contains("logout");
         }
 
         /// <summary>
@@ -93,19 +106,28 @@ namespace ModMyFactory.Web
             return true;
         }
 
-        public static async Task DownloadFactorioPackage(FactorioOnlineVersion version, CookieContainer container, IProgress<double> progress, CancellationToken cancellationToken)
+        /// <summary>
+        /// Downloads a Factorio package.
+        /// </summary>
+        /// <param name="version">The version of Factorio to be downloaded.</param>
+        /// <param name="downloadDirectory">The directory the package is downloaded to.</param>
+        /// <param name="container">The cookie container the session cookie is stored in.</param>
+        /// <param name="progress">A progress object used to report the progress of the operation.</param>
+        /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
+        public static async Task DownloadFactorioPackageAsync(FactorioOnlineVersion version, DirectoryInfo downloadDirectory, CookieContainer container, IProgress<double> progress, CancellationToken cancellationToken)
         {
-            string directoryPath = Path.Combine(Environment.CurrentDirectory, "Factorio");
-            var directory = new DirectoryInfo(directoryPath);
-            if (!directory.Exists) directory.Create();
+            if (!downloadDirectory.Exists) downloadDirectory.Create();
 
-            string filePath = Path.Combine(directory.FullName, "package.zip");
+            string filePath = Path.Combine(downloadDirectory.FullName, "package.zip");
             var file = new FileInfo(filePath);
 
-            await WebHelper.DownloadFile(version.DownloadUrl, container, file, progress, cancellationToken);
-            progress.Report(2);
-            await Task.Run(() => ZipFile.ExtractToDirectory(file.FullName, directory.FullName));
-            file.Delete();
+            await WebHelper.DownloadFileAsync(version.DownloadUrl, container, file, progress, cancellationToken);
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                progress.Report(2);
+                await Task.Run(() => ZipFile.ExtractToDirectory(file.FullName, downloadDirectory.FullName));
+                file.Delete();
+            }
         }
     }
 }

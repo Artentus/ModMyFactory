@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
+using ModMyFactory.Lang;
 using ModMyFactory.Web;
 
 namespace ModMyFactory
@@ -17,10 +19,13 @@ namespace ModMyFactory
         bool loggedIn;
         string username;
         string password;
-        TaskbarItemInfo taskbarInfo;
+        CookieContainer container;
+        readonly TaskbarItemInfo taskbarInfo;
         bool canCancelDownload;
 
         public static MainViewModel Instance => instance ?? (instance = new MainViewModel());
+
+        public List<CultureEntry> AvailableCultures { get; } 
 
         public ObservableCollection<Mod> Mods { get; }
 
@@ -30,16 +35,25 @@ namespace ModMyFactory
 
         public RelayCommand OpenVersionListCommand { get; }
 
+        public RelayCommand OpenAboutWindowCommand { get; }
+
         private MainViewModel()
         {
             loggedIn = false;
             taskbarInfo = (Application.Current.MainWindow.TaskbarItemInfo = new TaskbarItemInfo());
+            AvailableCultures = new List<CultureEntry>()
+            {
+                new CultureEntry(new CultureInfo("en")),
+                new CultureEntry(new CultureInfo("de")),
+            };
+            AvailableCultures[0].Select();
 
             Mods = new ObservableCollection<Mod>();
             Modpacks = new ObservableCollection<Modpack>();
 
             OpenSettingsCommand = new RelayCommand(OpenSettings);
             OpenVersionListCommand = new RelayCommand(async () => await OpenVersionList());
+            OpenAboutWindowCommand = new RelayCommand(OpenAboutWindow);
 
             Mod mod1 = new Mod("aaa", new FileInfo("a"));
             Mod mod2 = new Mod("bbb", new FileInfo("b"));
@@ -71,15 +85,20 @@ namespace ModMyFactory
 
         private void OpenSettings()
         {
-            var settingsWindow = new SettingsWindow { Owner = Application.Current.MainWindow };
+            var settingsWindow = new SettingsWindow() { Owner = Application.Current.MainWindow };
 
             settingsWindow.ShowDialog();
         }
 
         private async Task OpenVersionList()
         {
-            CookieContainer container = null;
             bool failed = false;
+            if (loggedIn)
+            {
+                loggedIn = FactorioWebsite.EnsureLoggedIn(container);
+                failed = !loggedIn;
+            }
+
             while (!loggedIn)
             {
                 var loginWindow = new LoginWindow
@@ -123,9 +142,12 @@ namespace ModMyFactory
                 };
                 downloadWindow.DataContext = downloadViewModel;
 
+                string directoryPath = Path.Combine(Environment.CurrentDirectory, "Factorio");
+                var directory = new DirectoryInfo(directoryPath);
+
                 taskbarInfo.ProgressState = TaskbarItemProgressState.Normal;
                 taskbarInfo.ProgressValue = 0;
-                Task t = FactorioWebsite.DownloadFactorioPackage(selectedVersion, container, new Progress<double>(p =>
+                Task t = FactorioWebsite.DownloadFactorioPackageAsync(selectedVersion, directory, container, new Progress<double>(p =>
                 {
                     if (p > 1)
                     {
@@ -145,6 +167,12 @@ namespace ModMyFactory
                 await t;
                 taskbarInfo.ProgressState = TaskbarItemProgressState.None;
             }
+        }
+
+        private void OpenAboutWindow()
+        {
+            var aboutWindow = new AboutWindow() { Owner = Application.Current.MainWindow };
+            aboutWindow.ShowDialog();
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -27,7 +26,7 @@ namespace ModMyFactory.Web
         /// <summary>
         /// Creates a HTTP request using the GET method.
         /// </summary>
-        /// <param name="url">The url of the request.</param>
+        /// <param name="url">The URL of the request.</param>
         /// <param name="container">The cookie container used to store cookies in the connection.</param>
         /// <returns>Returns a HTTPWebRequest object with its attributes set accordingly.</returns>
         public static HttpWebRequest CreateHttpRequest(string url, CookieContainer container)
@@ -43,7 +42,7 @@ namespace ModMyFactory.Web
         /// <summary>
         /// Creates a HTTP request using the POST method.
         /// </summary>
-        /// <param name="url">The url of the request.</param>
+        /// <param name="url">The URL of the request.</param>
         /// <param name="container">The cookie container used to store cookies in the connection.</param>
         /// <param name="content">The content that gets sent to the server.</param>
         /// <returns>Returns a HTTPWebRequest object with its attributes set accordingly.</returns>
@@ -67,7 +66,7 @@ namespace ModMyFactory.Web
         /// <summary>
         /// Gets the response document of an HTTP request.
         /// </summary>
-        /// <param name="url">The url of the request.</param>
+        /// <param name="url">The URL of the request.</param>
         /// <param name="container">The cookie container used to store cookies in the connection.</param>
         /// <param name="document">Out. The received document.</param>
         /// <returns>Return false if the request failed, otherwise true.</returns>
@@ -105,7 +104,7 @@ namespace ModMyFactory.Web
         /// <summary>
         /// Gets the response document of an HTTP request.
         /// </summary>
-        /// <param name="url">The url of the request.</param>
+        /// <param name="url">The URL of the request.</param>
         /// <param name="container">The cookie container used to store cookies in the connection.</param>
         /// <param name="content">The content that gets sent to the server.</param>
         /// <param name="document">Out. The received document.</param>
@@ -141,7 +140,15 @@ namespace ModMyFactory.Web
             return true;
         }
 
-        public static async Task DownloadFile(Uri url, CookieContainer container, FileInfo file, IProgress<double> progress, CancellationToken cancellationToken)
+        /// <summary>
+        /// Downloads the answer of an HTTP request and saves it as a file.
+        /// </summary>
+        /// <param name="url">The URL of the request.</param>
+        /// <param name="container">The cookie container used to store cookies in the connection.</param>
+        /// <param name="file">The file the data is written to.</param>
+        /// <param name="progress">A progress object used to report the progress of the operation.</param>
+        /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
+        public static async Task DownloadFileAsync(Uri url, CookieContainer container, FileInfo file, IProgress<double> progress, CancellationToken cancellationToken)
         {
             try
             {

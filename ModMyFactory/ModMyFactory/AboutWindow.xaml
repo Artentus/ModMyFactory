@@ -1,0 +1,66 @@
+﻿<Window x:Class="ModMyFactory.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ModMyFactory"
+        mc:Ignorable="d"
+        Title="About ModMyFactory" SizeToContent="WidthAndHeight"
+        WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Icon=".\Images\Factorio_Icon.ico">
+    
+    <Window.DataContext>
+        <local:AboutViewModel/>
+    </Window.DataContext>
+    
+    <Window.Resources>
+        <BitmapImage x:Key="Logo" UriSource="./Images/modmyfactory.png"/>
+    </Window.Resources>
+    
+    <Grid Margin="4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="20,10,20,5" Source="{StaticResource Logo}"
+               Stretch="None" SnapsToDevicePixels="True" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="20,0" Text="by Mathis Rech"/>
+        <TextBlock Grid.Row="1" Grid.Column="2" Margin="20,0" Text="{Binding VersionString}"/>
+
+        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="20,2,10,2" Text="Flag icons:"/>
+            <TextBlock Grid.Row="0" Grid.Column="1">
+                <Hyperlink Command="{Binding Url1Command}">Flag Icons by FamFamFam</Hyperlink>
+            </TextBlock>
+            
+            <TextBlock Grid.Row="1" Grid.Column="0" Margin="20,2,10,2" Text="Factorio font:"/>
+            <TextBlock Grid.Row="1" Grid.Column="1">
+                <Hyperlink Command="{Binding Url2Command}">Sylar Stencil</Hyperlink>
+            </TextBlock>
+        </Grid>
+        
+        <Button Grid.Row="5" Grid.Column="2" Margin="2" HorizontalAlignment="Right" Content="Close" IsDefault="True" IsCancel="True"/>
+    </Grid>
+</Window>

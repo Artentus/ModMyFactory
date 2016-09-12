@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ModMyFactory"
+        xmlns:lang="clr-namespace:ModMyFactory.Lang"
         mc:Ignorable="d"
         Title="ModMyFactory" Height="600" Width="800"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
@@ -12,15 +13,16 @@
         FocusManager.FocusedElement="{Binding RelativeSource={x:Static RelativeSource.Self}, Mode=OneTime}">
 
     <Window.Resources>
-        <BitmapImage x:Key="NewFileIcon" UriSource=".\Images\NewFile_6276.png"/>
-        <BitmapImage x:Key="OpenIcon" UriSource=".\Images\Open_6529.png"/>
-        <BitmapImage x:Key="SaveIcon" UriSource=".\Images\Save_6530.png"/>
-        <BitmapImage x:Key="ExportIcon" UriSource=".\Images\ExportReportData_10565.png"/>
-        <BitmapImage x:Key="UndoIcon" UriSource=".\Images\Undo_16x.png"/>
-        <BitmapImage x:Key="RedoIcon" UriSource=".\Images\Redo_16x.png"/>
-        <BitmapImage x:Key="CutIcon" UriSource=".\Images\Cut_6523.png"/>
-        <BitmapImage x:Key="CopyIcon" UriSource=".\Images\Copy_6524.png"/>
-        <BitmapImage x:Key="PasteIcon" UriSource=".\Images\Paste_6520.png"/>
+        <BitmapImage x:Key="NewFileIcon" UriSource="./Images/NewFile_6276.png"/>
+        <BitmapImage x:Key="OpenIcon" UriSource="./Images/Open_6529.png"/>
+        <BitmapImage x:Key="SaveIcon" UriSource="./Images/Save_6530.png"/>
+        <BitmapImage x:Key="ExportIcon" UriSource="./Images/ExportReportData_10565.png"/>
+        <BitmapImage x:Key="UndoIcon" UriSource="./Images/Undo_16x.png"/>
+        <BitmapImage x:Key="RedoIcon" UriSource="./Images/Redo_16x.png"/>
+        <BitmapImage x:Key="CutIcon" UriSource="./Images/Cut_6523.png"/>
+        <BitmapImage x:Key="CopyIcon" UriSource="./Images/Copy_6524.png"/>
+        <BitmapImage x:Key="PasteIcon" UriSource="./Images/Paste_6520.png"/>
+        <BitmapImage x:Key="CloseIcon" UriSource="./Images/Close_Menu.png"/>
 
         <Style x:Key="ActiveInactiveCheckBoxStyle" TargetType="{x:Type CheckBox}">
             <Style.Setters>
@@ -46,6 +48,10 @@
         <KeyBinding Modifiers="Control" Key="O" Command="{Binding OpenCommand}"/>
         <KeyBinding Modifiers="Control" Key="S" Command="{Binding SaveCommand}"/>
     </Window.InputBindings>-->
+    
+    <Window.CommandBindings>
+        <CommandBinding Command="Close" Executed="Close" CanExecute="CanExecuteCommandDefault"/>
+    </Window.CommandBindings>
 
     <Grid Margin="4,0,4,4">
         <Grid.RowDefinitions>
@@ -55,11 +61,36 @@
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0" IsMainMenu="True">
-            <MenuItem Header="_File">
-                <MenuItem Header="Close" InputGestureText="Alt+F4" Command="Close"/>
+            <MenuItem Header="{DynamicResource FileMenuItem}">
+                <MenuItem Header="Close" Icon="{StaticResource CloseIcon}" InputGestureText="Alt+F4" Command="Close"/>
             </MenuItem>
-            <MenuItem Header="_Edit">
+            <MenuItem Header="{DynamicResource EditMenuItem}">
                 <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>
+            </MenuItem>
+            <MenuItem Header="{DynamicResource LanguageMenuItem}" ItemsSource="{Binding AvailableCultures}">
+                <MenuItem.ItemTemplate>
+                    <DataTemplate DataType="{x:Type lang:CultureEntry}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Margin="0,0,6,0" Text="{Binding Name}"/>
+                            <TextBlock Grid.Column="1" Text="{Binding EnglishName}"/>
+                        </Grid>
+                    </DataTemplate>
+                </MenuItem.ItemTemplate>
+                <MenuItem.ItemContainerStyle>
+                    <Style TargetType="{x:Type MenuItem}">
+                        <Setter Property="IsCheckable" Value="True"/>
+                        <Setter Property="IsChecked" Value="{Binding IsSelected, Mode=OneWay}"/>
+                        <Setter Property="Icon" Value="{Binding Flag}"/>
+                        <Setter Property="Command" Value="{Binding SelectCommand}"/>
+                    </Style>
+                </MenuItem.ItemContainerStyle>
+            </MenuItem>
+            <MenuItem Header="{DynamicResource InfoMenuItem}">
+                <MenuItem Header="About" Command="{Binding OpenAboutWindowCommand}"/>
             </MenuItem>
         </Menu>
 
