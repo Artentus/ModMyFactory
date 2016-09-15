@@ -25,6 +25,8 @@ namespace ModMyFactory.Lang
         /// </summary>
         public string EnglishName => "(" + culture.EnglishName + ")";
 
+        public string LanguageCode => culture.TwoLetterISOLanguageName;
+
         /// <summary>
         /// Indicates whether this language is currently selected.
         /// </summary>
@@ -62,7 +64,10 @@ namespace ModMyFactory.Lang
                 if (selectedEntry != null) selectedEntry.IsSelected = false;
                 selectedEntry = this;
                 this.IsSelected = true;
+
                 App.Instance.SelectCulture(culture);
+                App.Instance.Settings.SelectedLanguage = LanguageCode;
+                App.Instance.Settings.Save();
             }
         }
     }

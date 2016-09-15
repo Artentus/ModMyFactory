@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ModMyFactory
+namespace ModMyFactory.Web
 {
     class FactorioOnlineVersion
     {

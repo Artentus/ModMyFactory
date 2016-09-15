@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ModMyFactory"
         mc:Ignorable="d"
-        Title="Settings" Height="300" Width="300"
+        Title="Settings" Width="500" SizeToContent="Height"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon=".\Images\Factorio_Icon.ico"
@@ -15,19 +15,56 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <TextBlock Grid.Row="0" Text="Mod database file:"/>
-        <DockPanel Grid.Row="1">
-            <Button DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="3" Content="Select" Command="{Binding SelectDatabaseFileCommand}"/>
-            <TextBox Margin="3" Padding="2" MaxLines="1" Text="{Binding ModDatabaseFile, Mode=TwoWay}"/>
-        </DockPanel>
-        
-        <DockPanel Grid.Row="3" LastChildFill="False">
-            <Button DockPanel.Dock="Right" Margin="3" Content="OK" IsDefault="True" Click="OKButtonClickHandler"/>
-            <Button DockPanel.Dock="Right" Margin="3" Content="Cancel" IsCancel="True"/>
-        </DockPanel>
+        <GroupBox Grid.Row="0" Header="Factorio location">
+            <Grid Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <RadioButton Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding FactorioDirectoryIsAppData}" Content="AppData"/>
+                <RadioButton Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding FactorioDirectoryIsAppDirectory}" Content="Application directory"/>
+                <RadioButton Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding FactorioDirectoryIsCustom}" Content="Select:"/>
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="2" Padding="2" IsEnabled="{Binding FactorioDirectoryIsCustom}" MaxLines="1" Text="{Binding FactorioDirectory}"/>
+                <Button Grid.Row="3" Grid.Column="1" Margin="2" IsEnabled="{Binding FactorioDirectoryIsCustom}" Command="{Binding SelectFactorioDirectoryCommand}"  Content="Browse"/>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Margin="0,4" Header="Mod location">
+            <Grid Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <RadioButton Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding ModDirectoryIsAppData}" Content="AppData"/>
+                <RadioButton Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding ModDirectoryIsAppDirectory}" Content="Application directory"/>
+                <RadioButton Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding ModDirectoryIsCustom}" Content="Select:"/>
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="2" Padding="2" IsEnabled="{Binding ModDirectoryIsCustom}" MaxLines="1" Text="{Binding ModDirectory}"/>
+                <Button Grid.Row="3" Grid.Column="1" Margin="2" IsEnabled="{Binding ModDirectoryIsCustom}" Command="{Binding SelectModDirectoryCommand}" Content="Browse"/>
+            </Grid>
+        </GroupBox>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft">
+            <Button Margin="2" IsDefault="True" Click="OKButtonClickHandler" IsEnabled="{Binding SettingsValid}" Content="OK"/>
+            <Button Margin="2" IsCancel="True" Content="Cancel"/>
+        </StackPanel>
     </Grid>
 </Window>

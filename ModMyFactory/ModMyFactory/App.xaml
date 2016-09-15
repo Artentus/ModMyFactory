@@ -753,6 +753,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type Button}">
+                                
                                 <Border x:Name="Border1" BorderBrush="#FFADADAD" BorderThickness="1" Background="#FFE1E1E1">
 
                                     <Border x:Name="Border2" BorderBrush="Transparent" BorderThickness="2" Background="Transparent" Margin="-1">
@@ -776,6 +777,13 @@
                                                     <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Background.Color" To="#FFCCE4F7" Duration="0:0:0:0.3"/>
                                                 </Storyboard>
                                             </VisualState>
+                                            <VisualState Name="Disabled">
+                                                <Storyboard>
+                                                    <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderThickness" To="1" Duration="0"/>
+                                                    <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderBrush.Color" To="#FFBFBFBF" Duration="0"/>
+                                                    <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Background.Color" To="#FFCCCCCC" Duration="0"/>
+                                                </Storyboard>
+                                            </VisualState>
                                         </VisualStateGroup>
 
                                         <VisualStateGroup Name="FocusStates">
@@ -790,10 +798,52 @@
                                         </VisualStateGroup>
                                     </VisualStateManager.VisualStateGroups>
                                 </Border>
+                                
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Trigger.Setters>
+                                            <Setter Property="Foreground" Value="#FF838383"/>
+                                        </Trigger.Setters>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
                 </Style.Setters>
+            </Style>
+
+            <Style x:Key="{x:Type GroupBox}" TargetType="{x:Type GroupBox}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type GroupBox}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                
+                                <Grid Grid.Row="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <ContentPresenter Grid.Row="0" Grid.Column="0" Margin="2" ContentSource="Header" RecognizesAccessKey="True"/>
+                                    <Rectangle Grid.Row="1" Grid.Column="0" Height="4" Fill="LightSkyBlue"/>
+                                </Grid>
+
+                                <Border Grid.Row="1" BorderThickness="1" BorderBrush="LightGray">
+                                    <ContentPresenter Margin="4" />
+                                </Border>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
             </Style>
 
         </ResourceDictionary>

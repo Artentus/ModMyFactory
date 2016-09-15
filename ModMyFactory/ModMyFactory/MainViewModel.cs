@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,13 +41,10 @@ namespace ModMyFactory
         private MainViewModel()
         {
             loggedIn = false;
-            taskbarInfo = (Application.Current.MainWindow.TaskbarItemInfo = new TaskbarItemInfo());
-            AvailableCultures = new List<CultureEntry>()
-            {
-                new CultureEntry(new CultureInfo("en")),
-                new CultureEntry(new CultureInfo("de")),
-            };
-            AvailableCultures[0].Select();
+            taskbarInfo = (App.Instance.MainWindow.TaskbarItemInfo = new TaskbarItemInfo());
+
+            AvailableCultures = GetAvailableCultures();
+            AvailableCultures.First(entry => string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
 
             Mods = new ObservableCollection<Mod>();
             Modpacks = new ObservableCollection<Modpack>();
@@ -73,21 +71,71 @@ namespace ModMyFactory
             Modpacks.Add(modpack1);
             Modpacks.Add(modpack2);
             Modpacks.Add(modpack3);
+        }
 
-            //var fi = new FileInfo(@"C:\Users\Mathis\AppData\Roaming\Factorio\mods\mod-list.json");
-            //using (var fs = fi.OpenRead())
-            //{
-            //    var serializer = new DataContractJsonSerializer(typeof(ModTemplateList));
-            //    var templates = (ModTemplateList)serializer.ReadObject(fs);
-            //    MessageBox.Show(string.Join("\n", templates.Mods.Select(template => template.Name + ";" + template.Enabled)));
-            //}
+        private List<CultureEntry> GetAvailableCultures()
+        {
+            var availableCultures = new List<CultureEntry>();
+            foreach (var key in App.Instance.Resources.Keys)
+            {
+                string stringKey = key as string;
+                if (stringKey != null && stringKey.StartsWith("Strings."))
+                {
+                    var dictionary = App.Instance.Resources[key] as ResourceDictionary;
+                    if (dictionary != null)
+                    {
+                        string cultureName = stringKey.Split('.')[1];
+                        availableCultures.Add(new CultureEntry(new CultureInfo(cultureName)));
+                    }
+                }
+            }
+            availableCultures.Sort((entry1, entry2) => string.Compare(entry1.EnglishName, entry2.EnglishName, StringComparison.InvariantCultureIgnoreCase));
+            return availableCultures;
         }
 
         private void OpenSettings()
         {
-            var settingsWindow = new SettingsWindow() { Owner = Application.Current.MainWindow };
+            var settingsWindow = new SettingsWindow() { Owner = App.Instance.MainWindow };
 
-            settingsWindow.ShowDialog();
+            bool? result = settingsWindow.ShowDialog();
+            if (result != null && result.Value)
+            {
+                var viewModel = (SettingsViewModel)settingsWindow.DataContext;
+
+                if (viewModel.FactorioDirectoryIsAppData)
+                {
+                    App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.AppData;
+                    App.Instance.Settings.FactorioDirectory = string.Empty;
+                }
+                else if (viewModel.FactorioDirectoryIsAppDirectory)
+                {
+                    App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.ApplicationDirectory;
+                    App.Instance.Settings.FactorioDirectory = string.Empty;
+                }
+                else if (viewModel.FactorioDirectoryIsCustom)
+                {
+                    App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.Custom;
+                    App.Instance.Settings.FactorioDirectory = viewModel.FactorioDirectory;
+                }
+
+                if (viewModel.ModDirectoryIsAppData)
+                {
+                    App.Instance.Settings.ModDirectoryOption = DirectoryOption.AppData;
+                    App.Instance.Settings.ModDirectory = string.Empty;
+                }
+                else if (viewModel.ModDirectoryIsAppDirectory)
+                {
+                    App.Instance.Settings.ModDirectoryOption = DirectoryOption.ApplicationDirectory;
+                    App.Instance.Settings.ModDirectory = string.Empty;
+                }
+                else if (viewModel.ModDirectoryIsCustom)
+                {
+                    App.Instance.Settings.ModDirectoryOption = DirectoryOption.Custom;
+                    App.Instance.Settings.ModDirectory = viewModel.ModDirectory;
+                }
+
+                App.Instance.Settings.Save();
+            }
         }
 
         private async Task OpenVersionList()
@@ -103,7 +151,7 @@ namespace ModMyFactory
             {
                 var loginWindow = new LoginWindow
                 {
-                    Owner = Application.Current.MainWindow,
+                    Owner = App.Instance.MainWindow,
                     FailedText = { Visibility = failed ? Visibility.Visible : Visibility.Collapsed }
                 };
                 bool? loginResult = loginWindow.ShowDialog();
@@ -119,11 +167,11 @@ namespace ModMyFactory
             List<FactorioOnlineVersion> versions;
             if (!FactorioWebsite.GetVersions(container, out versions))
             {
-                MessageBox.Show(Application.Current.MainWindow, "Error retrieving available versions!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(App.Instance.MainWindow, "Error retrieving available versions!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            var versionListWindow = new VersionListWindow { Owner = Application.Current.MainWindow };
+            var versionListWindow = new VersionListWindow { Owner = App.Instance.MainWindow };
             var versionViewModel = new VersionListViewModell(versions);
             versionListWindow.DataContext = versionViewModel;
 
@@ -133,7 +181,7 @@ namespace ModMyFactory
                 FactorioOnlineVersion selectedVersion = versionViewModel.SelectedVersion;
 
                 var cancellationSource = new CancellationTokenSource();
-                var downloadWindow = new DownloadWindow { Owner = Application.Current.MainWindow };
+                var downloadWindow = new DownloadWindow { Owner = App.Instance.MainWindow };
                 canCancelDownload = true;
                 var cancelCommand = new RelayCommand(() => cancellationSource.Cancel(), () => canCancelDownload);
                 var downloadViewModel = new DownloadViewModel(cancelCommand)
@@ -171,7 +219,7 @@ namespace ModMyFactory
 
         private void OpenAboutWindow()
         {
-            var aboutWindow = new AboutWindow() { Owner = Application.Current.MainWindow };
+            var aboutWindow = new AboutWindow() { Owner = App.Instance.MainWindow };
             aboutWindow.ShowDialog();
         }
     }

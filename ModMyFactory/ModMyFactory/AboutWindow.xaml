@@ -8,12 +8,9 @@
         Title="About ModMyFactory" SizeToContent="WidthAndHeight"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Icon=".\Images\Factorio_Icon.ico">
-    
-    <Window.DataContext>
-        <local:AboutViewModel/>
-    </Window.DataContext>
-    
+        Icon=".\Images\Factorio_Icon.ico"
+        DataContext="{x:Static local:AboutViewModel.Instance}">
+
     <Window.Resources>
         <BitmapImage x:Key="Logo" UriSource="./Images/modmyfactory.png"/>
     </Window.Resources>
@@ -43,6 +40,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -58,6 +57,16 @@
             <TextBlock Grid.Row="1" Grid.Column="0" Margin="20,2,10,2" Text="Factorio font:"/>
             <TextBlock Grid.Row="1" Grid.Column="1">
                 <Hyperlink Command="{Binding Url2Command}">Sylar Stencil</Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Margin="20,2,10,2" Text="Dialogs:"/>
+            <TextBlock Grid.Row="2" Grid.Column="1">
+                <Hyperlink Command="{Binding Url3Command}">Ookii.Dialogs</Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Margin="20,2,10,2" Text="JSON Framework:"/>
+            <TextBlock Grid.Row="3" Grid.Column="1">
+                <Hyperlink Command="{Binding Url4Command}">Json.NET</Hyperlink>
             </TextBlock>
         </Grid>
         

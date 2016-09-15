@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
+using ModMyFactory.Web;
 
 namespace ModMyFactory
 {
     sealed class VersionListViewModell : NotifyPropertyChangedBase
     {
         FactorioOnlineVersion selectedVersion;
+        bool canAdd;
 
         public List<FactorioOnlineVersion> FactorioVersions { get; }
 
@@ -19,6 +20,20 @@ namespace ModMyFactory
                 {
                     selectedVersion = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedVersion)));
+                    CanAdd = selectedVersion != null;
+                }
+            }
+        }
+
+        public bool CanAdd
+        {
+            get { return canAdd; }
+            private set
+            {
+                if (value != canAdd)
+                {
+                    canAdd = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(CanAdd)));
                 }
             }
         }
@@ -26,15 +41,6 @@ namespace ModMyFactory
         public VersionListViewModell(List<FactorioOnlineVersion> factorioVersions)
         {
             FactorioVersions = factorioVersions;
-
-            //FactorioVersions.Add(new FactorioOnlineVersion(new Version(0, 13, 20), "(alpha)"));
-            //FactorioVersions.Add(new FactorioOnlineVersion(new Version(0, 12, 35), "(alpha)"));
-            //FactorioVersions.Add(new FactorioOnlineVersion(new Version(0, 11, 22), "(alpha)"));
-            //FactorioVersions.Add(new FactorioOnlineVersion(new Version(0, 10, 12), "(alpha)"));
-            //FactorioVersions.Add(new FactorioOnlineVersion(new Version(0, 9, 8), "(alpha)"));
-            //FactorioVersions.Add(new FactorioOnlineVersion(new Version(0, 8, 8), "(alpha)"));
-            //FactorioVersions.Add(new FactorioOnlineVersion(new Version(0, 7, 5), "(alpha)"));
-            //FactorioVersions.Add(new FactorioOnlineVersion(new Version(0, 6, 4), "(alpha)"));
         }
     }
 }

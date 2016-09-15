@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
+using System.IO;
 using System.Threading;
 using System.Windows;
 
@@ -10,7 +12,19 @@ namespace ModMyFactory
 
         ResourceDictionary enDictionary;
 
-        public void SelectCulture(CultureInfo culture)
+        internal Settings Settings { get; }
+
+        private App()
+        {
+            string appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ModMyFactory");
+            var appDataDirectory = new DirectoryInfo(appDataPath);
+            if (!appDataDirectory.Exists) appDataDirectory.Create();
+
+            string settingsFile = Path.Combine(appDataDirectory.FullName, "settings.json");
+            Settings = Settings.Load(settingsFile, true);
+        }
+
+        internal void SelectCulture(CultureInfo culture)
         {
             if (enDictionary == null)
                 enDictionary = (ResourceDictionary)Resources["Strings.en"];
