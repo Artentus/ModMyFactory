@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Media.Imaging;
+using ModMyFactory.MVVM;
 
 namespace ModMyFactory.Lang
 {

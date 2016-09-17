@@ -75,13 +75,16 @@
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="DirectoryOption.cs" />
-    <Compile Include="DownloadViewModel.cs" />
-    <Compile Include="DownloadWindow.xaml.cs">
-      <DependentUpon>DownloadWindow.xaml</DependentUpon>
+    <Compile Include="ProgressViewModel.cs" />
+    <Compile Include="ProgressWindow.xaml.cs">
+      <DependentUpon>ProgressWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="DragDropReadyListBox.cs" />
     <Compile Include="DragDropReadyListBoxItem.cs" />
     <Compile Include="JsonHelper.cs" />
+    <Compile Include="MenuItemProperties.cs" />
+    <Compile Include="MVVM\ViewModel.cs" />
+    <Compile Include="MVVM\ViewModelBase.cs" />
     <Compile Include="Web\FactorioOnlineVersion.cs" />
     <Compile Include="Lang\CultureEntry.cs" />
     <Compile Include="LoginWindow.xaml.cs">
@@ -92,13 +95,13 @@
     <Compile Include="ModTemplate.cs" />
     <Compile Include="ModTemplateList.cs" />
     <Compile Include="MultiplyConverter.cs" />
-    <Compile Include="RelayCommand.cs" />
+    <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SettingsViewModel.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VersionListViewModell.cs" />
+    <Compile Include="VersionListViewModel.cs" />
     <Compile Include="VersionListWindow.xaml.cs">
       <DependentUpon>VersionListWindow.xaml</DependentUpon>
     </Compile>
@@ -111,7 +114,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DownloadWindow.xaml">
+    <Page Include="ProgressWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -150,7 +153,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NotifyPropertyChangedBase.cs" />
+    <Compile Include="MVVM\NotifyPropertyChangedBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -184,29 +187,27 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Close.png" />
-    <Resource Include="Images\Close_Menu.png" />
-    <Resource Include="Images\Copy_6524.png" />
-    <Resource Include="Images\Cursor.jpg" />
-    <Resource Include="Images\Cut_6523.png" />
-    <Resource Include="Images\ExportReportData_10565.png" />
-    <Resource Include="Images\Maximize.png" />
-    <Resource Include="Images\Maximize_Menu.png" />
-    <Resource Include="Images\Minimize.png" />
-    <Resource Include="Images\Minimize_Menu.png" />
-    <Resource Include="Images\NewFile_6276.png" />
-    <Resource Include="Images\Open_6529.png" />
-    <Resource Include="Images\Paste_6520.png" />
-    <Resource Include="Images\Redo_16x.png" />
-    <Resource Include="Images\Restore.png" />
-    <Resource Include="Images\Restore_Menu.png" />
-    <Resource Include="Images\Save_6530.png" />
-    <Resource Include="Images\Undo_16x.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\de.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\en.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\WebDestination.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Run.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Configure.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Information.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\modmyfactory.png" />

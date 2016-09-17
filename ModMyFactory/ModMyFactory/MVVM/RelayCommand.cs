@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace ModMyFactory
+namespace ModMyFactory.MVVM
 {
     class RelayCommand : ICommand
     {

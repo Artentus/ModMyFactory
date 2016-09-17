@@ -1,14 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using ModMyFactory.MVVM;
 
 namespace ModMyFactory
 {
-    sealed class AboutViewModel : NotifyPropertyChangedBase
+    sealed class AboutViewModel : ViewModelBase<AboutWindow>
     {
-        static AboutViewModel instance;
-
-        public static AboutViewModel Instance => instance ?? (instance = new AboutViewModel());
-
         public string VersionString => "v" + Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
 
         public RelayCommand Url1Command { get; }
@@ -19,7 +16,7 @@ namespace ModMyFactory
 
         public RelayCommand Url4Command { get; }
 
-        private AboutViewModel()
+        public AboutViewModel()
         {
             Url1Command = new RelayCommand(() => Process.Start("http://www.iconarchive.com/show/flag-icons-by-famfamfam.html"));
             Url2Command = new RelayCommand(() => Process.Start("http://www.dafont.com/sylar-stencil.font"));

@@ -1,15 +1,13 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.IO;
+using ModMyFactory.MVVM;
 using Ookii.Dialogs.Wpf;
 
 namespace ModMyFactory
 {
-    sealed class SettingsViewModel : NotifyPropertyChangedBase
+    sealed class SettingsViewModel : ViewModelBase<SettingsWindow>
     {
-        static SettingsViewModel instance;
-
-        public static SettingsViewModel Instance => instance ?? (instance = new SettingsViewModel());
-
         bool factorioDirectoryIsAppData;
         bool factorioDirectoryIsAppDirectory;
         bool factorioDirectoryIsCustom;
@@ -151,7 +149,7 @@ namespace ModMyFactory
 
         public RelayCommand SelectModDirectoryCommand { get; }
 
-        private SettingsViewModel()
+        public SettingsViewModel()
         {
             switch (App.Instance.Settings.FactorioDirectoryOption)
             {
@@ -203,14 +201,27 @@ namespace ModMyFactory
                 ModDirectory = dialog.SelectedPath;
         }
 
+        private bool PathValid(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return false;
+
+            try
+            {
+                Path.GetFullPath(path);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return Path.IsPathRooted(path);
+        }
+
         private void ValidateSettings()
         {
-            bool settingsValid = true;
-
-            if (FactorioDirectoryIsCustom && !Directory.Exists(FactorioDirectory)) settingsValid = false;
-            if (ModDirectoryIsCustom && !Directory.Exists(ModDirectory)) settingsValid = false;
-
-            SettingsValid = settingsValid;
+            SettingsValid =
+                (!FactorioDirectoryIsCustom || PathValid(FactorioDirectory))
+                && (!ModDirectoryIsCustom || PathValid(ModDirectory));
         }
     }
 }

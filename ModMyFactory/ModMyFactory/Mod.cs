@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using ModMyFactory.MVVM;
 
 namespace ModMyFactory
 {

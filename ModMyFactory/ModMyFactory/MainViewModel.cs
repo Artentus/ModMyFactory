@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -10,21 +9,22 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
 using ModMyFactory.Lang;
+using ModMyFactory.MVVM;
 using ModMyFactory.Web;
 
 namespace ModMyFactory
 {
-    sealed class MainViewModel : NotifyPropertyChangedBase
+    sealed class MainViewModel : ViewModelBase<MainWindow>
     {
         static MainViewModel instance;
+
+        public static MainViewModel Instance => instance ?? (instance = new MainViewModel((MainWindow)Application.Current.MainWindow));
+
         bool loggedIn;
         string username;
         string password;
         CookieContainer container;
-        readonly TaskbarItemInfo taskbarInfo;
         bool canCancelDownload;
-
-        public static MainViewModel Instance => instance ?? (instance = new MainViewModel());
 
         public List<CultureEntry> AvailableCultures { get; } 
 
@@ -38,12 +38,12 @@ namespace ModMyFactory
 
         public RelayCommand OpenAboutWindowCommand { get; }
 
-        private MainViewModel()
+        private MainViewModel(MainWindow window)
+            : base(window)
         {
             loggedIn = false;
-            taskbarInfo = (App.Instance.MainWindow.TaskbarItemInfo = new TaskbarItemInfo());
 
-            AvailableCultures = GetAvailableCultures();
+            AvailableCultures = App.Instance.GetAvailableCultures();
             AvailableCultures.First(entry => string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
 
             Mods = new ObservableCollection<Mod>();
@@ -73,35 +73,14 @@ namespace ModMyFactory
             Modpacks.Add(modpack3);
         }
 
-        private List<CultureEntry> GetAvailableCultures()
-        {
-            var availableCultures = new List<CultureEntry>();
-            foreach (var key in App.Instance.Resources.Keys)
-            {
-                string stringKey = key as string;
-                if (stringKey != null && stringKey.StartsWith("Strings."))
-                {
-                    var dictionary = App.Instance.Resources[key] as ResourceDictionary;
-                    if (dictionary != null)
-                    {
-                        string cultureName = stringKey.Split('.')[1];
-                        availableCultures.Add(new CultureEntry(new CultureInfo(cultureName)));
-                    }
-                }
-            }
-            availableCultures.Sort((entry1, entry2) => string.Compare(entry1.EnglishName, entry2.EnglishName, StringComparison.InvariantCultureIgnoreCase));
-            return availableCultures;
-        }
-
         private void OpenSettings()
         {
-            var settingsWindow = new SettingsWindow() { Owner = App.Instance.MainWindow };
+            var settingsWindow = new SettingsWindow() { Owner = Window };
+            var viewModel = ViewModel.CreateFromWindow<SettingsViewModel>(settingsWindow);
 
             bool? result = settingsWindow.ShowDialog();
             if (result != null && result.Value)
             {
-                var viewModel = (SettingsViewModel)settingsWindow.DataContext;
-
                 if (viewModel.FactorioDirectoryIsAppData)
                 {
                     App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.AppData;
@@ -151,7 +130,7 @@ namespace ModMyFactory
             {
                 var loginWindow = new LoginWindow
                 {
-                    Owner = App.Instance.MainWindow,
+                    Owner = Window,
                     FailedText = { Visibility = failed ? Visibility.Visible : Visibility.Collapsed }
                 };
                 bool? loginResult = loginWindow.ShowDialog();
@@ -167,13 +146,13 @@ namespace ModMyFactory
             List<FactorioOnlineVersion> versions;
             if (!FactorioWebsite.GetVersions(container, out versions))
             {
-                MessageBox.Show(App.Instance.MainWindow, "Error retrieving available versions!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "Error retrieving available versions!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            var versionListWindow = new VersionListWindow { Owner = App.Instance.MainWindow };
-            var versionViewModel = new VersionListViewModell(versions);
-            versionListWindow.DataContext = versionViewModel;
+            var versionListWindow = new VersionListWindow { Owner = Window };
+            var versionViewModel = ViewModel.CreateFromWindow<VersionListViewModel>(versionListWindow);
+            versions.ForEach(item => versionViewModel.FactorioVersions.Add(item));
 
             bool? versionResult = versionListWindow.ShowDialog();
             if (versionResult == true)
@@ -181,45 +160,38 @@ namespace ModMyFactory
                 FactorioOnlineVersion selectedVersion = versionViewModel.SelectedVersion;
 
                 var cancellationSource = new CancellationTokenSource();
-                var downloadWindow = new DownloadWindow { Owner = App.Instance.MainWindow };
-                canCancelDownload = true;
-                var cancelCommand = new RelayCommand(() => cancellationSource.Cancel(), () => canCancelDownload);
-                var downloadViewModel = new DownloadViewModel(cancelCommand)
-                {
-                    DownloadState = "Downloading " + selectedVersion.DownloadUrl
-                };
-                downloadWindow.DataContext = downloadViewModel;
+                var progressWindow = new ProgressWindow { Owner = Window };
+                var progressViewModel = ViewModel.CreateFromWindow<ProgressViewModel>(progressWindow);
+                progressViewModel.ProgressDescription = "Downloading " + selectedVersion.DownloadUrl;
+                progressViewModel.CanCancel = true;
+                progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
                 string directoryPath = Path.Combine(Environment.CurrentDirectory, "Factorio");
                 var directory = new DirectoryInfo(directoryPath);
 
-                taskbarInfo.ProgressState = TaskbarItemProgressState.Normal;
-                taskbarInfo.ProgressValue = 0;
                 Task t = FactorioWebsite.DownloadFactorioPackageAsync(selectedVersion, directory, container, new Progress<double>(p =>
                 {
                     if (p > 1)
                     {
-                        downloadViewModel.DownloadState = "Extracting...";
-                        downloadViewModel.IsIndeterminate = true;
-                        taskbarInfo.ProgressState = TaskbarItemProgressState.Indeterminate;
-                        canCancelDownload = false;
+                        progressViewModel.ProgressDescription = "Extracting...";
+                        progressViewModel.IsIndeterminate = true;
+                        progressViewModel.CanCancel = false;
                     }
                     else
                     {
-                        downloadViewModel.Progress = p;
-                        taskbarInfo.ProgressValue = p;
+                        progressViewModel.Progress = p;
                     }
                 }), cancellationSource.Token)
-                    .ContinueWith((t1) => Task.Run(() => downloadWindow.Dispatcher.Invoke(downloadWindow.Close)));
-                downloadWindow.ShowDialog();
+                    .ContinueWith((t1) => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
+                progressWindow.ShowDialog();
                 await t;
-                taskbarInfo.ProgressState = TaskbarItemProgressState.None;
             }
         }
 
         private void OpenAboutWindow()
         {
-            var aboutWindow = new AboutWindow() { Owner = App.Instance.MainWindow };
+            var aboutWindow = new AboutWindow() { Owner = Window };
+            ViewModel.CreateFromWindow<AboutViewModel>(aboutWindow);
             aboutWindow.ShowDialog();
         }
     }

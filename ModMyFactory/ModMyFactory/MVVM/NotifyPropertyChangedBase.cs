@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ModMyFactory
+namespace ModMyFactory.MVVM
 {
     /// <summary>
     /// Notifies clients that a property value has changed.
@@ -15,8 +15,8 @@ namespace ModMyFactory
         /// <summary>
         /// Raises the PropertyChanged event.
         /// </summary>
-        /// <param name="e"></param>
-        protected void OnPropertyChanged(PropertyChangedEventArgs e)
+        /// <param name="e">A PropertyChangedEventArgs that contains the event data.</param>
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             PropertyChanged?.Invoke(this, e);
         }

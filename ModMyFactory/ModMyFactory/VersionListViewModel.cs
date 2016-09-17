@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using ModMyFactory.MVVM;
 using ModMyFactory.Web;
 
 namespace ModMyFactory
 {
-    sealed class VersionListViewModell : NotifyPropertyChangedBase
+    sealed class VersionListViewModel : ViewModelBase<VersionListWindow>
     {
         FactorioOnlineVersion selectedVersion;
         bool canAdd;
 
-        public List<FactorioOnlineVersion> FactorioVersions { get; }
+        public ObservableCollection<FactorioOnlineVersion> FactorioVersions { get; set; }
 
         public FactorioOnlineVersion SelectedVersion
         {
@@ -38,9 +39,9 @@ namespace ModMyFactory
             }
         }
 
-        public VersionListViewModell(List<FactorioOnlineVersion> factorioVersions)
+        public VersionListViewModel()
         {
-            FactorioVersions = factorioVersions;
+            FactorioVersions = new ObservableCollection<FactorioOnlineVersion>();
         }
     }
 }

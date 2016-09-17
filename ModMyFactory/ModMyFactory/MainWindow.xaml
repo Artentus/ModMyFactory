@@ -13,16 +13,12 @@
         FocusManager.FocusedElement="{Binding RelativeSource={x:Static RelativeSource.Self}, Mode=OneTime}">
 
     <Window.Resources>
-        <BitmapImage x:Key="NewFileIcon" UriSource="./Images/NewFile_6276.png"/>
-        <BitmapImage x:Key="OpenIcon" UriSource="./Images/Open_6529.png"/>
-        <BitmapImage x:Key="SaveIcon" UriSource="./Images/Save_6530.png"/>
-        <BitmapImage x:Key="ExportIcon" UriSource="./Images/ExportReportData_10565.png"/>
-        <BitmapImage x:Key="UndoIcon" UriSource="./Images/Undo_16x.png"/>
-        <BitmapImage x:Key="RedoIcon" UriSource="./Images/Redo_16x.png"/>
-        <BitmapImage x:Key="CutIcon" UriSource="./Images/Cut_6523.png"/>
-        <BitmapImage x:Key="CopyIcon" UriSource="./Images/Copy_6524.png"/>
-        <BitmapImage x:Key="PasteIcon" UriSource="./Images/Paste_6520.png"/>
-        <BitmapImage x:Key="CloseIcon" UriSource="./Images/Close_Menu.png"/>
+        <BitmapImage x:Key="CloseIcon" UriSource="./Images/Close.png"/>
+        <BitmapImage x:Key="ConfigureIcon" UriSource="./Images/Configure.png"/>
+        <BitmapImage x:Key="InformationIcon" UriSource="./Images/Information.png"/>
+        <BitmapImage x:Key="RunIcon" UriSource="./Images/Run.png"/>
+        <BitmapImage x:Key="SettingsIcon" UriSource="./Images/Settings.png"/>
+        <BitmapImage x:Key="WebDestinationIcon" UriSource="./Images/WebDestination.png"/>
 
         <Style x:Key="ActiveInactiveCheckBoxStyle" TargetType="{x:Type CheckBox}">
             <Style.Setters>
@@ -62,10 +58,14 @@
 
         <Menu Grid.Row="0" IsMainMenu="True">
             <MenuItem Header="{DynamicResource FileMenuItem}">
+                <MenuItem Header="Start game" Icon="{StaticResource RunIcon}" InputGestureText="F5"/>
+                <Separator/>
                 <MenuItem Header="Close" Icon="{StaticResource CloseIcon}" InputGestureText="Alt+F4" Command="Close"/>
             </MenuItem>
             <MenuItem Header="{DynamicResource EditMenuItem}">
-                <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>
+                <MenuItem Header="Version manager" Icon="{StaticResource ConfigureIcon}" InputGestureText="F6"/>
+                <Separator/>
+                <MenuItem Header="Settings" Icon="{StaticResource SettingsIcon}" InputGestureText="F10" Command="{Binding OpenSettingsCommand}"/>
             </MenuItem>
             <MenuItem Header="{DynamicResource LanguageMenuItem}" ItemsSource="{Binding AvailableCultures}">
                 <MenuItem.ItemTemplate>
@@ -82,7 +82,7 @@
                 </MenuItem.ItemTemplate>
                 <MenuItem.ItemContainerStyle>
                     <Style TargetType="{x:Type MenuItem}">
-                        <Setter Property="IsCheckable" Value="True"/>
+                        <Setter Property="local:MenuItemProperties.ShowChecked" Value="True"/>
                         <Setter Property="IsChecked" Value="{Binding IsSelected, Mode=OneWay}"/>
                         <Setter Property="Icon" Value="{Binding Flag}"/>
                         <Setter Property="Command" Value="{Binding SelectCommand}"/>
@@ -90,50 +90,27 @@
                 </MenuItem.ItemContainerStyle>
             </MenuItem>
             <MenuItem Header="{DynamicResource InfoMenuItem}">
-                <MenuItem Header="About" Command="{Binding OpenAboutWindowCommand}"/>
+                <MenuItem Header="About" Icon="{StaticResource InformationIcon}" InputGestureText="Shift+F1" Command="{Binding OpenAboutWindowCommand}"/>
+                <Separator/>
+                <MenuItem Header="Factorio.com" Icon="{StaticResource WebDestinationIcon}" InputGestureText="Ctrl+F"/>
+                <MenuItem Header="FactorioMods.com" Icon="{StaticResource WebDestinationIcon}" InputGestureText="Ctrl+M"/>
             </MenuItem>
         </Menu>
 
         <ToolBar Grid.Row="1">
-            <Button ToolTip="New" Command="{Binding NewCommand}">
-                <Image Margin="1" Source="{StaticResource NewFileIcon}"/>
+            <ComboBox Margin="2,0" Width="100"/>
+                <Button ToolTip="Version manager">
+                <Image Margin="1" Source="{StaticResource ConfigureIcon}"/>
             </Button>
-            <Button ToolTip="Open..." Command="{Binding OpenCommand}">
-                <Image Margin="1" Source="{StaticResource OpenIcon}"/>
+            <Button ToolTip="Start game">
+                <Image Margin="1" Source="{StaticResource RunIcon}"/>
             </Button>
-            <Button ToolTip="Save" Command="{Binding SaveCommand}">
-                <Image Margin="1" Source="{StaticResource SaveIcon}"/>
-            </Button>
-            <Separator/>
-            <Button ToolTip="Export as mesh" Command="{Binding ExportCommand}">
-                <Image Margin="1" Source="{StaticResource ExportIcon}"/>
-            </Button>
-            <Separator/>
-            <Button ToolTip="Undo" Command="{Binding UndoCommand}">
-                <Image Margin="1" Source="{StaticResource UndoIcon}"/>
-            </Button>
-            <Button ToolTip="Redo" Command="{Binding RedoCommand}">
-                <Image Margin="1" Source="{StaticResource RedoIcon}"/>
-            </Button>
-            <Separator/>
-            <Button ToolTip="Cut">
-                <Image Margin="1" Source="{StaticResource CutIcon}"/>
-            </Button>
-            <Button ToolTip="Copy">
-                <Image Margin="1" Source="{StaticResource CopyIcon}"/>
-            </Button>
-            <Button ToolTip="Paste">
-                <Image Margin="1" Source="{StaticResource PasteIcon}"/>
-            </Button>
-            <Separator/>
         </ToolBar>
         
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="4"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -154,7 +131,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Mods" Margin="2"/>
-                <Rectangle Grid.Row="1" Grid.Column="0" Fill="LightSkyBlue"/>
+                <Rectangle Grid.Row="1" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
             </Grid>
             <local:DragDropReadyListBox Grid.Row="1" Grid.Column="0" SelectionMode="Extended" AllowDrop="True" ItemsSource="{Binding Mods}"
                       PreviewMouseDown="ModsListBoxPreviewMouseDownHandler" PreviewMouseMove="ModsListBoxPreviewMouseMoveHandler"
@@ -209,7 +186,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Modpacks" Margin="2"/>
-                <Rectangle Grid.Row="1" Grid.Column="0" Fill="LightSkyBlue"/>
+                <Rectangle Grid.Row="1" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
             </Grid>
             <local:DragDropReadyListBox Grid.Row="1" Grid.Column="2" SelectionMode="Extended" AllowDrop="True" ItemsSource="{Binding Modpacks}"
                       PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler" PreviewMouseMove="ModpackListBoxPreviewMouseMoveHandler"
@@ -297,22 +274,6 @@
                     </DataTemplate>
                 </local:DragDropReadyListBox.ItemTemplate>
             </local:DragDropReadyListBox>
-            
-            <!-- Factorio Versions-->
-            <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                
-                <ComboBox Grid.Column="0" Margin ="2" Width="100">
-                    
-                </ComboBox>
-                <Button Grid.Column="1" Margin ="2" Content="Add version" Command="{Binding OpenVersionListCommand}"/>
-                <Button Grid.Column="3" Margin ="2" Content="Start game"/>
-            </Grid>
         </Grid>
     </Grid>
 </Window>

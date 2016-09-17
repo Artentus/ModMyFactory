@@ -3,12 +3,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ModMyFactory"
         xmlns:web="clr-namespace:ModMyFactory.Web"
         mc:Ignorable="d"
         Title="Select Version" Height="500" Width="400"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon=".\Images\Factorio_Icon.ico">
+    
+    <Window.DataContext>
+        <local:VersionListViewModel/>
+    </Window.DataContext>
 
     <Grid Margin="4">
         <Grid.RowDefinitions>
@@ -22,7 +27,8 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <ListBox Grid.Row="0" Grid.Column="0" Margin="2" Grid.ColumnSpan="3" ItemsSource="{Binding FactorioVersions}" SelectedItem="{Binding SelectedVersion, Mode=TwoWay}">
+        <ListBox Grid.Row="0" Grid.Column="0" Margin="2" Grid.ColumnSpan="3" ItemsSource="{Binding FactorioVersions}" SelectedItem="{Binding SelectedVersion, Mode=TwoWay}"
+                 PreviewMouseDown="VersionListBoxPreviewMouseDownHandler">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type web:FactorioOnlineVersion}">
                     <Grid>

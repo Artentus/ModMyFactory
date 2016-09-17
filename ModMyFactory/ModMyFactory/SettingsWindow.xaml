@@ -8,8 +8,11 @@
         Title="Settings" Width="500" SizeToContent="Height"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Icon=".\Images\Factorio_Icon.ico"
-        DataContext="{x:Static local:SettingsViewModel.Instance}">
+        Icon=".\Images\Factorio_Icon.ico">
+    
+    <Window.DataContext>
+        <local:SettingsViewModel/>
+    </Window.DataContext>
     
     <Grid Margin="4">
         <Grid.RowDefinitions>

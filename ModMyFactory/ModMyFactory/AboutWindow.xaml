@@ -8,8 +8,11 @@
         Title="About ModMyFactory" SizeToContent="WidthAndHeight"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Icon=".\Images\Factorio_Icon.ico"
-        DataContext="{x:Static local:AboutViewModel.Instance}">
+        Icon=".\Images\Factorio_Icon.ico">
+    
+    <Window.DataContext>
+        <local:AboutViewModel/>
+    </Window.DataContext>
 
     <Window.Resources>
         <BitmapImage x:Key="Logo" UriSource="./Images/modmyfactory.png"/>
