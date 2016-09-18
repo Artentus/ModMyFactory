@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Shell;
 using ModMyFactory.Win32;
 
 namespace ModMyFactory
 {
-    public partial class ProgressWindow : Window
+    partial class ProgressWindow
     {
         public ProgressWindow()
         {

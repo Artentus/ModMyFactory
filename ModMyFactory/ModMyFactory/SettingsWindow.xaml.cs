@@ -2,7 +2,7 @@
 
 namespace ModMyFactory
 {
-    public partial class SettingsWindow : Window
+    partial class SettingsWindow
     {
         public SettingsWindow()
         {

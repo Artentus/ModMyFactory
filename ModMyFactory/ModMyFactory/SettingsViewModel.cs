@@ -8,6 +8,10 @@ namespace ModMyFactory
 {
     sealed class SettingsViewModel : ViewModelBase<SettingsWindow>
     {
+        static SettingsViewModel instance;
+
+        public static SettingsViewModel Instance => instance ?? (instance = new SettingsViewModel());
+
         bool factorioDirectoryIsAppData;
         bool factorioDirectoryIsAppDirectory;
         bool factorioDirectoryIsCustom;
@@ -149,40 +153,51 @@ namespace ModMyFactory
 
         public RelayCommand SelectModDirectoryCommand { get; }
 
-        public SettingsViewModel()
+        private SettingsViewModel()
         {
+            SelectFactorioDirectoryCommand = new RelayCommand(SelectFactorioDirectory);
+            SelectModDirectoryCommand = new RelayCommand(SelectModDirectory);
+        }
+
+        public void Reset()
+        {
+            FactorioDirectoryIsAppData = false;
+            FactorioDirectoryIsAppDirectory = false;
+            FactorioDirectoryIsCustom = false;
+            FactorioDirectory = string.Empty;
             switch (App.Instance.Settings.FactorioDirectoryOption)
             {
                 case DirectoryOption.AppData:
-                    factorioDirectoryIsAppData = true;
+                    FactorioDirectoryIsAppData = true;
                     break;
                 case DirectoryOption.ApplicationDirectory:
-                    factorioDirectoryIsAppDirectory = true;
+                    FactorioDirectoryIsAppDirectory = true;
                     break;
                 case DirectoryOption.Custom:
-                    factorioDirectoryIsCustom = true;
-                    factorioDirectory = App.Instance.Settings.FactorioDirectory;
+                    FactorioDirectoryIsCustom = true;
+                    FactorioDirectory = App.Instance.Settings.FactorioDirectory;
                     break;
             }
 
+            ModDirectoryIsAppData = false;
+            ModDirectoryIsAppDirectory = false;
+            ModDirectoryIsCustom = false;
+            ModDirectory = string.Empty;
             switch (App.Instance.Settings.ModDirectoryOption)
             {
                 case DirectoryOption.AppData:
-                    modDirectoryIsAppData = true;
+                    ModDirectoryIsAppData = true;
                     break;
                 case DirectoryOption.ApplicationDirectory:
-                    modDirectoryIsAppDirectory = true;
+                    ModDirectoryIsAppDirectory = true;
                     break;
                 case DirectoryOption.Custom:
-                    factorioDirectoryIsCustom = true;
-                    modDirectory = App.Instance.Settings.ModDirectory;
+                    ModDirectoryIsCustom = true;
+                    ModDirectory = App.Instance.Settings.ModDirectory;
                     break;
             }
 
             ValidateSettings();
-
-            SelectFactorioDirectoryCommand = new RelayCommand(SelectFactorioDirectory);
-            SelectModDirectoryCommand = new RelayCommand(SelectModDirectory);
         }
 
         private void SelectFactorioDirectory()

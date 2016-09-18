@@ -1,10 +1,11 @@
-﻿<Window x:Class="ModMyFactory.MainWindow"
+﻿<mvvm:ViewModelBoundWindow x:Class="ModMyFactory.MainWindow" x:ClassModifier="internal" x:TypeArguments="local:MainViewModel"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ModMyFactory"
         xmlns:lang="clr-namespace:ModMyFactory.Lang"
+        xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
         mc:Ignorable="d"
         Title="ModMyFactory" Height="600" Width="800"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
@@ -276,4 +277,4 @@
             </local:DragDropReadyListBox>
         </Grid>
     </Grid>
-</Window>
+</mvvm:ViewModelBoundWindow>

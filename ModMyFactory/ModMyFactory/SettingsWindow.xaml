@@ -1,19 +1,17 @@
-﻿<Window x:Class="ModMyFactory.SettingsWindow"
+﻿<mvvm:ViewModelBoundWindow x:Class="ModMyFactory.SettingsWindow" x:ClassModifier="internal" x:TypeArguments="local:SettingsViewModel"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ModMyFactory"
+        xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
         mc:Ignorable="d"
         Title="Settings" Width="500" SizeToContent="Height"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Icon=".\Images\Factorio_Icon.ico">
-    
-    <Window.DataContext>
-        <local:SettingsViewModel/>
-    </Window.DataContext>
-    
+        Icon=".\Images\Factorio_Icon.ico"
+        DataContext="{x:Static local:SettingsViewModel.Instance}">
+
     <Grid Margin="4">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -70,4 +68,4 @@
             <Button Margin="2" IsCancel="True" Content="Cancel"/>
         </StackPanel>
     </Grid>
-</Window>
+</mvvm:ViewModelBoundWindow>

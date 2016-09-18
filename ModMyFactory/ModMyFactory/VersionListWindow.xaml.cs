@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace ModMyFactory
 {
-    public partial class VersionListWindow : Window
+    partial class VersionListWindow
     {
         public VersionListWindow()
         {

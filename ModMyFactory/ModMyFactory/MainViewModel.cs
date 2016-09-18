@@ -7,7 +7,6 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Shell;
 using ModMyFactory.Lang;
 using ModMyFactory.MVVM;
 using ModMyFactory.Web;
@@ -18,7 +17,7 @@ namespace ModMyFactory
     {
         static MainViewModel instance;
 
-        public static MainViewModel Instance => instance ?? (instance = new MainViewModel((MainWindow)Application.Current.MainWindow));
+        public static MainViewModel Instance => instance ?? (instance = new MainViewModel());
 
         bool loggedIn;
         string username;
@@ -38,8 +37,7 @@ namespace ModMyFactory
 
         public RelayCommand OpenAboutWindowCommand { get; }
 
-        private MainViewModel(MainWindow window)
-            : base(window)
+        private MainViewModel()
         {
             loggedIn = false;
 
@@ -76,41 +74,41 @@ namespace ModMyFactory
         private void OpenSettings()
         {
             var settingsWindow = new SettingsWindow() { Owner = Window };
-            var viewModel = ViewModel.CreateFromWindow<SettingsViewModel>(settingsWindow);
+            settingsWindow.ViewModel.Reset();
 
             bool? result = settingsWindow.ShowDialog();
             if (result != null && result.Value)
             {
-                if (viewModel.FactorioDirectoryIsAppData)
+                if (settingsWindow.ViewModel.FactorioDirectoryIsAppData)
                 {
                     App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.AppData;
                     App.Instance.Settings.FactorioDirectory = string.Empty;
                 }
-                else if (viewModel.FactorioDirectoryIsAppDirectory)
+                else if (settingsWindow.ViewModel.FactorioDirectoryIsAppDirectory)
                 {
                     App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.ApplicationDirectory;
                     App.Instance.Settings.FactorioDirectory = string.Empty;
                 }
-                else if (viewModel.FactorioDirectoryIsCustom)
+                else if (settingsWindow.ViewModel.FactorioDirectoryIsCustom)
                 {
                     App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.Custom;
-                    App.Instance.Settings.FactorioDirectory = viewModel.FactorioDirectory;
+                    App.Instance.Settings.FactorioDirectory = settingsWindow.ViewModel.FactorioDirectory;
                 }
 
-                if (viewModel.ModDirectoryIsAppData)
+                if (settingsWindow.ViewModel.ModDirectoryIsAppData)
                 {
                     App.Instance.Settings.ModDirectoryOption = DirectoryOption.AppData;
                     App.Instance.Settings.ModDirectory = string.Empty;
                 }
-                else if (viewModel.ModDirectoryIsAppDirectory)
+                else if (settingsWindow.ViewModel.ModDirectoryIsAppDirectory)
                 {
                     App.Instance.Settings.ModDirectoryOption = DirectoryOption.ApplicationDirectory;
                     App.Instance.Settings.ModDirectory = string.Empty;
                 }
-                else if (viewModel.ModDirectoryIsCustom)
+                else if (settingsWindow.ViewModel.ModDirectoryIsCustom)
                 {
                     App.Instance.Settings.ModDirectoryOption = DirectoryOption.Custom;
-                    App.Instance.Settings.ModDirectory = viewModel.ModDirectory;
+                    App.Instance.Settings.ModDirectory = settingsWindow.ViewModel.ModDirectory;
                 }
 
                 App.Instance.Settings.Save();
@@ -151,20 +149,18 @@ namespace ModMyFactory
             }
 
             var versionListWindow = new VersionListWindow { Owner = Window };
-            var versionViewModel = ViewModel.CreateFromWindow<VersionListViewModel>(versionListWindow);
-            versions.ForEach(item => versionViewModel.FactorioVersions.Add(item));
+            versions.ForEach(item => versionListWindow.ViewModel.FactorioVersions.Add(item));
 
             bool? versionResult = versionListWindow.ShowDialog();
             if (versionResult == true)
             {
-                FactorioOnlineVersion selectedVersion = versionViewModel.SelectedVersion;
+                FactorioOnlineVersion selectedVersion = versionListWindow.ViewModel.SelectedVersion;
 
                 var cancellationSource = new CancellationTokenSource();
                 var progressWindow = new ProgressWindow { Owner = Window };
-                var progressViewModel = ViewModel.CreateFromWindow<ProgressViewModel>(progressWindow);
-                progressViewModel.ProgressDescription = "Downloading " + selectedVersion.DownloadUrl;
-                progressViewModel.CanCancel = true;
-                progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+                progressWindow.ViewModel.ProgressDescription = "Downloading " + selectedVersion.DownloadUrl;
+                progressWindow.ViewModel.CanCancel = true;
+                progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
                 string directoryPath = Path.Combine(Environment.CurrentDirectory, "Factorio");
                 var directory = new DirectoryInfo(directoryPath);
@@ -173,13 +169,13 @@ namespace ModMyFactory
                 {
                     if (p > 1)
                     {
-                        progressViewModel.ProgressDescription = "Extracting...";
-                        progressViewModel.IsIndeterminate = true;
-                        progressViewModel.CanCancel = false;
+                        progressWindow.ViewModel.ProgressDescription = "Extracting...";
+                        progressWindow.ViewModel.IsIndeterminate = true;
+                        progressWindow.ViewModel.CanCancel = false;
                     }
                     else
                     {
-                        progressViewModel.Progress = p;
+                        progressWindow.ViewModel.Progress = p;
                     }
                 }), cancellationSource.Token)
                     .ContinueWith((t1) => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
@@ -191,7 +187,6 @@ namespace ModMyFactory
         private void OpenAboutWindow()
         {
             var aboutWindow = new AboutWindow() { Owner = Window };
-            ViewModel.CreateFromWindow<AboutViewModel>(aboutWindow);
             aboutWindow.ShowDialog();
         }
     }

@@ -10,7 +10,7 @@ using System.Windows.Media;
 
 namespace ModMyFactory
 {
-    public partial class MainWindow : Window
+    partial class MainWindow
     {
         Point dragStartPoint;
         bool dragging;

@@ -1,8 +1,6 @@
-﻿using System.Windows;
-
-namespace ModMyFactory
+﻿namespace ModMyFactory
 {
-    public partial class AboutWindow : Window
+    partial class AboutWindow
     {
         public AboutWindow()
         {
