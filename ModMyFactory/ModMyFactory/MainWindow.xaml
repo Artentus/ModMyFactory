@@ -7,7 +7,7 @@
         xmlns:lang="clr-namespace:ModMyFactory.Lang"
         xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
         mc:Ignorable="d"
-        Title="ModMyFactory" Height="600" Width="800"
+        Title="ModMyFactory" Width="800" Height="600"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
         Icon=".\Images\Factorio_Icon.ico"
         DataContext="{x:Static local:MainViewModel.Instance}"
@@ -40,11 +40,13 @@
         </Style>
     </Window.Resources>
 
-    <!--<Window.InputBindings>
-        <KeyBinding Modifiers="Control" Key="N" Command="{Binding NewCommand}"/>
-        <KeyBinding Modifiers="Control" Key="O" Command="{Binding OpenCommand}"/>
-        <KeyBinding Modifiers="Control" Key="S" Command="{Binding SaveCommand}"/>
-    </Window.InputBindings>-->
+    <Window.InputBindings>
+        <KeyBinding Key="F6" Command="{Binding OpenVersionManagerCommand}"/>
+        <KeyBinding Key="F12" Command="{Binding OpenSettingsCommand}"/>
+        <KeyBinding Modifiers="Control" Key="F" Command="{Binding BrowseFactorioWebsiteCommand}"/>
+        <KeyBinding Modifiers="Control" Key="M" Command="{Binding BrowseModWebsiteCommand}"/>
+        <KeyBinding Modifiers="Shift" Key="F1" Command="{Binding OpenAboutWindowCommand}"/>
+    </Window.InputBindings>
     
     <Window.CommandBindings>
         <CommandBinding Command="Close" Executed="Close" CanExecute="CanExecuteCommandDefault"/>
@@ -59,14 +61,14 @@
 
         <Menu Grid.Row="0" IsMainMenu="True">
             <MenuItem Header="{DynamicResource FileMenuItem}">
-                <MenuItem Header="Start game" Icon="{StaticResource RunIcon}" InputGestureText="F5"/>
+                <MenuItem Header="Start game" Icon="{StaticResource RunIcon}" InputGestureText="F5" Command="{Binding StartGameCommand}"/>
                 <Separator/>
                 <MenuItem Header="Close" Icon="{StaticResource CloseIcon}" InputGestureText="Alt+F4" Command="Close"/>
             </MenuItem>
             <MenuItem Header="{DynamicResource EditMenuItem}">
-                <MenuItem Header="Version manager" Icon="{StaticResource ConfigureIcon}" InputGestureText="F6"/>
+                <MenuItem Header="Version manager" Icon="{StaticResource ConfigureIcon}" InputGestureText="F6" Command="{Binding OpenVersionManagerCommand}"/>
                 <Separator/>
-                <MenuItem Header="Settings" Icon="{StaticResource SettingsIcon}" InputGestureText="F10" Command="{Binding OpenSettingsCommand}"/>
+                <MenuItem Header="Settings" Icon="{StaticResource SettingsIcon}" InputGestureText="F12" Command="{Binding OpenSettingsCommand}"/>
             </MenuItem>
             <MenuItem Header="{DynamicResource LanguageMenuItem}" ItemsSource="{Binding AvailableCultures}">
                 <MenuItem.ItemTemplate>
@@ -91,19 +93,25 @@
                 </MenuItem.ItemContainerStyle>
             </MenuItem>
             <MenuItem Header="{DynamicResource InfoMenuItem}">
-                <MenuItem Header="About" Icon="{StaticResource InformationIcon}" InputGestureText="Shift+F1" Command="{Binding OpenAboutWindowCommand}"/>
+                <MenuItem Header="Factorio.com" Icon="{StaticResource WebDestinationIcon}" InputGestureText="Ctrl+F" Command="{Binding BrowseFactorioWebsiteCommand}"/>
+                <MenuItem Header="FactorioMods.com" Icon="{StaticResource WebDestinationIcon}" InputGestureText="Ctrl+M" Command="{Binding BrowseModWebsiteCommand}"/>
                 <Separator/>
-                <MenuItem Header="Factorio.com" Icon="{StaticResource WebDestinationIcon}" InputGestureText="Ctrl+F"/>
-                <MenuItem Header="FactorioMods.com" Icon="{StaticResource WebDestinationIcon}" InputGestureText="Ctrl+M"/>
+                <MenuItem Header="About" Icon="{StaticResource InformationIcon}" InputGestureText="Shift+F1" Command="{Binding OpenAboutWindowCommand}"/>
             </MenuItem>
         </Menu>
 
-        <ToolBar Grid.Row="1">
-            <ComboBox Margin="2,0" Width="100"/>
-                <Button ToolTip="Version manager">
+        <ToolBar Grid.Row="1" Margin="0,4,0,0">
+            <ComboBox Margin="2,0" Width="100" ItemsSource="{Binding FactorioVersions}" SelectedItem="{Binding SelectedVersion}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:FactorioVersion}">
+                        <TextBlock Text="{Binding DisplayName}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button ToolTip="Version manager" Command="{Binding OpenVersionManagerCommand}">
                 <Image Margin="1" Source="{StaticResource ConfigureIcon}"/>
             </Button>
-            <Button ToolTip="Start game">
+            <Button ToolTip="Start game" Command="{Binding StartGameCommand}">
                 <Image Margin="1" Source="{StaticResource RunIcon}"/>
             </Button>
         </ToolBar>

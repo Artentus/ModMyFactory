@@ -9,13 +9,12 @@
         Title="{Binding ActionName}" Width="500" SizeToContent="Height"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
-        Icon=".\Images\Factorio_Icon.ico"
-        Loaded="LoadedHandler" Closing="ClosingHandler">
+        Icon=".\Images\Factorio_Icon.ico">
     
     <Window.DataContext>
         <local:ProgressViewModel/>
     </Window.DataContext>
-    
+
     <Grid Margin="4,20,4,4">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

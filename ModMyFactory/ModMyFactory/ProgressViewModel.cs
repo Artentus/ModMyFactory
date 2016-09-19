@@ -20,7 +20,7 @@ namespace ModMyFactory
             set
             {
                 progress = value;
-                Window.TaskbarItemInfo.ProgressValue = value;
+                if (Window.TaskbarItemInfo != null) Window.TaskbarItemInfo.ProgressValue = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(Progress)));
             }
         }
@@ -59,9 +59,12 @@ namespace ModMyFactory
                 if (value != isIndeterminate)
                 {
                     isIndeterminate = value;
-                    Window.TaskbarItemInfo.ProgressState = value
-                        ? TaskbarItemProgressState.Indeterminate
-                        : TaskbarItemProgressState.Normal;
+                    if (Window.TaskbarItemInfo != null)
+                    {
+                        Window.TaskbarItemInfo.ProgressState = value
+                            ? TaskbarItemProgressState.Indeterminate
+                            : TaskbarItemProgressState.Normal;
+                    }
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsIndeterminate)));
                 }
             }

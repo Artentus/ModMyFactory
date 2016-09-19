@@ -203,7 +203,7 @@ namespace ModMyFactory
         private void SelectFactorioDirectory()
         {
             var dialog = new VistaFolderBrowserDialog();
-            bool? result = dialog.ShowDialog();
+            bool? result = dialog.ShowDialog(Window);
             if (result != null && result.Value)
                 FactorioDirectory = dialog.SelectedPath;
         }
@@ -211,7 +211,7 @@ namespace ModMyFactory
         private void SelectModDirectory()
         {
             var dialog = new VistaFolderBrowserDialog();
-            bool? result = dialog.ShowDialog();
+            bool? result = dialog.ShowDialog(Window);
             if (result != null && result.Value)
                 ModDirectory = dialog.SelectedPath;
         }

@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Windows;
 using Newtonsoft.Json;
 
 namespace ModMyFactory
@@ -15,6 +17,9 @@ namespace ModMyFactory
                 FactorioDirectory = string.Empty,
                 ModDirectory = string.Empty,
                 SelectedLanguage = "en",
+                State = WindowState.Normal,
+                PosX = 0, PosY = 0, Width = -1, Height = -1,
+                SelectedVersion = string.Empty,
             };
             return defaultSettings;
         }
@@ -46,6 +51,12 @@ namespace ModMyFactory
 
         public string SelectedLanguage;
 
+        public WindowState State;
+
+        public int PosX, PosY, Width, Height;
+
+        public string SelectedVersion;
+
         [JsonConstructor]
         private Settings()
         { }
@@ -58,6 +69,40 @@ namespace ModMyFactory
         public void Save()
         {
             JsonHelper.Serialize(this, file);
+        }
+
+        public DirectoryInfo GetFactorioDirectory()
+        {
+            const string directoryName = "Factorio";
+
+            switch (FactorioDirectoryOption)
+            {
+                case DirectoryOption.AppData:
+                    return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
+                case DirectoryOption.ApplicationDirectory:
+                    return new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, directoryName));
+                case DirectoryOption.Custom:
+                    return new DirectoryInfo(FactorioDirectory);
+            }
+
+            throw new InvalidOperationException();
+        }
+
+        public DirectoryInfo GetModDirectory()
+        {
+            const string directoryName = "Mods";
+
+            switch (ModDirectoryOption)
+            {
+                case DirectoryOption.AppData:
+                    return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
+                case DirectoryOption.ApplicationDirectory:
+                    return new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, directoryName));
+                case DirectoryOption.Custom:
+                    return new DirectoryInfo(ModDirectory);
+            }
+
+            throw new InvalidOperationException();
         }
     }
 }

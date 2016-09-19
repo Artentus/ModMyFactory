@@ -51,6 +51,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -74,7 +75,10 @@
     <Compile Include="AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CultureEntrySorter.cs" />
     <Compile Include="DirectoryOption.cs" />
+    <Compile Include="FactorioVersion.cs" />
+    <Compile Include="FactorioVersionSorter.cs" />
     <Compile Include="MVVM\IViewModelBase.cs" />
     <Compile Include="MVVM\IViewModelBoundWindow.cs" />
     <Compile Include="MVVM\ViewModelBoundWindow.cs" />
@@ -87,6 +91,10 @@
     <Compile Include="JsonHelper.cs" />
     <Compile Include="MenuItemProperties.cs" />
     <Compile Include="MVVM\ViewModelBase.cs" />
+    <Compile Include="VersionManagementViewModel.cs" />
+    <Compile Include="VersionManagementWindow.xaml.cs">
+      <DependentUpon>VersionManagementWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Web\FactorioOnlineVersion.cs" />
     <Compile Include="Lang\CultureEntry.cs" />
     <Compile Include="LoginWindow.xaml.cs">
@@ -117,6 +125,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ProgressWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VersionManagementWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

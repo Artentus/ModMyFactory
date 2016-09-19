@@ -114,7 +114,7 @@ namespace ModMyFactory.Web
         /// <param name="container">The cookie container the session cookie is stored in.</param>
         /// <param name="progress">A progress object used to report the progress of the operation.</param>
         /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
-        public static async Task DownloadFactorioPackageAsync(FactorioOnlineVersion version, DirectoryInfo downloadDirectory, CookieContainer container, IProgress<double> progress, CancellationToken cancellationToken)
+        public static async Task<FactorioVersion> DownloadFactorioPackageAsync(FactorioOnlineVersion version, DirectoryInfo downloadDirectory, CookieContainer container, IProgress<double> progress, CancellationToken cancellationToken)
         {
             if (!downloadDirectory.Exists) downloadDirectory.Create();
 
@@ -125,9 +125,17 @@ namespace ModMyFactory.Web
             if (!cancellationToken.IsCancellationRequested)
             {
                 progress.Report(2);
-                await Task.Run(() => ZipFile.ExtractToDirectory(file.FullName, downloadDirectory.FullName));
-                file.Delete();
+                await Task.Run(() =>
+                {
+                    ZipFile.ExtractToDirectory(file.FullName, downloadDirectory.FullName);
+                    var versionDirectory = new DirectoryInfo(Path.Combine(downloadDirectory.FullName, "Factorio_" + version.Version.ToString(3)));
+                    versionDirectory.MoveTo(Path.Combine(downloadDirectory.FullName, version.Version.ToString(3)));
+                    file.Delete();
+                    return new FactorioVersion(versionDirectory, version.Version);
+                });
             }
+
+            return null;
         }
     }
 }

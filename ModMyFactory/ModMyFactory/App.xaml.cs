@@ -16,10 +16,11 @@ namespace ModMyFactory
 
         internal Settings Settings { get; }
 
+        internal string AppDataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ModMyFactory");
+
         private App()
         {
-            string appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ModMyFactory");
-            var appDataDirectory = new DirectoryInfo(appDataPath);
+            var appDataDirectory = new DirectoryInfo(AppDataPath);
             if (!appDataDirectory.Exists) appDataDirectory.Create();
 
             string settingsFile = Path.Combine(appDataDirectory.FullName, "settings.json");
@@ -42,7 +43,6 @@ namespace ModMyFactory
                     }
                 }
             }
-            availableCultures.Sort((entry1, entry2) => string.Compare(entry1.EnglishName, entry2.EnglishName, StringComparison.InvariantCultureIgnoreCase));
             return availableCultures;
         }
 

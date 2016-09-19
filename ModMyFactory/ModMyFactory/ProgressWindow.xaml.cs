@@ -10,6 +10,9 @@ namespace ModMyFactory
         public ProgressWindow()
         {
             InitializeComponent();
+
+            Loaded += LoadedHandler;
+            Closing += ClosingHandler;
         }
 
         private void LoadedHandler(object sender, EventArgs e)
@@ -21,7 +24,8 @@ namespace ModMyFactory
 
             TaskbarItemInfo = new TaskbarItemInfo
             {
-                ProgressState = TaskbarItemProgressState.Normal
+                ProgressState = ViewModel.IsIndeterminate ? TaskbarItemProgressState.Indeterminate : TaskbarItemProgressState.Normal,
+                ProgressValue = ViewModel.Progress,
             };
         }
 

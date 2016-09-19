@@ -6,6 +6,11 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
+            <!-- Only for design time IntelliSense. -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Lang/Strings.en.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
             <ResourceDictionary x:Key="Strings.en" Source="Lang/Strings.en.xaml"/>
             <ResourceDictionary x:Key="Strings.de" Source="Lang/Strings.de.xaml"/>
 
@@ -204,7 +209,7 @@
                         </Trigger.ExitActions>
                     </Trigger>
                     <Trigger Property="IsEnabled" Value="False">
-                        <Setter Property="Foreground" Value="{StaticResource BorderBrush}"/>
+                        <Setter Property="Foreground" Value="Gray"/>
                     </Trigger>
                     <Trigger Property="IsCheckable" Value="True">
                         <Setter TargetName="CheckBox" Property="Visibility" Value="Visible"/>
@@ -954,7 +959,7 @@
                                 
                                 <Border x:Name="Border1" BorderBrush="#FFADADAD" BorderThickness="1" Background="#FFE1E1E1">
 
-                                    <Border x:Name="Border2" BorderBrush="Transparent" BorderThickness="2" Background="Transparent" Margin="-1">
+                                    <Border x:Name="Border2" BorderBrush="Transparent" BorderThickness="2" Background="Transparent" Margin="-1" Padding="2,0">
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 
@@ -964,6 +969,7 @@
                                             <VisualState Name="MouseOver">
                                                 <Storyboard>
                                                     <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderThickness" To="1" Duration="0"/>
+                                                    <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Padding" To="3,0" Duration="0"/>
                                                     <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderBrush.Color" To="#FF0078D7" Duration="0"/>
                                                     <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Background.Color" To="#FFE5F1FB" Duration="0:0:0:0.3"/>
                                                 </Storyboard>
@@ -971,6 +977,7 @@
                                             <VisualState Name="Pressed">
                                                 <Storyboard>
                                                     <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderThickness" To="1" Duration="0"/>
+                                                    <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Padding" To="3,0" Duration="0"/>
                                                     <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderBrush.Color" To="#FF005499" Duration="0"/>
                                                     <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Background.Color" To="#FFCCE4F7" Duration="0:0:0:0.3"/>
                                                 </Storyboard>
@@ -978,6 +985,7 @@
                                             <VisualState Name="Disabled">
                                                 <Storyboard>
                                                     <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderThickness" To="1" Duration="0"/>
+                                                    <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Padding" To="3,0" Duration="0"/>
                                                     <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderBrush.Color" To="#FFBFBFBF" Duration="0"/>
                                                     <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Background.Color" To="#FFCCCCCC" Duration="0"/>
                                                 </Storyboard>

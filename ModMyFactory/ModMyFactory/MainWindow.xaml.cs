@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,6 +25,43 @@ namespace ModMyFactory
             InitializeComponent();
 
             dragging = false;
+
+            if (App.Instance.Settings.Width < 0 && App.Instance.Settings.Height < 0)
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
+            else
+            {
+                WindowState = App.Instance.Settings.State;
+                WindowStartupLocation = WindowStartupLocation.Manual;
+                Width = App.Instance.Settings.Width;
+                Height = App.Instance.Settings.Height;
+                Left = App.Instance.Settings.PosX;
+                Top = App.Instance.Settings.PosY;
+            }
+            Closing += ClosingHandler;
+        }
+
+        private void ClosingHandler(object sender, CancelEventArgs e)
+        {
+            if (WindowState == WindowState.Normal)
+            {
+                App.Instance.Settings.PosX = (int)Left;
+                App.Instance.Settings.PosY = (int)Top;
+                App.Instance.Settings.Width = (int)Width;
+                App.Instance.Settings.Height = (int)Height;
+            }
+            else
+            {
+                App.Instance.Settings.PosX = (int)RestoreBounds.Left;
+                App.Instance.Settings.PosY = (int)RestoreBounds.Top;
+                App.Instance.Settings.Width = (int)RestoreBounds.Width;
+                App.Instance.Settings.Height = (int)RestoreBounds.Height;
+            }
+            App.Instance.Settings.State = WindowState == WindowState.Maximized
+                ? WindowState.Maximized
+                : WindowState.Normal;
+            App.Instance.Settings.Save();
         }
 
         void CanExecuteCommandDefault(object sender, CanExecuteRoutedEventArgs e)

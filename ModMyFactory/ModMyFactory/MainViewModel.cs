@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
+using System.Windows.Data;
 using ModMyFactory.Lang;
 using ModMyFactory.MVVM;
-using ModMyFactory.Web;
 
 namespace ModMyFactory
 {
@@ -19,37 +17,83 @@ namespace ModMyFactory
 
         public static MainViewModel Instance => instance ?? (instance = new MainViewModel());
 
-        bool loggedIn;
-        string username;
-        string password;
-        CookieContainer container;
-        bool canCancelDownload;
+        FactorioVersion selectedVersion;
 
-        public List<CultureEntry> AvailableCultures { get; } 
+        public ICollectionView AvailableCultures { get; }
+
+        public ICollectionView FactorioVersions { get; }
+
+        public FactorioVersion SelectedVersion
+        {
+            get { return selectedVersion; }
+            set
+            {
+                if (value != selectedVersion)
+                {
+                    selectedVersion = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedVersion)));
+
+                    App.Instance.Settings.SelectedVersion = selectedVersion?.Version.ToString(3) ?? string.Empty;
+                    App.Instance.Settings.Save();
+                }
+            }
+        }
 
         public ObservableCollection<Mod> Mods { get; }
 
         public ObservableCollection<Modpack> Modpacks { get; }
 
+        public RelayCommand StartGameCommand { get; }
+
+        public RelayCommand OpenVersionManagerCommand { get; }
+
         public RelayCommand OpenSettingsCommand { get; }
 
-        public RelayCommand OpenVersionListCommand { get; }
+        public RelayCommand BrowseFactorioWebsiteCommand { get; }
+
+        public RelayCommand BrowseModWebsiteCommand { get; }
 
         public RelayCommand OpenAboutWindowCommand { get; }
 
         private MainViewModel()
         {
-            loggedIn = false;
+            List<CultureEntry> availableCultures = App.Instance.GetAvailableCultures();
+            AvailableCultures = CollectionViewSource.GetDefaultView(availableCultures);
+            ((ListCollectionView)AvailableCultures).CustomSort = new CultureEntrySorter();
+            availableCultures.First(entry => string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
 
-            AvailableCultures = App.Instance.GetAvailableCultures();
-            AvailableCultures.First(entry => string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
+            var factorioVersions = new ObservableCollection<FactorioVersion>();
+            FactorioVersion.GetInstalledVersions().ForEach(item => factorioVersions.Add(item));
+            FactorioVersions = CollectionViewSource.GetDefaultView(factorioVersions);
+            ((ListCollectionView)FactorioVersions).CustomSort = new FactorioVersionSorter();
+
+            Version version;
+            bool result = Version.TryParse(App.Instance.Settings.SelectedVersion, out version);
+            if (result)
+            {
+                FactorioVersion factorioVersion = factorioVersions.FirstOrDefault(item => item.Version == version);
+                if (factorioVersion != null)
+                {
+                    selectedVersion = factorioVersion;
+                }
+                else
+                {
+                    App.Instance.Settings.SelectedVersion = string.Empty;
+                    App.Instance.Settings.Save();
+                }
+            }
 
             Mods = new ObservableCollection<Mod>();
             Modpacks = new ObservableCollection<Modpack>();
 
+            StartGameCommand = new RelayCommand(StartGame, () => SelectedVersion != null);
+            OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
             OpenSettingsCommand = new RelayCommand(OpenSettings);
-            OpenVersionListCommand = new RelayCommand(async () => await OpenVersionList());
+            BrowseFactorioWebsiteCommand = new RelayCommand(() => Process.Start("https://www.factorio.com/"));
+            BrowseModWebsiteCommand = new RelayCommand(() => Process.Start("https://mods.factorio.com/"));
             OpenAboutWindowCommand = new RelayCommand(OpenAboutWindow);
+            
+
 
             Mod mod1 = new Mod("aaa", new FileInfo("a"));
             Mod mod2 = new Mod("bbb", new FileInfo("b"));
@@ -69,6 +113,18 @@ namespace ModMyFactory
             Modpacks.Add(modpack1);
             Modpacks.Add(modpack2);
             Modpacks.Add(modpack3);
+        }
+
+        private void StartGame()
+        {
+            string modDirectory = Path.Combine(App.Instance.Settings.GetModDirectory().FullName, SelectedVersion.Version.ToString(3));
+            Process.Start(SelectedVersion.ExecutablePath, $"--mod-directory \"{modDirectory}\"");
+        }
+
+        private void OpenVersionManager()
+        {
+            var versionManagementWindow = new VersionManagementWindow() { Owner = Window };
+            versionManagementWindow.ShowDialog();
         }
 
         private void OpenSettings()
@@ -112,75 +168,6 @@ namespace ModMyFactory
                 }
 
                 App.Instance.Settings.Save();
-            }
-        }
-
-        private async Task OpenVersionList()
-        {
-            bool failed = false;
-            if (loggedIn)
-            {
-                loggedIn = FactorioWebsite.EnsureLoggedIn(container);
-                failed = !loggedIn;
-            }
-
-            while (!loggedIn)
-            {
-                var loginWindow = new LoginWindow
-                {
-                    Owner = Window,
-                    FailedText = { Visibility = failed ? Visibility.Visible : Visibility.Collapsed }
-                };
-                bool? loginResult = loginWindow.ShowDialog();
-                if (loginResult == null || loginResult == false) return;
-                username = loginWindow.UsernameBox.Text;
-                password = loginWindow.PasswordBox.Password;
-
-                container = new CookieContainer();
-                loggedIn = FactorioWebsite.LogIn(container, username, password);
-                failed = !loggedIn;
-            }
-
-            List<FactorioOnlineVersion> versions;
-            if (!FactorioWebsite.GetVersions(container, out versions))
-            {
-                MessageBox.Show(Application.Current.MainWindow, "Error retrieving available versions!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            var versionListWindow = new VersionListWindow { Owner = Window };
-            versions.ForEach(item => versionListWindow.ViewModel.FactorioVersions.Add(item));
-
-            bool? versionResult = versionListWindow.ShowDialog();
-            if (versionResult == true)
-            {
-                FactorioOnlineVersion selectedVersion = versionListWindow.ViewModel.SelectedVersion;
-
-                var cancellationSource = new CancellationTokenSource();
-                var progressWindow = new ProgressWindow { Owner = Window };
-                progressWindow.ViewModel.ProgressDescription = "Downloading " + selectedVersion.DownloadUrl;
-                progressWindow.ViewModel.CanCancel = true;
-                progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
-
-                string directoryPath = Path.Combine(Environment.CurrentDirectory, "Factorio");
-                var directory = new DirectoryInfo(directoryPath);
-
-                Task t = FactorioWebsite.DownloadFactorioPackageAsync(selectedVersion, directory, container, new Progress<double>(p =>
-                {
-                    if (p > 1)
-                    {
-                        progressWindow.ViewModel.ProgressDescription = "Extracting...";
-                        progressWindow.ViewModel.IsIndeterminate = true;
-                        progressWindow.ViewModel.CanCancel = false;
-                    }
-                    else
-                    {
-                        progressWindow.ViewModel.Progress = p;
-                    }
-                }), cancellationSource.Token)
-                    .ContinueWith((t1) => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
-                progressWindow.ShowDialog();
-                await t;
             }
         }
 
