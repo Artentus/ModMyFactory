@@ -39,9 +39,9 @@ namespace ModMyFactory
             }
         }
 
-        public ObservableCollection<Mod> Mods { get; }
+        public ICollectionView Mods { get; }
 
-        public ObservableCollection<Modpack> Modpacks { get; }
+        public ICollectionView Modpacks { get; }
 
         public RelayCommand StartGameCommand { get; }
 
@@ -83,8 +83,13 @@ namespace ModMyFactory
                 }
             }
 
-            Mods = new ObservableCollection<Mod>();
-            Modpacks = new ObservableCollection<Modpack>();
+            var mods = new ObservableCollection<Mod>();
+            Mods = CollectionViewSource.GetDefaultView(mods);
+            ((ListCollectionView)Mods).CustomSort = new ModSorter();
+
+            var modpacks = new ObservableCollection<Modpack>();
+            Modpacks = CollectionViewSource.GetDefaultView(modpacks);
+            ((ListCollectionView)Modpacks).CustomSort = new ModpackSorter();
 
             StartGameCommand = new RelayCommand(StartGame, () => SelectedVersion != null);
             OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
@@ -100,19 +105,19 @@ namespace ModMyFactory
             Mod mod3 = new Mod("ccc", new FileInfo("c"));
             Mod mod4 = new Mod("ddd", new FileInfo("d"));
             Mod mod5 = new Mod("eee", new FileInfo("e"));
-            Mods.Add(mod1);
-            Mods.Add(mod2);
-            Mods.Add(mod3);
-            Mods.Add(mod4);
-            Mods.Add(mod5);
+            mods.Add(mod1);
+            mods.Add(mod2);
+            mods.Add(mod3);
+            mods.Add(mod4);
+            mods.Add(mod5);
             Modpack modpack1 = new Modpack("aaa");
             Modpack modpack2 = new Modpack("bbb");
             Modpack modpack3 = new Modpack("ccc");
             //modpack.Mods.Add(mod1);
             //modpack.Mods.Add(mod2);
-            Modpacks.Add(modpack1);
-            Modpacks.Add(modpack2);
-            Modpacks.Add(modpack3);
+            modpacks.Add(modpack1);
+            modpacks.Add(modpack2);
+            modpacks.Add(modpack3);
         }
 
         private void StartGame()

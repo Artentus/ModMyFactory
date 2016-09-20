@@ -6,8 +6,8 @@ namespace ModMyFactory.MVVM
     /// <summary>
     /// Base class of all windows that have a view model bound as data context.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    abstract class ViewModelBoundWindow<T> : Window, IViewModelBoundWindow<T> where T : IViewModelBase<Window>
+    /// <typeparam name="T">THe view models type the window belongs to.</typeparam>
+    abstract class ViewModelBoundWindow<T> : Window where T : IViewModelBase
     {
         /// <summary>
         /// The view model bound to this window.
@@ -18,9 +18,7 @@ namespace ModMyFactory.MVVM
         {
             base.OnInitialized(e);
 
-            Type t = typeof(ViewModelBase<>);
-            t = t.MakeGenericType(this.GetType());
-            t.GetProperty("Window").SetValue(ViewModel, this);
+            ViewModel.SetWindow(this);
         }
     }
 }

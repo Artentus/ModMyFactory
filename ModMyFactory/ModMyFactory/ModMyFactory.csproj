@@ -79,8 +79,12 @@
     <Compile Include="DirectoryOption.cs" />
     <Compile Include="FactorioVersion.cs" />
     <Compile Include="FactorioVersionSorter.cs" />
+    <Compile Include="IModReference.cs" />
+    <Compile Include="ModpackReference.cs" />
+    <Compile Include="ModpackSorter.cs" />
+    <Compile Include="ModReference.cs" />
+    <Compile Include="ModSorter.cs" />
     <Compile Include="MVVM\IViewModelBase.cs" />
-    <Compile Include="MVVM\IViewModelBoundWindow.cs" />
     <Compile Include="MVVM\ViewModelBoundWindow.cs" />
     <Compile Include="ProgressViewModel.cs" />
     <Compile Include="ProgressWindow.xaml.cs">

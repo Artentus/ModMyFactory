@@ -302,7 +302,7 @@
                             </Border>
 
                             <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseDirectlyOver" SourceName="Border" Value="True">
+                                <Trigger Property="IsMouseOver" SourceName="Border" Value="True">
                                     <Trigger.EnterActions>
                                         <BeginStoryboard>
                                             <Storyboard>
@@ -905,10 +905,10 @@
                                         <ContentPresenter Grid.Column="0" Content="{TemplateBinding Header}"/>
                                         <ToggleButton x:Name="ExpanderButton" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Template="{StaticResource ToggleButtonStyle}"
                                                   IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"/>
-
                                     </Grid>
 
-                                    <ScrollViewer x:Name="ScrollViewer" DockPanel.Dock="Bottom" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                                    <ScrollViewer x:Name="ScrollViewer" Focusable="False"
+                                                  DockPanel.Dock="Bottom" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
                                         <ScrollViewer.Tag>
                                             <sys:Double>0.0</sys:Double>
                                         </ScrollViewer.Tag>

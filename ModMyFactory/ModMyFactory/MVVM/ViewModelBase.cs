@@ -6,17 +6,16 @@ namespace ModMyFactory.MVVM
     /// Base class of all view models.
     /// </summary>
     /// <typeparam name="T">The windows type the view model belongs to.</typeparam>
-    abstract class ViewModelBase<T> : NotifyPropertyChangedBase, IViewModelBase<T> where T : Window, IViewModelBoundWindow<IViewModelBase<T>>
+    abstract class ViewModelBase<T> : NotifyPropertyChangedBase, IViewModelBase where T : Window
     {
         /// <summary>
         /// The window this view model is associated with.
         /// </summary>
-        public T Window { get; set; }
+        public T Window { get; private set; }
 
-        /// <summary>
-        /// Creates a view model.
-        /// </summary>
-        protected ViewModelBase()
-        { }
+        void IViewModelBase.SetWindow(Window window)
+        {
+            Window = (T)window;
+        }
     }
 }

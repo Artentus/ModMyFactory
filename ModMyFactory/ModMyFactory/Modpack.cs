@@ -57,12 +57,51 @@ namespace ModMyFactory
         /// <summary>
         /// The mods in this modpack.
         /// </summary>
-        public ObservableCollection<Mod> Mods { get; }
+        public ObservableCollection<IModReference> Mods { get; }
 
         /// <summary>
         /// The mods wrapped as view source.
         /// </summary>
         public CollectionViewSource ViewSource { get; }
+
+        /// <summary>
+        /// Checks if this modpack contains a specified mod.
+        /// </summary>
+        public bool Contains(Mod mod)
+        {
+            foreach (var reference in Mods)
+            {
+                var modReference = reference as ModReference;
+                if (modReference != null)
+                {
+                    if (modReference.Mod == mod)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if this modpack contains a specified modpack.
+        /// </summary>
+        public bool Contains(Modpack modpack, bool recursive = false)
+        {
+            foreach (var reference in Mods)
+            {
+                var modpackReference = reference as ModpackReference;
+                if (modpackReference != null)
+                {
+                    if (modpackReference.Modpack == modpack)
+                        return true;
+
+                    if (recursive && modpackReference.Modpack.Contains(modpack, true))
+                        return true;
+                }
+            }
+
+            return false;
+        }
 
         private void SetActive()
         {
@@ -72,7 +111,7 @@ namespace ModMyFactory
             bool? newValue = Mods[0].Active;
             for (int i = 1; i < Mods.Count; i++)
             {
-                if (Mods[i].Active != newValue.Value)
+                if (Mods[i].Active != newValue)
                 {
                     newValue = null;
                     break;
@@ -99,19 +138,19 @@ namespace ModMyFactory
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    foreach (Mod mod in e.NewItems)
+                    foreach (IModReference mod in e.NewItems)
                         mod.PropertyChanged += ModPropertyChanged;
                     SetActive();
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (Mod mod in e.OldItems)
+                    foreach (IModReference mod in e.OldItems)
                         mod.PropertyChanged -= ModPropertyChanged;
                     SetActive();
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    foreach (Mod mod in e.NewItems)
+                    foreach (IModReference mod in e.NewItems)
                         mod.PropertyChanged += ModPropertyChanged;
-                    foreach (Mod mod in e.OldItems)
+                    foreach (IModReference mod in e.OldItems)
                         mod.PropertyChanged -= ModPropertyChanged;
                     SetActive();
                     break;
@@ -127,7 +166,7 @@ namespace ModMyFactory
             this.name = name;
             active = false;
             activeChanging = false;
-            Mods = new ObservableCollection<Mod>();
+            Mods = new ObservableCollection<IModReference>();
             Mods.CollectionChanged += ModsChangedHandler;
 
             ViewSource = new CollectionViewSource();

@@ -13,7 +13,7 @@ namespace ModMyFactory
             InitializeComponent();
         }
 
-        private void AddButtonClickHandler(object sender, RoutedEventArgs e)
+        private void DownloadButtonClickHandler(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
         }

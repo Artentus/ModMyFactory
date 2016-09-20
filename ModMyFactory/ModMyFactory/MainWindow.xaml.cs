@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -17,8 +15,6 @@ namespace ModMyFactory
         bool dragging;
         bool modsListBoxDeselectionOmitted;
         bool modpacksListBoxDeselectionOmitted;
-        int modsListBoxDragStartIndex;
-        int modpacksListBoxDragStartIndex;
 
         public MainWindow()
         {
@@ -76,28 +72,55 @@ namespace ModMyFactory
             e.Handled = true;
         }
 
+        private static ListBoxItem GetItem(ListBox listBox, Func<ListBoxItem, Point> positionSelector)
+        {
+            int itemCount = listBox.ItemContainerGenerator.Items.Count;
+            for (int i = 0; i < itemCount; i++)
+            {
+                ListBoxItem item = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromIndex(i);
+                Rect itemBounds = VisualTreeHelper.GetDescendantBounds(item);
+                Point relativePosition = positionSelector.Invoke(item);
+
+                if (itemBounds.Contains(relativePosition))
+                    return item;
+            }
+
+            return null;
+        }
+        
         private void ModpackListBoxDropHandler(object sender, DragEventArgs e)
         {
             ListBox listBox = sender as ListBox;
             if (listBox == null) return;
 
-            ListBoxItem item = null;
-            for (int i = 0; i < ((IList)listBox.ItemsSource).Count; i++)
+            ListBoxItem item = GetItem(listBox, e.GetPosition);
+            if (item != null)
             {
-                item = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromIndex(i);
-                if (VisualTreeHelper.GetDescendantBounds(item).Contains(e.GetPosition(item)))
-                    break;
-                item = null;
-            }
-
-            if (item != null && e.Data.GetDataPresent(typeof(List<Mod>)))
-            {
-                var mods = (List<Mod>)e.Data.GetData(typeof(List<Mod>));
-                Modpack modpack = (Modpack)listBox.ItemContainerGenerator.ItemFromContainer(item);
-                foreach (Mod mod in mods)
+                if (e.Data.GetDataPresent(typeof(List<Mod>)))
                 {
-                    if (!modpack.Mods.Contains(mod))
-                        modpack.Mods.Add(mod);
+                    var mods = (List<Mod>)e.Data.GetData(typeof(List<Mod>));
+                    Modpack parent = (Modpack)listBox.ItemContainerGenerator.ItemFromContainer(item);
+                    foreach (Mod mod in mods)
+                    {
+                        if (!parent.Contains(mod))
+                        {
+                            var reference = new ModReference(mod, parent);
+                            parent.Mods.Add(reference);
+                        }
+                    }
+                }
+                else if (e.Data.GetDataPresent(typeof(List<Modpack>)))
+                {
+                    var modpacks = (List<Modpack>)e.Data.GetData(typeof(List<Modpack>));
+                    Modpack parent = (Modpack)listBox.ItemContainerGenerator.ItemFromContainer(item);
+                    foreach (Modpack modpack in modpacks)
+                    {
+                        if (modpack != parent && !parent.Contains(modpack) && !modpack.Contains(parent, true))
+                        {
+                            var reference = new ModpackReference(modpack, parent);
+                            parent.Mods.Add(reference);
+                        }
+                    }
                 }
             }
         }
@@ -107,85 +130,14 @@ namespace ModMyFactory
             ListBox listBox = sender as ListBox;
             if (listBox == null) return;
 
-            if (e.Data.GetDataPresent(typeof(List<Mod>)))
+            e.Effects = DragDropEffects.None;
+            if (e.Data.GetDataPresent(typeof(List<Mod>)) || e.Data.GetDataPresent(typeof(List<Modpack>)))
             {
-                int index = -1;
-                for (int i = 0; i < ((IList)listBox.ItemsSource).Count; i++)
-                {
-                    var item = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromIndex(i);
-                    if (VisualTreeHelper.GetDescendantBounds(item).Contains(e.GetPosition(item)))
-                    {
-                        index = i;
-                        break;
-                    }
-                }
-
-                e.Effects = (index >= 0) ? DragDropEffects.Link : DragDropEffects.None;
-            }
-            else if (e.Data.GetDataPresent(typeof(List<Modpack>)))
-            {
-                int index = -1;
-                for (int i = 0; i < ((IList)listBox.ItemsSource).Count; i++)
-                {
-                    var item = listBox.ItemContainerGenerator.ContainerFromIndex(i) as ListBoxItem;
-                    if (item == null)
-                    {
-                        e.Effects = DragDropEffects.None;
-                        return;
-                    }
-
-                    Rect bounds = VisualTreeHelper.GetDescendantBounds(item);
-                    Point pos = e.GetPosition(item);
-                    if (bounds.Contains(pos))
-                    {
-                        bounds.Height /= 2;
-                        index = bounds.Contains(pos) ? i : i + 1;
-                        break;
-                    }
-                }
-
-                if (index >= 0)
-                {
-                    var modpacks = (List<Modpack>)e.Data.GetData(typeof(List<Modpack>));
-                    if (modpacks.Count == 1)
-                    {
-                        e.Effects = DragDropEffects.Move;
-                        Modpack modpack = modpacks[0];
-                        ObservableCollection<Modpack> modpackCollection = (ObservableCollection<Modpack>)listBox.ItemsSource;
-
-                        int oldIndex = modpackCollection.IndexOf(modpack);
-                        int newIndex = Math.Min(Math.Max(index > oldIndex ? index - 1 : index, 0), modpackCollection.Count - 1);
-                        if (newIndex != oldIndex)
-                            modpackCollection.Move(oldIndex, newIndex);
-
-                        return;
-                    }
-                }
-                e.Effects = DragDropEffects.None;
+                ListBoxItem item = GetItem(listBox, e.GetPosition);
+                if (item != null) e.Effects = DragDropEffects.Link;
             }
         }
-
-        void ModpackListBoxDragLeaveHandler(object sender, DragEventArgs e)
-        {
-            ListBox listBox = sender as ListBox;
-            if (listBox == null) return;
-
-            if (VisualTreeHelper.GetDescendantBounds(listBox).Contains(e.GetPosition(listBox)))
-                return;
-
-            if (e.Data.GetDataPresent(typeof(List<Modpack>)))
-            {
-                var modpacks = (List<Modpack>)e.Data.GetData(typeof(List<Modpack>));
-                if (modpacks.Count == 1)
-                {
-                    Modpack modpack = modpacks[0];
-                    ObservableCollection<Modpack> modpackCollection = (ObservableCollection<Modpack>)listBox.ItemsSource;
-
-                    modpackCollection.Move(modpackCollection.IndexOf(modpack), modpacksListBoxDragStartIndex);
-                }
-            }
-        }
-
+        
         private void ModpackListBoxPreviewMouseDownHandler(object sender, MouseButtonEventArgs e)
         {
             ListBox listBox = sender as ListBox;
@@ -194,15 +146,7 @@ namespace ModMyFactory
             if (e.ChangedButton != MouseButton.Left)
                 return;
 
-            ListBoxItem item = null;
-            for (int i = 0; i < ((IList)listBox.ItemsSource).Count; i++)
-            {
-                item = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromIndex(i);
-                if (VisualTreeHelper.GetDescendantBounds(item).Contains(e.GetPosition(item)))
-                    break;
-                item = null;
-            }
-
+            ListBoxItem item = GetItem(listBox, e.GetPosition);
             if (item != null)
             {
                 dragStartPoint = e.GetPosition(null);
@@ -229,8 +173,7 @@ namespace ModMyFactory
             {
                 var mods = new List<Modpack>();
                 mods.AddRange(listBox.SelectedItems.Cast<Modpack>());
-                modpacksListBoxDragStartIndex = listBox.SelectedIndex;
-                DragDrop.DoDragDrop(listBox, mods, DragDropEffects.All);
+                DragDrop.DoDragDrop(listBox, mods, DragDropEffects.Link);
                 dragging = false;
                 modpacksListBoxDeselectionOmitted = false;
             }
@@ -246,15 +189,7 @@ namespace ModMyFactory
                 ListBox listBox = sender as ListBox;
                 if (listBox == null) return;
 
-                ListBoxItem item = null;
-                for (int i = 0; i < ((IList)listBox.ItemsSource).Count; i++)
-                {
-                    item = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromIndex(i);
-                    if (VisualTreeHelper.GetDescendantBounds(item).Contains(e.GetPosition(item)))
-                        break;
-                    item = null;
-                }
-
+                ListBoxItem item = GetItem(listBox, e.GetPosition);
                 if (item != null && item.IsSelected)
                 {
                     Modpack selectedModpack = (Modpack)listBox.ItemContainerGenerator.ItemFromContainer(item);
@@ -276,74 +211,7 @@ namespace ModMyFactory
                 modpacksListBoxDeselectionOmitted = false;
             }
         }
-
-        private void ModsListBoxDragOverHander(object sender, DragEventArgs e)
-        {
-            ListBox listBox = sender as ListBox;
-            if (listBox == null) return;
-
-            int index = -1;
-            for (int i = 0; i < ((IList)listBox.ItemsSource).Count; i++)
-            {
-                var item = listBox.ItemContainerGenerator.ContainerFromIndex(i) as ListBoxItem;
-                if (item == null)
-                {
-                    e.Effects = DragDropEffects.None;
-                    return;
-                }
-
-                Rect bounds = VisualTreeHelper.GetDescendantBounds(item);
-                Point pos = e.GetPosition(item);
-                if (bounds.Contains(pos))
-                {
-                    bounds.Height /= 2;
-                    index = bounds.Contains(pos) ? i : i + 1;
-                    break;
-                }
-            }
-
-            if (index >= 0 && e.Data.GetDataPresent(typeof(List<Mod>)))
-            {
-                var mods = (List<Mod>)e.Data.GetData(typeof(List<Mod>));
-                if (mods.Count == 1)
-                {
-                    e.Effects = DragDropEffects.Move;
-                    Mod mod = mods[0];
-                    ObservableCollection<Mod> modCollection = (ObservableCollection<Mod>)listBox.ItemsSource;
-
-                    int oldIndex = modCollection.IndexOf(mod);
-                    int newIndex = Math.Min(Math.Max(index > oldIndex ? index - 1 : index, 0), modCollection.Count - 1);
-                    if (newIndex != oldIndex)
-                        modCollection.Move(oldIndex, newIndex);
-
-                    return;
-                }
-            }
-            e.Effects = DragDropEffects.None;
-        }
-
-        private void ModsListBoxDragLeaveHandler(object sender, DragEventArgs e)
-        {
-            ListBox listBox = sender as ListBox;
-            if (listBox == null) return;
-
-            if (VisualTreeHelper.GetDescendantBounds(listBox).Contains(e.GetPosition(listBox)))
-                return;
-
-            if (e.Data.GetDataPresent(typeof(List<Mod>)))
-            {
-                var mods = (List<Mod>)e.Data.GetData(typeof(List<Mod>));
-                if (mods.Count == 1)
-                {
-                    Mod mod = mods[0];
-                    ObservableCollection<Mod> modCollection = (ObservableCollection<Mod>)listBox.ItemsSource;
-
-                    modCollection.Move(modCollection.IndexOf(mod), modsListBoxDragStartIndex);
-                    listBox.SelectedIndex = modsListBoxDragStartIndex;
-                }
-            }
-        }
-
+        
         private void ModsListBoxPreviewMouseDownHandler(object sender, MouseButtonEventArgs e)
         {
             ListBox listBox = sender as ListBox;
@@ -352,15 +220,7 @@ namespace ModMyFactory
             if (e.ChangedButton != MouseButton.Left)
                 return;
 
-            ListBoxItem item = null;
-            for (int i = 0; i < ((IList)listBox.ItemsSource).Count; i++)
-            {
-                item = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromIndex(i);
-                if (VisualTreeHelper.GetDescendantBounds(item).Contains(e.GetPosition(item)))
-                    break;
-                item = null;
-            }
-
+            ListBoxItem item = GetItem(listBox, e.GetPosition);
             if (item != null)
             {
                 dragStartPoint = e.GetPosition(null);
@@ -387,7 +247,6 @@ namespace ModMyFactory
             {
                 var mods = new List<Mod>();
                 mods.AddRange(listBox.SelectedItems.Cast<Mod>());
-                modsListBoxDragStartIndex = listBox.SelectedIndex;
                 DragDrop.DoDragDrop(listBox, mods, DragDropEffects.All);
                 dragging = false;
                 modsListBoxDeselectionOmitted = false;
@@ -404,15 +263,7 @@ namespace ModMyFactory
                 ListBox listBox = sender as ListBox;
                 if (listBox == null) return;
 
-                ListBoxItem item = null;
-                for (int i = 0; i < ((IList)listBox.ItemsSource).Count; i++)
-                {
-                    item = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromIndex(i);
-                    if (VisualTreeHelper.GetDescendantBounds(item).Contains(e.GetPosition(item)))
-                        break;
-                    item = null;
-                }
-
+                ListBoxItem item = GetItem(listBox, e.GetPosition);
                 if (item != null && item.IsSelected)
                 {
                     Mod selectedMod = (Mod)listBox.ItemContainerGenerator.ItemFromContainer(item);

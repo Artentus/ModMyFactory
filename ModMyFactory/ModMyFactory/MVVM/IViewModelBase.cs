@@ -2,8 +2,8 @@
 
 namespace ModMyFactory.MVVM
 {
-    interface IViewModelBase<out T> where T : Window
+    interface IViewModelBase
     {
-        T Window { get; }
+        void SetWindow(Window window);
     }
 }
