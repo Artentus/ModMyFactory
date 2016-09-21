@@ -358,6 +358,7 @@ namespace ModMyFactory
                     "Do you really want to remove this version of Factorio?\nThis will delete all corresponding files on your hard drive.",
                     "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
+                SelectedVersion.DeleteLinks();
                 SelectedVersion.Directory.Delete(true);
                 FactorioVersions.Remove(SelectedVersion);
             }

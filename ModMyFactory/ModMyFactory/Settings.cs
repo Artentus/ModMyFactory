@@ -96,7 +96,7 @@ namespace ModMyFactory
 
         public DirectoryInfo GetModDirectory()
         {
-            const string directoryName = "Mods";
+            const string directoryName = "mods";
 
             switch (ModDirectoryOption)
             {

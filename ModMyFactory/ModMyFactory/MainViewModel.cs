@@ -197,8 +197,7 @@ namespace ModMyFactory
 
         private void StartGame()
         {
-            string modDirectory = Path.Combine(App.Instance.Settings.GetModDirectory().FullName, SelectedVersion.Version.ToString(3));
-            Process.Start(SelectedVersion.ExecutablePath, $"--mod-directory \"{modDirectory}\"");
+            Process.Start(SelectedVersion.ExecutablePath);
         }
 
         private void OpenVersionManager()
@@ -248,6 +247,11 @@ namespace ModMyFactory
                 }
 
                 App.Instance.Settings.Save();
+
+                DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory();
+                if (!modDirectory.Exists) modDirectory.Create();
+                foreach (var version in FactorioVersions)
+                    version.CreateModDirectoryLink(true);
             }
         }
 

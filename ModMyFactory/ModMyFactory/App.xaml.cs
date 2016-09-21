@@ -25,6 +25,12 @@ namespace ModMyFactory
 
             string settingsFile = Path.Combine(appDataDirectory.FullName, "settings.json");
             Settings = Settings.Load(settingsFile, true);
+
+            DirectoryInfo saveDirectory = new DirectoryInfo(Path.Combine(appDataDirectory.FullName, "saves"));
+            if (!saveDirectory.Exists) saveDirectory.Create();
+
+            DirectoryInfo modDirectory = Settings.GetModDirectory();
+            if (!modDirectory.Exists) modDirectory.Create();
         }
 
         internal List<CultureEntry> GetAvailableCultures()
