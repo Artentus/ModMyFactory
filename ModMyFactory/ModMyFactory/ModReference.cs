@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using ModMyFactory.MVVM;
@@ -22,6 +23,8 @@ namespace ModMyFactory
                     Mod.Active = value.Value;
             }
         }
+
+        public List<IEditableCollectionView> ParentViews => null;
 
         public RelayCommand RemoveFromParentCommand { get; }
 

@@ -110,7 +110,7 @@
         <Menu Grid.Row="0" IsMainMenu="True">
             <MenuItem Header="{DynamicResource FileMenuItem}">
                 <MenuItem Header="Add mods" Icon="{StaticResource AddDocumentIcon}" InputGestureText="Strg+N"/>
-                <MenuItem Header="New modpack" Icon="{StaticResource NewPackageIcon}" InputGestureText="Shift+N"/>
+                <MenuItem Header="New modpack" Icon="{StaticResource NewPackageIcon}" InputGestureText="Shift+N" Command="{Binding CreateModpackCommand}"/>
                 <Separator/>
                 <MenuItem Header="Start game" Icon="{StaticResource RunIcon}" InputGestureText="F5" Command="{Binding StartGameCommand}"/>
                 <Separator/>
@@ -155,7 +155,7 @@
             <Button ToolTip="Add mods">
                 <Image Margin="1" Source="{StaticResource AddDocumentIcon}"/>
             </Button>
-            <Button ToolTip="New modpack">
+            <Button ToolTip="New modpack" Command="{Binding CreateModpackCommand}">
                 <Image Margin="1" Source="{StaticResource NewPackageIcon}"/>
             </Button>
 
@@ -247,7 +247,7 @@
                 <Rectangle Grid.Row="1" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
             </Grid>
             <local:DragDropReadyListBox Grid.Row="1" Grid.Column="2" SelectionMode="Extended" AllowDrop="True" ItemsSource="{Binding ModpacksView}"
-                      PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler" PreviewMouseMove="ModpackListBoxPreviewMouseMoveHandler"
+                      PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler" MouseMove="ModpackListBoxMouseMoveHandler"
                       PreviewMouseUp="ModpackListBoxPreviewMouseUpHandler" Drop="ModpackListBoxDropHandler" DragOver="ModpackListBoxDragOverHandler">
                 <local:DragDropReadyListBox.Resources>
                     <DataTemplate x:Key="SubitemTemplate" DataType="{x:Type local:IModReference}">
@@ -288,7 +288,8 @@
                                     <ToggleButton x:Name="RenameButton" Grid.Column="1" Margin="2,0" ToolTip="Rename">
                                         <ToggleButton.Template>
                                             <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                <Image x:Name="Image" Source="{DynamicResource RenameInactiveIcon}"/>
+                                                <Image x:Name="Image" Source="{DynamicResource RenameInactiveIcon}" Stretch="None" VerticalAlignment="Center"
+                                                       RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" SnapsToDevicePixels="True"/>
                                                 
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsChecked" Value="True">

@@ -30,6 +30,18 @@
 
         <ListBox Grid.Row="0" Grid.Column="0" Margin="2" Grid.ColumnSpan="3" ItemsSource="{Binding FactorioVersions}" SelectedItem="{Binding SelectedVersion, Mode=TwoWay}"
                  PreviewMouseDown="VersionListBoxPreviewMouseDownHandler">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Downloadable}" Value="False">
+                            <DataTrigger.Setters>
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type web:FactorioOnlineVersion}">
                     <Grid>

@@ -88,6 +88,8 @@ namespace ModMyFactory
 
         }
 
+        public RelayCommand CreateModpackCommand { get; }
+
         public RelayCommand StartGameCommand { get; }
 
         public RelayCommand OpenVersionManagerCommand { get; }
@@ -138,6 +140,7 @@ namespace ModMyFactory
             modGridLength = App.Instance.Settings.ModGridLength;
             modpackGridLength = App.Instance.Settings.ModpackGridLength;
 
+            CreateModpackCommand = new RelayCommand(CreateNewModpack);
             StartGameCommand = new RelayCommand(StartGame, () => SelectedVersion != null);
             OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
             OpenSettingsCommand = new RelayCommand(OpenSettings);
@@ -158,13 +161,38 @@ namespace ModMyFactory
             Mods.Add(mod4);
             Mods.Add(mod5);
             Modpack modpack1 = new Modpack("aaa", Modpacks, Application.Current.MainWindow);
+            modpack1.ParentViews.Add(ModpacksView);
             Modpack modpack2 = new Modpack("bbb", Modpacks, Application.Current.MainWindow);
+            modpack2.ParentViews.Add(ModpacksView);
             Modpack modpack3 = new Modpack("ccc", Modpacks, Application.Current.MainWindow);
+            modpack3.ParentViews.Add(ModpacksView);
             //modpack.Mods.Add(mod1);
             //modpack.Mods.Add(mod2);
             Modpacks.Add(modpack1);
             Modpacks.Add(modpack2);
             Modpacks.Add(modpack3);
+        }
+
+        private void CreateNewModpack()
+        {
+            string newName = "NewModpack";
+            int count = 0;
+            bool contains = true;
+            while (contains)
+            {
+                contains = false;
+                count++;
+                foreach (var item in Modpacks)
+                {
+                    if (item.Name == (newName + count))
+                        contains = true;
+                }
+            }
+            newName += count;
+
+            Modpack modpack = new Modpack(newName, Modpacks, Window);
+            modpack.ParentViews.Add(ModpacksView);
+            Modpacks.Add(modpack);
         }
 
         private void StartGame()

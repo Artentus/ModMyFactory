@@ -95,6 +95,17 @@ namespace ModMyFactory
             return true;
         }
 
+        private bool VersionAlreadyInstalled(FactorioOnlineVersion version)
+        {
+            foreach (var localVersion in FactorioVersions)
+            {
+                if (version.Version == localVersion.Version)
+                    return true;
+            }
+
+            return false;
+        }
+
         private bool ShowVersionList(out FactorioOnlineVersion selectedVersion)
         {
             selectedVersion = null;
@@ -104,6 +115,7 @@ namespace ModMyFactory
                 MessageBox.Show(Window, "Error retrieving available versions!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
+            versions.ForEach(item => item.Downloadable = !VersionAlreadyInstalled(item));
 
             var versionListWindow = new VersionListWindow { Owner = Window };
             versions.ForEach(item => versionListWindow.ViewModel.FactorioVersions.Add(item));

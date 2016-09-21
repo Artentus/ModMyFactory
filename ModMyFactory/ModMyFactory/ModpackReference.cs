@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using ModMyFactory.MVVM;
@@ -18,6 +19,8 @@ namespace ModMyFactory
             get { return Modpack.Active; }
             set { Modpack.Active = value; }
         }
+
+        public List<IEditableCollectionView> ParentViews => Modpack.ParentViews;
 
         public RelayCommand RemoveFromParentCommand { get; }
 
@@ -40,6 +43,9 @@ namespace ModMyFactory
             switch (e.PropertyName)
             {
                 case nameof(Mod.Name):
+                    foreach (var view in ParentViews)
+                        view.EditItem(this);
+
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayName)));
                     break;
                 case nameof(Mod.Active):

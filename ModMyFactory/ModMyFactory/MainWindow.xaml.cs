@@ -118,6 +118,7 @@ namespace ModMyFactory
                         if (modpack != parent && !parent.Contains(modpack) && !modpack.Contains(parent, true))
                         {
                             var reference = new ModpackReference(modpack, parent);
+                            reference.ParentViews.Add(parent.ModsView);
                             parent.Mods.Add(reference);
                         }
                     }
@@ -162,7 +163,7 @@ namespace ModMyFactory
             }
         }
 
-        private void ModpackListBoxPreviewMouseMoveHandler(object sender, MouseEventArgs e)
+        private void ModpackListBoxMouseMoveHandler(object sender, MouseEventArgs e)
         {
             ListBox listBox = sender as ListBox;
             if (listBox == null) return;

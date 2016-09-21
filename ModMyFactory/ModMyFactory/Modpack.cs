@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -11,7 +12,7 @@ namespace ModMyFactory
     /// <summary>
     /// A collection of mods.
     /// </summary>
-    class Modpack : NotifyPropertyChangedBase
+    class Modpack : NotifyPropertyChangedBase, IEditableObject
     {
         string name;
         bool? active;
@@ -27,8 +28,14 @@ namespace ModMyFactory
             {
                 if (value != name)
                 {
+                    foreach (var view in ParentViews)
+                        view.EditItem(this);
+
                     name = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Name)));
+
+                    foreach (var view in ParentViews)
+                        view.CommitEdit();
                 }
             }
         }
@@ -62,6 +69,11 @@ namespace ModMyFactory
         /// The mods in this modpack.
         /// </summary>
         public ObservableCollection<IModReference> Mods { get; }
+
+        /// <summary>
+        /// The list of views this modpack is presented in.
+        /// </summary>
+        public List<IEditableCollectionView> ParentViews { get; } 
 
         public RelayCommand DeleteCommand { get; }
 
@@ -221,7 +233,20 @@ namespace ModMyFactory
             ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
             ModsView.CustomSort = new ModReferenceSorter();
 
+            ParentViews = new List<IEditableCollectionView>();
+
             DeleteCommand = new RelayCommand(() => Delete(parentCollection, messageOwner));
+        }
+
+        public void BeginEdit()
+        { }
+
+        public void EndEdit()
+        { }
+
+        public void CancelEdit()
+        {
+            throw new NotImplementedException();
         }
     }
 }

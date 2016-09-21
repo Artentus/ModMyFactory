@@ -1,14 +1,31 @@
 ﻿using System;
+using System.ComponentModel;
+using ModMyFactory.MVVM;
 
 namespace ModMyFactory.Web
 {
-    class FactorioOnlineVersion
+    sealed class FactorioOnlineVersion : NotifyPropertyChangedBase
     {
+        bool downloadable;
+
         public Version Version { get; }
 
         public string VersionModifier { get; }
 
         public Uri DownloadUrl { get; }
+
+        public bool Downloadable
+        {
+            get { return downloadable; }
+            set
+            {
+                if (value != downloadable)
+                {
+                    downloadable = true;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Downloadable)));
+                }
+            }
+        }
 
         public FactorioOnlineVersion(Version version, string versionModifier)
         {
