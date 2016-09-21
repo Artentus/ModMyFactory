@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace ModMyFactory
 {
@@ -19,7 +20,9 @@ namespace ModMyFactory
                 SelectedLanguage = "en",
                 State = WindowState.Normal,
                 PosX = 0, PosY = 0, Width = -1, Height = -1,
-                SelectedVersion = string.Empty,
+                ModGridLength = new GridLength(1, GridUnitType.Star),
+                ModpackGridLength = new GridLength(1, GridUnitType.Star),
+                SelectedVersion = default(Version),
             };
             return defaultSettings;
         }
@@ -55,7 +58,10 @@ namespace ModMyFactory
 
         public int PosX, PosY, Width, Height;
 
-        public string SelectedVersion;
+        public GridLength ModGridLength, ModpackGridLength;
+
+        [JsonConverter(typeof(VersionConverter))]
+        public Version SelectedVersion;
 
         [JsonConstructor]
         private Settings()

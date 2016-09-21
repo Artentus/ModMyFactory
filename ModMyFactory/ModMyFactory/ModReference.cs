@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Windows.Media.Imaging;
 using ModMyFactory.MVVM;
 
 namespace ModMyFactory
@@ -8,6 +10,8 @@ namespace ModMyFactory
         public Mod Mod { get; }
 
         public string DisplayName => Mod.Name;
+
+        public BitmapImage Image { get; }
 
         public bool? Active
         {
@@ -24,6 +28,7 @@ namespace ModMyFactory
         public ModReference(Mod mod, Modpack parent)
         {
             Mod = mod;
+            Image = new BitmapImage(new Uri("Images/Document.png", UriKind.Relative));
 
             mod.PropertyChanged += PropertyChangedHandler;
             RemoveFromParentCommand = new RelayCommand(() => parent.Mods.Remove(this));

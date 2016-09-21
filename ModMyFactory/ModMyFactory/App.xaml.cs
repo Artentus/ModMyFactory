@@ -18,7 +18,7 @@ namespace ModMyFactory
 
         internal string AppDataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ModMyFactory");
 
-        private App()
+        public App()
         {
             var appDataDirectory = new DirectoryInfo(AppDataPath);
             if (!appDataDirectory.Exists) appDataDirectory.Create();

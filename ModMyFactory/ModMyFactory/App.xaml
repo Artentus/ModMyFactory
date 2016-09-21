@@ -704,7 +704,7 @@
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="*"/>
                                                         <ColumnDefinition Width="1"/>
-                                                        <ColumnDefinition Width="13"/>
+                                                        <ColumnDefinition Width="14"/>
                                                     </Grid.ColumnDefinitions>
 
                                                     <Rectangle Grid.Column="1" Fill="{StaticResource BorderBrush}"/>
@@ -713,8 +713,7 @@
                                                     <Rectangle Grid.Column="2" Margin="-1" Fill="{StaticResource SelectionBrush}"
                                                                Visibility="{TemplateBinding IsChecked, Converter={StaticResource VisibilityConverter}}"/>
 
-                                                    <Path Grid.Column="2" Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                              Data="M 0 0 L 4 4 L 8 0 Z" RenderOptions.EdgeMode="Aliased"/>
+                                                    <Path Grid.Column="2" Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 3 3 L 6 0 Z"/>
                                                 </Grid>
                                             </Border>
 

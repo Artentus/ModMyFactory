@@ -1,6 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Data;
 using ModMyFactory.MVVM;
 
@@ -54,31 +56,72 @@ namespace ModMyFactory
             }
         }
 
+        public ListCollectionView ModsView { get; }
+
         /// <summary>
         /// The mods in this modpack.
         /// </summary>
         public ObservableCollection<IModReference> Mods { get; }
 
+        public RelayCommand DeleteCommand { get; }
+
         /// <summary>
-        /// The mods wrapped as view source.
+        /// Checks if this modpack contains a specified mod.
         /// </summary>
-        public CollectionViewSource ViewSource { get; }
+        public bool Contains(Mod mod, out ModReference reference)
+        {
+            foreach (var @ref in Mods)
+            {
+                var modReference = @ref as ModReference;
+                if (modReference != null)
+                {
+                    if (modReference.Mod == mod)
+                    {
+                        reference = modReference;
+                        return true;
+                    }
+                }
+            }
+
+            reference = null;
+            return false;
+        }
 
         /// <summary>
         /// Checks if this modpack contains a specified mod.
         /// </summary>
         public bool Contains(Mod mod)
         {
-            foreach (var reference in Mods)
+            ModReference reference;
+            return Contains(mod, out reference);
+        }
+
+        /// <summary>
+        /// Checks if this modpack contains a specified modpack.
+        /// </summary>
+        public bool Contains(Modpack modpack, out ModpackReference reference, bool recursive = false)
+        {
+            foreach (var @ref in Mods)
             {
-                var modReference = reference as ModReference;
-                if (modReference != null)
+                var modpackReference = @ref as ModpackReference;
+                if (modpackReference != null)
                 {
-                    if (modReference.Mod == mod)
+                    if (modpackReference.Modpack == modpack)
+                    {
+                        reference = modpackReference;
                         return true;
+                    }
+
+                    ModpackReference recursiveReference;
+                    if (recursive && modpackReference.Modpack.Contains(modpack, out recursiveReference, true))
+                    {
+                        reference = recursiveReference;
+                        return true;
+                    }
                 }
             }
 
+            reference = null;
             return false;
         }
 
@@ -87,20 +130,8 @@ namespace ModMyFactory
         /// </summary>
         public bool Contains(Modpack modpack, bool recursive = false)
         {
-            foreach (var reference in Mods)
-            {
-                var modpackReference = reference as ModpackReference;
-                if (modpackReference != null)
-                {
-                    if (modpackReference.Modpack == modpack)
-                        return true;
-
-                    if (recursive && modpackReference.Modpack.Contains(modpack, true))
-                        return true;
-                }
-            }
-
-            return false;
+            ModpackReference reference;
+            return Contains(modpack, out reference, recursive);
         }
 
         private void SetActive()
@@ -157,11 +188,29 @@ namespace ModMyFactory
             }
         }
 
+        private void Delete(ICollection<Modpack> parentCollection, Window messageOwner)
+        {
+            if (MessageBox.Show(messageOwner, "Do you really want to delete this modpack?", "Confirm",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                foreach (var modpack in parentCollection)
+                {
+                    ModpackReference reference;
+                    if (modpack.Contains(this, out reference))
+                        modpack.Mods.Remove(reference);
+
+                }
+                parentCollection.Remove(this);
+            }
+        }
+
         /// <summary>
         /// Creates a modpack.
         /// </summary>
         /// <param name="name">The name of the modpack.</param>
-        public Modpack(string name)
+        /// <param name="parentCollection">The collection containing this modpack.</param>
+        /// <param name="messageOwner">The window that ownes the deletion message box.</param>
+        public Modpack(string name, ICollection<Modpack> parentCollection, Window messageOwner)
         {
             this.name = name;
             active = false;
@@ -169,9 +218,10 @@ namespace ModMyFactory
             Mods = new ObservableCollection<IModReference>();
             Mods.CollectionChanged += ModsChangedHandler;
 
-            ViewSource = new CollectionViewSource();
-            ViewSource.Source = Mods;
-            ViewSource.SortDescriptions.Add(new SortDescription(nameof(Name), ListSortDirection.Ascending));
+            ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
+            ModsView.CustomSort = new ModReferenceSorter();
+
+            DeleteCommand = new RelayCommand(() => Delete(parentCollection, messageOwner));
         }
     }
 }

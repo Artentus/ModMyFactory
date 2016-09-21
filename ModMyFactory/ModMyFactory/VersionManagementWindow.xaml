@@ -24,7 +24,7 @@
         </Grid.RowDefinitions>
         
         <ListBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" PreviewMouseDown="VersionListBoxPreviewMouseDownHandler"
-                 ItemsSource="{Binding FactorioVersions}" SelectedItem="{Binding SelectedVersion}">
+                 ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type local:FactorioVersion}">
                     <TextBlock Margin="4,2" IsHitTestVisible="False" Text="{Binding DisplayName}"/>

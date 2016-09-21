@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
@@ -8,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using ModMyFactory.MVVM;
 using ModMyFactory.Web;
 using Ookii.Dialogs.Wpf;
@@ -27,7 +29,9 @@ namespace ModMyFactory
 
         FactorioVersion selectedVersion;
 
-        public ICollectionView FactorioVersions { get; }
+        public ListCollectionView FactorioVersionsView { get; }
+
+        public ObservableCollection<FactorioVersion> FactorioVersions { get; }
 
         public FactorioVersion SelectedVersion
         {
@@ -53,6 +57,8 @@ namespace ModMyFactory
         private VersionManagementViewModel()
         {
             FactorioVersions = MainViewModel.Instance.FactorioVersions;
+            FactorioVersionsView = (ListCollectionView)CollectionViewSource.GetDefaultView(FactorioVersions);
+            FactorioVersionsView.CustomSort = new FactorioVersionSorter();
 
             DownloadCommand = new RelayCommand(async () => await DownloadOnlineVersion());
             AddFromZipCommand = new RelayCommand(async () => await AddZippedVersion());
@@ -140,7 +146,7 @@ namespace ModMyFactory
                     progressWindow.ShowDialog();
 
                     FactorioVersion newVersion = await downloadTask;
-                    ((ICollection<FactorioVersion>)FactorioVersions.SourceCollection).Add(newVersion);
+                    if (newVersion != null) FactorioVersions.Add(newVersion);
                     await closeWindowTask;
                 }
             }
@@ -240,7 +246,7 @@ namespace ModMyFactory
                 }
                 else
                 {
-                    ((ICollection<FactorioVersion>)FactorioVersions.SourceCollection).Add(new FactorioVersion(versionDirectory, version));
+                    FactorioVersions.Add(new FactorioVersion(versionDirectory, version));
 
                     if (MessageBox.Show(Window, "Do you want to delete the source file?", "Delete file?",
                         MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -328,7 +334,7 @@ namespace ModMyFactory
                         progressWindow.ShowDialog();
                         await moveTask;
 
-                        ((ICollection<FactorioVersion>)FactorioVersions.SourceCollection).Add(new FactorioVersion(destinationDirectory, version));
+                        FactorioVersions.Add(new FactorioVersion(destinationDirectory, version));
                     }
                 }
             }
@@ -341,7 +347,7 @@ namespace ModMyFactory
                     "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 SelectedVersion.Directory.Delete(true);
-                ((ICollection<FactorioVersion>)FactorioVersions.SourceCollection).Remove(SelectedVersion);
+                FactorioVersions.Remove(SelectedVersion);
             }
         }
     }

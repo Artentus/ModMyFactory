@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Data;
 using ModMyFactory.Lang;
 using ModMyFactory.MVVM;
@@ -18,10 +19,16 @@ namespace ModMyFactory
         public static MainViewModel Instance => instance ?? (instance = new MainViewModel());
 
         FactorioVersion selectedVersion;
+        GridLength modGridLength;
+        GridLength modpackGridLength;
 
-        public ICollectionView AvailableCultures { get; }
+        public ListCollectionView AvailableCulturesView { get; }
 
-        public ICollectionView FactorioVersions { get; }
+        public List<CultureEntry> AvailableCultures { get; }
+
+        public ListCollectionView FactorioVersionsView { get; }
+
+        public ObservableCollection<FactorioVersion> FactorioVersions { get; }
 
         public FactorioVersion SelectedVersion
         {
@@ -33,15 +40,53 @@ namespace ModMyFactory
                     selectedVersion = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedVersion)));
 
-                    App.Instance.Settings.SelectedVersion = selectedVersion?.Version.ToString(3) ?? string.Empty;
+                    App.Instance.Settings.SelectedVersion = selectedVersion.Version;
                     App.Instance.Settings.Save();
                 }
             }
         }
 
-        public ICollectionView Mods { get; }
+        public ListCollectionView ModsView { get; }
 
-        public ICollectionView Modpacks { get; }
+        public ObservableCollection<Mod> Mods { get; }
+
+        public ListCollectionView ModpacksView { get; }
+
+        public ObservableCollection<Modpack> Modpacks { get; }
+
+        public GridLength ModGridLength
+        {
+            get { return modGridLength; }
+            set
+            {
+                if (value != modGridLength)
+                {
+                    modGridLength = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModGridLength)));
+
+                    App.Instance.Settings.ModGridLength = modGridLength;
+                    App.Instance.Settings.Save();
+                }
+            }
+            
+        }
+
+        public GridLength ModpackGridLength
+        {
+            get { return modpackGridLength; }
+            set
+            {
+                if (value != modpackGridLength)
+                {
+                    modpackGridLength = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModpackGridLength)));
+
+                    App.Instance.Settings.ModpackGridLength = modpackGridLength;
+                    App.Instance.Settings.Save();
+                }
+            }
+
+        }
 
         public RelayCommand StartGameCommand { get; }
 
@@ -57,39 +102,41 @@ namespace ModMyFactory
 
         private MainViewModel()
         {
-            List<CultureEntry> availableCultures = App.Instance.GetAvailableCultures();
-            AvailableCultures = CollectionViewSource.GetDefaultView(availableCultures);
-            ((ListCollectionView)AvailableCultures).CustomSort = new CultureEntrySorter();
-            availableCultures.First(entry => string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
+            AvailableCultures = App.Instance.GetAvailableCultures();
+            AvailableCulturesView = (ListCollectionView)CollectionViewSource.GetDefaultView(AvailableCultures);
+            AvailableCulturesView.CustomSort = new CultureEntrySorter();
+            AvailableCultures.First(entry => string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
 
-            var factorioVersions = new ObservableCollection<FactorioVersion>();
-            FactorioVersion.GetInstalledVersions().ForEach(item => factorioVersions.Add(item));
-            FactorioVersions = CollectionViewSource.GetDefaultView(factorioVersions);
-            ((ListCollectionView)FactorioVersions).CustomSort = new FactorioVersionSorter();
+            FactorioVersions = new ObservableCollection<FactorioVersion>();
+            FactorioVersion.GetInstalledVersions().ForEach(item => FactorioVersions.Add(item));
+            FactorioVersionsView = (ListCollectionView)CollectionViewSource.GetDefaultView(FactorioVersions);
+            FactorioVersionsView.CustomSort = new FactorioVersionSorter();
 
-            Version version;
-            bool result = Version.TryParse(App.Instance.Settings.SelectedVersion, out version);
-            if (result)
+            Version version = App.Instance.Settings.SelectedVersion;
+            if (version != null)
             {
-                FactorioVersion factorioVersion = factorioVersions.FirstOrDefault(item => item.Version == version);
+                FactorioVersion factorioVersion = FactorioVersions.FirstOrDefault(item => item.Version == version);
                 if (factorioVersion != null)
                 {
                     selectedVersion = factorioVersion;
                 }
                 else
                 {
-                    App.Instance.Settings.SelectedVersion = string.Empty;
+                    App.Instance.Settings.SelectedVersion = default(Version);
                     App.Instance.Settings.Save();
                 }
             }
 
-            var mods = new ObservableCollection<Mod>();
-            Mods = CollectionViewSource.GetDefaultView(mods);
-            ((ListCollectionView)Mods).CustomSort = new ModSorter();
+            Mods = new ObservableCollection<Mod>();
+            ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
+            ModsView.CustomSort = new ModSorter();
 
-            var modpacks = new ObservableCollection<Modpack>();
-            Modpacks = CollectionViewSource.GetDefaultView(modpacks);
-            ((ListCollectionView)Modpacks).CustomSort = new ModpackSorter();
+            Modpacks = new ObservableCollection<Modpack>();
+            ModpacksView = (ListCollectionView)CollectionViewSource.GetDefaultView(Modpacks);
+            ModpacksView.CustomSort = new ModpackSorter();
+
+            modGridLength = App.Instance.Settings.ModGridLength;
+            modpackGridLength = App.Instance.Settings.ModpackGridLength;
 
             StartGameCommand = new RelayCommand(StartGame, () => SelectedVersion != null);
             OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
@@ -105,19 +152,19 @@ namespace ModMyFactory
             Mod mod3 = new Mod("ccc", new FileInfo("c"));
             Mod mod4 = new Mod("ddd", new FileInfo("d"));
             Mod mod5 = new Mod("eee", new FileInfo("e"));
-            mods.Add(mod1);
-            mods.Add(mod2);
-            mods.Add(mod3);
-            mods.Add(mod4);
-            mods.Add(mod5);
-            Modpack modpack1 = new Modpack("aaa");
-            Modpack modpack2 = new Modpack("bbb");
-            Modpack modpack3 = new Modpack("ccc");
+            Mods.Add(mod1);
+            Mods.Add(mod2);
+            Mods.Add(mod3);
+            Mods.Add(mod4);
+            Mods.Add(mod5);
+            Modpack modpack1 = new Modpack("aaa", Modpacks, Application.Current.MainWindow);
+            Modpack modpack2 = new Modpack("bbb", Modpacks, Application.Current.MainWindow);
+            Modpack modpack3 = new Modpack("ccc", Modpacks, Application.Current.MainWindow);
             //modpack.Mods.Add(mod1);
             //modpack.Mods.Add(mod2);
-            modpacks.Add(modpack1);
-            modpacks.Add(modpack2);
-            modpacks.Add(modpack3);
+            Modpacks.Add(modpack1);
+            Modpacks.Add(modpack2);
+            Modpacks.Add(modpack3);
         }
 
         private void StartGame()

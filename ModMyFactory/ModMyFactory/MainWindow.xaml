@@ -14,9 +14,13 @@
         FocusManager.FocusedElement="{Binding RelativeSource={x:Static RelativeSource.Self}, Mode=OneTime}">
 
     <Window.Resources>
+        <BitmapImage x:Key="AddDocumentIcon" UriSource="./Images/AddDocument.png"/>
         <BitmapImage x:Key="CloseIcon" UriSource="./Images/Close.png"/>
         <BitmapImage x:Key="ConfigureIcon" UriSource="./Images/Configure.png"/>
         <BitmapImage x:Key="InformationIcon" UriSource="./Images/Information.png"/>
+        <BitmapImage x:Key="NewPackageIcon" UriSource="./Images/NewPackage.png"/>
+        <BitmapImage x:Key="RenameActiveIcon" UriSource="./Images/RenameActive.png"/>
+        <BitmapImage x:Key="RenameInactiveIcon" UriSource="./Images/RenameInactive.png"/>
         <BitmapImage x:Key="RunIcon" UriSource="./Images/Run.png"/>
         <BitmapImage x:Key="SettingsIcon" UriSource="./Images/Settings.png"/>
         <BitmapImage x:Key="WebDestinationIcon" UriSource="./Images/WebDestination.png"/>
@@ -37,6 +41,50 @@
                     </Trigger.Setters>
                 </Trigger>
             </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SmallCloseButton" TargetType="Button">
+            <Style.Setters>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Border>
+                                    <Border.Background>
+                                        <SolidColorBrush x:Name="Background" Color="Transparent"/>
+                                    </Border.Background>
+                                </Border>
+                                <Path Data="M 4 4, 12 12 M 4 12, 12 4">
+                                    <Path.Stroke>
+                                        <SolidColorBrush x:Name="Foreground" Color="DimGray"/>
+                                    </Path.Stroke>
+                                </Path>
+                            </Grid>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="Background" Storyboard.TargetProperty="Color" To="#E81123" Duration="0:0:0.1"/>
+                                                <ColorAnimation Storyboard.TargetName="Foreground" Storyboard.TargetProperty="Color" To="White" Duration="0:0:0.1"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="Background" Storyboard.TargetProperty="Color" To="Transparent" Duration="0:0:0.3"/>
+                                                <ColorAnimation Storyboard.TargetName="Foreground" Storyboard.TargetProperty="Color" To="DimGray" Duration="0:0:0.1"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
         </Style>
     </Window.Resources>
 
@@ -61,6 +109,9 @@
 
         <Menu Grid.Row="0" IsMainMenu="True">
             <MenuItem Header="{DynamicResource FileMenuItem}">
+                <MenuItem Header="Add mods" Icon="{StaticResource AddDocumentIcon}" InputGestureText="Strg+N"/>
+                <MenuItem Header="New modpack" Icon="{StaticResource NewPackageIcon}" InputGestureText="Shift+N"/>
+                <Separator/>
                 <MenuItem Header="Start game" Icon="{StaticResource RunIcon}" InputGestureText="F5" Command="{Binding StartGameCommand}"/>
                 <Separator/>
                 <MenuItem Header="Close" Icon="{StaticResource CloseIcon}" InputGestureText="Alt+F4" Command="Close"/>
@@ -70,7 +121,7 @@
                 <Separator/>
                 <MenuItem Header="Settings" Icon="{StaticResource SettingsIcon}" InputGestureText="F12" Command="{Binding OpenSettingsCommand}"/>
             </MenuItem>
-            <MenuItem Header="{DynamicResource LanguageMenuItem}" ItemsSource="{Binding AvailableCultures}">
+            <MenuItem Header="{DynamicResource LanguageMenuItem}" ItemsSource="{Binding AvailableCulturesView}">
                 <MenuItem.ItemTemplate>
                     <DataTemplate DataType="{x:Type lang:CultureEntry}">
                         <Grid>
@@ -101,7 +152,16 @@
         </Menu>
 
         <ToolBar Grid.Row="1" Margin="0,4,0,0">
-            <ComboBox Margin="2,0" Width="100" ItemsSource="{Binding FactorioVersions}" SelectedItem="{Binding SelectedVersion}">
+            <Button ToolTip="Add mods">
+                <Image Margin="1" Source="{StaticResource AddDocumentIcon}"/>
+            </Button>
+            <Button ToolTip="New modpack">
+                <Image Margin="1" Source="{StaticResource NewPackageIcon}"/>
+            </Button>
+
+            <Separator/>
+            
+            <ComboBox Margin="2,0" Width="120" ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type local:FactorioVersion}">
                         <TextBlock Text="{Binding DisplayName}"/>
@@ -111,8 +171,16 @@
             <Button ToolTip="Version manager" Command="{Binding OpenVersionManagerCommand}">
                 <Image Margin="1" Source="{StaticResource ConfigureIcon}"/>
             </Button>
-            <Button ToolTip="Start game" Command="{Binding StartGameCommand}">
-                <Image Margin="1" Source="{StaticResource RunIcon}"/>
+            <Button Command="{Binding StartGameCommand}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="0" Margin="1" Source="{StaticResource RunIcon}"/>
+                    <TextBlock Grid.Column="1" Margin="2,0" Text="Start game"/>
+                </Grid>
             </Button>
         </ToolBar>
         
@@ -123,13 +191,13 @@
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="{Binding ModGridLength, Mode=TwoWay}" MinWidth="200"/>
                 <ColumnDefinition Width="4"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="{Binding ModpackGridLength, Mode=TwoWay}" MinWidth="200"/>
             </Grid.ColumnDefinitions>
 
             <!-- Mods -->
-            <Grid Grid.Row="0" Grid.Column="0">
+            <Grid Grid.Row="0" Grid.Column="0" SnapsToDevicePixels="True">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="4"/>
@@ -142,49 +210,30 @@
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Mods" Margin="2"/>
                 <Rectangle Grid.Row="1" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
             </Grid>
-            <local:DragDropReadyListBox Grid.Row="1" Grid.Column="0" SelectionMode="Extended" ItemsSource="{Binding Mods}"
+            <local:DragDropReadyListBox Grid.Row="1" Grid.Column="0" SelectionMode="Extended" ItemsSource="{Binding ModsView}"
                       PreviewMouseDown="ModsListBoxPreviewMouseDownHandler" PreviewMouseMove="ModsListBoxPreviewMouseMoveHandler"
                       PreviewMouseUp="ModsListBoxPreviewMouseUpHandler">
                 <local:DragDropReadyListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type local:Mod}">
-                        <Expander>
+                        <Grid Margin="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                            <Expander.Header>
-                                <Grid Margin="2">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <CheckBox Grid.Column="0" Margin="4" Style="{StaticResource ActiveInactiveCheckBoxStyle}" IsChecked="{Binding Active, Mode=TwoWay}"/>
-                                    <TextBlock Grid.Column="1" Margin="2,0" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Name}"/>
-                                </Grid>
-                            </Expander.Header>
-                            
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="1"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                
-                                <TextBlock Grid.Column="0" Grid.Row="1" Margin="20,0,0,0" Text="{Binding File.Name}"/>
-                                <Button Grid.Column="1" Grid.Row="1">
-                                    <TextBlock Margin="2,0" Text="Edit"/>
-                                </Button>
-                            </Grid>
-                        </Expander>
-                        
+                            <CheckBox Grid.Column="0" Margin="4" Style="{StaticResource ActiveInactiveCheckBoxStyle}" IsChecked="{Binding Active, Mode=TwoWay}"/>
+                            <TextBlock Grid.Column="1" Margin="2,0" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Name}"/>
+                            <Button Grid.Column="2" Width="16" Height="16" Margin="4,0" ToolTip="Delete" Style="{StaticResource SmallCloseButton}"/>
+                        </Grid>
                     </DataTemplate>
                 </local:DragDropReadyListBox.ItemTemplate>
             </local:DragDropReadyListBox>
+            
+            <GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Background="{StaticResource BackgroundBrush}" SnapsToDevicePixels="True"/>
 
             <!-- Modpacks -->
-            <Grid Grid.Row="0" Grid.Column="2">
+            <Grid Grid.Row="0" Grid.Column="2" SnapsToDevicePixels="True">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="4"/>
@@ -197,85 +246,68 @@
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Modpacks" Margin="2"/>
                 <Rectangle Grid.Row="1" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
             </Grid>
-            <local:DragDropReadyListBox Grid.Row="1" Grid.Column="2" SelectionMode="Extended" AllowDrop="True" ItemsSource="{Binding Modpacks}"
+            <local:DragDropReadyListBox Grid.Row="1" Grid.Column="2" SelectionMode="Extended" AllowDrop="True" ItemsSource="{Binding ModpacksView}"
                       PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler" PreviewMouseMove="ModpackListBoxPreviewMouseMoveHandler"
                       PreviewMouseUp="ModpackListBoxPreviewMouseUpHandler" Drop="ModpackListBoxDropHandler" DragOver="ModpackListBoxDragOverHandler">
                 <local:DragDropReadyListBox.Resources>
-                    <Style x:Key="SmallCloseButton" TargetType="Button">
-                        <Style.Setters>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Grid>
-                                            <Border>
-                                                <Border.Background>
-                                                    <SolidColorBrush x:Name="Background" Color="Transparent"/>
-                                                </Border.Background>
-                                            </Border>
-                                            <Path Data="M 4 4, 12 12 M 4 12, 12 4">
-                                                <Path.Stroke>
-                                                    <SolidColorBrush x:Name="Foreground" Color="DimGray"/>
-                                                </Path.Stroke>
-                                            </Path>
-                                        </Grid>
-
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Trigger.EnterActions>
-                                                    <BeginStoryboard>
-                                                        <Storyboard>
-                                                            <ColorAnimation Storyboard.TargetName="Background" Storyboard.TargetProperty="Color" To="#E81123" Duration="0:0:0.1"/>
-                                                            <ColorAnimation Storyboard.TargetName="Foreground" Storyboard.TargetProperty="Color" To="White" Duration="0:0:0.1"/>
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </Trigger.EnterActions>
-                                                <Trigger.ExitActions>
-                                                    <BeginStoryboard>
-                                                        <Storyboard>
-                                                            <ColorAnimation Storyboard.TargetName="Background" Storyboard.TargetProperty="Color" To="Transparent" Duration="0:0:0.3"/>
-                                                            <ColorAnimation Storyboard.TargetName="Foreground" Storyboard.TargetProperty="Color" To="DimGray" Duration="0:0:0.1"/>
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </Trigger.ExitActions>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style.Setters>
-                    </Style>
-
                     <DataTemplate x:Key="SubitemTemplate" DataType="{x:Type local:IModReference}">
                         <Grid>
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <CheckBox Grid.Column="0" Margin="4" Style="{StaticResource ActiveInactiveCheckBoxStyle}" IsChecked="{Binding Active, Mode=TwoWay}"/>
-                            <TextBlock Grid.Column="1" Margin="2,0" VerticalAlignment="Center" Text="{Binding DisplayName}" IsHitTestVisible="False"/>
-                            <Button Grid.Column="2" Width="16" Height="16" ToolTip="Remove from modpack" Style="{StaticResource SmallCloseButton}" Command="{Binding RemoveFromParentCommand}"/>
+                            <Image Grid.Column="1" Margin="1" Source="{Binding Image}" Stretch="None" VerticalAlignment="Center"
+                                   RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" SnapsToDevicePixels="True"/>
+                            <TextBlock Grid.Column="2" Margin="2,0" VerticalAlignment="Center" Text="{Binding DisplayName}" IsHitTestVisible="False"/>
+                            <Button Grid.Column="3" Width="16" Height="16" ToolTip="Remove from modpack" Style="{StaticResource SmallCloseButton}" Command="{Binding RemoveFromParentCommand}"/>
                         </Grid>
                     </DataTemplate>
                 </local:DragDropReadyListBox.Resources>
 
                 <local:DragDropReadyListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type local:Modpack}">
+                        <DataTemplate.Resources>
+                            <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
+                        </DataTemplate.Resources>
+                        
                         <Expander>
                             <Expander.Header>
                                 <Grid Margin="2">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-
+                                    
                                     <CheckBox Grid.Column="0" Margin="4" Style="{StaticResource ActiveInactiveCheckBoxStyle}" IsChecked="{Binding Active, Mode=TwoWay}"/>
-                                    <TextBlock Grid.Column="1" Margin="2,0" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Name}"/>
+                                    <ToggleButton x:Name="RenameButton" Grid.Column="1" Margin="2,0" ToolTip="Rename">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                <Image x:Name="Image" Source="{DynamicResource RenameInactiveIcon}"/>
+                                                
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Trigger.Setters>
+                                                            <Setter TargetName="Image" Property="Source" Value="{DynamicResource RenameActiveIcon}"/>
+                                                        </Trigger.Setters>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
+                                    <TextBlock Grid.Column="2" Margin="2,0" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Name}"/>
+                                    <TextBox Grid.Column="2" Margin="2,0" Padding="2" VerticalAlignment="Center" MaxLines="1"
+                                             Visibility="{Binding IsChecked, ElementName=RenameButton, Converter={StaticResource VisibilityConverter}}" Text="{Binding Name}"/>
+                                    <Button Grid.Column="3" Width="16" Height="16" Margin="4,0" ToolTip="Delete" Style="{StaticResource SmallCloseButton}" Command="{Binding DeleteCommand}"/>
                                 </Grid>
                             </Expander.Header>
 
-                            <ItemsControl x:Name="SubitemList" Margin="20,0,4,0" ItemsSource="{Binding ViewSource.View}" ItemTemplate="{StaticResource SubitemTemplate}"/>
+                            <ItemsControl x:Name="SubitemList" Margin="20,0,4,0" ItemsSource="{Binding ModsView}" ItemTemplate="{StaticResource SubitemTemplate}"/>
                         </Expander>
                     </DataTemplate>
                 </local:DragDropReadyListBox.ItemTemplate>

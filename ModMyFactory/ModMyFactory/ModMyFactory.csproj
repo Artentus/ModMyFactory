@@ -39,6 +39,12 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>ModMyFactory.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Images\Factorio_Icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -83,9 +89,11 @@
     <Compile Include="ModpackReference.cs" />
     <Compile Include="ModpackSorter.cs" />
     <Compile Include="ModReference.cs" />
+    <Compile Include="ModReferenceSorter.cs" />
     <Compile Include="ModSorter.cs" />
     <Compile Include="MVVM\IViewModelBase.cs" />
     <Compile Include="MVVM\ViewModelBoundWindow.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="ProgressViewModel.cs" />
     <Compile Include="ProgressWindow.xaml.cs">
       <DependentUpon>ProgressWindow.xaml</DependentUpon>
@@ -229,6 +237,22 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\modmyfactory.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Package.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\NewPackage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\AddDocument.png" />
+    <Resource Include="Images\Document.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\RenameActive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\RenameInactive.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

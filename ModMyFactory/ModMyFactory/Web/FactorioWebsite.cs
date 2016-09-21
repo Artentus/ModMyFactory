@@ -125,14 +125,19 @@ namespace ModMyFactory.Web
             if (!cancellationToken.IsCancellationRequested)
             {
                 progress.Report(2);
-                await Task.Run(() =>
+                FactorioVersion factorioVersion = await Task.Run(() =>
                 {
                     ZipFile.ExtractToDirectory(file.FullName, downloadDirectory.FullName);
-                    var versionDirectory = new DirectoryInfo(Path.Combine(downloadDirectory.FullName, "Factorio_" + version.Version.ToString(3)));
-                    versionDirectory.MoveTo(Path.Combine(downloadDirectory.FullName, version.Version.ToString(3)));
+
+                    string versionString = version.Version.ToString(3);
+                    var versionDirectory = downloadDirectory.EnumerateDirectories($"Factorio_{versionString}*").First();
+                    versionDirectory.MoveTo(Path.Combine(downloadDirectory.FullName, versionString));
                     file.Delete();
+
                     return new FactorioVersion(versionDirectory, version.Version);
                 });
+
+                return factorioVersion;
             }
 
             return null;

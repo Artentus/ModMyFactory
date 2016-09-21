@@ -58,7 +58,6 @@
   -->
 
   <!-- Designs für allgemeine Windows-Steuerelemente und -Dialogfelder (Windows XP und höher) aktivieren -->
-  <!--
   <dependency>
     <dependentAssembly>
       <assemblyIdentity
@@ -71,6 +70,5 @@
         />
     </dependentAssembly>
   </dependency>
-  -->
 
 </assembly>
