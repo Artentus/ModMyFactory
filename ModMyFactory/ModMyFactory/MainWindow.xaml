@@ -89,6 +89,9 @@
     </Window.Resources>
 
     <Window.InputBindings>
+        <KeyBinding Modifiers="Control" Key="N" Command="{Binding AddModsCommand}"/>
+        <KeyBinding Modifiers="Shift" Key="N" Command="{Binding CreateModpackCommand}"/>
+        <KeyBinding Key="F5" Command="{Binding StartGameCommand}"/>
         <KeyBinding Key="F6" Command="{Binding OpenVersionManagerCommand}"/>
         <KeyBinding Key="F12" Command="{Binding OpenSettingsCommand}"/>
         <KeyBinding Modifiers="Control" Key="F" Command="{Binding BrowseFactorioWebsiteCommand}"/>
@@ -109,7 +112,7 @@
 
         <Menu Grid.Row="0" IsMainMenu="True">
             <MenuItem Header="{DynamicResource FileMenuItem}">
-                <MenuItem Header="Add mods" Icon="{StaticResource AddDocumentIcon}" InputGestureText="Strg+N"/>
+                <MenuItem Header="Add mods" Icon="{StaticResource AddDocumentIcon}" InputGestureText="Strg+N" Command="{Binding AddModsCommand}"/>
                 <MenuItem Header="New modpack" Icon="{StaticResource NewPackageIcon}" InputGestureText="Shift+N" Command="{Binding CreateModpackCommand}"/>
                 <Separator/>
                 <MenuItem Header="Start game" Icon="{StaticResource RunIcon}" InputGestureText="F5" Command="{Binding StartGameCommand}"/>
@@ -152,7 +155,7 @@
         </Menu>
 
         <ToolBar Grid.Row="1" Margin="0,4,0,0">
-            <Button ToolTip="Add mods">
+            <Button ToolTip="Add mods" Command="{Binding AddModsCommand}">
                 <Image Margin="1" Source="{StaticResource AddDocumentIcon}"/>
             </Button>
             <Button ToolTip="New modpack" Command="{Binding CreateModpackCommand}">

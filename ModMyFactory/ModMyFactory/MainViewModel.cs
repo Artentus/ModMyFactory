@@ -4,11 +4,15 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using ModMyFactory.Lang;
 using ModMyFactory.MVVM;
+using Ookii.Dialogs.Wpf;
 
 namespace ModMyFactory
 {
@@ -88,6 +92,8 @@ namespace ModMyFactory
 
         }
 
+        public RelayCommand AddModsCommand { get; }
+
         public RelayCommand CreateModpackCommand { get; }
 
         public RelayCommand StartGameCommand { get; }
@@ -140,6 +146,7 @@ namespace ModMyFactory
             modGridLength = App.Instance.Settings.ModGridLength;
             modpackGridLength = App.Instance.Settings.ModpackGridLength;
 
+            AddModsCommand = new RelayCommand(async () => await AddMods());
             CreateModpackCommand = new RelayCommand(CreateNewModpack);
             StartGameCommand = new RelayCommand(StartGame, () => SelectedVersion != null);
             OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
@@ -147,30 +154,91 @@ namespace ModMyFactory
             BrowseFactorioWebsiteCommand = new RelayCommand(() => Process.Start("https://www.factorio.com/"));
             BrowseModWebsiteCommand = new RelayCommand(() => Process.Start("https://mods.factorio.com/"));
             OpenAboutWindowCommand = new RelayCommand(OpenAboutWindow);
-            
+        }
 
+        private bool ArchiveFileValid(FileInfo archiveFile, out Version validVersion)
+        {
+            validVersion = default(Version);
 
-            Mod mod1 = new Mod("aaa", new FileInfo("a"));
-            Mod mod2 = new Mod("bbb", new FileInfo("b"));
-            Mod mod3 = new Mod("ccc", new FileInfo("c"));
-            Mod mod4 = new Mod("ddd", new FileInfo("d"));
-            Mod mod5 = new Mod("eee", new FileInfo("e"));
-            Mods.Add(mod1);
-            Mods.Add(mod2);
-            Mods.Add(mod3);
-            Mods.Add(mod4);
-            Mods.Add(mod5);
-            Modpack modpack1 = new Modpack("aaa", Modpacks, Application.Current.MainWindow);
-            modpack1.ParentViews.Add(ModpacksView);
-            Modpack modpack2 = new Modpack("bbb", Modpacks, Application.Current.MainWindow);
-            modpack2.ParentViews.Add(ModpacksView);
-            Modpack modpack3 = new Modpack("ccc", Modpacks, Application.Current.MainWindow);
-            modpack3.ParentViews.Add(ModpacksView);
-            //modpack.Mods.Add(mod1);
-            //modpack.Mods.Add(mod2);
-            Modpacks.Add(modpack1);
-            Modpacks.Add(modpack2);
-            Modpacks.Add(modpack3);
+            using (ZipArchive archive = ZipFile.OpenRead(archiveFile.FullName))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    if (entry.FullName.EndsWith("info.json"))
+                    {
+                        using (Stream stream = entry.Open())
+                        {
+                            using (var reader = new StreamReader(stream))
+                            {
+                                string content = reader.ReadToEnd();
+                                MatchCollection matches = Regex.Matches(content, "\"factorio_version\" *: *\"(?<version>[0-9]+\\.[0-9]+(\\.[0-9]+)?)\"",
+                                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                                if (matches.Count == 0) return false;
+
+                                string versionString = matches[0].Groups["version"].Value;
+                                validVersion = Version.Parse(versionString);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private async Task AddMods()
+        {
+            var dialog = new VistaOpenFileDialog();
+            dialog.Multiselect = true;
+            dialog.Filter = "ZIP-Archives (*.zip)|*.zip";
+            bool? result = dialog.ShowDialog(Window);
+            if (result.HasValue && result.Value)
+            {
+                var progressWindow = new ProgressWindow() { Owner = Window };
+                progressWindow.ViewModel.ActionName = "Processing mods";
+
+                IProgress<Tuple<double, string>> progress1 = new Progress<Tuple<double, string>>(info =>
+                {
+                    progressWindow.ViewModel.Progress = info.Item1;
+                    progressWindow.ViewModel.ProgressDescription = info.Item2;
+                });
+                IProgress<Tuple<FileInfo, Version>> progress2 = new Progress<Tuple<FileInfo, Version>>(info =>
+                {
+                    var mod = new Mod(info.Item1, info.Item2);
+                    Mods.Add(mod);
+                });
+
+                Task processModsTask = Task.Run(() =>
+                {
+                    int fileCount = dialog.FileNames.Length;
+                    int counter = 0;
+                    foreach (string fileName in dialog.FileNames)
+                    {
+                        var archiveFile = new FileInfo(fileName);
+                        Version version;
+
+                        progress1.Report(new Tuple<double, string>((double)counter / fileCount, archiveFile.Name));
+
+                        if (ArchiveFileValid(archiveFile, out version))
+                        {
+                            archiveFile.MoveTo(Path.Combine(App.Instance.Settings.GetModDirectory().FullName, version.ToString(2), archiveFile.Name));
+                            progress2.Report(new Tuple<FileInfo, Version>(archiveFile, version));
+                        }
+
+                        counter++;
+                    }
+
+                    progress1.Report(new Tuple<double, string>(1, string.Empty));
+                });
+
+                Task closeWindowTask =
+                    processModsTask.ContinueWith(t => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
+                progressWindow.ShowDialog();
+
+                await processModsTask;
+                await closeWindowTask;
+            }
         }
 
         private void CreateNewModpack()
