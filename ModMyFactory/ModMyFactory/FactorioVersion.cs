@@ -46,33 +46,60 @@ namespace ModMyFactory
             string osPlatform = Environment.Is64BitOperatingSystem ? "x64" : "x86";
             ExecutablePath = Path.Combine(directory.FullName, "bin", osPlatform, "factorio.exe");
 
-            DirectoryInfo localSaveDirectory = new DirectoryInfo(Path.Combine(directory.FullName, "saves"));
+            CreateSaveDirectoryLink();
+            CreateScenarioDirectoryLink();
+            CreateModDirectoryLink(false);
+        }
+
+        private void CreateSaveDirectoryLink()
+        {
+            DirectoryInfo localSaveDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "saves"));
             if (!localSaveDirectory.Exists)
             {
-                string globalSavePath = Path.Combine(App.Instance.AppDataPath, "saves");
+                var globalSaveDirectory = new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, "saves"));
+                if (!globalSaveDirectory.Exists) globalSaveDirectory.Create();
+
                 var info = new ProcessStartInfo("cmd")
                 {
-                    Arguments = $"/K mklink /J \"{localSaveDirectory.FullName}\" \"{globalSavePath}\"",
+                    Arguments = $"/K mklink /J \"{localSaveDirectory.FullName}\" \"{globalSaveDirectory.FullName}\"",
                     CreateNoWindow = true,
                     UseShellExecute = false
                 };
                 Process.Start(info);
             }
+        }
 
-            CreateModDirectoryLink(false);
+        private void CreateScenarioDirectoryLink()
+        {
+            DirectoryInfo localScenarioDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "scenarios"));
+            if (!localScenarioDirectory.Exists)
+            {
+                var globalScenarioDirectory = new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, "scenarios"));
+                if (!globalScenarioDirectory.Exists) globalScenarioDirectory.Create();
+
+                var info = new ProcessStartInfo("cmd")
+                {
+                    Arguments = $"/K mklink /J \"{localScenarioDirectory.FullName}\" \"{globalScenarioDirectory.FullName}\"",
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                };
+                Process.Start(info);
+            }
         }
 
         public void CreateModDirectoryLink(bool forced)
         {
             DirectoryInfo localModDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "mods"));
-            if (forced && localModDirectory.Exists) localModDirectory.Delete();
+            if (forced && localModDirectory.Exists) localModDirectory.Delete(false);
 
             if (!localModDirectory.Exists)
             {
-                string globalSavePath = App.Instance.Settings.GetModDirectory().FullName;
+                var globalSaveDirectory = new DirectoryInfo(Path.Combine(App.Instance.Settings.GetModDirectory().FullName, Version.ToString(2)));
+                if (!globalSaveDirectory.Exists) globalSaveDirectory.Create();
+
                 var info = new ProcessStartInfo("cmd")
                 {
-                    Arguments = $"/K mklink /J \"{localModDirectory.FullName}\" \"{globalSavePath}\"",
+                    Arguments = $"/K mklink /J \"{localModDirectory.FullName}\" \"{globalSaveDirectory.FullName}\"",
                     CreateNoWindow = true,
                     UseShellExecute = false
                 };

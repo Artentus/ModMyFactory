@@ -248,8 +248,6 @@ namespace ModMyFactory
 
                 App.Instance.Settings.Save();
 
-                DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory();
-                if (!modDirectory.Exists) modDirectory.Create();
                 foreach (var version in FactorioVersions)
                     version.CreateModDirectoryLink(true);
             }
