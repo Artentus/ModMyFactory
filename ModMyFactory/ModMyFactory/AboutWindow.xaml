@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ModMyFactory"
         xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
         mc:Ignorable="d"
-        Title="About ModMyFactory" SizeToContent="WidthAndHeight"
+        Title="{DynamicResource AboutWindowTitle}" SizeToContent="WidthAndHeight"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon=".\Images\Factorio_Icon.ico">
@@ -37,7 +37,7 @@
 
         <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="20,10,20,5" Source="{StaticResource Logo}"
                Stretch="None" SnapsToDevicePixels="True" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-        <TextBlock Grid.Row="1" Grid.Column="0" Margin="20,0" Text="by Mathis Rech"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="20,0" Text="{DynamicResource AuthorLabel}"/>
         <TextBlock Grid.Row="1" Grid.Column="2" Margin="20,0" Text="{Binding VersionString}"/>
 
         <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3">
@@ -53,27 +53,27 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" Margin="20,2,10,2" Text="Flag icons:"/>
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource FlagsLabel}"/>
             <TextBlock Grid.Row="0" Grid.Column="1">
                 <Hyperlink Command="{Binding Url1Command}">Flag Icons by FamFamFam</Hyperlink>
             </TextBlock>
             
-            <TextBlock Grid.Row="1" Grid.Column="0" Margin="20,2,10,2" Text="Factorio font:"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource FontLabel}"/>
             <TextBlock Grid.Row="1" Grid.Column="1">
                 <Hyperlink Command="{Binding Url2Command}">Sylar Stencil</Hyperlink>
             </TextBlock>
 
-            <TextBlock Grid.Row="2" Grid.Column="0" Margin="20,2,10,2" Text="Dialogs:"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource DialogsLabel}"/>
             <TextBlock Grid.Row="2" Grid.Column="1">
                 <Hyperlink Command="{Binding Url3Command}">Ookii.Dialogs</Hyperlink>
             </TextBlock>
 
-            <TextBlock Grid.Row="3" Grid.Column="0" Margin="20,2,10,2" Text="JSON Framework:"/>
+            <TextBlock Grid.Row="3" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource JsonLabel}"/>
             <TextBlock Grid.Row="3" Grid.Column="1">
                 <Hyperlink Command="{Binding Url4Command}">Json.NET</Hyperlink>
             </TextBlock>
         </Grid>
         
-        <Button Grid.Row="5" Grid.Column="2" Margin="2" HorizontalAlignment="Right" Content="Close" IsDefault="True" IsCancel="True"/>
+        <Button Grid.Row="5" Grid.Column="2" Margin="2" HorizontalAlignment="Right" Content="{DynamicResource CloseButton}" IsDefault="True" IsCancel="True"/>
     </Grid>
 </mvvm:ViewModelBoundWindow>

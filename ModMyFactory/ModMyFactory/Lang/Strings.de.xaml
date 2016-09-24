@@ -1,9 +1,149 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:system="clr-namespace:System;assembly=mscorlib">
-    
-    <system:String x:Key="FileMenuItem">_Datei</system:String>
-    <system:String x:Key="EditMenuItem">_Bearbeiten</system:String>
-    <system:String x:Key="LanguageMenuItem">_Sprache</system:String>
-    <system:String x:Key="InfoMenuItem">_Info</system:String>
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <!--
+    ____________________ Misc ____________________
+    -->
+
+    <!-- buttons -->
+    <sys:String x:Key="OkButton">OK</sys:String>
+    <sys:String x:Key="CloseButton">Schließen</sys:String>
+    <sys:String x:Key="CancelButton">Abbrechen</sys:String>
+    <sys:String x:Key="DownloadButton">Herunterladen</sys:String>
+
+
+    <!--
+    ____________________ MainWindow ____________________
+    -->
+
+    <sys:String x:Key="MainWindowTitle">ModMyFactory</sys:String>
+
+    <!-- 'File' menu -->
+    <sys:String x:Key="FileMenuItem">_Datei</sys:String>
+    <sys:String x:Key="AddModsMenuItem">Mods hinzufügen</sys:String>
+    <sys:String x:Key="NewModpackMenuItem">Neues Modpack</sys:String>
+    <sys:String x:Key="ExportLinkMenuItem">Link exportieren</sys:String>
+    <sys:String x:Key="StartGameMenuItem">Spiel starten</sys:String>
+    <sys:String x:Key="CloseMenuItem">Schließen</sys:String>
+
+    <!-- 'Edit' menu -->
+    <sys:String x:Key="EditMenuItem">_Bearbeiten</sys:String>
+    <sys:String x:Key="VersionManagerMenuItem">Versionsmanager</sys:String>
+    <sys:String x:Key="SettingsMenuItem">Einstellungen</sys:String>
+
+    <!-- 'Language' menu -->
+    <sys:String x:Key="LanguageMenuItem">_Sprache</sys:String>
+
+    <!-- 'Info' menu -->
+    <sys:String x:Key="InfoMenuItem">_Info</sys:String>
+    <sys:String x:Key="FactorioComMenuItem">Factorio.com</sys:String>
+    <sys:String x:Key="FactorioModsComMenuItem">Factoriomods.com</sys:String>
+    <sys:String x:Key="AboutMenuItem">Über</sys:String>
+
+    <!-- hotkeys -->
+    <sys:String x:Key="AddModsHotkey">Strg+N</sys:String>
+    <sys:String x:Key="NewModpackHotkey">Umschalt+N</sys:String>
+    <sys:String x:Key="ExportLinkHotkey">Strg+L</sys:String>
+    <sys:String x:Key="StartGameHotkey">F5</sys:String>
+    <sys:String x:Key="CloseHotkey">Alt+F4</sys:String>
+    <sys:String x:Key="VersionManagerHotkey">F6</sys:String>
+    <sys:String x:Key="SettingsHotkey">F12</sys:String>
+    <sys:String x:Key="FactorioComHotkey">Strg+F</sys:String>
+    <sys:String x:Key="FactorioModsComHotkey">Strg+M</sys:String>
+    <sys:String x:Key="AboutHotkey">Umschalt+F1</sys:String>
+
+    <!-- headers -->
+    <sys:String x:Key="ModsHeader">Mods</sys:String>
+    <sys:String x:Key="ModpacksHeader">Modpacks</sys:String>
+
+    <!-- tooltips -->
+    <sys:String x:Key="RenameToolTip">Umbenennen</sys:String>
+    <sys:String x:Key="DeleteToolTip">Löschen</sys:String>
+    <sys:String x:Key="RemoveToolTip">Aus Modpack entfernen</sys:String>
+    <sys:String x:Key="SetActiveToolTip">Auf aktiv setzten</sys:String>
+    <sys:String x:Key="SetInactiveToolTip">Auf inaktiv setzen</sys:String>
+
+
+    <!--
+    ____________________ VersionManagementWindow ____________________
+    -->
+
+    <sys:String x:Key="VersionManagementWindowTitle">Versionsmanager</sys:String>
+
+    <!-- buttons -->
+    <sys:String x:Key="AddZipButton">Aus ZIP hinzufügen</sys:String>
+    <sys:String x:Key="AddFolderButton">Aus Ordner hinzufügen</sys:String>
+    <sys:String x:Key="RemoveButton">Entfernen</sys:String>
+
+
+    <!--
+    ____________________ VersionListWindow ____________________
+    -->
+
+    <sys:String x:Key="VersionListWindowTitle">Version auswählen</sys:String>
+
+
+    <!--
+    ____________________ SettingsWindow ____________________
+    -->
+
+    <sys:String x:Key="SettingsWindowTitle">Einstellungen</sys:String>
+
+    <!-- group headers -->
+    <sys:String x:Key="FactorioDirectoryGroupHeader">Factorio Speicherort</sys:String>
+    <sys:String x:Key="ModDirectoryGroupHeader">Mod Speicherort</sys:String>
+
+
+    <!-- group items -->
+    <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
+    <sys:String x:Key="AppDirectoryGroupItem">Anwendungsverzeichnis</sys:String>
+    <sys:String x:Key="SelectGroupItem">Auswählen:</sys:String>
+
+    <!-- buttons -->
+    <sys:String x:Key="BrowseButton">Durchsuchen</sys:String>
+
+
+    <!--
+    ____________________ LoginWindow ____________________
+    -->
+
+    <sys:String x:Key="LoginWindowTitle">Einloggen</sys:String>
+
+    <!-- headers -->
+    <sys:String x:Key="UsernameHeader">Benutzername oder Email</sys:String>
+    <sys:String x:Key="PasswordHeader">Passwort</sys:String>
+
+    <!-- messages -->
+    <sys:String x:Key="LoginFailedMessage">Einloggen fehlgeschlagen!</sys:String>
+
+
+    <!--
+    ____________________ LinkPropertiesWindow ____________________
+    -->
+
+    <sys:String x:Key="LinkPropertiesWindowTitle">Linkeigenschaften auswählen</sys:String>
+
+    <!-- headers -->
+    <sys:String x:Key="SelectFactorioHeader">Factorioversion auswählen:</sys:String>
+    <sys:String x:Key="SelectModpackHeader">Modpack auswählen:</sys:String>
+
+
+    <!-- buttons -->
+    <sys:String x:Key="CreateButton">Erstellen</sys:String>
+
+
+    <!--
+    ____________________ AboutWindow ____________________
+    -->
+
+    <sys:String x:Key="AboutWindowTitle">Über ModMyFactory</sys:String>
+
+
+    <!-- labels -->
+    <sys:String x:Key="AuthorLabel">von Mathis Rech</sys:String>
+    <sys:String x:Key="FlagsLabel">Flaggenbilder:</sys:String>
+    <sys:String x:Key="FontLabel">Factorio-Schriftart:</sys:String>
+    <sys:String x:Key="DialogsLabel">Dialoge:</sys:String>
+    <sys:String x:Key="JsonLabel">JSON Framework:</sys:String>
+
 </ResourceDictionary>

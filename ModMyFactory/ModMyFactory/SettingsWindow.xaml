@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ModMyFactory"
         xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
         mc:Ignorable="d"
-        Title="Settings" Width="500" SizeToContent="Height"
+        Title="{DynamicResource SettingsWindowTitle}" Width="500" SizeToContent="Height"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon=".\Images\Factorio_Icon.ico"
@@ -19,7 +19,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <GroupBox Grid.Row="0" Header="Factorio location">
+        <GroupBox Grid.Row="0" Header="{DynamicResource FactorioDirectoryGroupHeader}">
             <Grid Margin="4">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -33,15 +33,19 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 
-                <RadioButton Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding FactorioDirectoryIsAppData}" Content="AppData"/>
-                <RadioButton Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding FactorioDirectoryIsAppDirectory}" Content="Application directory"/>
-                <RadioButton Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding FactorioDirectoryIsCustom}" Content="Select:"/>
+                <RadioButton Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="2"
+                             IsChecked="{Binding FactorioDirectoryIsAppData}" Content="{DynamicResource AppDataGroupItem}"/>
+                <RadioButton Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="2"
+                             IsChecked="{Binding FactorioDirectoryIsAppDirectory}" Content="{DynamicResource AppDirectoryGroupItem}"/>
+                <RadioButton Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2"
+                             IsChecked="{Binding FactorioDirectoryIsCustom}" Content="{DynamicResource SelectGroupItem}"/>
                 <TextBox Grid.Row="3" Grid.Column="0" Margin="2" Padding="2" IsEnabled="{Binding FactorioDirectoryIsCustom}" MaxLines="1" Text="{Binding FactorioDirectory}"/>
-                <Button Grid.Row="3" Grid.Column="1" Margin="2" IsEnabled="{Binding FactorioDirectoryIsCustom}" Command="{Binding SelectFactorioDirectoryCommand}"  Content="Browse"/>
+                <Button Grid.Row="3" Grid.Column="1" Margin="2" IsEnabled="{Binding FactorioDirectoryIsCustom}"
+                        Command="{Binding SelectFactorioDirectoryCommand}" Content="{DynamicResource BrowseButton}"/>
             </Grid>
         </GroupBox>
 
-        <GroupBox Grid.Row="1" Margin="0,4" Header="Mod location">
+        <GroupBox Grid.Row="1" Margin="0,4" Header="{DynamicResource ModDirectoryGroupHeader}">
             <Grid Margin="4">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -55,17 +59,21 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <RadioButton Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding ModDirectoryIsAppData}" Content="AppData"/>
-                <RadioButton Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding ModDirectoryIsAppDirectory}" Content="Application directory"/>
-                <RadioButton Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding ModDirectoryIsCustom}" Content="Select:"/>
+                <RadioButton Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="2"
+                             IsChecked="{Binding ModDirectoryIsAppData}" Content="{DynamicResource AppDataGroupItem}"/>
+                <RadioButton Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="2"
+                             IsChecked="{Binding ModDirectoryIsAppDirectory}" Content="{DynamicResource AppDirectoryGroupItem}"/>
+                <RadioButton Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2"
+                             IsChecked="{Binding ModDirectoryIsCustom}" Content="{DynamicResource SelectGroupItem}"/>
                 <TextBox Grid.Row="3" Grid.Column="0" Margin="2" Padding="2" IsEnabled="{Binding ModDirectoryIsCustom}" MaxLines="1" Text="{Binding ModDirectory}"/>
-                <Button Grid.Row="3" Grid.Column="1" Margin="2" IsEnabled="{Binding ModDirectoryIsCustom}" Command="{Binding SelectModDirectoryCommand}" Content="Browse"/>
+                <Button Grid.Row="3" Grid.Column="1" Margin="2" IsEnabled="{Binding ModDirectoryIsCustom}"
+                        Command="{Binding SelectModDirectoryCommand}" Content="{DynamicResource BrowseButton}"/>
             </Grid>
         </GroupBox>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft">
-            <Button Margin="2" IsDefault="True" Click="OKButtonClickHandler" IsEnabled="{Binding SettingsValid}" Content="OK"/>
-            <Button Margin="2" IsCancel="True" Content="Cancel"/>
+            <Button Margin="2" IsDefault="True" Click="OKButtonClickHandler" IsEnabled="{Binding SettingsValid}" Content="{DynamicResource OkButton}"/>
+            <Button Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
         </StackPanel>
     </Grid>
 </mvvm:ViewModelBoundWindow>

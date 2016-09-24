@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ModMyFactory"
         mc:Ignorable="d"
-        Title="Login" Width="350" SizeToContent="Height"
+        Title="{DynamicResource LoginWindowTitle}" Width="350" SizeToContent="Height"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon=".\Images\Factorio_Icon.ico"
@@ -28,13 +28,13 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock x:Name="FailedText" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Foreground="Red" FontSize="14" FontWeight="Bold" Text="Login failed!"/>
-        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Text="Username or Email"/>
+        <TextBlock x:Name="FailedText" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Foreground="Red" FontSize="14" FontWeight="Bold" Text="{DynamicResource LoginFailedMessage}"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Text="{DynamicResource UsernameHeader}"/>
         <TextBox x:Name="UsernameBox" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"  Margin="2" Padding="2" MaxLines="1"/>
-        <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Text="Password"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Text="{DynamicResource PasswordHeader}"/>
         <PasswordBox x:Name="PasswordBox" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="2" Padding="2"/>
 
-        <Button Grid.Row="6" Grid.Column="1" Margin="2" IsCancel="True" Content="Cancel"/>
-        <Button Grid.Row="6" Grid.Column="2" Margin="2" IsDefault="True" Content="OK" Click="OKButtonClickHandler"/>
+        <Button Grid.Row="6" Grid.Column="1" Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
+        <Button Grid.Row="6" Grid.Column="2" Margin="2" IsDefault="True" Content="{DynamicResource OkButton}" Click="OKButtonClickHandler"/>
     </Grid>
 </Window>
