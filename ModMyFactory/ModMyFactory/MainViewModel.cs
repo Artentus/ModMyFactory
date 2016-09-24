@@ -58,6 +58,8 @@ namespace ModMyFactory
 
         public ObservableCollection<Modpack> Modpacks { get; }
 
+        public ModpackTemplateList ModpackTemplateList { get; }
+
         public GridLength ModGridLength
         {
             get { return modGridLength; }
@@ -95,6 +97,8 @@ namespace ModMyFactory
         public RelayCommand AddModsCommand { get; }
 
         public RelayCommand CreateModpackCommand { get; }
+
+        public RelayCommand ExportLinkCommand { get; }
 
         public RelayCommand StartGameCommand { get; }
 
@@ -138,16 +142,28 @@ namespace ModMyFactory
             Mods = new ObservableCollection<Mod>();
             ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
             ModsView.CustomSort = new ModSorter();
+            ModsView.GroupDescriptions.Add(new PropertyGroupDescription("FactorioVersion"));
 
             Modpacks = new ObservableCollection<Modpack>();
             ModpacksView = (ListCollectionView)CollectionViewSource.GetDefaultView(Modpacks);
             ModpacksView.CustomSort = new ModpackSorter();
+
+            Mod.LoadTemplates();
+            Mod.LoadMods(Mods, Modpacks, Application.Current.MainWindow);
+            ModpackTemplateList = ModpackTemplateList.Load(Path.Combine(App.Instance.AppDataPath, "modpacks.json"));
+            ModpackTemplateList.PopulateModpackList(Mods, Modpacks, Application.Current.MainWindow);
+            Modpacks.CollectionChanged += (sender, e) =>
+            {
+                ModpackTemplateList.Update(Modpacks);
+                ModpackTemplateList.Save();
+            };
 
             modGridLength = App.Instance.Settings.ModGridLength;
             modpackGridLength = App.Instance.Settings.ModpackGridLength;
 
             AddModsCommand = new RelayCommand(async () => await AddMods());
             CreateModpackCommand = new RelayCommand(CreateNewModpack);
+            ExportLinkCommand = new RelayCommand(CreateLink);
             StartGameCommand = new RelayCommand(StartGame, () => SelectedVersion != null);
             OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
             OpenSettingsCommand = new RelayCommand(OpenSettings);
@@ -177,6 +193,7 @@ namespace ModMyFactory
 
                                 string versionString = matches[0].Groups["version"].Value;
                                 validVersion = Version.Parse(versionString);
+                                validVersion = new Version(validVersion.Major, validVersion.Minor);
                                 return true;
                             }
                         }
@@ -205,7 +222,7 @@ namespace ModMyFactory
                 });
                 IProgress<Tuple<FileInfo, Version>> progress2 = new Progress<Tuple<FileInfo, Version>>(info =>
                 {
-                    var mod = new Mod(info.Item1, info.Item2);
+                    var mod = new Mod(info.Item1, info.Item2, Mods, Modpacks, Window);
                     Mods.Add(mod);
                 });
 
@@ -222,7 +239,10 @@ namespace ModMyFactory
 
                         if (ArchiveFileValid(archiveFile, out version))
                         {
-                            archiveFile.MoveTo(Path.Combine(App.Instance.Settings.GetModDirectory().FullName, version.ToString(2), archiveFile.Name));
+                            var versionDirectory = App.Instance.Settings.GetModDirectory(version);
+                            if (!versionDirectory.Exists) versionDirectory.Create();
+
+                            archiveFile.MoveTo(Path.Combine(versionDirectory.FullName, archiveFile.Name));
                             progress2.Report(new Tuple<FileInfo, Version>(archiveFile, version));
                         }
 
@@ -261,6 +281,11 @@ namespace ModMyFactory
             Modpack modpack = new Modpack(newName, Modpacks, Window);
             modpack.ParentViews.Add(ModpacksView);
             Modpacks.Add(modpack);
+        }
+
+        private void CreateLink()
+        {
+
         }
 
         private void StartGame()

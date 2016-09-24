@@ -24,7 +24,7 @@ namespace ModMyFactory.Lang
         /// <summary>
         /// The english name of the language.
         /// </summary>
-        public string EnglishName => "(" + culture.EnglishName + ")";
+        public string EnglishName => culture.EnglishName;
 
         public string LanguageCode => culture.TwoLetterISOLanguageName;
 
@@ -51,7 +51,7 @@ namespace ModMyFactory.Lang
         public CultureEntry(CultureInfo culture)
         {
             this.culture = culture;
-            Flag = new BitmapImage(new Uri($"Images/{culture.TwoLetterISOLanguageName}.png", UriKind.Relative));
+            Flag = new BitmapImage(new Uri($"Images/Lang/{culture.TwoLetterISOLanguageName}.png", UriKind.Relative));
             SelectCommand = new RelayCommand(Select);
         }
 

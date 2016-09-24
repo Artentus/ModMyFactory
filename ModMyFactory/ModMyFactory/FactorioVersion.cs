@@ -94,12 +94,12 @@ namespace ModMyFactory
 
             if (!localModDirectory.Exists)
             {
-                var globalSaveDirectory = new DirectoryInfo(Path.Combine(App.Instance.Settings.GetModDirectory().FullName, Version.ToString(2)));
-                if (!globalSaveDirectory.Exists) globalSaveDirectory.Create();
+                var globalModDirectory = App.Instance.Settings.GetModDirectory(Version);
+                if (!globalModDirectory.Exists) globalModDirectory.Create();
 
                 var info = new ProcessStartInfo("cmd")
                 {
-                    Arguments = $"/K mklink /J \"{localModDirectory.FullName}\" \"{globalSaveDirectory.FullName}\"",
+                    Arguments = $"/K mklink /J \"{localModDirectory.FullName}\" \"{globalModDirectory.FullName}\"",
                     CreateNoWindow = true,
                     UseShellExecute = false
                 };
@@ -111,6 +111,9 @@ namespace ModMyFactory
         {
             DirectoryInfo localSaveDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "saves"));
             if (localSaveDirectory.Exists) localSaveDirectory.Delete(false);
+
+            DirectoryInfo localScenarioDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "scenarios"));
+            if (localScenarioDirectory.Exists) localScenarioDirectory.Delete(false);
 
             DirectoryInfo localModDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "mods"));
             if (localModDirectory.Exists) localModDirectory.Delete(false);

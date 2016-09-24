@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -74,7 +75,7 @@ namespace ModMyFactory
 
         private static ListBoxItem GetItem(ListBox listBox, Func<ListBoxItem, Point> positionSelector)
         {
-            int itemCount = listBox.ItemContainerGenerator.Items.Count;
+            int itemCount = ((ICollection)((ICollectionView)listBox.ItemsSource).SourceCollection).Count;
             for (int i = 0; i < itemCount; i++)
             {
                 ListBoxItem item = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromIndex(i);
@@ -108,6 +109,9 @@ namespace ModMyFactory
                             parent.Mods.Add(reference);
                         }
                     }
+
+                    ViewModel.ModpackTemplateList.Update(ViewModel.Modpacks);
+                    ViewModel.ModpackTemplateList.Save();
                 }
                 else if (e.Data.GetDataPresent(typeof(List<Modpack>)))
                 {
@@ -122,6 +126,9 @@ namespace ModMyFactory
                             parent.Mods.Add(reference);
                         }
                     }
+
+                    ViewModel.ModpackTemplateList.Update(ViewModel.Modpacks);
+                    ViewModel.ModpackTemplateList.Save();
                 }
             }
         }

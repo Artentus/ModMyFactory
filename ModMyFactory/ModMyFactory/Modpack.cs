@@ -36,6 +36,9 @@ namespace ModMyFactory
 
                     foreach (var view in ParentViews)
                         view.CommitEdit();
+
+                    MainViewModel.Instance.ModpackTemplateList.Update(MainViewModel.Instance.Modpacks);
+                    MainViewModel.Instance.ModpackTemplateList.Save();
                 }
             }
         }
@@ -63,6 +66,9 @@ namespace ModMyFactory
             }
         }
 
+        /// <summary>
+        /// The view that presents all contents of this modpack.
+        /// </summary>
         public ListCollectionView ModsView { get; }
 
         /// <summary>
@@ -75,6 +81,9 @@ namespace ModMyFactory
         /// </summary>
         public List<IEditableCollectionView> ParentViews { get; } 
 
+        /// <summary>
+        /// A command that deletes this modpack from the list.
+        /// </summary>
         public RelayCommand DeleteCommand { get; }
 
         /// <summary>

@@ -81,6 +81,7 @@
     <Compile Include="AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BooleanToStringJsonConverter.cs" />
     <Compile Include="CultureEntrySorter.cs" />
     <Compile Include="DirectoryOption.cs" />
     <Compile Include="FactorioVersion.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="IModReference.cs" />
     <Compile Include="ModpackReference.cs" />
     <Compile Include="ModpackSorter.cs" />
+    <Compile Include="ModpackTemplateList.cs" />
     <Compile Include="ModReference.cs" />
     <Compile Include="ModReferenceSorter.cs" />
     <Compile Include="ModSorter.cs" />
@@ -114,7 +116,6 @@
     </Compile>
     <Compile Include="Mod.cs" />
     <Compile Include="Modpack.cs" />
-    <Compile Include="ModTemplate.cs" />
     <Compile Include="ModTemplateList.cs" />
     <Compile Include="MultiplyConverter.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
@@ -215,10 +216,10 @@
     <Resource Include="Images\Close.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\de.png" />
+    <Resource Include="Images\Lang\de.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\en.png" />
+    <Resource Include="Images\Lang\en.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\WebDestination.png" />
@@ -253,6 +254,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\RenameInactive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ExportLink.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

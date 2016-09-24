@@ -94,18 +94,29 @@ namespace ModMyFactory
             throw new InvalidOperationException();
         }
 
-        public DirectoryInfo GetModDirectory()
+        public DirectoryInfo GetModDirectory(Version version = null)
         {
             const string directoryName = "mods";
 
             switch (ModDirectoryOption)
             {
                 case DirectoryOption.AppData:
-                    return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
+                    if (version != null)
+                        return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName, version.ToString(2)));
+                    else
+                        return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
+
                 case DirectoryOption.ApplicationDirectory:
-                    return new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, directoryName));
+                    if (version != null)
+                        return new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, directoryName, version.ToString(2)));
+                    else
+                        return new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, directoryName));
+
                 case DirectoryOption.Custom:
-                    return new DirectoryInfo(ModDirectory);
+                    if (version != null)
+                        return new DirectoryInfo(Path.Combine(ModDirectory, version.ToString(2)));
+                    else
+                        return new DirectoryInfo(ModDirectory);
             }
 
             throw new InvalidOperationException();

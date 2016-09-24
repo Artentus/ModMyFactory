@@ -34,7 +34,13 @@ namespace ModMyFactory
             Image = new BitmapImage(new Uri("Images/Document.png", UriKind.Relative));
 
             mod.PropertyChanged += PropertyChangedHandler;
-            RemoveFromParentCommand = new RelayCommand(() => parent.Mods.Remove(this));
+            RemoveFromParentCommand = new RelayCommand(() =>
+            {
+                parent.Mods.Remove(this);
+
+                MainViewModel.Instance.ModpackTemplateList.Update(MainViewModel.Instance.Modpacks);
+                MainViewModel.Instance.ModpackTemplateList.Save();
+            });
         }
 
         ~ModReference()

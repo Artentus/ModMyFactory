@@ -23,87 +23,6 @@
             <SolidColorBrush x:Key="HoverBrush" Color="{StaticResource HoverColor}"/>
             <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource SelectionColor}"/>
 
-            <!--<Style TargetType="{x:Type TabControl}">
-            <Setter Property="SnapsToDevicePixels" Value="true"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TabControl">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-
-                            <TabPanel Grid.Row="0" IsItemsHost="True" Margin="10,0"/>
-                            <ContentPresenter Grid.Row="1" ContentSource="SelectedContent"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style TargetType="TabItem">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TabItem">
-
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="4"/>
-                            </Grid.RowDefinitions>
-
-                            <Rectangle x:Name="Rectangle1" Grid.Row="0" Fill="White"/>
-                            <Rectangle x:Name="Rectangle2" Grid.Row="1" Fill="LightSkyBlue" Opacity="0"/>
-
-                            <ContentPresenter x:Name="ContentSite" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" ContentSource="Header" Margin="4"/>
-                        </Grid>
-
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation Storyboard.TargetName="Rectangle1" Storyboard.TargetProperty="Fill.Color" From="White" To="#FFE0F2FD" Duration="0:0:0.1"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimationUsingKeyFrames Storyboard.TargetName="Rectangle1" Storyboard.TargetProperty="Fill.Color">
-                                                <DiscreteColorKeyFrame KeyTime="0:0:0" Value="White"/>
-                                            </ColorAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-
-                            <Trigger Property="IsSelected" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="Rectangle2" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.2"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Rectangle2" Storyboard.TargetProperty="Opacity">
-                                                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
-                                            </DoubleAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>-->
-
             <Style TargetType="Menu">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -266,12 +185,15 @@
             <Style x:Key="{x:Type ListBox}" TargetType="{x:Type ListBox}">
                 <Setter Property="SnapsToDevicePixels" Value="true"/>
                 <Setter Property="OverridesDefaultStyle" Value="true"/>
+                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+                <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListBox}">
                             <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-                                <ScrollViewer Focusable="false" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" CanContentScroll="False">
-                                    <VirtualizingStackPanel Margin="2,1,2,2" IsItemsHost="True"/>
+                                <ScrollViewer Focusable="false">
+                                    <ItemsPresenter Margin="2,1,2,2"/>
                                 </ScrollViewer>
                             </Border>
                         </ControlTemplate>
@@ -831,7 +753,7 @@
                                         </Popup>
                                     </ToggleButton>
                                     <Thumb x:Name="ToolBarThumb" Style="{StaticResource ToolBarThumbStyle}" Width="10"/>
-                                    <ToolBarPanel x:Name="PART_ToolBarPanel" IsItemsHost="true" Margin="0,1,2,2"/>
+                                    <ToolBarPanel x:Name="PART_ToolBarPanel" IsItemsHost="true" Margin="2,1,2,2"/>
                                 </DockPanel>
                             </Border>
 
@@ -918,7 +840,7 @@
                                             </MultiBinding>
                                         </ScrollViewer.Height>
 
-                                        <ContentPresenter x:Name="ExpanderContent"/>
+                                        <ContentPresenter x:Name="ExpanderContent" VerticalAlignment="Top"/>
                                     </ScrollViewer>
                                 </DockPanel>
 
@@ -927,14 +849,22 @@
                                         <Trigger.EnterActions>
                                             <BeginStoryboard>
                                                 <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetName="ScrollViewer" Storyboard.TargetProperty="Tag" To="1" Duration="0:0:0.2"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ScrollViewer" Storyboard.TargetProperty="Tag" To="1" Duration="0:0:0.2">
+                                                        <DoubleAnimation.EasingFunction>
+                                                            <CircleEase/>
+                                                        </DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
                                                 </Storyboard>
                                             </BeginStoryboard>
                                         </Trigger.EnterActions>
                                         <Trigger.ExitActions>
                                             <BeginStoryboard>
                                                 <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetName="ScrollViewer" Storyboard.TargetProperty="Tag" To="0" Duration="0:0:0.2"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ScrollViewer" Storyboard.TargetProperty="Tag" To="0" Duration="0:0:0.2">
+                                                        <DoubleAnimation.EasingFunction>
+                                                            <CircleEase/>
+                                                        </DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
                                                 </Storyboard>
                                             </BeginStoryboard>
                                         </Trigger.ExitActions>

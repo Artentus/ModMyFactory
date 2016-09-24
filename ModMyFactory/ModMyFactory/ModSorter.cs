@@ -8,6 +8,9 @@ namespace ModMyFactory
     {
         public int Compare(Mod x, Mod y)
         {
+            int versionOrder = y.FactorioVersion.CompareTo(x.FactorioVersion);
+            if (versionOrder != 0) return versionOrder;
+
             return string.Compare(x.Name, y.Name, StringComparison.InvariantCultureIgnoreCase);
         }
 
