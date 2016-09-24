@@ -335,7 +335,6 @@
 
                 <local:DragDropReadyListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type local:Modpack}">
-
                         <Expander>
                             <Expander.Header>
                                 <Grid Margin="2">

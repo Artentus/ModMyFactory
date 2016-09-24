@@ -82,6 +82,10 @@
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="BooleanToStringJsonConverter.cs" />
+    <Compile Include="LinkPropertiesViewModel.cs" />
+    <Compile Include="LinkPropertiesWindow.xaml.cs">
+      <DependentUpon>LinkPropertiesWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CultureEntrySorter.cs" />
     <Compile Include="DirectoryOption.cs" />
     <Compile Include="FactorioVersion.cs" />
@@ -130,10 +134,15 @@
     </Compile>
     <Compile Include="Web\FactorioWebsite.cs" />
     <Compile Include="Web\WebHelper.cs" />
+    <Compile Include="Win32\ShellHelper.cs" />
     <Compile Include="Win32\User32.cs" />
     <Compile Include="Win32\WindowLongIndex.cs" />
     <Compile Include="Win32\WindowStyles.cs" />
     <Page Include="AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LinkPropertiesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -6,12 +6,14 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using ModMyFactory.Lang;
 using ModMyFactory.MVVM;
+using ModMyFactory.Win32;
 using Ookii.Dialogs.Wpf;
 
 namespace ModMyFactory
@@ -285,7 +287,26 @@ namespace ModMyFactory
 
         private void CreateLink()
         {
+            var propertiesWindow = new LinkPropertiesWindow();
+            bool? result = propertiesWindow.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                var dialog = new VistaSaveFileDialog();
+                dialog.Filter = "Shortcuts (*.lnk)|*.lnk";
+                dialog.AddExtension = true;
+                dialog.DefaultExt = ".lnk";
+                result = dialog.ShowDialog(Window);
+                if (result.HasValue && result.Value)
+                {
+                    string applicationPath = Assembly.GetExecutingAssembly().Location;
+                    string versionString = propertiesWindow.ViewModel.SelectedVersion.Version.ToString(3);
+                    string modpackName = propertiesWindow.ViewModel.SelectedModpack?.Name;
 
+                    string arguments = $"-v {versionString}";
+                    if (!string.IsNullOrEmpty(modpackName)) arguments += $" -p \"{modpackName}\"";
+                    ShellHelper.CreateShortcut(dialog.FileName, applicationPath, arguments, $"{applicationPath}, 0");
+                }
+            }
         }
 
         private void StartGame()

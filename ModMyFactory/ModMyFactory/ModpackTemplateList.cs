@@ -59,12 +59,12 @@ namespace ModMyFactory
 
         private Mod GetMod(ICollection<Mod> modList, string name)
         {
-            return modList.First(mod => mod.Name == name);
+            return modList.FirstOrDefault(mod => mod.Name == name);
         }
 
         private Modpack GetModpack(ICollection<Modpack> modpackList, string name)
         {
-            return modpackList.First(modpack => modpack.Name == name);
+            return modpackList.FirstOrDefault(modpack => modpack.Name == name);
         }
 
         private ModpackTemplate GetTemplate(string name)

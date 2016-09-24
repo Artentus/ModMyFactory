@@ -214,7 +214,7 @@ namespace ModMyFactory
 
                                 // Name
                                 MatchCollection matches = Regex.Matches(content, "\"name\" *: *\"(?<name>.*)\"",
-                                        RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
                                 innerName = matches.Count > 0 ? matches[0].Groups["name"].Value : File.Name;
                                 matches = Regex.Matches(content, "\"title\" *: *\"(?<title>.*)\"",
                                     RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
@@ -250,6 +250,8 @@ namespace ModMyFactory
                                 }
                             }
                         }
+
+                        break;
                     }
                 }
             }
