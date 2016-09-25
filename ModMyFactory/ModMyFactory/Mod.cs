@@ -79,7 +79,27 @@ namespace ModMyFactory
             }
         }
 
-        private static void SaveTemplates()
+        /// <summary>
+        /// Starts updating all mod templates.
+        /// While updating all save commands will be ignored.
+        /// </summary>
+        public static void BeginUpdateTemplates()
+        {
+            templateLists.ForEach(list => list.BeginUpdate());
+        }
+
+        /// <summary>
+        /// Finishes updating all mod templates.
+        /// </summary>
+        public static void EndUpdateTemplates()
+        {
+            templateLists.ForEach(list => list.EndUpdate());
+        }
+
+        /// <summary>
+        /// Saves all mod templates to their files.
+        /// </summary>
+        public static void SaveTemplates()
         {
             templateLists.ForEach(list => list.Save());
         }

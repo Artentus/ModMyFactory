@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace ModMyFactory
 {
@@ -10,11 +12,27 @@ namespace ModMyFactory
     sealed class ModpackTemplateList
     {
         [JsonObject(MemberSerialization.OptOut)]
+        sealed class ModpackTemplateMod
+        {
+            public string Name { get; }
+
+            [JsonConverter(typeof(VersionConverter))]
+            public Version FactorioVersion { get; }
+
+            [JsonConstructor]
+            public ModpackTemplateMod(string name, Version factorioVersion)
+            {
+                Name = name;
+                FactorioVersion = factorioVersion;
+            }
+        }
+
+        [JsonObject(MemberSerialization.OptOut)]
         sealed class ModpackTemplate
         {
             public string Name { get; set; }
 
-            public string[] Mods { get; set; }
+            public ModpackTemplateMod[] Mods { get; set; }
 
             public string[] Modpacks { get; set; }
         }
@@ -57,9 +75,9 @@ namespace ModMyFactory
             Modpacks = new ModpackTemplate[0];
         }
 
-        private Mod GetMod(ICollection<Mod> modList, string name)
+        private Mod GetMod(ICollection<Mod> modList, ModpackTemplateMod modTemplate)
         {
-            return modList.FirstOrDefault(mod => mod.Name == name);
+            return modList.FirstOrDefault(mod => mod.Name == modTemplate.Name && mod.FactorioVersion == modTemplate.FactorioVersion);
         }
 
         private Modpack GetModpack(ICollection<Modpack> modpackList, string name)
@@ -77,9 +95,9 @@ namespace ModMyFactory
             foreach (var template in Modpacks)
             {
                 var modpack = new Modpack(template.Name, modpackList, messageOwner);
-                foreach (string modName in template.Mods)
+                foreach (ModpackTemplateMod modTemplate in template.Mods)
                 {
-                    Mod mod = GetMod(modList, modName);
+                    Mod mod = GetMod(modList, modTemplate);
                     if (mod != null) modpack.Mods.Add(new ModReference(mod, modpack));
                 }
 
@@ -110,7 +128,8 @@ namespace ModMyFactory
                 Modpacks[index] = new ModpackTemplate()
                 {
                     Name = modpack.Name,
-                    Mods = modpack.Mods.Where(item => item is ModReference).Select(item => item.DisplayName).ToArray(),
+                    Mods = modpack.Mods.Where(item => item is ModReference)
+                    .Select(item => new ModpackTemplateMod(item.DisplayName, ((ModReference)item).Mod.FactorioVersion)).ToArray(),
                     Modpacks = modpack.Mods.Where(item => item is ModpackReference).Select(item => item.DisplayName).ToArray(),
                 };
 

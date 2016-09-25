@@ -57,6 +57,7 @@ namespace ModMyFactory
 
         const bool DefaultActiveState = true;
         FileInfo file;
+        bool updating;
 
         [JsonProperty(PropertyName = "mods")]
         List<ModTemplate> Mods;
@@ -109,6 +110,7 @@ namespace ModMyFactory
             if (Contains(name))
             {
                 Mods.First(mod => mod.Name == name).Enabled = value;
+                Save();
             }
             else
             {
@@ -118,11 +120,31 @@ namespace ModMyFactory
         }
 
         /// <summary>
+        /// Starts updating this ModTemplateList.
+        /// While updating all save commands will be ignored.
+        /// </summary>
+        public void BeginUpdate()
+        {
+            updating = true;
+        }
+
+        /// <summary>
+        /// Finishes updating this ModTemplateList.
+        /// </summary>
+        public void EndUpdate()
+        {
+            updating = false;
+        }
+
+        /// <summary>
         /// Saves this ModTemplateList to its file.
         /// </summary>
         public void Save()
         {
-            JsonHelper.Serialize(this, file);
+            if (!updating)
+            {
+                JsonHelper.Serialize(this, file);
+            }
         }
     }
 }

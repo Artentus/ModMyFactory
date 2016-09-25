@@ -57,8 +57,13 @@ namespace ModMyFactory
                     activeChanging = true;
                     if (active.HasValue)
                     {
+                        Mod.BeginUpdateTemplates();
+
                         foreach (var mod in Mods)
                             if (mod.Active != active.Value) mod.Active = active.Value;
+
+                        Mod.EndUpdateTemplates();
+                        Mod.SaveTemplates();
                     }
                     activeChanging = false;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));

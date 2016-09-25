@@ -48,6 +48,7 @@ namespace ModMyFactory
                         var modpacks = new List<Modpack>();
 
                         Mod.LoadTemplates();
+                        Mod.BeginUpdateTemplates();
                         Mod.LoadMods(mods, modpacks, null);
                         var modpackTemplateList =
                             ModpackTemplateList.Load(Path.Combine(app.AppDataPath, "modpacks.json"));
@@ -66,6 +67,9 @@ namespace ModMyFactory
                                 modpack.Active = true;
                             }
                         }
+
+                        Mod.EndUpdateTemplates();
+                        Mod.SaveTemplates();
 
                         Process.Start(factorioVersion.ExecutablePath);
                     }
