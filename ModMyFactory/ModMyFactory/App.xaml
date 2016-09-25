@@ -816,7 +816,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type Expander}">
-                                <DockPanel>
+                                <DockPanel PreviewMouseWheel="ExpanderPreviewMouseWheelHandler">
                                     <Grid DockPanel.Dock="Top">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
@@ -829,7 +829,7 @@
                                     </Grid>
 
                                     <ScrollViewer x:Name="ScrollViewer" Focusable="False"
-                                                  DockPanel.Dock="Bottom" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                                                  DockPanel.Dock="Bottom" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
                                         <ScrollViewer.Tag>
                                             <sys:Double>0.0</sys:Double>
                                         </ScrollViewer.Tag>
@@ -840,6 +840,7 @@
                                             </MultiBinding>
                                         </ScrollViewer.Height>
 
+                                        
                                         <ContentPresenter x:Name="ExpanderContent" VerticalAlignment="Top"/>
                                     </ScrollViewer>
                                 </DockPanel>

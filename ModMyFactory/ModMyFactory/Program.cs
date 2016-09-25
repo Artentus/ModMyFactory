@@ -15,9 +15,24 @@ namespace ModMyFactory
         [STAThread]
         public static int Main(string[] args)
         {
-            App app = new App();
+            App app = null;
 
-            int index = Array.IndexOf(args, "-v");
+            // Custom AppData path for debugging purposes only.
+            int index = Array.IndexOf(args, "-a");
+            if (index >= 0)
+            {
+                index++;
+
+                if (index < args.Length)
+                {
+                    string appDataPath = args[index];
+                    app = new App(appDataPath);
+                }
+            }
+            if (app == null) app = new App();
+
+            // Direct game start logic.
+            index = Array.IndexOf(args, "-v");
             if (index >= 0)
             {
                 index++;

@@ -364,7 +364,13 @@
                                 </Grid>
                             </Expander.Header>
 
-                            <ItemsControl x:Name="SubitemList" Margin="20,0,4,0" ItemsSource="{Binding ModsView}" ItemTemplate="{StaticResource SubitemTemplate}"/>
+                            <ItemsControl Margin="20,0,4,0" ItemsSource="{Binding ModsView}" ItemTemplate="{StaticResource SubitemTemplate}">
+                                <ItemsControl.Template>
+                                    <ControlTemplate TargetType="{x:Type ItemsControl}">
+                                        <StackPanel IsItemsHost="True"/>
+                                    </ControlTemplate>
+                                </ItemsControl.Template>
+                            </ItemsControl>
                         </Expander>
                     </DataTemplate>
                 </local:DragDropReadyListBox.ItemTemplate>

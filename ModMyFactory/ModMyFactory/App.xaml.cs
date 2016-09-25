@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using System.Windows.Input;
 using ModMyFactory.Lang;
 
 namespace ModMyFactory
@@ -16,16 +17,22 @@ namespace ModMyFactory
 
         internal Settings Settings { get; }
 
-        internal string AppDataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ModMyFactory");
+        internal string AppDataPath { get; }
 
-        public App()
+        public App(string appDataPath)
         {
+            AppDataPath = appDataPath;
+
             var appDataDirectory = new DirectoryInfo(AppDataPath);
             if (!appDataDirectory.Exists) appDataDirectory.Create();
 
             string settingsFile = Path.Combine(appDataDirectory.FullName, "settings.json");
             Settings = Settings.Load(settingsFile, true);
         }
+
+        public App()
+            : this(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ModMyFactory"))
+        { }
 
         internal List<CultureEntry> GetAvailableCultures()
         {
@@ -61,6 +68,16 @@ namespace ModMyFactory
 
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
+        }
+
+        private void ExpanderPreviewMouseWheelHandler(object sender, MouseWheelEventArgs e)
+        {
+            e.Handled = true;
+
+            var element = (UIElement)sender;
+            var newArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+            newArgs.RoutedEvent = UIElement.MouseWheelEvent;
+            element.RaiseEvent(newArgs);
         }
     }
 }
