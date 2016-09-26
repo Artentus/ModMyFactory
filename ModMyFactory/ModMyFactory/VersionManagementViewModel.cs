@@ -13,6 +13,7 @@ using System.Windows.Data;
 using ModMyFactory.MVVM;
 using ModMyFactory.Web;
 using Ookii.Dialogs.Wpf;
+using System.Diagnostics;
 
 namespace ModMyFactory
 {
@@ -46,6 +47,8 @@ namespace ModMyFactory
             }
         }
 
+        public RelayCommand OpenFolderCommand { get; }
+
         public RelayCommand DownloadCommand { get; }
 
         public RelayCommand AddFromZipCommand { get; }
@@ -60,6 +63,7 @@ namespace ModMyFactory
             FactorioVersionsView = (ListCollectionView)CollectionViewSource.GetDefaultView(FactorioVersions);
             FactorioVersionsView.CustomSort = new FactorioVersionSorter();
 
+            OpenFolderCommand = new RelayCommand(() => OpenFolder());
             DownloadCommand = new RelayCommand(async () => await DownloadOnlineVersion());
             AddFromZipCommand = new RelayCommand(async () => await AddZippedVersion());
             AddFromFolderCommand = new RelayCommand(async () => await AddLocalVersion());
@@ -123,6 +127,28 @@ namespace ModMyFactory
             bool? versionResult = versionListWindow.ShowDialog();
             selectedVersion = versionListWindow.ViewModel.SelectedVersion;
             return versionResult.HasValue && versionResult.Value;
+        }
+
+        private void OpenFolder()
+        {
+            if (IsVersionSelected())
+            {
+                OpenDirectoryInExplorer(SelectedVersion.Directory.FullName);
+            }
+            else
+            {
+                OpenDirectoryInExplorer(App.Instance.Settings.GetFactorioDirectory().FullName);
+            }
+        }
+
+        private bool IsVersionSelected()
+        {
+            return SelectedVersion != null;
+        }
+
+        private void OpenDirectoryInExplorer(string directoryPath)
+        {
+            Process.Start(directoryPath);
         }
 
         private async Task DownloadOnlineVersion()
