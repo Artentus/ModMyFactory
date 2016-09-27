@@ -8,8 +8,9 @@
     <!-- buttons -->
     <sys:String x:Key="OkButton">OK</sys:String>
     <sys:String x:Key="CloseButton">Close</sys:String>
-    <sys:String x:Key="CancelButton">Cancel</sys:String>
+    <sys:String x:Key="CancelButton">Cancel</sys:String> 
     <sys:String x:Key="DownloadButton">Download</sys:String>
+    <sys:String x:Key="OpenFolderButton">Open Folder</sys:String>
     
     
     <!--

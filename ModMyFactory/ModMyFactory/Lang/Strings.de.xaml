@@ -10,6 +10,7 @@
     <sys:String x:Key="CloseButton">Schließen</sys:String>
     <sys:String x:Key="CancelButton">Abbrechen</sys:String>
     <sys:String x:Key="DownloadButton">Herunterladen</sys:String>
+    <sys:String x:Key="OpenFolderButton">Ordner öffnen</sys:String>
 
 
     <!--
