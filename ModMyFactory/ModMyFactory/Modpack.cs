@@ -15,6 +15,7 @@ namespace ModMyFactory
     class Modpack : NotifyPropertyChangedBase, IEditableObject
     {
         string name;
+        bool editing;
         bool? active;
         bool activeChanging;
 
@@ -28,17 +29,8 @@ namespace ModMyFactory
             {
                 if (value != name)
                 {
-                    foreach (var view in ParentViews)
-                        view.EditItem(this);
-
                     name = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Name)));
-
-                    foreach (var view in ParentViews)
-                        view.CommitEdit();
-
-                    MainViewModel.Instance.ModpackTemplateList.Update(MainViewModel.Instance.Modpacks);
-                    MainViewModel.Instance.ModpackTemplateList.Save();
                 }
             }
         }
@@ -72,6 +64,36 @@ namespace ModMyFactory
         }
 
         /// <summary>
+        /// Indicates whether the user currently edits the name of this modpack.
+        /// </summary>
+        public bool Editing
+        {
+            get { return editing; }
+            set
+            {
+                if (value != editing)
+                {
+                    editing = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Editing)));
+
+                    if (editing)
+                    {
+                        foreach (var view in ParentViews)
+                            view.EditItem(this);
+                    }
+                    else
+                    {
+                        foreach (var view in ParentViews)
+                            view.CommitEdit();
+
+                        MainViewModel.Instance.ModpackTemplateList.Update(MainViewModel.Instance.Modpacks);
+                        MainViewModel.Instance.ModpackTemplateList.Save();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// The view that presents all contents of this modpack.
         /// </summary>
         public ListCollectionView ModsView { get; }
@@ -90,6 +112,11 @@ namespace ModMyFactory
         /// A command that deletes this modpack from the list.
         /// </summary>
         public RelayCommand DeleteCommand { get; }
+
+        /// <summary>
+        /// A command that finishes renaming this modpack.
+        /// </summary>
+        public RelayCommand FinishRenameCommand { get; }
 
         /// <summary>
         /// Checks if this modpack contains a specified mod.
@@ -250,6 +277,7 @@ namespace ModMyFactory
             ParentViews = new List<IEditableCollectionView>();
 
             DeleteCommand = new RelayCommand(() => Delete(parentCollection, messageOwner));
+            FinishRenameCommand = new RelayCommand(() => Editing = false, () => Editing);
         }
 
         public void BeginEdit()

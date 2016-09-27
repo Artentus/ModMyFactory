@@ -38,11 +38,12 @@
     <sys:String x:Key="InfoMenuItem">_Info</sys:String>
     <sys:String x:Key="FactorioComMenuItem">Factorio.com</sys:String>
     <sys:String x:Key="FactorioModsComMenuItem">Factoriomods.com</sys:String>
+    <sys:String x:Key="ForumThreadMenuItem">ModMyFactory Forum-Thread</sys:String>
     <sys:String x:Key="AboutMenuItem">Über</sys:String>
 
     <!-- hotkeys -->
     <sys:String x:Key="AddModsHotkey">Strg+N</sys:String>
-    <sys:String x:Key="NewModpackHotkey">Umschalt+N</sys:String>
+    <sys:String x:Key="NewModpackHotkey">Alt+N</sys:String>
     <sys:String x:Key="ExportLinkHotkey">Strg+L</sys:String>
     <sys:String x:Key="StartGameHotkey">F5</sys:String>
     <sys:String x:Key="CloseHotkey">Alt+F4</sys:String>
@@ -50,7 +51,8 @@
     <sys:String x:Key="SettingsHotkey">F12</sys:String>
     <sys:String x:Key="FactorioComHotkey">Strg+F</sys:String>
     <sys:String x:Key="FactorioModsComHotkey">Strg+M</sys:String>
-    <sys:String x:Key="AboutHotkey">Umschalt+F1</sys:String>
+    <sys:String x:Key="ForumThreadHotkey">F1</sys:String>
+    <sys:String x:Key="AboutHotkey">Strg+F1</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ModsHeader">Mods</sys:String>
@@ -71,8 +73,8 @@
     <sys:String x:Key="VersionManagementWindowTitle">Versionsmanager</sys:String>
 
     <!-- buttons -->
-    <sys:String x:Key="AddZipButton">Aus ZIP hinzufügen</sys:String>
-    <sys:String x:Key="AddFolderButton">Aus Ordner hinzufügen</sys:String>
+    <TextBlock x:Key="AddZipButton" TextAlignment="Center" xml:space="preserve">Aus ZIP&#x0a;hinzufügen</TextBlock>
+    <TextBlock x:Key="AddFolderButton" TextAlignment="Center" xml:space="preserve">Aus Ordner&#x0a;hinzufügen</TextBlock>
     <sys:String x:Key="OpenFolderButton">Ordner öffnen</sys:String>
     <sys:String x:Key="RemoveButton">Entfernen</sys:String>
 

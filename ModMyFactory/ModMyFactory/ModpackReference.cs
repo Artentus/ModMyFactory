@@ -42,15 +42,19 @@ namespace ModMyFactory
         {
             switch (e.PropertyName)
             {
-                case nameof(Mod.Name):
-                    foreach (var view in ParentViews)
-                        view.EditItem(this);
-
+                case nameof(Modpack.Name):
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayName)));
                     break;
-                case nameof(Mod.Active):
+                case nameof(Modpack.Active):
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
                     break;
+                //case nameof(Modpack.Editing):
+                //    if (Modpack.Editing)
+                //    {
+                //        foreach (var view in ParentViews)
+                //            view.EditItem(this);
+                //    }
+                //    break;
             }
         }
     }

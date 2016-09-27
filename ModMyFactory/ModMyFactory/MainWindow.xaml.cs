@@ -293,5 +293,21 @@ namespace ModMyFactory
                 modsListBoxDeselectionOmitted = false;
             }
         }
+
+        private void RenameTextBoxLostFocusHandler(object sender, EventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            textBox.Visibility = Visibility.Collapsed;
+        }
+
+        private void RenameTextBoxVisibilityChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            if ((bool)e.NewValue)
+            {
+                textBox.Focus();
+                textBox.CaretIndex = textBox.Text.Length;
+            }
+        }
     }
 }

@@ -192,7 +192,7 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListBox}">
                             <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-                                <ScrollViewer Focusable="false">
+                                <ScrollViewer>
                                     <ItemsPresenter Margin="2,1,2,2"/>
                                 </ScrollViewer>
                             </Border>
@@ -663,7 +663,7 @@
                                     </ToggleButton.Template>
                                 </ToggleButton>
 
-                                <ContentPresenter x:Name="ContentSite" Margin="6,2,20,2" VerticalAlignment="Stretch" HorizontalAlignment="Left" IsHitTestVisible="False"
+                                <ContentPresenter x:Name="ContentSite" Margin="4,0,20,0" VerticalAlignment="Center" HorizontalAlignment="Left" IsHitTestVisible="False"
                                                       Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                                       ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"/>
 
@@ -889,7 +889,7 @@
                                 
                                 <Border x:Name="Border1" BorderBrush="#FFADADAD" BorderThickness="1" Background="#FFE1E1E1">
 
-                                    <Border x:Name="Border2" BorderBrush="Transparent" BorderThickness="2" Background="Transparent" Margin="-1" Padding="2,0">
+                                    <Border x:Name="Border2" BorderBrush="Transparent" BorderThickness="2" Background="Transparent" Margin="-1" Padding="4,2">
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 
@@ -899,7 +899,7 @@
                                             <VisualState Name="MouseOver">
                                                 <Storyboard>
                                                     <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderThickness" To="1" Duration="0"/>
-                                                    <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Padding" To="3,0" Duration="0"/>
+                                                    <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Padding" To="5,3" Duration="0"/>
                                                     <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderBrush.Color" To="#FF0078D7" Duration="0"/>
                                                     <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Background.Color" To="#FFE5F1FB" Duration="0:0:0:0.3"/>
                                                 </Storyboard>
@@ -907,7 +907,7 @@
                                             <VisualState Name="Pressed">
                                                 <Storyboard>
                                                     <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderThickness" To="1" Duration="0"/>
-                                                    <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Padding" To="3,0" Duration="0"/>
+                                                    <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Padding" To="5,3" Duration="0"/>
                                                     <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderBrush.Color" To="#FF005499" Duration="0"/>
                                                     <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Background.Color" To="#FFCCE4F7" Duration="0:0:0:0.3"/>
                                                 </Storyboard>
@@ -915,7 +915,7 @@
                                             <VisualState Name="Disabled">
                                                 <Storyboard>
                                                     <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderThickness" To="1" Duration="0"/>
-                                                    <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Padding" To="3,0" Duration="0"/>
+                                                    <ThicknessAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Padding" To="5,3" Duration="0"/>
                                                     <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="BorderBrush.Color" To="#FFBFBFBF" Duration="0"/>
                                                     <ColorAnimation Storyboard.TargetName="Border2" Storyboard.TargetProperty="Background.Color" To="#FFCCCCCC" Duration="0"/>
                                                 </Storyboard>

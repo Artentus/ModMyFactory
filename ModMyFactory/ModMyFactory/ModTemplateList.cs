@@ -58,6 +58,7 @@ namespace ModMyFactory
         const bool DefaultActiveState = true;
         FileInfo file;
         bool updating;
+        int updateCount;
 
         [JsonProperty(PropertyName = "mods")]
         List<ModTemplate> Mods;
@@ -126,14 +127,25 @@ namespace ModMyFactory
         public void BeginUpdate()
         {
             updating = true;
+            updateCount++;
         }
 
         /// <summary>
         /// Finishes updating this ModTemplateList.
         /// </summary>
-        public void EndUpdate()
+        /// <param name="force">If true forces to end updating, otherwise EndUpdate will have to be called as many times as BeginUpdate has been called.</param>
+        public void EndUpdate(bool force)
         {
-            updating = false;
+            if (force)
+            {
+                updateCount = 0;
+                updating = false;
+            }
+            else
+            {
+                if (updateCount > 0) updateCount--;
+                if (updateCount == 0) updating = false;
+            }
         }
 
         /// <summary>

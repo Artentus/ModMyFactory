@@ -91,9 +91,10 @@ namespace ModMyFactory
         /// <summary>
         /// Finishes updating all mod templates.
         /// </summary>
-        public static void EndUpdateTemplates()
+        /// <param name="force">If true forces to end updating, otherwise EndUpdate will have to be called as many times as BeginUpdate has been called.</param>
+        public static void EndUpdateTemplates(bool force = false)
         {
-            templateLists.ForEach(list => list.EndUpdate());
+            templateLists.ForEach(list => list.EndUpdate(force));
         }
 
         /// <summary>

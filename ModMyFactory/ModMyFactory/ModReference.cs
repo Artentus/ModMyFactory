@@ -52,10 +52,10 @@ namespace ModMyFactory
         {
             switch (e.PropertyName)
             {
-                case nameof(ModMyFactory.Mod.Name):
+                case nameof(Mod.Name):
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayName)));
                     break;
-                case nameof(ModMyFactory.Mod.Active):
+                case nameof(Mod.Active):
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
                     break;
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -17,12 +18,16 @@ namespace ModMyFactory
             public string Name { get; }
 
             [JsonConverter(typeof(VersionConverter))]
+            public Version Version { get; }
+
+            [JsonConverter(typeof(VersionConverter))]
             public Version FactorioVersion { get; }
 
             [JsonConstructor]
-            public ModpackTemplateMod(string name, Version factorioVersion)
+            public ModpackTemplateMod(string name, Version version, Version factorioVersion)
             {
                 Name = name;
+                Version = version;
                 FactorioVersion = factorioVersion;
             }
         }
@@ -77,7 +82,17 @@ namespace ModMyFactory
 
         private Mod GetMod(ICollection<Mod> modList, ModpackTemplateMod modTemplate)
         {
-            return modList.FirstOrDefault(mod => mod.Name == modTemplate.Name && mod.FactorioVersion == modTemplate.FactorioVersion);
+            if (modTemplate.Version == null) // Backwards compatibility
+            {
+                return modList.FirstOrDefault(mod => mod.Name == modTemplate.Name
+                && mod.FactorioVersion == modTemplate.FactorioVersion);
+            }
+            else
+            {
+                return modList.FirstOrDefault(mod => mod.Name == modTemplate.Name
+                && mod.Version == modTemplate.Version
+                && mod.FactorioVersion == modTemplate.FactorioVersion);
+            }
         }
 
         private Modpack GetModpack(ICollection<Modpack> modpackList, string name)
@@ -90,11 +105,13 @@ namespace ModMyFactory
             return Modpacks.First(template => template.Name == name);
         }
 
-        public void PopulateModpackList(ICollection<Mod> modList, ICollection<Modpack> modpackList, Window messageOwner)
+        public void PopulateModpackList(ICollection<Mod> modList, ICollection<Modpack> modpackList, IEditableCollectionView modpackView, Window messageOwner)
         {
             foreach (var template in Modpacks)
             {
                 var modpack = new Modpack(template.Name, modpackList, messageOwner);
+                if (modpackView != null) modpack.ParentViews.Add(modpackView);
+
                 foreach (ModpackTemplateMod modTemplate in template.Mods)
                 {
                     Mod mod = GetMod(modList, modTemplate);
@@ -111,6 +128,8 @@ namespace ModMyFactory
                 foreach (string modpackName in template.Modpacks)
                 {
                     Modpack subModpack = GetModpack(modpackList, modpackName);
+                    subModpack.ParentViews.Add(modpack.ModsView);
+
                     var reference = new ModpackReference(subModpack, modpack);
                     reference.ParentViews.Add(modpack.ModsView);
                     if (subModpack != null) modpack.Mods.Add(reference);
@@ -129,7 +148,7 @@ namespace ModMyFactory
                 {
                     Name = modpack.Name,
                     Mods = modpack.Mods.Where(item => item is ModReference)
-                    .Select(item => new ModpackTemplateMod(item.DisplayName, ((ModReference)item).Mod.FactorioVersion)).ToArray(),
+                    .Select(item => new ModpackTemplateMod(item.DisplayName, ((ModReference)item).Mod.Version, ((ModReference)item).Mod.FactorioVersion)).ToArray(),
                     Modpacks = modpack.Mods.Where(item => item is ModpackReference).Select(item => item.DisplayName).ToArray(),
                 };
 

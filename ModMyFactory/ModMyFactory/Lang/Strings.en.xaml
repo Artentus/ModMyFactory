@@ -38,11 +38,12 @@
     <sys:String x:Key="InfoMenuItem">_Info</sys:String>
     <sys:String x:Key="FactorioComMenuItem">Factorio.com</sys:String>
     <sys:String x:Key="FactorioModsComMenuItem">Factoriomods.com</sys:String>
+    <sys:String x:Key="ForumThreadMenuItem">ModMyFactory forum thread</sys:String>
     <sys:String x:Key="AboutMenuItem">About</sys:String>
     
     <!-- hotkeys -->
     <sys:String x:Key="AddModsHotkey">Ctrl+N</sys:String>
-    <sys:String x:Key="NewModpackHotkey">Shift+N</sys:String>
+    <sys:String x:Key="NewModpackHotkey">Alt+N</sys:String>
     <sys:String x:Key="ExportLinkHotkey">Ctrl+L</sys:String>
     <sys:String x:Key="StartGameHotkey">F5</sys:String>
     <sys:String x:Key="CloseHotkey">Alt+F4</sys:String>
@@ -50,7 +51,8 @@
     <sys:String x:Key="SettingsHotkey">F12</sys:String>
     <sys:String x:Key="FactorioComHotkey">Ctrl+F</sys:String>
     <sys:String x:Key="FactorioModsComHotkey">Ctrl+M</sys:String>
-    <sys:String x:Key="AboutHotkey">Shift+F1</sys:String>
+    <sys:String x:Key="ForumThreadHotkey">F1</sys:String>
+    <sys:String x:Key="AboutHotkey">Ctrl+F1</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ModsHeader">Mods</sys:String>

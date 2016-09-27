@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -25,6 +27,8 @@ namespace ModMyFactory
         public static MainViewModel Instance => instance ?? (instance = new MainViewModel());
 
         FactorioVersion selectedVersion;
+        string modsFilter;
+        string modpacksFilter;
         GridLength modGridLength;
         GridLength modpackGridLength;
 
@@ -54,9 +58,39 @@ namespace ModMyFactory
 
         public ListCollectionView ModsView { get; }
 
+        public string ModsFilter
+        {
+            get { return modsFilter; }
+            set
+            {
+                if (value != modsFilter)
+                {
+                    modsFilter = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModsFilter)));
+
+                    ModsView.Refresh();
+                }
+            }
+        }
+
         public ObservableCollection<Mod> Mods { get; }
 
         public ListCollectionView ModpacksView { get; }
+
+        public string ModpacksFilter
+        {
+            get { return modpacksFilter; }
+            set
+            {
+                if (value != modpacksFilter)
+                {
+                    modpacksFilter = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModpacksFilter)));
+
+                    ModpacksView.Refresh();
+                }
+            }
+        }
 
         public ObservableCollection<Modpack> Modpacks { get; }
 
@@ -112,7 +146,27 @@ namespace ModMyFactory
 
         public RelayCommand BrowseModWebsiteCommand { get; }
 
+        public RelayCommand BrowseForumThreadCommand { get; }
+
         public RelayCommand OpenAboutWindowCommand { get; }
+
+        private bool ModFilter(object item)
+        {
+            Mod mod = item as Mod;
+            if (mod == null) return false;
+
+            if (string.IsNullOrWhiteSpace(modsFilter)) return true;
+            return Thread.CurrentThread.CurrentUICulture.CompareInfo.IndexOf(mod.Name, modsFilter, CompareOptions.IgnoreCase) >= 0;
+        }
+
+        private bool ModpackFilter(object item)
+        {
+            Modpack modpack = item as Modpack;
+            if (modpack == null) return false;
+
+            if (string.IsNullOrWhiteSpace(modpacksFilter)) return true;
+            return Thread.CurrentThread.CurrentUICulture.CompareInfo.IndexOf(modpack.Name, modpacksFilter, CompareOptions.IgnoreCase) >= 0;
+        }
 
         private MainViewModel()
         {
@@ -145,15 +199,17 @@ namespace ModMyFactory
             ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
             ModsView.CustomSort = new ModSorter();
             ModsView.GroupDescriptions.Add(new PropertyGroupDescription("FactorioVersion"));
+            ModsView.Filter = ModFilter;
 
             Modpacks = new ObservableCollection<Modpack>();
             ModpacksView = (ListCollectionView)CollectionViewSource.GetDefaultView(Modpacks);
             ModpacksView.CustomSort = new ModpackSorter();
+            ModpacksView.Filter = ModpackFilter;
 
             Mod.LoadTemplates();
             Mod.LoadMods(Mods, Modpacks, Application.Current.MainWindow);
             ModpackTemplateList = ModpackTemplateList.Load(Path.Combine(App.Instance.AppDataPath, "modpacks.json"));
-            ModpackTemplateList.PopulateModpackList(Mods, Modpacks, Application.Current.MainWindow);
+            ModpackTemplateList.PopulateModpackList(Mods, Modpacks, ModpacksView, Application.Current.MainWindow);
             Modpacks.CollectionChanged += (sender, e) =>
             {
                 ModpackTemplateList.Update(Modpacks);
@@ -171,6 +227,7 @@ namespace ModMyFactory
             OpenSettingsCommand = new RelayCommand(OpenSettings);
             BrowseFactorioWebsiteCommand = new RelayCommand(() => Process.Start("https://www.factorio.com/"));
             BrowseModWebsiteCommand = new RelayCommand(() => Process.Start("https://mods.factorio.com/"));
+            BrowseForumThreadCommand = new RelayCommand(() => Process.Start("https://forums.factorio.com/viewtopic.php?f=137&t=33370"));
             OpenAboutWindowCommand = new RelayCommand(OpenAboutWindow);
         }
 
