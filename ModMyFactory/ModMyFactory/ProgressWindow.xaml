@@ -9,7 +9,7 @@
         Title="{Binding ActionName}" Width="500" SizeToContent="Height"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
-        Icon=".\Images\Factorio_Icon.ico">
+        Icon=".\Images\MMF_Icon.ico">
     
     <Window.DataContext>
         <local:ProgressViewModel/>

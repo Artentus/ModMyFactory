@@ -9,7 +9,7 @@
         Title="{DynamicResource AboutWindowTitle}" SizeToContent="WidthAndHeight"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Icon=".\Images\Factorio_Icon.ico">
+        Icon=".\Images\MMF_Icon.ico">
     
     <Window.DataContext>
         <local:AboutViewModel/>
@@ -24,6 +24,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="20"/>
             <RowDefinition Height="Auto"/>
@@ -74,6 +75,21 @@
             </TextBlock>
         </Grid>
         
-        <Button Grid.Row="5" Grid.Column="2" Margin="2" HorizontalAlignment="Right" Content="{DynamicResource CloseButton}" IsDefault="True" IsCancel="True"/>
+        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="20,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <Rectangle Grid.Row="0" Margin="0,10" Height="1" Fill="{StaticResource BorderBrush}"/>
+            <TextBlock Grid.Row="1" Text="{DynamicResource ContributorsHeader}"/>
+            <WrapPanel Grid.Row="2" Margin="0,2" Orientation="Horizontal">
+                <TextBlock Margin="0,0,4,0"> <Hyperlink Command="{Binding Contributor1Command}">plague006</Hyperlink></TextBlock>
+                <TextBlock Margin="4,0"> <Hyperlink Command="{Binding Contributor2Command}">jodli</Hyperlink> </TextBlock>
+            </WrapPanel>
+        </Grid>
+        
+        <Button Grid.Row="6" Grid.Column="2" Margin="2" HorizontalAlignment="Right" Content="{DynamicResource CloseButton}" IsDefault="True" IsCancel="True"/>
     </Grid>
 </mvvm:ViewModelBoundWindow>

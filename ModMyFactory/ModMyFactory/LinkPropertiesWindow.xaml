@@ -9,7 +9,7 @@
         Title="{DynamicResource LinkPropertiesWindowTitle}" Width="400" Height="500"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Icon=".\Images\Factorio_Icon.ico">
+        Icon=".\Images\MMF_Icon.ico">
     
     <Window.DataContext>
         <local:LinkPropertiesViewModel/>

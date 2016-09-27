@@ -9,7 +9,7 @@
         Title="{DynamicResource VersionManagementWindowTitle}" Height="400" Width="500"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
         WindowStartupLocation="CenterOwner"
-        Icon=".\Images\Factorio_Icon.ico"
+        Icon=".\Images\MMF_Icon.ico"
         DataContext="{x:Static local:VersionManagementViewModel.Instance}">
     
     <Grid Margin="4">
@@ -33,10 +33,13 @@
         </ListBox>
 
         <StackPanel Grid.Column="1" Grid.Row="0" Margin="4,0,0,4">
-            <Button Margin="0,0,0,2" Content="{DynamicResource OpenFolderButton}" Command="{Binding OpenFolderCommand}"/>
-            <Button Margin="0,2" Content="{DynamicResource DownloadButton}" Command="{Binding DownloadCommand}"/>
+            <Button Margin="0,0,0,2" Content="{DynamicResource DownloadButton}" Command="{Binding DownloadCommand}"/>
             <Button Margin="0,2" Content="{DynamicResource AddZipButton}" Command="{Binding AddFromZipCommand}"/>
             <Button Margin="0,2" Content="{DynamicResource AddFolderButton}" Command="{Binding AddFromFolderCommand}"/>
+
+            <Rectangle Margin="0,4" Height="1" Fill="{StaticResource BorderBrush}"/>
+            
+            <Button Margin="0,2" Content="{DynamicResource OpenFolderButton}" Command="{Binding OpenFolderCommand}"/>
             <Button Margin="0,2" Content="{DynamicResource RemoveButton}" Command="{Binding RemoveCommand}"/>
         </StackPanel>
         

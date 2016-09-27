@@ -10,7 +10,7 @@
         Title="{DynamicResource VersionListWindowTitle}" Height="500" Width="400"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Icon=".\Images\Factorio_Icon.ico">
+        Icon=".\Images\MMF_Icon.ico">
     
     <Window.DataContext>
         <local:VersionListViewModel/>

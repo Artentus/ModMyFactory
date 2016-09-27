@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="{DynamicResource MainWindowTitle}" Width="800" Height="600"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
-        Icon=".\Images\Factorio_Icon.ico"
+        Icon=".\Images\MMF_Icon.ico"
         DataContext="{x:Static local:MainViewModel.Instance}"
         FocusManager.FocusedElement="{Binding RelativeSource={x:Static RelativeSource.Self}, Mode=OneTime}">
 

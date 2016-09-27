@@ -10,7 +10,6 @@
     <sys:String x:Key="CloseButton">Schließen</sys:String>
     <sys:String x:Key="CancelButton">Abbrechen</sys:String>
     <sys:String x:Key="DownloadButton">Herunterladen</sys:String>
-    <sys:String x:Key="OpenFolderButton">Ordner öffnen</sys:String>
 
 
     <!--
@@ -74,6 +73,7 @@
     <!-- buttons -->
     <sys:String x:Key="AddZipButton">Aus ZIP hinzufügen</sys:String>
     <sys:String x:Key="AddFolderButton">Aus Ordner hinzufügen</sys:String>
+    <sys:String x:Key="OpenFolderButton">Ordner öffnen</sys:String>
     <sys:String x:Key="RemoveButton">Entfernen</sys:String>
 
 
@@ -146,5 +146,8 @@
     <sys:String x:Key="FontLabel">Factorio-Schriftart:</sys:String>
     <sys:String x:Key="DialogsLabel">Dialoge:</sys:String>
     <sys:String x:Key="JsonLabel">JSON Framework:</sys:String>
+
+    <!-- headers -->
+    <sys:String x:Key="ContributorsHeader">Mitwirkende</sys:String>
 
 </ResourceDictionary>

@@ -8,7 +8,7 @@
         Title="{DynamicResource LoginWindowTitle}" Width="350" SizeToContent="Height"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Icon=".\Images\Factorio_Icon.ico"
+        Icon=".\Images\MMF_Icon.ico"
         FocusManager.FocusedElement="{Binding ElementName=UsernameBox}">
     
     <Grid Margin="4">

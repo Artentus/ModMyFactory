@@ -43,7 +43,8 @@
     <StartupObject>ModMyFactory.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Images\Factorio_Icon.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -219,9 +220,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Factorio_Icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\Close.png" />
   </ItemGroup>
   <ItemGroup>
@@ -267,7 +265,16 @@
   <ItemGroup>
     <Resource Include="Images\ExportLink.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\MMF_Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Factorio_Icon.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /Y "$(ProjectDir)Images\Factorio_Icon.ico" "$(TargetDir)Factorio_Icon.ico"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

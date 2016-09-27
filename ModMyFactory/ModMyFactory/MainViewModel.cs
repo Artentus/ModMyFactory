@@ -299,12 +299,13 @@ namespace ModMyFactory
                 if (result.HasValue && result.Value)
                 {
                     string applicationPath = Assembly.GetExecutingAssembly().Location;
+                    string iconPath = Path.Combine(Environment.CurrentDirectory, "Factorio_Icon.ico");
                     string versionString = propertiesWindow.ViewModel.SelectedVersion.Version.ToString(3);
                     string modpackName = propertiesWindow.ViewModel.SelectedModpack?.Name;
 
                     string arguments = $"-v {versionString}";
                     if (!string.IsNullOrEmpty(modpackName)) arguments += $" -p \"{modpackName}\"";
-                    ShellHelper.CreateShortcut(dialog.FileName, applicationPath, arguments, $"{applicationPath}, 0");
+                    ShellHelper.CreateShortcut(dialog.FileName, applicationPath, arguments, iconPath);
                 }
             }
         }

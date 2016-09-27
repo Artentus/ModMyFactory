@@ -8,11 +8,10 @@
     <!-- buttons -->
     <sys:String x:Key="OkButton">OK</sys:String>
     <sys:String x:Key="CloseButton">Close</sys:String>
-    <sys:String x:Key="CancelButton">Cancel</sys:String> 
+    <sys:String x:Key="CancelButton">Cancel</sys:String>
     <sys:String x:Key="DownloadButton">Download</sys:String>
-    <sys:String x:Key="OpenFolderButton">Open Folder</sys:String>
-    
-    
+
+
     <!--
     ____________________ MainWindow ____________________
     -->
@@ -74,9 +73,10 @@
     <!-- buttons -->
     <sys:String x:Key="AddZipButton">Add from ZIP</sys:String>
     <sys:String x:Key="AddFolderButton">Add from folder</sys:String>
+    <sys:String x:Key="OpenFolderButton">Open folder</sys:String>
     <sys:String x:Key="RemoveButton">Remove</sys:String>
 
-    
+
     <!--
     ____________________ VersionListWindow ____________________
     -->
@@ -146,5 +146,8 @@
     <sys:String x:Key="FontLabel">Factorio font:</sys:String>
     <sys:String x:Key="DialogsLabel">Dialogs:</sys:String>
     <sys:String x:Key="JsonLabel">JSON Framework:</sys:String>
+    
+    <!-- headers -->
+    <sys:String x:Key="ContributorsHeader">Contributors</sys:String>
     
 </ResourceDictionary>

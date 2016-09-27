@@ -47,13 +47,13 @@ namespace ModMyFactory
             }
         }
 
-        public RelayCommand OpenFolderCommand { get; }
-
         public RelayCommand DownloadCommand { get; }
 
         public RelayCommand AddFromZipCommand { get; }
 
         public RelayCommand AddFromFolderCommand { get; }
+
+        public RelayCommand OpenFolderCommand { get; }
 
         public RelayCommand RemoveCommand { get; }
 
@@ -63,10 +63,11 @@ namespace ModMyFactory
             FactorioVersionsView = (ListCollectionView)CollectionViewSource.GetDefaultView(FactorioVersions);
             FactorioVersionsView.CustomSort = new FactorioVersionSorter();
 
-            OpenFolderCommand = new RelayCommand(() => OpenFolder());
+            
             DownloadCommand = new RelayCommand(async () => await DownloadOnlineVersion());
             AddFromZipCommand = new RelayCommand(async () => await AddZippedVersion());
             AddFromFolderCommand = new RelayCommand(async () => await AddLocalVersion());
+            OpenFolderCommand = new RelayCommand(OpenFolder, () => SelectedVersion != null);
             RemoveCommand = new RelayCommand(RemoveSelectedVersion, () => SelectedVersion != null);
         }
 
@@ -127,28 +128,6 @@ namespace ModMyFactory
             bool? versionResult = versionListWindow.ShowDialog();
             selectedVersion = versionListWindow.ViewModel.SelectedVersion;
             return versionResult.HasValue && versionResult.Value;
-        }
-
-        private void OpenFolder()
-        {
-            if (IsVersionSelected())
-            {
-                OpenDirectoryInExplorer(SelectedVersion.Directory.FullName);
-            }
-            else
-            {
-                OpenDirectoryInExplorer(App.Instance.Settings.GetFactorioDirectory().FullName);
-            }
-        }
-
-        private bool IsVersionSelected()
-        {
-            return SelectedVersion != null;
-        }
-
-        private void OpenDirectoryInExplorer(string directoryPath)
-        {
-            Process.Start(directoryPath);
         }
 
         private async Task DownloadOnlineVersion()
@@ -376,6 +355,11 @@ namespace ModMyFactory
                     }
                 }
             }
+        }
+
+        private void OpenFolder()
+        {
+            Process.Start(SelectedVersion.Directory.FullName);
         }
 
         private void RemoveSelectedVersion()

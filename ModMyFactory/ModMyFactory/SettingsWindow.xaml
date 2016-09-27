@@ -9,7 +9,7 @@
         Title="{DynamicResource SettingsWindowTitle}" Width="500" SizeToContent="Height"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Icon=".\Images\Factorio_Icon.ico"
+        Icon=".\Images\MMF_Icon.ico"
         DataContext="{x:Static local:SettingsViewModel.Instance}">
 
     <Grid Margin="4">
