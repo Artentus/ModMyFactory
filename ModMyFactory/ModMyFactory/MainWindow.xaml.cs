@@ -75,7 +75,7 @@ namespace ModMyFactory
 
         private static ListBoxItem GetItem(ListBox listBox, Func<ListBoxItem, Point> positionSelector)
         {
-            int itemCount = ((ICollection)((ICollectionView)listBox.ItemsSource).SourceCollection).Count;
+            int itemCount = ((ICollectionView)listBox.ItemsSource).Cast<object>().Count();
             for (int i = 0; i < itemCount; i++)
             {
                 ListBoxItem item = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromIndex(i);
