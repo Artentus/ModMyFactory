@@ -350,9 +350,9 @@ namespace ModMyFactory
                             .ContinueWith(t => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
                         progressWindow.ShowDialog();
                         await moveTask;
-
-                        FactorioVersions.Add(new FactorioVersion(destinationDirectory, version));
                     }
+
+                    FactorioVersions.Add(new FactorioVersion(destinationDirectory, version));
                 }
             }
         }

@@ -9,6 +9,8 @@ namespace ModMyFactory
 {
     public static class Program
     {
+        public static bool NoUpdateCheck { get; private set; }
+
         /// <summary>
         /// Application Entry Point.
         /// </summary>
@@ -30,6 +32,10 @@ namespace ModMyFactory
                 }
             }
             if (app == null) app = new App();
+
+            // Prevent update search on startup
+            index = Array.IndexOf(args, "-u");
+            NoUpdateCheck = (index >= 0);
 
             // Direct game start logic.
             index = Array.IndexOf(args, "-v");

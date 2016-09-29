@@ -42,7 +42,8 @@ namespace ModMyFactory
 
         private void LoadedHandler(object sender, EventArgs e)
         {
-            ViewModel.UpdateCommand.Execute(true);
+            if (!Program.NoUpdateCheck)
+                ViewModel.UpdateCommand.Execute(true);
         }
 
         private void ClosingHandler(object sender, CancelEventArgs e)
