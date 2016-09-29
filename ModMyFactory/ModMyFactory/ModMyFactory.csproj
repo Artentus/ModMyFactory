@@ -82,6 +82,7 @@
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="BooleanToStringJsonConverter.cs" />
+    <Compile Include="InverseBooleanConverter.cs" />
     <Compile Include="LinkPropertiesViewModel.cs" />
     <Compile Include="LinkPropertiesWindow.xaml.cs">
       <DependentUpon>LinkPropertiesWindow.xaml</DependentUpon>
@@ -272,6 +273,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\AddFolder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Download.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

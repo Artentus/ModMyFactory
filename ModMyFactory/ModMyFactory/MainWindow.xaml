@@ -14,9 +14,12 @@
         FocusManager.FocusedElement="{Binding RelativeSource={x:Static RelativeSource.Self}, Mode=OneTime}">
 
     <Window.Resources>
+        <BitmapImage x:Key="AddIcon" UriSource="./Images/Add.png"/>
         <BitmapImage x:Key="AddDocumentIcon" UriSource="./Images/AddDocument.png"/>
+        <BitmapImage x:Key="AddFolderIcon" UriSource="./Images/AddFolder.png"/>
         <BitmapImage x:Key="CloseIcon" UriSource="./Images/Close.png"/>
         <BitmapImage x:Key="ConfigureIcon" UriSource="./Images/Configure.png"/>
+        <BitmapImage x:Key="DownloadIcon" UriSource="./Images/Download.png"/>
         <BitmapImage x:Key="ExportLinkIcon" UriSource="./Images/ExportLink.png"/>
         <BitmapImage x:Key="InformationIcon" UriSource="./Images/Information.png"/>
         <BitmapImage x:Key="NewPackageIcon" UriSource="./Images/NewPackage.png"/>
@@ -27,6 +30,8 @@
         <BitmapImage x:Key="WebDestinationIcon" UriSource="./Images/WebDestination.png"/>
         
         <BitmapImage x:Key="SearchIcon" UriSource="./Images/Search.png"/>
+        
+        <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
 
         <Style x:Key="ActiveInactiveCheckBoxStyle" TargetType="{x:Type CheckBox}">
             <Style.Setters>
@@ -92,8 +97,7 @@
     </Window.Resources>
 
     <Window.InputBindings>
-        <KeyBinding Modifiers="Control" Key="N" Command="{Binding AddModsCommand}"/>
-        <KeyBinding Modifiers="Alt" Key="N" Command="{Binding CreateModpackCommand}"/>
+        <KeyBinding Modifiers="Control" Key="N" Command="{Binding CreateModpackCommand}"/>
         <KeyBinding Modifiers="Control" Key="L" Command="{Binding ExportLinkCommand}"/>
         <KeyBinding Key="F5" Command="{Binding StartGameCommand}"/>
         <KeyBinding Key="F6" Command="{Binding OpenVersionManagerCommand}"/>
@@ -117,8 +121,11 @@
 
         <Menu Grid.Row="0" IsMainMenu="True">
             <MenuItem Header="{DynamicResource FileMenuItem}">
-                <MenuItem Header="{DynamicResource AddModsMenuItem}" Icon="{StaticResource AddDocumentIcon}"
-                          InputGestureText="{DynamicResource AddModsHotkey}" Command="{Binding AddModsCommand}"/>
+                <MenuItem Header="{DynamicResource AddModsMenuItem}" Icon="{StaticResource AddIcon}">
+                    <MenuItem Header="{DynamicResource DownloadModsMenuItem}" Icon="{StaticResource DownloadIcon}" Command="{Binding DownloadModsCommand}"/>
+                    <MenuItem Header="{DynamicResource AddModFilesMenuItem}" Icon="{StaticResource AddDocumentIcon}" Command="{Binding AddModsFromFilesCommand}"/>
+                    <MenuItem Header="{DynamicResource AddModFolderMenuItem}" Icon="{StaticResource AddFolderIcon}" Command="{Binding AddModFromFolderCommand}"/>
+                </MenuItem>
                 <MenuItem Header="{DynamicResource NewModpackMenuItem}" Icon="{StaticResource NewPackageIcon}"
                           InputGestureText="{DynamicResource NewModpackHotkey}" Command="{Binding CreateModpackCommand}"/>
                 <MenuItem Header="{DynamicResource ExportLinkMenuItem}" Icon="{StaticResource ExportLinkIcon}"
@@ -173,10 +180,32 @@
         </Menu>
 
         <ToolBar Grid.Row="1" Margin="0,4,0,0">
-            <Button ToolTip="{DynamicResource AddModsMenuItem}" Command="{Binding AddModsCommand}">
-                <Image Margin="1" Source="{StaticResource AddDocumentIcon}"
-                       Stretch="None" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
-            </Button>
+            <ToggleButton x:Name="ToggleButton" ToolTip="{DynamicResource AddModsMenuItem}"
+                          IsEnabled="{Binding IsOpen, ElementName=ToggledPopup, Converter={StaticResource InverseBooleanConverter}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="0" Margin="1" Source="{StaticResource AddIcon}"
+                               Stretch="None" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
+
+                    <Path Grid.Column="1" Margin="2" VerticalAlignment="Center" Fill="Black" Data="M 0 0 L 3 3 L 6 0 Z"/>
+
+                    <Popup x:Name="ToggledPopup" StaysOpen="False" Placement="Bottom" PlacementTarget="{Binding ElementName=ToggleButton}" PopupAnimation="Fade"
+                               IsOpen="{Binding IsChecked, ElementName=ToggleButton, Mode=TwoWay}">
+                        <Border Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
+                            <Menu IsMainMenu="False">
+                                <MenuItem Header="{DynamicResource DownloadModsMenuItem}" Icon="{StaticResource DownloadIcon}" Command="{Binding DownloadModsCommand}"/>
+                                <MenuItem Header="{DynamicResource AddModFilesMenuItem}" Icon="{StaticResource AddDocumentIcon}" Command="{Binding AddModsFromFilesCommand}"/>
+                                <MenuItem Header="{DynamicResource AddModFolderMenuItem}" Icon="{StaticResource AddFolderIcon}" Command="{Binding AddModFromFolderCommand}"/>
+                            </Menu>
+                        </Border>
+                    </Popup>
+                </Grid>
+            </ToggleButton>
+        
             <Button ToolTip="{DynamicResource NewModpackMenuItem}" Command="{Binding CreateModpackCommand}">
                 <Image Margin="1" Source="{StaticResource NewPackageIcon}"
                        Stretch="None" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
@@ -208,7 +237,7 @@
 
                     <Image Grid.Column="0" Margin="1" Source="{StaticResource RunIcon}"
                            Stretch="None" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
-                    <TextBlock Grid.Column="1" Margin="2,0" Text="{DynamicResource StartGameMenuItem}"/>
+                    <TextBlock Grid.Column="1" Margin="2,0,4,0" Text="{DynamicResource StartGameMenuItem}" VerticalAlignment="Center"/>
                 </Grid>
             </Button>
         </ToolBar>

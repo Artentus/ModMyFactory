@@ -28,8 +28,16 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="Menu">
                             <Border Background="{StaticResource BackgroundBrush}">
-                                <StackPanel ClipToBounds="True" Orientation="Horizontal" IsItemsHost="True"/>
+                                <StackPanel x:Name="ItemsHost" ClipToBounds="True" Orientation="Horizontal" IsItemsHost="True"/>
                             </Border>
+                            
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMainMenu" Value="False">
+                                    <Trigger.Setters>
+                                        <Setter TargetName="ItemsHost" Property="Orientation" Value="Vertical"/>
+                                    </Trigger.Setters>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -102,6 +110,7 @@
                         <Rectangle x:Name="CheckBox" Grid.Column="3" Width="5" Margin="0,-1" Fill="{StaticResource BackgroundBrush}" Visibility="Collapsed"/>
                     </Grid>
                 </Border>
+                
                 <ControlTemplate.Triggers>
                     <Trigger Property="Icon" Value="{x:Null}">
                         <Setter TargetName="Icon" Property="Visibility" Value="Hidden"/>
@@ -143,24 +152,54 @@
             </ControlTemplate>
 
             <ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}" TargetType="MenuItem">
-                <Border x:Name="Border">
-                    <Grid>
+                <Border x:Name="Border" BorderBrush="{StaticResource BackgroundBrush}" BorderThickness="1" Background="{StaticResource BackgroundBrush}">
+                    <Grid Margin="0,1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" SharedSizeGroup="Icon"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="Shortcut"/>
-                            <ColumnDefinition Width="13"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <ContentPresenter x:Name="Icon" Margin="6,0,6,0" VerticalAlignment="Center" ContentSource="Icon"/>
-                        <ContentPresenter x:Name="HeaderHost" Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True"/>
-                        <TextBlock x:Name="InputGestureText" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="5,2,2,2" DockPanel.Dock="Right"/>
-                        <Popup x:Name="Popup" Placement="Right" HorizontalOffset="-4" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
-                            <Border x:Name="SubmenuBorder" SnapsToDevicePixels="True" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource BorderBrush}">
+                        <Image x:Name="Icon" Grid.Column="0" Margin="6,0" Width="18" VerticalAlignment="Center" Source="{TemplateBinding Icon}"
+                               Stretch="None" SnapsToDevicePixels="True" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                        <ContentPresenter x:Name="HeaderHost" Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True" Margin="0,2" VerticalAlignment="Center"/>
+                        <Path Grid.Column="2" SnapsToDevicePixels="True" Margin="4" VerticalAlignment="Center" Fill="Black" Data="M 0 0 L 4 4 L 0 8 Z"/>
+
+                        <Popup x:Name="Popup" Placement="Right" HorizontalOffset="1" VerticalOffset="-3"
+                               IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
+                            <Border x:Name="SubmenuBorder" SnapsToDevicePixels="True"
+                                    Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
                                 <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
                             </Border>
                         </Popup>
                     </Grid>
                 </Border>
+
+                <ControlTemplate.Triggers>
+                    <Trigger Property="Icon" Value="{x:Null}">
+                        <Setter TargetName="Icon" Property="Visibility" Value="Hidden"/>
+                    </Trigger>
+                    <Trigger Property="IsHighlighted" Value="True">
+                        <Trigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Background.Color" From="Transparent" To="{StaticResource HoverColor}" Duration="0:0:0.1"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.EnterActions>
+                        <Trigger.ExitActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background.Color">
+                                        <DiscreteColorKeyFrame KeyTime="0:0:0" Value="Transparent"/>
+                                    </ColorAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.ExitActions>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Foreground" Value="Gray"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
             </ControlTemplate>
 
             <Style x:Key="{x:Type MenuItem}" TargetType="MenuItem">
@@ -171,7 +210,7 @@
                         <Setter Property="Grid.IsSharedSizeScope" Value="true"/>
                     </Trigger>
                     <Trigger Property="Role" Value="TopLevelItem">
-                        <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelItemTemplateKey}}"/>
+                        <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.SubmenuItemTemplateKey}}"/>
                     </Trigger>
                     <Trigger Property="Role" Value="SubmenuHeader">
                         <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.SubmenuHeaderTemplateKey}}"/>
@@ -545,8 +584,16 @@
                 </Setter>
             </Style>
 
-            <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" BasedOn="{StaticResource ToolBarButtonBaseStyle}" TargetType="{x:Type Button}"/>
-            <Style x:Key="{x:Static ToolBar.ToggleButtonStyleKey}" BasedOn="{StaticResource ToolBarButtonBaseStyle}" TargetType="{x:Type ToggleButton}"/>
+            <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" BasedOn="{StaticResource ToolBarButtonBaseStyle}" TargetType="{x:Type Button}">
+                <Style.Setters>
+                    <Setter Property="MinWidth" Value="24"/>
+                </Style.Setters>
+            </Style>
+            <Style x:Key="{x:Static ToolBar.ToggleButtonStyleKey}" BasedOn="{StaticResource ToolBarButtonBaseStyle}" TargetType="{x:Type ToggleButton}">
+                <Style.Setters>
+                    <Setter Property="MinWidth" Value="24"/>
+                </Style.Setters>
+            </Style>
             <Style x:Key="{x:Static ToolBar.CheckBoxStyleKey}" BasedOn="{StaticResource ToolBarButtonBaseStyle}" TargetType="{x:Type CheckBox}"/>
             <Style x:Key="{x:Static ToolBar.RadioButtonStyleKey}" BasedOn="{StaticResource ToolBarButtonBaseStyle}" TargetType="{x:Type RadioButton}"/>
 

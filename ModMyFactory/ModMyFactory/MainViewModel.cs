@@ -130,7 +130,11 @@ namespace ModMyFactory
 
         }
 
-        public RelayCommand AddModsCommand { get; }
+        public RelayCommand DownloadModsCommand { get; }
+
+        public RelayCommand AddModsFromFilesCommand { get; }
+
+        public RelayCommand AddModFromFolderCommand { get; }
 
         public RelayCommand CreateModpackCommand { get; }
 
@@ -219,7 +223,9 @@ namespace ModMyFactory
             modGridLength = App.Instance.Settings.ModGridLength;
             modpackGridLength = App.Instance.Settings.ModpackGridLength;
 
-            AddModsCommand = new RelayCommand(async () => await AddMods());
+            DownloadModsCommand = new RelayCommand(DownloadMods, () => false);
+            AddModsFromFilesCommand = new RelayCommand(async () => await AddModsFromFiles());
+            AddModFromFolderCommand = new RelayCommand(AddModFromFolder, () => false);
             CreateModpackCommand = new RelayCommand(CreateNewModpack);
             ExportLinkCommand = new RelayCommand(CreateLink);
             StartGameCommand = new RelayCommand(StartGame, () => SelectedVersion != null);
@@ -229,6 +235,11 @@ namespace ModMyFactory
             BrowseModWebsiteCommand = new RelayCommand(() => Process.Start("https://mods.factorio.com/"));
             BrowseForumThreadCommand = new RelayCommand(() => Process.Start("https://forums.factorio.com/viewtopic.php?f=137&t=33370"));
             OpenAboutWindowCommand = new RelayCommand(OpenAboutWindow);
+        }
+
+        private void DownloadMods()
+        {
+            // ToDo: Implement mod downloading
         }
 
         private bool ArchiveFileValid(FileInfo archiveFile, out Version validVersion)
@@ -263,7 +274,7 @@ namespace ModMyFactory
             return false;
         }
 
-        private async Task AddMods()
+        private async Task AddModsFromFiles()
         {
             var dialog = new VistaOpenFileDialog();
             dialog.Multiselect = true;
@@ -318,6 +329,11 @@ namespace ModMyFactory
                 await processModsTask;
                 await closeWindowTask;
             }
+        }
+
+        private void AddModFromFolder()
+        {
+            // ToDo: Implement mods in folder-mode
         }
 
         private void CreateNewModpack()

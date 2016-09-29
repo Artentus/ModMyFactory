@@ -21,6 +21,9 @@
     <!-- 'File' menu -->
     <sys:String x:Key="FileMenuItem">_File</sys:String>
     <sys:String x:Key="AddModsMenuItem">Add mods</sys:String>
+    <sys:String x:Key="DownloadModsMenuItem">Download</sys:String>
+    <sys:String x:Key="AddModFilesMenuItem">From files</sys:String>
+    <sys:String x:Key="AddModFolderMenuItem">From folder</sys:String>
     <sys:String x:Key="NewModpackMenuItem">New modpack</sys:String>
     <sys:String x:Key="ExportLinkMenuItem">Export link</sys:String>
     <sys:String x:Key="StartGameMenuItem">Start game</sys:String>
@@ -42,8 +45,7 @@
     <sys:String x:Key="AboutMenuItem">About</sys:String>
     
     <!-- hotkeys -->
-    <sys:String x:Key="AddModsHotkey">Ctrl+N</sys:String>
-    <sys:String x:Key="NewModpackHotkey">Alt+N</sys:String>
+    <sys:String x:Key="NewModpackHotkey">Ctrl+N</sys:String>
     <sys:String x:Key="ExportLinkHotkey">Ctrl+L</sys:String>
     <sys:String x:Key="StartGameHotkey">F5</sys:String>
     <sys:String x:Key="CloseHotkey">Alt+F4</sys:String>
