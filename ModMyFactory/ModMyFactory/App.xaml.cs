@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using ModMyFactory.Lang;
+using Octokit;
+using Application = System.Windows.Application;
 
 namespace ModMyFactory
 {
@@ -14,6 +18,9 @@ namespace ModMyFactory
         internal static App Instance => (App)Application.Current;
 
         ResourceDictionary enDictionary;
+        UpdateSearchResult searchResult;
+
+        internal Version AssemblyVersion => Assembly.GetExecutingAssembly().GetName().Version;
 
         internal Settings Settings { get; }
 
@@ -68,6 +75,22 @@ namespace ModMyFactory
 
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
+        }
+
+        internal async Task<UpdateSearchResult> SearchForUpdateAsync()
+        {
+            if (searchResult == null || !searchResult.UpdateAvailable)
+            {
+                var client = new GitHubClient(new ProductHeaderValue("ModMyFactory"));
+                var latestRelease = await client.Repository.Release.GetLatest("Artentus", "ModMyFactory");
+
+                var version = Version.Parse(latestRelease.TagName.Substring(2));
+                bool updateAvailable = version > AssemblyVersion;
+                string updateUrl = latestRelease.Url;
+                searchResult = new UpdateSearchResult(updateAvailable, updateUrl, version);
+            }
+
+            return searchResult;
         }
 
         private void ExpanderPreviewMouseWheelHandler(object sender, MouseWheelEventArgs e)

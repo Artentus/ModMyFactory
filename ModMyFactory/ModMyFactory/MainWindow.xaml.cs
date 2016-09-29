@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -36,7 +35,14 @@ namespace ModMyFactory
                 Left = App.Instance.Settings.PosX;
                 Top = App.Instance.Settings.PosY;
             }
+
+            Loaded += LoadedHandler;
             Closing += ClosingHandler;
+        }
+
+        private void LoadedHandler(object sender, EventArgs e)
+        {
+            ViewModel.UpdateCommand.Execute(true);
         }
 
         private void ClosingHandler(object sender, CancelEventArgs e)

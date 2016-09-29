@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:ModMyFactory"
         xmlns:lang="clr-namespace:ModMyFactory.Lang"
         xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="{DynamicResource MainWindowTitle}" Width="800" Height="600"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
@@ -130,10 +131,14 @@
                           InputGestureText="{DynamicResource NewModpackHotkey}" Command="{Binding CreateModpackCommand}"/>
                 <MenuItem Header="{DynamicResource ExportLinkMenuItem}" Icon="{StaticResource ExportLinkIcon}"
                           InputGestureText="{DynamicResource ExportLinkHotkey}" Command="{Binding ExportLinkCommand}"/>
+                
                 <Separator/>
+                
                 <MenuItem Header="{DynamicResource StartGameMenuItem}" Icon="{StaticResource RunIcon}"
                           InputGestureText="{DynamicResource StartGameHotkey}" Command="{Binding StartGameCommand}"/>
+                
                 <Separator/>
+                
                 <MenuItem Header="{DynamicResource CloseMenuItem}" Icon="{StaticResource CloseIcon}"
                           InputGestureText="{DynamicResource CloseHotkey}" Command="Close"/>
             </MenuItem>
@@ -167,13 +172,20 @@
                 </MenuItem.ItemContainerStyle>
             </MenuItem>
             <MenuItem Header="{DynamicResource InfoMenuItem}">
+                <MenuItem.Resources>
+                    <sys:Boolean x:Key="False">False</sys:Boolean>
+                </MenuItem.Resources>
+                
                 <MenuItem Header="{DynamicResource FactorioComMenuItem}" Icon="{StaticResource WebDestinationIcon}"
                           InputGestureText="{DynamicResource FactorioComHotkey}" Command="{Binding BrowseFactorioWebsiteCommand}"/>
                 <MenuItem Header="{DynamicResource FactorioModsComMenuItem}" Icon="{StaticResource WebDestinationIcon}"
                           InputGestureText="{DynamicResource FactorioModsComHotkey}" Command="{Binding BrowseModWebsiteCommand}"/>
                 <MenuItem Header="{DynamicResource ForumThreadMenuItem}" Icon="{StaticResource WebDestinationIcon}"
                           InputGestureText="{DynamicResource ForumThreadHotkey}" Command="{Binding BrowseForumThreadCommand}"/>
+                
                 <Separator/>
+                
+                <MenuItem Header="{DynamicResource CheckUpdateMenuItem}" Command="{Binding UpdateCommand}" CommandParameter="{StaticResource False}"/>
                 <MenuItem Header="{DynamicResource AboutMenuItem}" Icon="{StaticResource InformationIcon}"
                           InputGestureText="{DynamicResource AboutHotkey}" Command="{Binding OpenAboutWindowCommand}"/>
             </MenuItem>

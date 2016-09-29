@@ -1,12 +1,11 @@
 ﻿using System.Diagnostics;
-using System.Reflection;
 using ModMyFactory.MVVM;
 
 namespace ModMyFactory
 {
     sealed class AboutViewModel : ViewModelBase<AboutWindow>
     {
-        public string VersionString => "v" + Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+        public string VersionString => "v" + App.Instance.AssemblyVersion.ToString(3);
 
         public RelayCommand Url1Command { get; }
 

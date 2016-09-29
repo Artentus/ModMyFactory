@@ -6,6 +6,7 @@ namespace ModMyFactory.MVVM
     class RelayCommand : ICommand
     {
         readonly Action methodToExecute;
+        readonly Action<object> parameterizedMethodToExecute;
         readonly Func<bool> canExecuteEvaluator;
 
         public event EventHandler CanExecuteChanged
@@ -20,6 +21,12 @@ namespace ModMyFactory.MVVM
             this.canExecuteEvaluator = canExecuteEvaluator;
         }
 
+        public RelayCommand(Action<object> parameterizedMethodToExecute, Func<bool> canExecuteEvaluator)
+        {
+            this.parameterizedMethodToExecute = parameterizedMethodToExecute;
+            this.canExecuteEvaluator = canExecuteEvaluator;
+        }
+
         public RelayCommand(Action methodToExecute)
             : this(methodToExecute, () => true)
         { }
@@ -31,7 +38,14 @@ namespace ModMyFactory.MVVM
 
         public void Execute(object parameter)
         {
-            methodToExecute.Invoke();
+            if (methodToExecute != null)
+            {
+                methodToExecute.Invoke();
+            }
+            else
+            {
+                parameterizedMethodToExecute.Invoke(parameter);
+            }
         }
     }
 }

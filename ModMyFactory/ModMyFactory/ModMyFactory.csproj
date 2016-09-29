@@ -50,6 +50,10 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Octokit, Version=0.22.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Octokit.0.22.0\lib\net45\Octokit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Ookii.Dialogs.Wpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0c15020868fd6249, processorArchitecture=MSIL">
       <HintPath>..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
       <Private>True</Private>
@@ -110,6 +114,7 @@
     <Compile Include="JsonHelper.cs" />
     <Compile Include="MenuItemProperties.cs" />
     <Compile Include="MVVM\ViewModelBase.cs" />
+    <Compile Include="UpdateSearchResult.cs" />
     <Compile Include="VersionManagementViewModel.cs" />
     <Compile Include="VersionManagementWindow.xaml.cs">
       <DependentUpon>VersionManagementWindow.xaml</DependentUpon>

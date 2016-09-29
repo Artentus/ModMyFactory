@@ -42,7 +42,8 @@
     <sys:String x:Key="FactorioComMenuItem">Factorio.com</sys:String>
     <sys:String x:Key="FactorioModsComMenuItem">Factoriomods.com</sys:String>
     <sys:String x:Key="ForumThreadMenuItem">ModMyFactory Forum-Thread</sys:String>
-    <sys:String x:Key="AboutMenuItem">Über</sys:String>
+    <sys:String x:Key="CheckUpdateMenuItem">Auf Update prüfen</sys:String>
+    <sys:String x:Key="AboutMenuItem">Über ModMyFactory</sys:String>
 
     <!-- hotkeys -->
     <sys:String x:Key="NewModpackHotkey">Strg+N</sys:String>

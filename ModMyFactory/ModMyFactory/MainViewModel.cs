@@ -31,6 +31,7 @@ namespace ModMyFactory
         string modpacksFilter;
         GridLength modGridLength;
         GridLength modpackGridLength;
+        bool updating;
 
         public ListCollectionView AvailableCulturesView { get; }
 
@@ -152,6 +153,8 @@ namespace ModMyFactory
 
         public RelayCommand BrowseForumThreadCommand { get; }
 
+        public RelayCommand UpdateCommand { get; }
+
         public RelayCommand OpenAboutWindowCommand { get; }
 
         private bool ModFilter(object item)
@@ -234,6 +237,7 @@ namespace ModMyFactory
             BrowseFactorioWebsiteCommand = new RelayCommand(() => Process.Start("https://www.factorio.com/"));
             BrowseModWebsiteCommand = new RelayCommand(() => Process.Start("https://mods.factorio.com/"));
             BrowseForumThreadCommand = new RelayCommand(() => Process.Start("https://forums.factorio.com/viewtopic.php?f=137&t=33370"));
+            UpdateCommand = new RelayCommand(async obj => await Update((bool)obj), () => !updating);
             OpenAboutWindowCommand = new RelayCommand(OpenAboutWindow);
         }
 
@@ -439,6 +443,31 @@ namespace ModMyFactory
                 foreach (var version in FactorioVersions)
                     version.CreateModDirectoryLink(true);
             }
+        }
+
+        private async Task Update(bool silent)
+        {
+            updating = true;
+
+            UpdateSearchResult result = await App.Instance.SearchForUpdateAsync();
+            if (result.UpdateAvailable)
+            {
+                string currentVersionString = App.Instance.AssemblyVersion.ToString(3);
+                string newVersionString = result.Version.ToString(3);
+                if (MessageBox.Show(Window,
+                        $"You are running an old version of ModMyFactory (current version is {currentVersionString}, newest version is {newVersionString}).\nDo you want to download the newest version?",
+                        "Update available", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    Process.Start(result.UpdateUrl);
+                }
+            }
+            else if (!silent)
+            {
+                MessageBox.Show(Window, "You are running the newest version of ModMyFactory.", "No update available",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+
+            updating = false;
         }
 
         private void OpenAboutWindow()
