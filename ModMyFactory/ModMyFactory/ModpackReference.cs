@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using ModMyFactory.MVVM;
+using ModMyFactory.Models;
 
 namespace ModMyFactory
 {

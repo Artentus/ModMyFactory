@@ -81,61 +81,62 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AboutViewModel.cs" />
-    <Compile Include="AboutWindow.xaml.cs">
+    <Compile Include="ViewModels\AboutViewModel.cs" />
+    <Compile Include="Views\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BooleanToStringJsonConverter.cs" />
-    <Compile Include="InverseBooleanConverter.cs" />
-    <Compile Include="LinkPropertiesViewModel.cs" />
-    <Compile Include="LinkPropertiesWindow.xaml.cs">
+    <Compile Include="MVVM\Converters\BooleanToStringJsonConverter.cs" />
+    <Compile Include="MVVM\Converters\InverseBooleanConverter.cs" />
+    <Compile Include="ViewModels\LinkPropertiesViewModel.cs" />
+    <Compile Include="Views\LinkPropertiesWindow.xaml.cs">
       <DependentUpon>LinkPropertiesWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CultureEntrySorter.cs" />
+    <Compile Include="MVVM\Sorters\CultureEntrySorter.cs" />
     <Compile Include="DirectoryOption.cs" />
-    <Compile Include="FactorioVersion.cs" />
-    <Compile Include="FactorioVersionSorter.cs" />
+    <Compile Include="Models\FactorioVersion.cs" />
+    <Compile Include="MVVM\Sorters\FactorioVersionSorter.cs" />
     <Compile Include="IModReference.cs" />
     <Compile Include="ModpackReference.cs" />
-    <Compile Include="ModpackSorter.cs" />
+    <Compile Include="MVVM\Sorters\ModpackSorter.cs" />
     <Compile Include="ModpackTemplateList.cs" />
     <Compile Include="ModReference.cs" />
-    <Compile Include="ModReferenceSorter.cs" />
-    <Compile Include="ModSorter.cs" />
+    <Compile Include="MVVM\Sorters\ModReferenceSorter.cs" />
+    <Compile Include="MVVM\Sorters\ModSorter.cs" />
     <Compile Include="MVVM\IViewModelBase.cs" />
     <Compile Include="MVVM\ViewModelBoundWindow.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="ProgressViewModel.cs" />
-    <Compile Include="ProgressWindow.xaml.cs">
+    <Compile Include="ViewModels\ProgressViewModel.cs" />
+    <Compile Include="Views\ProgressWindow.xaml.cs">
       <DependentUpon>ProgressWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DragDropReadyListBox.cs" />
-    <Compile Include="DragDropReadyListBoxItem.cs" />
-    <Compile Include="JsonHelper.cs" />
-    <Compile Include="MenuItemProperties.cs" />
+    <Compile Include="MVVM\DragDropReadyListBox.cs" />
+    <Compile Include="MVVM\DragDropReadyListBoxItem.cs" />
+    <Compile Include="Helpers\JsonHelper.cs" />
+    <Compile Include="MVVM\MenuItemProperties.cs" />
     <Compile Include="MVVM\ViewModelBase.cs" />
-    <Compile Include="UpdateSearchResult.cs" />
-    <Compile Include="VersionManagementViewModel.cs" />
-    <Compile Include="VersionManagementWindow.xaml.cs">
+    <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="Models\UpdateSearchResult.cs" />
+    <Compile Include="ViewModels\VersionManagementViewModel.cs" />
+    <Compile Include="Views\VersionManagementWindow.xaml.cs">
       <DependentUpon>VersionManagementWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Web\FactorioOnlineVersion.cs" />
     <Compile Include="Lang\CultureEntry.cs" />
-    <Compile Include="LoginWindow.xaml.cs">
+    <Compile Include="Views\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Mod.cs" />
-    <Compile Include="Modpack.cs" />
+    <Compile Include="Models\Mod.cs" />
+    <Compile Include="Models\Modpack.cs" />
     <Compile Include="ModTemplateList.cs" />
-    <Compile Include="MultiplyConverter.cs" />
+    <Compile Include="MVVM\Converters\MultiplyConverter.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="SettingsViewModel.cs" />
-    <Compile Include="SettingsWindow.xaml.cs">
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Views\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VersionListViewModel.cs" />
-    <Compile Include="VersionListWindow.xaml.cs">
+    <Compile Include="ViewModels\VersionListViewModel.cs" />
+    <Compile Include="Views\VersionListWindow.xaml.cs">
       <DependentUpon>VersionListWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Web\FactorioWebsite.cs" />
@@ -144,19 +145,19 @@
     <Compile Include="Win32\User32.cs" />
     <Compile Include="Win32\WindowLongIndex.cs" />
     <Compile Include="Win32\WindowStyles.cs" />
-    <Page Include="AboutWindow.xaml">
+    <Page Include="Views\AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="LinkPropertiesWindow.xaml">
+    <Page Include="Views\LinkPropertiesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ProgressWindow.xaml">
+    <Page Include="Views\ProgressWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VersionManagementWindow.xaml">
+    <Page Include="Views\VersionManagementWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -168,11 +169,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Resource>
-    <Page Include="LoginWindow.xaml">
+    <Page Include="Views\LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -180,16 +181,16 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainViewModel.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="SettingsWindow.xaml">
+    <Page Include="Views\SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VersionListWindow.xaml">
+    <Page Include="Views\VersionListWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

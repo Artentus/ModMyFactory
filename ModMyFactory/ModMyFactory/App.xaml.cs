@@ -10,6 +10,7 @@ using System.Windows.Input;
 using ModMyFactory.Lang;
 using Octokit;
 using Application = System.Windows.Application;
+using ModMyFactory.Models;
 
 namespace ModMyFactory
 {

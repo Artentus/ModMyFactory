@@ -6,6 +6,8 @@ using System.Linq;
 using System.Windows;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using ModMyFactory.Models;
+using ModMyFactory.Helpers;
 
 namespace ModMyFactory
 {
