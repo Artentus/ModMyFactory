@@ -284,6 +284,11 @@
             <local:DragDropReadyListBox Grid.Row="1" Grid.Column="0" SelectionMode="Extended" ItemsSource="{Binding ModsView}"
                       PreviewMouseDown="ModsListBoxPreviewMouseDownHandler" PreviewMouseMove="ModsListBoxPreviewMouseMoveHandler"
                       PreviewMouseUp="ModsListBoxPreviewMouseUpHandler">
+                <local:DragDropReadyListBox.ItemContainerStyle>
+                    <Style TargetType="local:DragDropReadyListBoxItem">
+                        <Setter Property="ToolTip" Value="{Binding ToolTip}" />
+                    </Style>
+                </local:DragDropReadyListBox.ItemContainerStyle>
                 <local:DragDropReadyListBox.GroupStyle>
                     <GroupStyle>
                         <GroupStyle.HeaderTemplate>
