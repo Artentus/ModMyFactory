@@ -310,7 +310,9 @@ namespace ModMyFactory
                         var versionDirectory = App.Instance.Settings.GetModDirectory(version);
                         if (!versionDirectory.Exists) versionDirectory.Create();
 
-                        archiveFile.MoveTo(Path.Combine(versionDirectory.FullName, archiveFile.Name));
+                        var modFilePath = Path.Combine(versionDirectory.FullName, archiveFile.Name);
+                        if (!File.Exists(modFilePath)) archiveFile.MoveTo(modFilePath);
+
                         progress2.Report(new Tuple<FileInfo, Version>(archiveFile, version));
                     }
 
