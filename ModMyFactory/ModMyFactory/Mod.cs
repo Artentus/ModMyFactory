@@ -188,6 +188,15 @@ namespace ModMyFactory
             }
         }
 
+        public string ToolTip
+        {
+            get
+            {
+                var authorAndVersion = $"Author: {Author}     Version: {Version}";
+                return $"{authorAndVersion}\n{StringHelper.Wrap(Description, authorAndVersion.Length)}";
+            }
+        }
+
         private void Delete(ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
         {
             if (MessageBox.Show(messageOwner, "Do you really want to delete this mod?", "Confirm",
