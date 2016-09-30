@@ -114,6 +114,7 @@
     <Compile Include="JsonHelper.cs" />
     <Compile Include="MenuItemProperties.cs" />
     <Compile Include="MVVM\ViewModelBase.cs" />
+    <Compile Include="StringHelper.cs" />
     <Compile Include="UpdateSearchResult.cs" />
     <Compile Include="VersionManagementViewModel.cs" />
     <Compile Include="VersionManagementWindow.xaml.cs">
