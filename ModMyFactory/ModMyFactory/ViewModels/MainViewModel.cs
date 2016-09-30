@@ -300,7 +300,7 @@ namespace ModMyFactory.ViewModels
                 });
                 IProgress<Tuple<FileInfo, Version>> progress2 = new Progress<Tuple<FileInfo, Version>>(info =>
                 {
-                    var mod = new Mod(info.Item1, info.Item2, Mods, Modpacks, Window);
+                    var mod = new ZippedMod(info.Item1, info.Item2, Mods, Modpacks, Window);
                     Mods.Add(mod);
                 });
 

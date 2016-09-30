@@ -81,6 +81,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\ExtractedMod.cs" />
+    <Compile Include="Models\ZippedMod.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="Views\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>

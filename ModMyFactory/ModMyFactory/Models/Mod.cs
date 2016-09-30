@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.IO.Compression;
 using System.Text.RegularExpressions;
 using System.Windows;
 using ModMyFactory.MVVM;
@@ -14,7 +13,7 @@ namespace ModMyFactory.Models
     /// <summary>
     /// A mod.
     /// </summary>
-    class Mod : NotifyPropertyChangedBase
+    abstract class Mod : NotifyPropertyChangedBase
     {
         static List<ModTemplateList> templateLists;
 
@@ -125,7 +124,13 @@ namespace ModMyFactory.Models
                     {
                         foreach (var file in directory.EnumerateFiles("*.zip"))
                         {
-                            var mod = new Mod(file, version, parentCollection, modpackCollection, messageOwner);
+                            var mod = new ZippedMod(file, version, parentCollection, modpackCollection, messageOwner);
+                            parentCollection.Add(mod);
+                        }
+
+                        foreach (var subDirectory in directory.EnumerateDirectories())
+                        {
+                            var mod = new ExtractedMod(subDirectory, version, parentCollection, modpackCollection, messageOwner);
                             parentCollection.Add(mod);
                         }
                     }
@@ -133,33 +138,28 @@ namespace ModMyFactory.Models
             }
         }
 
-        readonly string innerName;
+        string innerName;
         bool active;
 
         /// <summary>
         /// The name of the mod.
         /// </summary>
-        public string Name { get; }
+        public string Name { get; protected set; }
 
         /// <summary>
         /// The description of the mod.
         /// </summary>
-        public string Description { get; }
+        public string Description { get; protected set; }
 
         /// <summary>
         /// The author of the mod.
         /// </summary>
-        public string Author { get; }
+        public string Author { get; protected set; }
 
         /// <summary>
         /// The version of the mod.
         /// </summary>
-        public Version Version { get; }
-
-        /// <summary>
-        /// The mod file.
-        /// </summary>
-        public FileInfo File { get; }
+        public Version Version { get; protected set; }
 
         /// <summary>
         /// The version of Factorio this mod is compatible with.
@@ -191,7 +191,7 @@ namespace ModMyFactory.Models
         }
 
         /// <summary>
-        /// Additional information about this mod to bee displayed in a tooltip.
+        /// Additional information about this mod to be displayed in a tooltip.
         /// </summary>
         public string ToolTip
         {
@@ -201,6 +201,16 @@ namespace ModMyFactory.Models
                 return $"{authorAndVersion}\n\n{StringHelper.Wrap(Description, authorAndVersion.Length)}";
             }
         }
+
+        /// <summary>
+        /// The name this mod should appear under if info.json does not contain any valid names.
+        /// </summary>
+        protected abstract string FallbackName { get; }
+
+        /// <summary>
+        /// Deletes this mod at file system level.
+        /// </summary>
+        protected abstract void DeleteFilesystemObjects();
 
         private void Delete(ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
         {
@@ -214,7 +224,7 @@ namespace ModMyFactory.Models
                         modpack.Mods.Remove(reference);
 
                 }
-                File.Delete();
+                DeleteFilesystemObjects();
                 parentCollection.Remove(this);
 
                 MainViewModel.Instance.ModpackTemplateList.Update(MainViewModel.Instance.Modpacks);
@@ -223,74 +233,65 @@ namespace ModMyFactory.Models
         }
 
         /// <summary>
+        /// Reads a provided info.json file to populate the mods attributes.
+        /// All derived classes should call this method in their constructor.
+        /// </summary>
+        /// <param name="stream">A stream containing the contents of the info.json file.</param>
+        protected void ReadInfoFile(Stream stream)
+        {
+            using (var reader = new StreamReader(stream))
+            {
+                string content = reader.ReadToEnd();
+
+                // Name
+                MatchCollection matches = Regex.Matches(content, "\"name\" *: *\"(?<name>.*)\"",
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                innerName = matches.Count > 0 ? matches[0].Groups["name"].Value : FallbackName;
+                matches = Regex.Matches(content, "\"title\" *: *\"(?<title>.*)\"",
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                Name = matches.Count > 0 ? matches[0].Groups["title"].Value : innerName;
+
+                // Description
+                matches = Regex.Matches(content, "\"description\" *: *\"(?<description>.*)\"",
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                if (matches.Count > 0)
+                {
+                    Description = matches[0].Groups["description"].Value;
+                }
+
+                // Author
+                matches = Regex.Matches(content, "\"author\" *: *\"(?<author>.*)\"",
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                if (matches.Count > 0)
+                {
+                    Author = matches[0].Groups["author"].Value;
+                }
+
+                // Version
+                matches = Regex.Matches(content, "\"version\" *: *\"(?<version>[0-9]+(\\.[0-9]+){0,3})\"",
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                if (matches.Count > 0)
+                {
+                    string versionString = matches[0].Groups["version"].Value;
+                    Version = Version.Parse(versionString);
+                }
+                else
+                {
+                    Version = new Version(1, 0);
+                }
+            }
+        }
+
+        /// <summary>
         /// Creates a mod.
         /// </summary>
-        /// <param name="file">The mod file.</param>
         /// <param name="factorioVersion">The version of Factorio this mod is compatible with.</param>
         /// <param name="parentCollection">The collection containing this mod.</param>
         /// <param name="modpackCollection">The collection containing all modpacks.</param>
         /// <param name="messageOwner">The window that ownes the deletion message box.</param>
-        public Mod(FileInfo file, Version factorioVersion, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
+        protected Mod(Version factorioVersion, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
         {
-            File = file;
             FactorioVersion = factorioVersion;
-
-            using (ZipArchive archive = ZipFile.OpenRead(File.FullName))
-            {
-                foreach (var entry in archive.Entries)
-                {
-                    if (entry.FullName.EndsWith("info.json"))
-                    {
-                        using (Stream stream = entry.Open())
-                        {
-                            using (var reader = new StreamReader(stream))
-                            {
-                                string content = reader.ReadToEnd();
-
-                                // Name
-                                MatchCollection matches = Regex.Matches(content, "\"name\" *: *\"(?<name>.*)\"",
-                                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                                innerName = matches.Count > 0 ? matches[0].Groups["name"].Value : File.Name;
-                                matches = Regex.Matches(content, "\"title\" *: *\"(?<title>.*)\"",
-                                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                                Name = matches.Count > 0 ? matches[0].Groups["title"].Value : innerName;
-
-                                // Description
-                                matches = Regex.Matches(content, "\"description\" *: *\"(?<description>.*)\"",
-                                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                                if (matches.Count > 0)
-                                {
-                                    Description = matches[0].Groups["description"].Value;
-                                }
-
-                                // Author
-                                matches = Regex.Matches(content, "\"author\" *: *\"(?<author>.*)\"",
-                                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                                if (matches.Count > 0)
-                                {
-                                    Author = matches[0].Groups["author"].Value;
-                                }
-
-                                // Version
-                                matches = Regex.Matches(content, "\"version\" *: *\"(?<version>[0-9]+(\\.[0-9]+){0,3})\"",
-                                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                                if (matches.Count > 0)
-                                {
-                                    string versionString = matches[0].Groups["version"].Value;
-                                    Version = Version.Parse(versionString);
-                                }
-                                else
-                                {
-                                    Version = new Version(1, 0);
-                                }
-                            }
-                        }
-
-                        break;
-                    }
-                }
-            }
-
             DeleteCommand = new RelayCommand(() => Delete(parentCollection, modpackCollection, messageOwner));
 
             active = Mod.GetActive(innerName, FactorioVersion);

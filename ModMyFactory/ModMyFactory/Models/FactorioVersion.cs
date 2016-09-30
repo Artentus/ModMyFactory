@@ -51,7 +51,7 @@ namespace ModMyFactory.Models
             CreateModDirectoryLink(false);
         }
 
-        private void CreateSaveDirectoryLink()
+        public void CreateSaveDirectoryLink()
         {
             DirectoryInfo localSaveDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "saves"));
             if (!localSaveDirectory.Exists)
@@ -69,7 +69,7 @@ namespace ModMyFactory.Models
             }
         }
 
-        private void CreateScenarioDirectoryLink()
+        public void CreateScenarioDirectoryLink()
         {
             DirectoryInfo localScenarioDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "scenarios"));
             if (!localScenarioDirectory.Exists)
