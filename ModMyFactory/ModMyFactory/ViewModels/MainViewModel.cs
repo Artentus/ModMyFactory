@@ -346,21 +346,6 @@ namespace ModMyFactory.ViewModels
             // ToDo: Add mod from folder
         }
 
-        private string[] GetModFilesFromFolder(string path)
-        {
-            string[] modFiles = new string[0];
-            try
-            {
-                modFiles = Directory.GetFiles(path, "*.zip", SearchOption.AllDirectories);
-            }
-            catch (UnauthorizedAccessException uae)
-            {
-                Console.WriteLine(uae);
-            }
-
-            return modFiles;
-        }
-
         private void CreateNewModpack()
         {
             string newName = "NewModpack";
@@ -381,6 +366,9 @@ namespace ModMyFactory.ViewModels
             Modpack modpack = new Modpack(newName, Modpacks, Window);
             modpack.ParentView = ModpacksView;
             Modpacks.Add(modpack);
+
+            modpack.Editing = true;
+            Window.ModpacksListBox.ScrollIntoView(modpack);
         }
 
         private void CreateLink()

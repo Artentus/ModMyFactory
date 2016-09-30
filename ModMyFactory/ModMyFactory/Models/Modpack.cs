@@ -86,6 +86,7 @@ namespace ModMyFactory.Models
                     {
                         ParentView.CommitEdit();
 
+                        MainViewModel.Instance.Window.ModpacksListBox.ScrollIntoView(this);
                         MainViewModel.Instance.ModpackTemplateList.Update(MainViewModel.Instance.Modpacks);
                         MainViewModel.Instance.ModpackTemplateList.Save();
                     }
