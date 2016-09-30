@@ -80,13 +80,11 @@ namespace ModMyFactory.Models
 
                     if (editing)
                     {
-                        foreach (var view in ParentViews)
-                            view.EditItem(this);
+                        ParentView.EditItem(this);
                     }
                     else
                     {
-                        foreach (var view in ParentViews)
-                            view.CommitEdit();
+                        ParentView.CommitEdit();
 
                         MainViewModel.Instance.ModpackTemplateList.Update(MainViewModel.Instance.Modpacks);
                         MainViewModel.Instance.ModpackTemplateList.Save();
@@ -106,9 +104,9 @@ namespace ModMyFactory.Models
         public ObservableCollection<IModReference> Mods { get; }
 
         /// <summary>
-        /// The list of views this modpack is presented in.
+        /// The view this modpack is presented in.
         /// </summary>
-        public List<IEditableCollectionView> ParentViews { get; } 
+        public IEditableCollectionView ParentView { get; set; }
 
         /// <summary>
         /// A command that deletes this modpack from the list.
@@ -275,8 +273,6 @@ namespace ModMyFactory.Models
 
             ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
             ModsView.CustomSort = new ModReferenceSorter();
-
-            ParentViews = new List<IEditableCollectionView>();
 
             DeleteCommand = new RelayCommand(() => Delete(parentCollection, messageOwner));
             FinishRenameCommand = new RelayCommand(() => Editing = false, () => Editing);

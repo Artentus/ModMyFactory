@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace ModMyFactory.Win32
+namespace ModMyFactory.Helpers
 {
     static class ShellHelper
     {

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using ModMyFactory.MVVM;
-using ModMyFactory.Models;
 
-namespace ModMyFactory
+namespace ModMyFactory.Models
 {
     class ModpackReference : NotifyPropertyChangedBase, IModReference
     {
@@ -21,14 +19,17 @@ namespace ModMyFactory
             set { Modpack.Active = value; }
         }
 
-        public List<IEditableCollectionView> ParentViews => Modpack.ParentViews;
+        /// <summary>
+        /// The view this modpack reference is presented in.
+        /// </summary>
+        public IEditableCollectionView ParentView { get; set; }
 
         public RelayCommand RemoveFromParentCommand { get; }
 
         public ModpackReference(Modpack modpack, Modpack parent)
         {
             Modpack = modpack;
-            Image = new BitmapImage(new Uri("Images/Package.png", UriKind.Relative));
+            Image = new BitmapImage(new Uri("../Images/Package.png", UriKind.Relative));
 
             modpack.PropertyChanged += PropertyChangedHandler;
             RemoveFromParentCommand = new RelayCommand(() => parent.Mods.Remove(this));
@@ -49,13 +50,16 @@ namespace ModMyFactory
                 case nameof(Modpack.Active):
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
                     break;
-                //case nameof(Modpack.Editing):
-                //    if (Modpack.Editing)
-                //    {
-                //        foreach (var view in ParentViews)
-                //            view.EditItem(this);
-                //    }
-                //    break;
+                case nameof(Modpack.Editing):
+                    if (Modpack.Editing)
+                    {
+                        ParentView.EditItem(this);
+                    }
+                    else
+                    {
+                        ParentView.CommitEdit();
+                    }
+                    break;
             }
         }
     }

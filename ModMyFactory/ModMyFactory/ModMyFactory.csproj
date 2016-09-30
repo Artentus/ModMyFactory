@@ -85,7 +85,7 @@
     <Compile Include="Views\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MVVM\Converters\BooleanToStringJsonConverter.cs" />
+    <Compile Include="BooleanToStringJsonConverter.cs" />
     <Compile Include="MVVM\Converters\InverseBooleanConverter.cs" />
     <Compile Include="ViewModels\LinkPropertiesViewModel.cs" />
     <Compile Include="Views\LinkPropertiesWindow.xaml.cs">
@@ -95,11 +95,11 @@
     <Compile Include="DirectoryOption.cs" />
     <Compile Include="Models\FactorioVersion.cs" />
     <Compile Include="MVVM\Sorters\FactorioVersionSorter.cs" />
-    <Compile Include="IModReference.cs" />
-    <Compile Include="ModpackReference.cs" />
+    <Compile Include="Models\IModReference.cs" />
+    <Compile Include="Models\ModpackReference.cs" />
     <Compile Include="MVVM\Sorters\ModpackSorter.cs" />
     <Compile Include="ModpackTemplateList.cs" />
-    <Compile Include="ModReference.cs" />
+    <Compile Include="Models\ModReference.cs" />
     <Compile Include="MVVM\Sorters\ModReferenceSorter.cs" />
     <Compile Include="MVVM\Sorters\ModSorter.cs" />
     <Compile Include="MVVM\IViewModelBase.cs" />
@@ -141,7 +141,7 @@
     </Compile>
     <Compile Include="Web\FactorioWebsite.cs" />
     <Compile Include="Web\WebHelper.cs" />
-    <Compile Include="Win32\ShellHelper.cs" />
+    <Compile Include="Helpers\ShellHelper.cs" />
     <Compile Include="Win32\User32.cs" />
     <Compile Include="Win32\WindowLongIndex.cs" />
     <Compile Include="Win32\WindowStyles.cs" />

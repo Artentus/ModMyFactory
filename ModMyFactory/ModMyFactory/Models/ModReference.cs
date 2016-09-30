@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using ModMyFactory.MVVM;
-using ModMyFactory.Models;
 using ModMyFactory.ViewModels;
 
-namespace ModMyFactory
+namespace ModMyFactory.Models
 {
     class ModReference : NotifyPropertyChangedBase, IModReference
     {
@@ -26,14 +24,12 @@ namespace ModMyFactory
             }
         }
 
-        public List<IEditableCollectionView> ParentViews => null;
-
         public RelayCommand RemoveFromParentCommand { get; }
 
         public ModReference(Mod mod, Modpack parent)
         {
             Mod = mod;
-            Image = new BitmapImage(new Uri("Images/Document.png", UriKind.Relative));
+            Image = new BitmapImage(new Uri("../Images/Document.png", UriKind.Relative));
 
             mod.PropertyChanged += PropertyChangedHandler;
             RemoveFromParentCommand = new RelayCommand(() =>

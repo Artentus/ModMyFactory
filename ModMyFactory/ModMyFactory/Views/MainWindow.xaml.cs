@@ -130,7 +130,7 @@ namespace ModMyFactory.Views
                         if (modpack != parent && !parent.Contains(modpack) && !modpack.Contains(parent, true))
                         {
                             var reference = new ModpackReference(modpack, parent);
-                            reference.ParentViews.Add(parent.ModsView);
+                            reference.ParentView = parent.ModsView;
                             parent.Mods.Add(reference);
                         }
                     }

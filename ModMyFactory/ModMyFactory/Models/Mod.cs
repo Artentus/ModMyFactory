@@ -190,12 +190,15 @@ namespace ModMyFactory.Models
             }
         }
 
+        /// <summary>
+        /// Additional information about this mod to bee displayed in a tooltip.
+        /// </summary>
         public string ToolTip
         {
             get
             {
                 var authorAndVersion = $"Author: {Author}     Version: {Version}";
-                return $"{authorAndVersion}\n{StringHelper.Wrap(Description, authorAndVersion.Length)}";
+                return $"{authorAndVersion}\n\n{StringHelper.Wrap(Description, authorAndVersion.Length)}";
             }
         }
 

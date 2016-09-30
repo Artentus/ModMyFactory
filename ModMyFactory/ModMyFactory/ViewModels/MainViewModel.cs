@@ -13,9 +13,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using ModMyFactory.Helpers;
 using ModMyFactory.Lang;
 using ModMyFactory.MVVM;
-using ModMyFactory.Win32;
 using Ookii.Dialogs.Wpf;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
@@ -229,9 +229,9 @@ namespace ModMyFactory.ViewModels
             modGridLength = App.Instance.Settings.ModGridLength;
             modpackGridLength = App.Instance.Settings.ModpackGridLength;
 
-            DownloadModsCommand = new RelayCommand(DownloadMods, () => false);
+            DownloadModsCommand = new RelayCommand(DownloadMods);
             AddModsFromFilesCommand = new RelayCommand(async () => await AddModsFromFiles());
-            AddModFromFolderCommand = new RelayCommand(async () => await AddModsFromFolder());
+            AddModFromFolderCommand = new RelayCommand(async () => await AddModFromFolder());
             CreateModpackCommand = new RelayCommand(CreateNewModpack);
             ExportLinkCommand = new RelayCommand(CreateLink);
             StartGameCommand = new RelayCommand(StartGame, () => SelectedVersion != null);
@@ -281,58 +281,6 @@ namespace ModMyFactory.ViewModels
             return false;
         }
 
-        private async Task ProcessMods(string[] fileNames)
-        {
-            var progressWindow = new ProgressWindow() { Owner = Window };
-            progressWindow.ViewModel.ActionName = "Processing mods";
-
-            IProgress<Tuple<double, string>> progress1 = new Progress<Tuple<double, string>>(info =>
-            {
-                progressWindow.ViewModel.Progress = info.Item1;
-                progressWindow.ViewModel.ProgressDescription = info.Item2;
-            });
-            IProgress<Tuple<FileInfo, Version>> progress2 = new Progress<Tuple<FileInfo, Version>>(info =>
-            {
-                var mod = new Mod(info.Item1, info.Item2, Mods, Modpacks, Window);
-                Mods.Add(mod);
-            });
-
-            Task processModsTask = Task.Run(() =>
-            {
-                int fileCount = fileNames.Length;
-                int counter = 0;
-                foreach (string fileName in fileNames)
-                {
-                    var archiveFile = new FileInfo(fileName);
-                    Version version;
-
-                    progress1.Report(new Tuple<double, string>((double)counter / fileCount, archiveFile.Name));
-
-                    if (ArchiveFileValid(archiveFile, out version))
-                    {
-                        var versionDirectory = App.Instance.Settings.GetModDirectory(version);
-                        if (!versionDirectory.Exists) versionDirectory.Create();
-
-                        var modFilePath = Path.Combine(versionDirectory.FullName, archiveFile.Name);
-                        if (!File.Exists(modFilePath)) archiveFile.MoveTo(modFilePath);
-
-                        progress2.Report(new Tuple<FileInfo, Version>(archiveFile, version));
-                    }
-
-                    counter++;
-                }
-
-                progress1.Report(new Tuple<double, string>(1, string.Empty));
-            });
-
-            Task closeWindowTask =
-                processModsTask.ContinueWith(t => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
-            progressWindow.ShowDialog();
-
-            await processModsTask;
-            await closeWindowTask;
-        }
-
         private async Task AddModsFromFiles()
         {
             var dialog = new VistaOpenFileDialog();
@@ -342,23 +290,60 @@ namespace ModMyFactory.ViewModels
 
             if (result.HasValue && result.Value)
             {
-                await ProcessMods(dialog.FileNames);
+                var progressWindow = new ProgressWindow() { Owner = Window };
+                progressWindow.ViewModel.ActionName = "Processing mods";
+
+                IProgress<Tuple<double, string>> progress1 = new Progress<Tuple<double, string>>(info =>
+                {
+                    progressWindow.ViewModel.Progress = info.Item1;
+                    progressWindow.ViewModel.ProgressDescription = info.Item2;
+                });
+                IProgress<Tuple<FileInfo, Version>> progress2 = new Progress<Tuple<FileInfo, Version>>(info =>
+                {
+                    var mod = new Mod(info.Item1, info.Item2, Mods, Modpacks, Window);
+                    Mods.Add(mod);
+                });
+
+                Task processModsTask = Task.Run(() =>
+                {
+                    int fileCount = dialog.FileNames.Length;
+                    int counter = 0;
+                    foreach (string fileName in dialog.FileNames)
+                    {
+                        var archiveFile = new FileInfo(fileName);
+                        Version version;
+
+                        progress1.Report(new Tuple<double, string>((double)counter / fileCount, archiveFile.Name));
+
+                        if (ArchiveFileValid(archiveFile, out version))
+                        {
+                            var versionDirectory = App.Instance.Settings.GetModDirectory(version);
+                            if (!versionDirectory.Exists) versionDirectory.Create();
+
+                            var modFilePath = Path.Combine(versionDirectory.FullName, archiveFile.Name);
+                            if (!File.Exists(modFilePath)) archiveFile.MoveTo(modFilePath);
+
+                            progress2.Report(new Tuple<FileInfo, Version>(archiveFile, version));
+                        }
+
+                        counter++;
+                    }
+
+                    progress1.Report(new Tuple<double, string>(1, string.Empty));
+                });
+
+                Task closeWindowTask =
+                    processModsTask.ContinueWith(t => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
+                progressWindow.ShowDialog();
+
+                await processModsTask;
+                await closeWindowTask;
             }
         }
 
-        private async Task AddModsFromFolder()
+        private async Task AddModFromFolder()
         {
-            var dialog = new VistaFolderBrowserDialog();
-            bool? result = dialog.ShowDialog(Window);
-
-            if (result.HasValue && result.Value)
-            {
-                var fileNames = GetModFilesFromFolder(dialog.SelectedPath);
-                if (fileNames.Length > 0)
-                {
-                    await ProcessMods(fileNames);
-                }
-            }
+            // ToDo: Add mod from folder
         }
 
         private string[] GetModFilesFromFolder(string path)
@@ -394,7 +379,7 @@ namespace ModMyFactory.ViewModels
             newName += count;
 
             Modpack modpack = new Modpack(newName, Modpacks, Window);
-            modpack.ParentViews.Add(ModpacksView);
+            modpack.ParentView = ModpacksView;
             Modpacks.Add(modpack);
         }
 

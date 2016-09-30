@@ -288,10 +288,13 @@
                       PreviewMouseDown="ModsListBoxPreviewMouseDownHandler" PreviewMouseMove="ModsListBoxPreviewMouseMoveHandler"
                       PreviewMouseUp="ModsListBoxPreviewMouseUpHandler">
                 <mvvm:DragDropReadyListBox.ItemContainerStyle>
-                    <Style TargetType="mvvm:DragDropReadyListBoxItem">
-                        <Setter Property="ToolTip" Value="{Binding ToolTip}" />
+                    <Style TargetType="mvvm:DragDropReadyListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                        <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
+                        <Setter Property="ToolTipService.InitialShowDelay" Value="800"/>
+                        <Setter Property="ToolTipService.ShowDuration" Value="15000"/>
                     </Style>
                 </mvvm:DragDropReadyListBox.ItemContainerStyle>
+                
                 <mvvm:DragDropReadyListBox.GroupStyle>
                     <GroupStyle>
                         <GroupStyle.HeaderTemplate>
@@ -374,7 +377,7 @@
                 <mvvm:DragDropReadyListBox.Resources>
                     <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
                     
-                    <DataTemplate x:Key="SubitemTemplate" DataType="{x:Type local:IModReference}">
+                    <DataTemplate x:Key="SubitemTemplate" DataType="{x:Type model:IModReference}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>

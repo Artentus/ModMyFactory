@@ -112,7 +112,7 @@ namespace ModMyFactory
             foreach (var template in Modpacks)
             {
                 var modpack = new Modpack(template.Name, modpackList, messageOwner);
-                if (modpackView != null) modpack.ParentViews.Add(modpackView);
+                if (modpackView != null) modpack.ParentView = modpackView;
 
                 foreach (ModpackTemplateMod modTemplate in template.Mods)
                 {
@@ -130,10 +130,8 @@ namespace ModMyFactory
                 foreach (string modpackName in template.Modpacks)
                 {
                     Modpack subModpack = GetModpack(modpackList, modpackName);
-                    subModpack.ParentViews.Add(modpack.ModsView);
-
                     var reference = new ModpackReference(subModpack, modpack);
-                    reference.ParentViews.Add(modpack.ModsView);
+                    reference.ParentView = modpack.ModsView;
                     if (subModpack != null) modpack.Mods.Add(reference);
                 }
             }
