@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using ModMyFactory.MVVM.Converters;
+using ModMyFactory.Helpers;
 
 namespace ModMyFactory
 {

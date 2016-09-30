@@ -2,8 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ModMyFactory"
+             xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
+             xmlns:converter="clr-namespace:ModMyFactory.MVVM.Converters"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             StartupUri="MainWindow.xaml">
+             StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <!-- Only for design time IntelliSense. -->
@@ -142,7 +144,7 @@
                     <Trigger Property="IsCheckable" Value="True">
                         <Setter TargetName="CheckBox" Property="Visibility" Value="Visible"/>
                     </Trigger>
-                    <Trigger Property="local:MenuItemProperties.ShowChecked" Value="True">
+                    <Trigger Property="mvvm:MenuItemProperties.ShowChecked" Value="True">
                         <Setter TargetName="CheckBox" Property="Visibility" Value="Visible"/>
                     </Trigger>
                     <Trigger Property="IsChecked" Value="True">
@@ -240,7 +242,7 @@
                 </Setter>
             </Style>
 
-            <Style x:Key="{x:Type local:DragDropReadyListBox}" TargetType="{x:Type local:DragDropReadyListBox}" BasedOn="{StaticResource {x:Type ListBox}}"/>
+            <Style x:Key="{x:Type mvvm:DragDropReadyListBox}" TargetType="{x:Type mvvm:DragDropReadyListBox}" BasedOn="{StaticResource {x:Type ListBox}}"/>
 
             <Style x:Key="{x:Type ListBoxItem}" TargetType="{x:Type ListBoxItem}">
                 <Setter Property="SnapsToDevicePixels" Value="true"/>
@@ -373,7 +375,7 @@
                 </Setter>
             </Style>
 
-            <Style x:Key="{x:Type local:DragDropReadyListBoxItem}" TargetType="{x:Type local:DragDropReadyListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}"/>
+            <Style x:Key="{x:Type mvvm:DragDropReadyListBoxItem}" TargetType="{x:Type mvvm:DragDropReadyListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}"/>
 
             <Style TargetType="ContextMenu">
                 <Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -823,7 +825,7 @@
 
             <Style TargetType="{x:Type Expander}">
                 <Style.Resources>
-                    <local:MultiplyConverter x:Key="MultiplyConverter"/>
+                    <converter:MultiplyConverter x:Key="MultiplyConverter"/>
 
                     <ControlTemplate x:Key="ToggleButtonStyle" TargetType="{x:Type ToggleButton}">
                         <Grid Width="20" Height="20" Margin="0,0,4,0">
