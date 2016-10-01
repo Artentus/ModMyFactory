@@ -58,6 +58,19 @@ namespace ModMyFactory.Web
             return document.Contains("logout");
         }
 
+        private static bool VersionCompatibleWithPlatform(Version version)
+        {
+            if (Environment.Is64BitOperatingSystem)
+            {
+                return true;
+            }
+            else
+            {
+                // 32 bit no longer supported as of version 0.15.
+                return version < new Version(0, 15);
+            }
+        }
+
         /// <summary>
         /// Reads the Factorio version list.
         /// </summary>
@@ -81,11 +94,12 @@ namespace ModMyFactory.Web
             {
                 string versionString = match.Groups["version"].Value;
                 string modifierString = match.Groups["modifier"].Value;
+                Version version = Version.Parse(versionString);
 
-                if (allowedModifiers.Contains(modifierString))
+                if (allowedModifiers.Contains(modifierString) && VersionCompatibleWithPlatform(version))
                 {
-                    var version = new FactorioOnlineVersion(Version.Parse(versionString), modifierString);
-                    versions.Add(version);
+                    var factorioVersion = new FactorioOnlineVersion(version, modifierString);
+                    versions.Add(factorioVersion);
                 }
             }
 
