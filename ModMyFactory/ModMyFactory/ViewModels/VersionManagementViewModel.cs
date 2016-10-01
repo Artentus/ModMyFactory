@@ -14,6 +14,7 @@ using ModMyFactory.MVVM;
 using ModMyFactory.Web;
 using Ookii.Dialogs.Wpf;
 using System.Diagnostics;
+using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.Views;
@@ -301,22 +302,6 @@ namespace ModMyFactory.ViewModels
             return false;
         }
 
-        private async Task MoveDirectoryAsync(DirectoryInfo sourceDirectory, DirectoryInfo destinationDirectory)
-        {
-            if (!destinationDirectory.Exists) destinationDirectory.Create();
-
-            await Task.Run(() =>
-            {
-                foreach (var file in sourceDirectory.GetFiles())
-                    file.MoveTo(Path.Combine(destinationDirectory.FullName, file.Name));
-            });
-
-            foreach (var directory in sourceDirectory.GetDirectories())
-                await MoveDirectoryAsync(directory, new DirectoryInfo(Path.Combine(destinationDirectory.FullName, directory.Name)));
-
-            sourceDirectory.Delete(true);
-        }
-
         private async Task AddLocalVersion()
         {
             var dialog = new VistaFolderBrowserDialog();
@@ -338,22 +323,16 @@ namespace ModMyFactory.ViewModels
                 {
                     DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
                     DirectoryInfo destinationDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.ToString(3)));
-                    if (string.Equals(installationDirectory.Root.Name, factorioDirectory.Root.Name, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        installationDirectory.MoveTo(destinationDirectory.FullName);
-                    }
-                    else
-                    {
-                        var progressWindow = new ProgressWindow() { Owner = Window };
-                        progressWindow.ViewModel.ActionName = "Adding local installation";
-                        progressWindow.ViewModel.ProgressDescription = "Moving files...";
-                        progressWindow.ViewModel.IsIndeterminate = true;
 
-                        Task moveTask = MoveDirectoryAsync(installationDirectory, destinationDirectory)
-                            .ContinueWith(t => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
-                        progressWindow.ShowDialog();
-                        await moveTask;
-                    }
+                    var progressWindow = new ProgressWindow() { Owner = Window };
+                    progressWindow.ViewModel.ActionName = "Adding local installation";
+                    progressWindow.ViewModel.ProgressDescription = "Moving files...";
+                    progressWindow.ViewModel.IsIndeterminate = true;
+
+                    Task moveTask = installationDirectory.MoveToAsync(destinationDirectory.FullName)
+                        .ContinueWith(t => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
+                    progressWindow.ShowDialog();
+                    await moveTask;
 
                     FactorioVersions.Add(new FactorioVersion(destinationDirectory, version));
                 }

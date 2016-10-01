@@ -146,6 +146,12 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand StartGameCommand { get; }
 
+        public RelayCommand OpenModFolderCommand { get; }
+
+        public RelayCommand OpenSavegameFolderCommand { get; }
+
+        public RelayCommand OpenScenarioFolderCommand { get; }
+
         public RelayCommand OpenVersionManagerCommand { get; }
 
         public RelayCommand OpenSettingsCommand { get; }
@@ -185,7 +191,10 @@ namespace ModMyFactory.ViewModels
                 AvailableCultures = App.Instance.GetAvailableCultures();
                 AvailableCulturesView = (ListCollectionView)CollectionViewSource.GetDefaultView(AvailableCultures);
                 AvailableCulturesView.CustomSort = new CultureEntrySorter();
-                AvailableCultures.First(entry => string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
+                AvailableCultures.First(
+                    entry =>
+                        string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage,
+                            StringComparison.InvariantCultureIgnoreCase)).Select();
 
                 FactorioVersions = new ObservableCollection<FactorioVersion>();
                 FactorioVersion.GetInstalledVersions().ForEach(item => FactorioVersions.Add(item));
@@ -230,26 +239,55 @@ namespace ModMyFactory.ViewModels
 
                 modGridLength = App.Instance.Settings.ModGridLength;
                 modpackGridLength = App.Instance.Settings.ModpackGridLength;
-            }
 
-            DownloadModsCommand = new RelayCommand(DownloadMods);
-            AddModsFromFilesCommand = new RelayCommand(async () => await AddModsFromFiles());
-            AddModFromFolderCommand = new RelayCommand(async () => await AddModFromFolder());
-            CreateModpackCommand = new RelayCommand(CreateNewModpack);
-            ExportLinkCommand = new RelayCommand(CreateLink);
-            StartGameCommand = new RelayCommand(StartGame, () => SelectedVersion != null);
-            OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
-            OpenSettingsCommand = new RelayCommand(OpenSettings);
-            BrowseFactorioWebsiteCommand = new RelayCommand(() => Process.Start("https://www.factorio.com/"));
-            BrowseModWebsiteCommand = new RelayCommand(() => Process.Start("https://mods.factorio.com/"));
-            BrowseForumThreadCommand = new RelayCommand(() => Process.Start("https://forums.factorio.com/viewtopic.php?f=137&t=33370"));
-            UpdateCommand = new RelayCommand<bool>(async silent => await Update(silent), () => !updating);
-            OpenAboutWindowCommand = new RelayCommand(OpenAboutWindow);
+
+                // 'File' menu
+                DownloadModsCommand = new RelayCommand(DownloadMods);
+                AddModsFromFilesCommand = new RelayCommand(async () => await AddModsFromFiles());
+                AddModFromFolderCommand = new RelayCommand(async () => await AddModFromFolder());
+                CreateModpackCommand = new RelayCommand(CreateNewModpack);
+                ExportLinkCommand = new RelayCommand(CreateLink);
+
+                StartGameCommand = new RelayCommand(StartGame, () => SelectedVersion != null);
+
+                // 'Edit' menu
+                OpenModFolderCommand = new RelayCommand(() => Process.Start(App.Instance.Settings.GetModDirectory().FullName));
+                OpenSavegameFolderCommand = new RelayCommand(() => Process.Start(Path.Combine(App.Instance.AppDataPath, "saves")));
+                OpenScenarioFolderCommand = new RelayCommand(() => Process.Start(Path.Combine(App.Instance.AppDataPath, "scenarios")));
+
+                OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
+
+                OpenSettingsCommand = new RelayCommand(OpenSettings);
+
+                // 'Info' menu
+                BrowseFactorioWebsiteCommand = new RelayCommand(() => Process.Start("https://www.factorio.com/"));
+                BrowseModWebsiteCommand = new RelayCommand(() => Process.Start("https://mods.factorio.com/"));
+                BrowseForumThreadCommand =  new RelayCommand(() => Process.Start("https://forums.factorio.com/viewtopic.php?f=137&t=33370"));
+
+                UpdateCommand = new RelayCommand<bool>(async silent => await Update(silent), () => !updating);
+                OpenAboutWindowCommand = new RelayCommand(OpenAboutWindow);
+            }
         }
 
         private void DownloadMods()
         {
             // ToDo: Implement mod downloading
+        }
+
+        private Version ParseInfoFile(Stream stream)
+        {
+            using (var reader = new StreamReader(stream))
+            {
+                string content = reader.ReadToEnd();
+                MatchCollection matches = Regex.Matches(content, "\"factorio_version\" *: *\"(?<version>[0-9]+\\.[0-9]+(\\.[0-9]+)?)\"",
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                if (matches.Count == 0) return null;
+
+                string versionString = matches[0].Groups["version"].Value;
+                var version = Version.Parse(versionString);
+                version = new Version(version.Major, version.Minor);
+                return version;
+            }
         }
 
         private bool ArchiveFileValid(FileInfo archiveFile, out Version validVersion)
@@ -264,18 +302,8 @@ namespace ModMyFactory.ViewModels
                     {
                         using (Stream stream = entry.Open())
                         {
-                            using (var reader = new StreamReader(stream))
-                            {
-                                string content = reader.ReadToEnd();
-                                MatchCollection matches = Regex.Matches(content, "\"factorio_version\" *: *\"(?<version>[0-9]+\\.[0-9]+(\\.[0-9]+)?)\"",
-                                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                                if (matches.Count == 0) return false;
-
-                                string versionString = matches[0].Groups["version"].Value;
-                                validVersion = Version.Parse(versionString);
-                                validVersion = new Version(validVersion.Major, validVersion.Minor);
-                                return true;
-                            }
+                            validVersion = ParseInfoFile(stream);
+                            if (validVersion != null) return true;
                         }
                     }
                 }
@@ -324,7 +352,8 @@ namespace ModMyFactory.ViewModels
                             if (!versionDirectory.Exists) versionDirectory.Create();
 
                             var modFilePath = Path.Combine(versionDirectory.FullName, archiveFile.Name);
-                            if (!File.Exists(modFilePath)) archiveFile.MoveTo(modFilePath);
+                            if (!File.Exists(modFilePath))
+                                archiveFile.MoveTo(modFilePath);
 
                             progress2.Report(new Tuple<FileInfo, Version>(archiveFile, version));
                         }
@@ -344,9 +373,60 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        private bool DirectoryValid(DirectoryInfo directory, out Version validVersion)
+        {
+            validVersion = default(Version);
+
+            var file = directory.EnumerateFiles("info.json").FirstOrDefault();
+            if (file != null)
+            {
+                using (Stream stream = file.OpenRead())
+                {
+                    validVersion = ParseInfoFile(stream);
+                    if (validVersion != null) return true;
+                }
+            }
+
+            return false;
+        }
+
         private async Task AddModFromFolder()
         {
-            // ToDo: Add mod from folder
+            var dialog = new VistaFolderBrowserDialog();
+            bool? result = dialog.ShowDialog(Window);
+
+            if (result.HasValue && result.Value)
+            {
+                var directory = new DirectoryInfo(dialog.SelectedPath);
+
+                Task moveDirectoryTask = null;
+                Version version;
+                if (DirectoryValid(directory, out version))
+                {
+                    var versionDirectory = App.Instance.Settings.GetModDirectory(version);
+                    if (!versionDirectory.Exists) versionDirectory.Create();
+
+                    var modDirectoryPath = Path.Combine(versionDirectory.FullName, directory.Name);
+                    if (!Directory.Exists(modDirectoryPath))
+                        moveDirectoryTask = directory.MoveToAsync(modDirectoryPath);
+                }
+
+                if (moveDirectoryTask != null)
+                {
+                    var progressWindow = new ProgressWindow() { Owner = Window };
+                    progressWindow.ViewModel.ActionName = "Processing mod";
+                    progressWindow.ViewModel.ProgressDescription = directory.Name;
+                    progressWindow.ViewModel.IsIndeterminate = true;
+
+                    moveDirectoryTask = moveDirectoryTask.ContinueWith(t => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
+                    progressWindow.ShowDialog();
+                    await moveDirectoryTask;
+
+                    progressWindow.Close();
+                }
+
+                Mods.Add(new ExtractedMod(directory, version, Mods, Modpacks, Window));
+            }
         }
 
         private void CreateNewModpack()

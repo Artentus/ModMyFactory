@@ -27,6 +27,7 @@
         <BitmapImage x:Key="ExportLinkIcon" UriSource="../Images/ExportLink.png"/>
         <BitmapImage x:Key="InformationIcon" UriSource="../Images/Information.png"/>
         <BitmapImage x:Key="NewPackageIcon" UriSource="../Images/NewPackage.png"/>
+        <BitmapImage x:Key="OpenFolderIcon" UriSource="../Images/OpenFolder.png"/>
         <BitmapImage x:Key="RenameActiveIcon" UriSource="../Images/RenameActive.png"/>
         <BitmapImage x:Key="RenameInactiveIcon" UriSource="../Images/RenameInactive.png"/>
         <BitmapImage x:Key="RunIcon" UriSource="../Images/Run.png"/>
@@ -146,9 +147,20 @@
                           InputGestureText="{DynamicResource CloseHotkey}" Command="Close"/>
             </MenuItem>
             <MenuItem Header="{DynamicResource EditMenuItem}">
+                <MenuItem Header="{DynamicResource OpenModFolderMenuItem}" Icon="{StaticResource OpenFolderIcon}"
+                          Command="{Binding OpenModFolderCommand}"/>
+                <MenuItem Header="{DynamicResource OpenSavegameFolderMenuItem}" Icon="{StaticResource OpenFolderIcon}"
+                          Command="{Binding OpenSavegameFolderCommand}"/>
+                <MenuItem Header="{DynamicResource OpenScenarioFolderMenuItem}" Icon="{StaticResource OpenFolderIcon}"
+                          Command="{Binding OpenScenarioFolderCommand}"/>
+                
+                <Separator/>
+                
                 <MenuItem Header="{DynamicResource VersionManagerMenuItem}" Icon="{StaticResource ConfigureIcon}"
                           InputGestureText="{DynamicResource VersionManagerHotkey}" Command="{Binding OpenVersionManagerCommand}"/>
+                
                 <Separator/>
+                
                 <MenuItem Header="{DynamicResource SettingsMenuItem}" Icon="{StaticResource SettingsIcon}"
                           InputGestureText="{DynamicResource SettingsHotkey}" Command="{Binding OpenSettingsCommand}"/>
             </MenuItem>

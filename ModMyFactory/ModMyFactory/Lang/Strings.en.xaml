@@ -31,6 +31,9 @@
     
     <!-- 'Edit' menu -->
     <sys:String x:Key="EditMenuItem">_Edit</sys:String>
+    <sys:String x:Key="OpenModFolderMenuItem">Open mod folder</sys:String>
+    <sys:String x:Key="OpenSavegameFolderMenuItem">Open savegame folder</sys:String>
+    <sys:String x:Key="OpenScenarioFolderMenuItem">Open scenario folder</sys:String>
     <sys:String x:Key="VersionManagerMenuItem">Version manager</sys:String>
     <sys:String x:Key="SettingsMenuItem">Settings</sys:String>
     

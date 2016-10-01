@@ -81,6 +81,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\DirectoryInfoExtensions.cs" />
     <Compile Include="Models\ExtractedMod.cs" />
     <Compile Include="Models\ZippedMod.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
@@ -290,6 +291,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Download.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\OpenFolder.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
