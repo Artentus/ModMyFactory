@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
-using ModMyFactory.MVVM.Converters;
 using ModMyFactory.Helpers;
 
 namespace ModMyFactory
@@ -39,7 +38,7 @@ namespace ModMyFactory
         /// Loads a specified mod-list.json file.
         /// </summary>
         /// <param name="path">The file path.</param>
-        /// <returns>Returns a ModTemplateList representing the specified mod.list.json file.</returns>
+        /// <returns>Returns a ModTemplateList representing the specified mod-list.json file.</returns>
         public static ModTemplateList Load(string path)
         {
             var file = new FileInfo(path);
@@ -106,7 +105,7 @@ namespace ModMyFactory
         /// <summary>
         /// Sets the active state of a mod.
         /// </summary>
-        /// <param name="name">the mods name.</param>
+        /// <param name="name">The mods name.</param>
         /// <param name="value">The new active state of the mod.</param>
         public void SetActive(string name, bool value)
         {
@@ -118,6 +117,20 @@ namespace ModMyFactory
             else
             {
                 Mods.Add(new ModTemplate(name, value));
+                Save();
+            }
+        }
+
+        /// <summary>
+        /// Removes a mods template.
+        /// </summary>
+        /// <param name="name">The mods name.</param>
+        public void Remove(string name)
+        {
+            ModTemplate template = Mods.Find(item => item.Name == name);
+            if (template != null)
+            {
+                Mods.Remove(template);
                 Save();
             }
         }

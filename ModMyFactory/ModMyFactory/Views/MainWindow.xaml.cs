@@ -43,7 +43,7 @@ namespace ModMyFactory.Views
 
         private void LoadedHandler(object sender, EventArgs e)
         {
-            if (!Program.NoUpdateCheck)
+            if (Program.UpdateCheckOnStartup)
                 ViewModel.UpdateCommand.Execute(true);
         }
 

@@ -16,15 +16,32 @@ namespace ModMyFactory
 {
     public partial class App : Application
     {
+        /// <summary>
+        /// The current application instance.
+        /// </summary>
         internal static App Instance => (App)Application.Current;
+
+        /// <summary>
+        /// Indicates whether the application is currently in design mode.
+        /// </summary>
+        internal static bool IsInDesignMode => !(Application.Current is App);
 
         ResourceDictionary enDictionary;
         UpdateSearchResult searchResult;
 
+        /// <summary>
+        /// The applications version.
+        /// </summary>
         internal Version AssemblyVersion => Assembly.GetExecutingAssembly().GetName().Version;
 
+        /// <summary>
+        /// The applications settings.
+        /// </summary>
         internal Settings Settings { get; }
 
+        /// <summary>
+        /// The applications AppData path.
+        /// </summary>
         internal string AppDataPath { get; }
 
         public App(string appDataPath)
@@ -42,6 +59,10 @@ namespace ModMyFactory
             : this(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ModMyFactory"))
         { }
 
+        /// <summary>
+        /// Lists all available cultures.
+        /// </summary>
+        /// <returns>Returns a list containing all available cultures.</returns>
         internal List<CultureEntry> GetAvailableCultures()
         {
             var availableCultures = new List<CultureEntry>();
@@ -61,6 +82,10 @@ namespace ModMyFactory
             return availableCultures;
         }
 
+        /// <summary>
+        /// Sets a specified culture as UI culture.
+        /// </summary>
+        /// <param name="culture">The culture to set as UI culture.</param>
         internal void SelectCulture(CultureInfo culture)
         {
             if (enDictionary == null)
@@ -78,6 +103,10 @@ namespace ModMyFactory
             Thread.CurrentThread.CurrentUICulture = culture;
         }
 
+        /// <summary>
+        /// Searches for available updates on GitHub.
+        /// </summary>
+        /// <returns>Returns an update-search result.</returns>
         internal async Task<UpdateSearchResult> SearchForUpdateAsync()
         {
             if (searchResult == null || !searchResult.UpdateAvailable)

@@ -10,10 +10,13 @@ namespace ModMyFactory
 {
     public static class Program
     {
-        public static bool NoUpdateCheck { get; private set; }
+        /// <summary>
+        /// Indicates whether ModMyFatory should check for updates on startup.
+        /// </summary>
+        public static bool UpdateCheckOnStartup { get; private set; }
 
         /// <summary>
-        /// Application Entry Point.
+        /// Application entry point.
         /// </summary>
         [STAThread]
         public static int Main(string[] args)
@@ -36,7 +39,7 @@ namespace ModMyFactory
 
             // Prevent update search on startup
             index = Array.IndexOf(args, "-u");
-            NoUpdateCheck = (index >= 0);
+            UpdateCheckOnStartup = (index < 0);
 
             // Direct game start logic.
             index = Array.IndexOf(args, "-v");

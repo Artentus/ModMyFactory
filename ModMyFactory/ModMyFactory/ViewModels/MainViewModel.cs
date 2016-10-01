@@ -156,7 +156,7 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand BrowseForumThreadCommand { get; }
 
-        public RelayCommand UpdateCommand { get; }
+        public RelayCommand<bool> UpdateCommand { get; }
 
         public RelayCommand OpenAboutWindowCommand { get; }
 
@@ -180,54 +180,57 @@ namespace ModMyFactory.ViewModels
 
         private MainViewModel()
         {
-            AvailableCultures = App.Instance.GetAvailableCultures();
-            AvailableCulturesView = (ListCollectionView)CollectionViewSource.GetDefaultView(AvailableCultures);
-            AvailableCulturesView.CustomSort = new CultureEntrySorter();
-            AvailableCultures.First(entry => string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
-
-            FactorioVersions = new ObservableCollection<FactorioVersion>();
-            FactorioVersion.GetInstalledVersions().ForEach(item => FactorioVersions.Add(item));
-            FactorioVersionsView = (ListCollectionView)CollectionViewSource.GetDefaultView(FactorioVersions);
-            FactorioVersionsView.CustomSort = new FactorioVersionSorter();
-
-            Version version = App.Instance.Settings.SelectedVersion;
-            if (version != null)
+            if (!App.IsInDesignMode) // Make view model designer friendly.
             {
-                FactorioVersion factorioVersion = FactorioVersions.FirstOrDefault(item => item.Version == version);
-                if (factorioVersion != null)
+                AvailableCultures = App.Instance.GetAvailableCultures();
+                AvailableCulturesView = (ListCollectionView)CollectionViewSource.GetDefaultView(AvailableCultures);
+                AvailableCulturesView.CustomSort = new CultureEntrySorter();
+                AvailableCultures.First(entry => string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
+
+                FactorioVersions = new ObservableCollection<FactorioVersion>();
+                FactorioVersion.GetInstalledVersions().ForEach(item => FactorioVersions.Add(item));
+                FactorioVersionsView = (ListCollectionView)CollectionViewSource.GetDefaultView(FactorioVersions);
+                FactorioVersionsView.CustomSort = new FactorioVersionSorter();
+
+                Version version = App.Instance.Settings.SelectedVersion;
+                if (version != null)
                 {
-                    selectedVersion = factorioVersion;
+                    FactorioVersion factorioVersion = FactorioVersions.FirstOrDefault(item => item.Version == version);
+                    if (factorioVersion != null)
+                    {
+                        selectedVersion = factorioVersion;
+                    }
+                    else
+                    {
+                        App.Instance.Settings.SelectedVersion = default(Version);
+                        App.Instance.Settings.Save();
+                    }
                 }
-                else
+
+                Mods = new ObservableCollection<Mod>();
+                ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
+                ModsView.CustomSort = new ModSorter();
+                ModsView.GroupDescriptions.Add(new PropertyGroupDescription("FactorioVersion"));
+                ModsView.Filter = ModFilter;
+
+                Modpacks = new ObservableCollection<Modpack>();
+                ModpacksView = (ListCollectionView)CollectionViewSource.GetDefaultView(Modpacks);
+                ModpacksView.CustomSort = new ModpackSorter();
+                ModpacksView.Filter = ModpackFilter;
+
+                Mod.LoadTemplates();
+                Mod.LoadMods(Mods, Modpacks, Application.Current.MainWindow);
+                ModpackTemplateList = ModpackTemplateList.Load(Path.Combine(App.Instance.AppDataPath, "modpacks.json"));
+                ModpackTemplateList.PopulateModpackList(Mods, Modpacks, ModpacksView, Application.Current.MainWindow);
+                Modpacks.CollectionChanged += (sender, e) =>
                 {
-                    App.Instance.Settings.SelectedVersion = default(Version);
-                    App.Instance.Settings.Save();
-                }
+                    ModpackTemplateList.Update(Modpacks);
+                    ModpackTemplateList.Save();
+                };
+
+                modGridLength = App.Instance.Settings.ModGridLength;
+                modpackGridLength = App.Instance.Settings.ModpackGridLength;
             }
-
-            Mods = new ObservableCollection<Mod>();
-            ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
-            ModsView.CustomSort = new ModSorter();
-            ModsView.GroupDescriptions.Add(new PropertyGroupDescription("FactorioVersion"));
-            ModsView.Filter = ModFilter;
-
-            Modpacks = new ObservableCollection<Modpack>();
-            ModpacksView = (ListCollectionView)CollectionViewSource.GetDefaultView(Modpacks);
-            ModpacksView.CustomSort = new ModpackSorter();
-            ModpacksView.Filter = ModpackFilter;
-
-            Mod.LoadTemplates();
-            Mod.LoadMods(Mods, Modpacks, Application.Current.MainWindow);
-            ModpackTemplateList = ModpackTemplateList.Load(Path.Combine(App.Instance.AppDataPath, "modpacks.json"));
-            ModpackTemplateList.PopulateModpackList(Mods, Modpacks, ModpacksView, Application.Current.MainWindow);
-            Modpacks.CollectionChanged += (sender, e) =>
-            {
-                ModpackTemplateList.Update(Modpacks);
-                ModpackTemplateList.Save();
-            };
-
-            modGridLength = App.Instance.Settings.ModGridLength;
-            modpackGridLength = App.Instance.Settings.ModpackGridLength;
 
             DownloadModsCommand = new RelayCommand(DownloadMods);
             AddModsFromFilesCommand = new RelayCommand(async () => await AddModsFromFiles());
@@ -240,7 +243,7 @@ namespace ModMyFactory.ViewModels
             BrowseFactorioWebsiteCommand = new RelayCommand(() => Process.Start("https://www.factorio.com/"));
             BrowseModWebsiteCommand = new RelayCommand(() => Process.Start("https://mods.factorio.com/"));
             BrowseForumThreadCommand = new RelayCommand(() => Process.Start("https://forums.factorio.com/viewtopic.php?f=137&t=33370"));
-            UpdateCommand = new RelayCommand(async obj => await Update((bool)obj), () => !updating);
+            UpdateCommand = new RelayCommand<bool>(async silent => await Update(silent), () => !updating);
             OpenAboutWindowCommand = new RelayCommand(OpenAboutWindow);
         }
 

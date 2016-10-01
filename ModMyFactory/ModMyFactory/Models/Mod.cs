@@ -80,6 +80,11 @@ namespace ModMyFactory.Models
             }
         }
 
+        private static void RemoveTemplate(string name)
+        {
+            templateLists.ForEach(list => list.Remove(name));
+        }
+
         /// <summary>
         /// Starts updating all mod templates.
         /// While updating all save commands will be ignored.
@@ -144,22 +149,22 @@ namespace ModMyFactory.Models
         /// <summary>
         /// The name of the mod.
         /// </summary>
-        public string Name { get; protected set; }
+        public string Name { get; private set; }
 
         /// <summary>
         /// The description of the mod.
         /// </summary>
-        public string Description { get; protected set; }
+        public string Description { get; private set; }
 
         /// <summary>
         /// The author of the mod.
         /// </summary>
-        public string Author { get; protected set; }
+        public string Author { get; private set; }
 
         /// <summary>
         /// The version of the mod.
         /// </summary>
-        public Version Version { get; protected set; }
+        public Version Version { get; private set; }
 
         /// <summary>
         /// The version of Factorio this mod is compatible with.
@@ -226,6 +231,7 @@ namespace ModMyFactory.Models
                 }
                 DeleteFilesystemObjects();
                 parentCollection.Remove(this);
+                RemoveTemplate(innerName);
 
                 MainViewModel.Instance.ModpackTemplateList.Update(MainViewModel.Instance.Modpacks);
                 MainViewModel.Instance.ModpackTemplateList.Save();
@@ -280,6 +286,8 @@ namespace ModMyFactory.Models
                     Version = new Version(1, 0);
                 }
             }
+
+            active = Mod.GetActive(innerName, FactorioVersion);
         }
 
         /// <summary>
@@ -293,8 +301,6 @@ namespace ModMyFactory.Models
         {
             FactorioVersion = factorioVersion;
             DeleteCommand = new RelayCommand(() => Delete(parentCollection, modpackCollection, messageOwner));
-
-            active = Mod.GetActive(innerName, FactorioVersion);
         }
     }
 }
