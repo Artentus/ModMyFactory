@@ -338,6 +338,12 @@
                                         </BeginStoryboard>
                                     </Trigger.ExitActions>
                                 </Trigger>
+                                
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Trigger.Setters>
+                                        <Setter Property="Foreground" Value="Gray"/>
+                                    </Trigger.Setters>
+                                </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
