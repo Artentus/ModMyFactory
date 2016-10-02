@@ -353,9 +353,10 @@ namespace ModMyFactory.ViewModels
 
                             var modFilePath = Path.Combine(versionDirectory.FullName, archiveFile.Name);
                             if (!File.Exists(modFilePath))
+                            {
                                 archiveFile.MoveTo(modFilePath);
-
-                            progress2.Report(new Tuple<FileInfo, Version>(archiveFile, version));
+                                progress2.Report(new Tuple<FileInfo, Version>(archiveFile, version));
+                            }
                         }
 
                         counter++;
@@ -399,7 +400,7 @@ namespace ModMyFactory.ViewModels
             {
                 var directory = new DirectoryInfo(dialog.SelectedPath);
 
-                Task moveDirectoryTask = null;
+                Task moveDirectoryTask;
                 Version version;
                 if (DirectoryValid(directory, out version))
                 {
@@ -407,23 +408,34 @@ namespace ModMyFactory.ViewModels
                     if (!versionDirectory.Exists) versionDirectory.Create();
 
                     var modDirectoryPath = Path.Combine(versionDirectory.FullName, directory.Name);
-                    if (!Directory.Exists(modDirectoryPath))
+                    if (Directory.Exists(modDirectoryPath))
+                    {
+                        MessageBox.Show(Window, $"The mod directory '{modDirectoryPath}' already exists!",
+                            "Error adding mod", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                    else
+                    {
                         moveDirectoryTask = directory.MoveToAsync(modDirectoryPath);
+                    }
                 }
-
-                if (moveDirectoryTask != null)
+                else
                 {
-                    var progressWindow = new ProgressWindow() { Owner = Window };
-                    progressWindow.ViewModel.ActionName = "Processing mod";
-                    progressWindow.ViewModel.ProgressDescription = directory.Name;
-                    progressWindow.ViewModel.IsIndeterminate = true;
-
-                    moveDirectoryTask = moveDirectoryTask.ContinueWith(t => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
-                    progressWindow.ShowDialog();
-                    await moveDirectoryTask;
-
-                    progressWindow.Close();
+                    MessageBox.Show(Window, "The selected directory does not contain a valid mod.", "Error adding mod",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
+
+                var progressWindow = new ProgressWindow() { Owner = Window };
+                progressWindow.ViewModel.ActionName = "Processing mod";
+                progressWindow.ViewModel.ProgressDescription = directory.Name;
+                progressWindow.ViewModel.IsIndeterminate = true;
+
+                moveDirectoryTask = moveDirectoryTask.ContinueWith(t => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
+                progressWindow.ShowDialog();
+                await moveDirectoryTask;
+
+                progressWindow.Close();
 
                 Mods.Add(new ExtractedMod(directory, version, Mods, Modpacks, Window));
             }

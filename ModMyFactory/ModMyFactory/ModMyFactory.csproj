@@ -82,6 +82,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Helpers\DirectoryInfoExtensions.cs" />
+    <Compile Include="Web\ModApi\ApiPage.cs" />
     <Compile Include="Models\ExtractedMod.cs" />
     <Compile Include="Models\ZippedMod.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
@@ -143,6 +144,11 @@
       <DependentUpon>VersionListWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Web\FactorioWebsite.cs" />
+    <Compile Include="Web\ModApi\ExtendedModInfo.cs" />
+    <Compile Include="Web\ModApi\ModInfo.cs" />
+    <Compile Include="Web\ModApi\ModRelease.cs" />
+    <Compile Include="Web\ModApi\PageInfo.cs" />
+    <Compile Include="Web\ModApi\PageLinks.cs" />
     <Compile Include="Web\WebHelper.cs" />
     <Compile Include="Helpers\ShellHelper.cs" />
     <Compile Include="Win32\User32.cs" />
