@@ -82,6 +82,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Helpers\DirectoryInfoExtensions.cs" />
+    <Compile Include="ViewModels\OnlineModsViewModel.cs" />
+    <Compile Include="Views\OnlineModsWindow.xaml.cs">
+      <DependentUpon>OnlineModsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Web\ModApi\ApiPage.cs" />
     <Compile Include="Models\ExtractedMod.cs" />
     <Compile Include="Models\ZippedMod.cs" />
@@ -149,6 +153,7 @@
     <Compile Include="Web\ModApi\ModRelease.cs" />
     <Compile Include="Web\ModApi\PageInfo.cs" />
     <Compile Include="Web\ModApi\PageLinks.cs" />
+    <Compile Include="Web\ModWebsite.cs" />
     <Compile Include="Web\WebHelper.cs" />
     <Compile Include="Helpers\ShellHelper.cs" />
     <Compile Include="Win32\User32.cs" />
@@ -159,6 +164,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LinkPropertiesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\OnlineModsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -300,6 +309,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\OpenFolder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Downloads.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Views.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

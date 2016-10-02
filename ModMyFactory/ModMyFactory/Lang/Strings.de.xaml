@@ -158,4 +158,18 @@
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Mitwirkende</sys:String>
 
+    
+    <!--
+    ____________________ OnlineModsWindow ____________________
+    -->
+
+    <sys:String x:Key="OnlineModsWindowTitle">Online-Mods durchsuchen</sys:String>
+
+    <!-- format strings -->
+    <sys:String x:Key="ByFormat">von {0}</sys:String>
+
+    <!-- tooltips -->
+    <sys:String x:Key="ViewsToolTip">Aufrufe</sys:String>
+    <sys:String x:Key="DownloadsToolTip">Downloads</sys:String>
+
 </ResourceDictionary>

@@ -72,7 +72,7 @@ namespace ModMyFactory.ViewModels
             AddFromZipCommand = new RelayCommand(async () => await AddZippedVersion());
             AddFromFolderCommand = new RelayCommand(async () => await AddLocalVersion());
             OpenFolderCommand = new RelayCommand(OpenFolder, () => SelectedVersion != null);
-            RemoveCommand = new RelayCommand(RemoveSelectedVersion, () => SelectedVersion != null);
+            RemoveCommand = new RelayCommand(async () => await RemoveSelectedVersion(), () => SelectedVersion != null);
         }
 
         private bool LogIn()
@@ -163,7 +163,7 @@ namespace ModMyFactory.ViewModels
                         }
                     }), cancellationSource.Token);
 
-                    Task closeWindowTask = downloadTask.ContinueWith(t => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
+                    Task closeWindowTask = downloadTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                     progressWindow.ShowDialog();
 
                     FactorioVersion newVersion = await downloadTask;
@@ -253,7 +253,7 @@ namespace ModMyFactory.ViewModels
                 });
 
                 Task closeWindowTask =
-                    extractTask.ContinueWith(t => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
+                    extractTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                 progressWindow.ShowDialog();
 
                 await extractTask;
@@ -302,6 +302,61 @@ namespace ModMyFactory.ViewModels
             return false;
         }
 
+        private void MoveContentsToPreserve(DirectoryInfo destinationDirectory, Version version)
+        {
+            var localSaveDirecotry = new DirectoryInfo(Path.Combine(destinationDirectory.FullName, "saves"));
+            if (localSaveDirecotry.Exists)
+            {
+                foreach (var saveFile in localSaveDirecotry.GetFiles())
+                {
+                    string newName = Path.Combine(App.Instance.GlobalSavePath, saveFile.Name);
+                    if (!File.Exists(newName)) saveFile.MoveTo(newName);
+                }
+            }
+
+            var localScenarioDirecotry = new DirectoryInfo(Path.Combine(destinationDirectory.FullName, "scenarios"));
+            if (localScenarioDirecotry.Exists)
+            {
+                foreach (var scenarioFile in localScenarioDirecotry.GetFiles())
+                {
+                    string newName = Path.Combine(App.Instance.GlobalScenarioPath, scenarioFile.Name);
+                    if (!File.Exists(newName)) scenarioFile.MoveTo(newName);
+                }
+            }
+
+            var localModDirecotry = new DirectoryInfo(Path.Combine(destinationDirectory.FullName, "mods"));
+            if (localModDirecotry.Exists)
+            {
+                string globalModPath = App.Instance.Settings.GetModDirectory(version).FullName;
+
+                foreach (var modFile in localModDirecotry.GetFiles("*.zip"))
+                {
+                    string newName = Path.Combine(globalModPath, modFile.Name);
+                    if (!File.Exists(newName))
+                    {
+                        modFile.MoveTo(newName);
+                        MainViewModel.Instance.Window.Dispatcher.Invoke(
+                            () => MainViewModel.Instance.Mods.Add(new ZippedMod(modFile, version,
+                                MainViewModel.Instance.Mods, MainViewModel.Instance.Modpacks,
+                                MainViewModel.Instance.Window)));
+                    }
+                }
+
+                foreach (var modFolder in localModDirecotry.GetDirectories())
+                {
+                    string newName = Path.Combine(globalModPath, modFolder.Name);
+                    if (!Directory.Exists(newName))
+                    {
+                        modFolder.MoveToAsync(newName).Wait();
+                        MainViewModel.Instance.Window.Dispatcher.Invoke(
+                            () => MainViewModel.Instance.Mods.Add(new ExtractedMod(modFolder, version,
+                                MainViewModel.Instance.Mods, MainViewModel.Instance.Modpacks,
+                                MainViewModel.Instance.Window)));
+                    }
+                }
+            }
+        }
+
         private async Task AddLocalVersion()
         {
             var dialog = new VistaFolderBrowserDialog();
@@ -315,6 +370,7 @@ namespace ModMyFactory.ViewModels
                 {
                     MessageBox.Show(Window, "This folder does not contain a valid Factorio installation.",
                         "Invalid folder", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
 
                 if (MessageBox.Show(Window,
@@ -330,11 +386,15 @@ namespace ModMyFactory.ViewModels
                     progressWindow.ViewModel.IsIndeterminate = true;
 
                     Task moveTask = installationDirectory.MoveToAsync(destinationDirectory.FullName)
-                        .ContinueWith(t => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
-                    progressWindow.ShowDialog();
-                    await moveTask;
+                        .ContinueWith(t => MoveContentsToPreserve(destinationDirectory, version));
 
-                    FactorioVersions.Add(new FactorioVersion(destinationDirectory, version));
+                    Task closeWindowTask = moveTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                    progressWindow.ShowDialog();
+
+                    await moveTask;
+                    await closeWindowTask;
+
+                    FactorioVersions.Add(new FactorioVersion(destinationDirectory, version, true));
                 }
             }
         }
@@ -344,14 +404,29 @@ namespace ModMyFactory.ViewModels
             Process.Start(SelectedVersion.Directory.FullName);
         }
 
-        private void RemoveSelectedVersion()
+        private async Task RemoveSelectedVersion()
         {
             if (MessageBox.Show(Window,
                     "Do you really want to remove this version of Factorio?\nThis will delete all corresponding files on your hard drive.",
                     "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                SelectedVersion.DeleteLinks();
-                SelectedVersion.Directory.Delete(true);
+                var progressWindow = new ProgressWindow() { Owner = Window };
+                progressWindow.ViewModel.ActionName = "Removing Factorio version";
+                progressWindow.ViewModel.ProgressDescription = "Deleting files...";
+                progressWindow.ViewModel.IsIndeterminate = true;
+
+                Task deleteTask = Task.Run(() =>
+                {
+                    SelectedVersion.DeleteLinks();
+                    SelectedVersion.Directory.Delete(true);
+                });
+
+                Task closeWindowTask = deleteTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                progressWindow.ShowDialog();
+
+                await deleteTask;
+                await closeWindowTask;
+
                 FactorioVersions.Remove(SelectedVersion);
             }
         }

@@ -6,18 +6,18 @@ namespace ModMyFactory.Web.ModApi
     struct ExtendedModInfo
     {
         [JsonProperty("license_name")]
-        public string LicenseName;
+        public string LicenseName { get; set; }
 
         [JsonProperty("license_url")]
-        public string LicenseUrl;
+        public string LicenseUrl { get; set; }
 
         [JsonProperty("github_path")]
-        public string GitHubUrl;
+        public string GitHubUrl { get; set; }
 
         [JsonProperty("description")]
-        public string Description;
+        public string Description { get; set; }
 
         [JsonProperty("releases")]
-        public ModRelease[] Releases;
+        public ModRelease[] Releases { get; set; }
     }
 }

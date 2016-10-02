@@ -157,5 +157,19 @@
     
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Contributors</sys:String>
+
+
+    <!--
+    ____________________ OnlineModsWindow ____________________
+    -->
+
+    <sys:String x:Key="OnlineModsWindowTitle">Browse online mods</sys:String>
     
+    <!-- format strings -->
+    <sys:String x:Key="ByFormat">by {0}</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="ViewsToolTip">Views</sys:String>
+    <sys:String x:Key="DownloadsToolTip">Downloads</sys:String>
+
 </ResourceDictionary>

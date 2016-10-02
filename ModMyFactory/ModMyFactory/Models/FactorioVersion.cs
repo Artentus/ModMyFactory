@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using ModMyFactory.Helpers;
 
 namespace ModMyFactory.Models
 {
@@ -38,7 +39,7 @@ namespace ModMyFactory.Models
 
         public string ExecutablePath { get; }
 
-        public FactorioVersion(DirectoryInfo directory, Version version)
+        public FactorioVersion(DirectoryInfo directory, Version version, bool forceLinkCreation = false)
         {
             Version = version;
             Directory = directory;
@@ -46,67 +47,111 @@ namespace ModMyFactory.Models
             string osPlatform = Environment.Is64BitOperatingSystem ? "x64" : "x86";
             ExecutablePath = Path.Combine(directory.FullName, "bin", osPlatform, "factorio.exe");
 
-            CreateSaveDirectoryLink();
-            CreateScenarioDirectoryLink();
-            CreateModDirectoryLink(false);
+            CreateSaveDirectoryLink(forceLinkCreation);
+            CreateScenarioDirectoryLink(forceLinkCreation);
+            CreateModDirectoryLink(forceLinkCreation);
         }
 
-        public void CreateSaveDirectoryLink()
+        private void CreateSaveDirectoryLink(DirectoryInfo localSaveDirectory)
+        {
+            var globalSaveDirectory = new DirectoryInfo(App.Instance.GlobalSavePath);
+            if (!globalSaveDirectory.Exists) globalSaveDirectory.Create();
+
+            var info = new ProcessStartInfo("cmd")
+            {
+                Arguments = $"/K mklink /J \"{localSaveDirectory.FullName}\" \"{globalSaveDirectory.FullName}\"",
+                CreateNoWindow = true,
+                UseShellExecute = false
+            };
+            Process.Start(info);
+        }
+
+        /// <summary>
+        /// Creates the directory junction for saves.
+        /// </summary>
+        /// <param name="forced">If true, an existing link/directory will be deleted.</param>
+        public void CreateSaveDirectoryLink(bool forced)
         {
             DirectoryInfo localSaveDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "saves"));
-            if (!localSaveDirectory.Exists)
+            if (forced && localSaveDirectory.Exists)
             {
-                var globalSaveDirectory = new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, "saves"));
-                if (!globalSaveDirectory.Exists) globalSaveDirectory.Create();
-
-                var info = new ProcessStartInfo("cmd")
-                {
-                    Arguments = $"/K mklink /J \"{localSaveDirectory.FullName}\" \"{globalSaveDirectory.FullName}\"",
-                    CreateNoWindow = true,
-                    UseShellExecute = false
-                };
-                Process.Start(info);
+                localSaveDirectory.DeleteRecursiveReparsePoint();
+                CreateSaveDirectoryLink(localSaveDirectory);
+            }
+            else if (!localSaveDirectory.Exists)
+            {
+                CreateSaveDirectoryLink(localSaveDirectory);
             }
         }
 
-        public void CreateScenarioDirectoryLink()
+        private void CreateScenarioDirectoryLink(DirectoryInfo localScenarioDirectory)
+        {
+            var globalScenarioDirectory = new DirectoryInfo(App.Instance.GlobalScenarioPath);
+            if (!globalScenarioDirectory.Exists) globalScenarioDirectory.Create();
+
+            var info = new ProcessStartInfo("cmd")
+            {
+                Arguments = $"/K mklink /J \"{localScenarioDirectory.FullName}\" \"{globalScenarioDirectory.FullName}\"",
+                CreateNoWindow = true,
+                UseShellExecute = false
+            };
+            Process.Start(info);
+        }
+
+
+        /// <summary>
+        /// Creates the directory junction for scenarios.
+        /// </summary>
+        /// <param name="forced">If true, an existing link/directory will be deleted.</param>
+        public void CreateScenarioDirectoryLink(bool forced)
         {
             DirectoryInfo localScenarioDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "scenarios"));
-            if (!localScenarioDirectory.Exists)
+            if (forced && localScenarioDirectory.Exists)
             {
-                var globalScenarioDirectory = new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, "scenarios"));
-                if (!globalScenarioDirectory.Exists) globalScenarioDirectory.Create();
-
-                var info = new ProcessStartInfo("cmd")
-                {
-                    Arguments = $"/K mklink /J \"{localScenarioDirectory.FullName}\" \"{globalScenarioDirectory.FullName}\"",
-                    CreateNoWindow = true,
-                    UseShellExecute = false
-                };
-                Process.Start(info);
+                localScenarioDirectory.DeleteRecursiveReparsePoint();
+                CreateScenarioDirectoryLink(localScenarioDirectory);
+            }
+            else if (!localScenarioDirectory.Exists)
+            {
+                CreateScenarioDirectoryLink(localScenarioDirectory);
             }
         }
 
+        private void CreateModDirectoryLink(DirectoryInfo localModDirectory)
+        {
+            var globalModDirectory = App.Instance.Settings.GetModDirectory(Version);
+            if (!globalModDirectory.Exists) globalModDirectory.Create();
+
+            var info = new ProcessStartInfo("cmd")
+            {
+                Arguments = $"/K mklink /J \"{localModDirectory.FullName}\" \"{globalModDirectory.FullName}\"",
+                CreateNoWindow = true,
+                UseShellExecute = false
+            };
+            Process.Start(info);
+        }
+
+        /// <summary>
+        /// Creates the directory junction for mods.
+        /// </summary>
+        /// <param name="forced">If true, an existing link/directory will be deleted.</param>
         public void CreateModDirectoryLink(bool forced)
         {
             DirectoryInfo localModDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "mods"));
-            if (forced && localModDirectory.Exists) localModDirectory.Delete(false);
-
-            if (!localModDirectory.Exists)
+            if (forced && localModDirectory.Exists)
             {
-                var globalModDirectory = App.Instance.Settings.GetModDirectory(Version);
-                if (!globalModDirectory.Exists) globalModDirectory.Create();
-
-                var info = new ProcessStartInfo("cmd")
-                {
-                    Arguments = $"/K mklink /J \"{localModDirectory.FullName}\" \"{globalModDirectory.FullName}\"",
-                    CreateNoWindow = true,
-                    UseShellExecute = false
-                };
-                Process.Start(info);
+                localModDirectory.DeleteRecursiveReparsePoint();
+                CreateModDirectoryLink(localModDirectory);
+            }
+            else if (!localModDirectory.Exists)
+            {
+                CreateModDirectoryLink(localModDirectory);
             }
         }
 
+        /// <summary>
+        /// Deletes all directory junctions.
+        /// </summary>
         public void DeleteLinks()
         {
             DirectoryInfo localSaveDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "saves"));

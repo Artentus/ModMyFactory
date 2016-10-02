@@ -22,9 +22,14 @@ namespace ModMyFactory
         public static int Main(string[] args)
         {
             App app = null;
+            bool createCrashLog = true;
+
+            // Do not create crash logs when debugging.
+            int index = Array.IndexOf(args, "-l");
+            if (index >= 0) createCrashLog = false;
 
             // Custom AppData path for debugging purposes only.
-            int index = Array.IndexOf(args, "-a");
+            index = Array.IndexOf(args, "-a");
             if (index >= 0)
             {
                 index++;
@@ -32,10 +37,10 @@ namespace ModMyFactory
                 if (index < args.Length)
                 {
                     string appDataPath = args[index];
-                    app = new App(appDataPath);
+                    app = new App(createCrashLog, appDataPath);
                 }
             }
-            if (app == null) app = new App();
+            if (app == null) app = new App(createCrashLog);
 
             // Prevent update search on startup
             index = Array.IndexOf(args, "-u");

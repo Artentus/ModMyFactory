@@ -11,6 +11,7 @@ using ModMyFactory.Lang;
 using Octokit;
 using Application = System.Windows.Application;
 using ModMyFactory.Models;
+using FileMode = System.IO.FileMode;
 
 namespace ModMyFactory
 {
@@ -44,7 +45,17 @@ namespace ModMyFactory
         /// </summary>
         internal string AppDataPath { get; }
 
-        public App(string appDataPath)
+        /// <summary>
+        /// The global location for savegames.
+        /// </summary>
+        internal string GlobalSavePath => Path.Combine(AppDataPath, "saves");
+
+        /// <summary>
+        /// The global location for scenarios.
+        /// </summary>
+        internal string GlobalScenarioPath => Path.Combine(AppDataPath, "scenarios");
+
+        public App(bool createCrashLog, string appDataPath)
         {
             AppDataPath = appDataPath;
 
@@ -53,10 +64,32 @@ namespace ModMyFactory
 
             string settingsFile = Path.Combine(appDataDirectory.FullName, "settings.json");
             Settings = Settings.Load(settingsFile, true);
+
+            // Generate log when crashed.
+            if (createCrashLog)
+            {
+                this.DispatcherUnhandledException += (sender, e) =>
+                {
+                    var logFile = new FileInfo(Path.Combine(AppDataPath, "crash-log.txt"));
+                    using (Stream stream = logFile.Open(FileMode.Create, FileAccess.Write))
+                    {
+                        using (var writer = new StreamWriter(stream))
+                        {
+                            writer.Write(e.Exception.ToString());
+                        }
+                    }
+
+                    MessageBox.Show(this.MainWindow, "A crash log has been created in %AppData%\\ModMyFactory.",
+                        "ModMyFactory crashed!", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    e.Handled = true;
+                    this.Shutdown(e.Exception.HResult);
+                };
+            }
         }
 
-        public App()
-            : this(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ModMyFactory"))
+        public App(bool createCrashLog = true)
+            : this(createCrashLog, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ModMyFactory"))
         { }
 
         /// <summary>

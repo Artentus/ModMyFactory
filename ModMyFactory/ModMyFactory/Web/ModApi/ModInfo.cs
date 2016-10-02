@@ -6,18 +6,21 @@ namespace ModMyFactory.Web.ModApi
     struct ModInfo
     {
         [JsonProperty("title")]
-        public string Title;
+        public string Title { get; set; }
 
         [JsonProperty("downloads_count")]
-        public int DownloadCount;
+        public int DownloadCount { get; set; }
+
+        [JsonProperty("visits_count")]
+        public int ViewCount { get; set; }
 
         [JsonProperty("name")]
-        public string Name;
+        public string Name { get; set; }
 
         [JsonProperty("summary")]
-        public string Summary;
+        public string Summary { get; set; }
 
         [JsonProperty("owner")]
-        public string Author;
+        public string Author { get; set; }
     }
 }

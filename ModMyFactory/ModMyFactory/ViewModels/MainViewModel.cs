@@ -20,6 +20,8 @@ using Ookii.Dialogs.Wpf;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.Views;
+using ModMyFactory.Web;
+using ModMyFactory.Web.ModApi;
 
 namespace ModMyFactory.ViewModels
 {
@@ -242,7 +244,7 @@ namespace ModMyFactory.ViewModels
 
 
                 // 'File' menu
-                DownloadModsCommand = new RelayCommand(DownloadMods);
+                DownloadModsCommand = new RelayCommand(async () => await DownloadMods());
                 AddModsFromFilesCommand = new RelayCommand(async () => await AddModsFromFiles());
                 AddModFromFolderCommand = new RelayCommand(async () => await AddModFromFolder());
                 CreateModpackCommand = new RelayCommand(CreateNewModpack);
@@ -269,9 +271,37 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private void DownloadMods()
+        private async Task DownloadMods()
         {
-            // ToDo: Implement mod downloading
+            var progressWindow = new ProgressWindow() { Owner = Window };
+            progressWindow.ViewModel.ActionName = "Fetching mods";
+            progressWindow.ViewModel.ProgressDescription = "Parsing page 1.";
+            progressWindow.ViewModel.CanCancel = true;
+
+            var progress = new Progress<Tuple<double, string>>(value =>
+            {
+                progressWindow.ViewModel.Progress = value.Item1;
+                progressWindow.ViewModel.ProgressDescription = value.Item2;
+            });
+            var cancellationSource = new CancellationTokenSource();
+            progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+
+            Task<List<ModInfo>> fetchModsTask = ModWebsite.GetModsAsync(progress, cancellationSource.Token);
+
+            Task closeWindowTask =
+                    fetchModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+            progressWindow.ShowDialog();
+
+            List<ModInfo> mods = await fetchModsTask;
+            await closeWindowTask;
+
+            if (!cancellationSource.IsCancellationRequested)
+            {
+                var modsWindow = new OnlineModsWindow() { Owner = Window };
+                mods.ForEach(mod => modsWindow.ViewModel.Mods.Add(mod));
+
+                modsWindow.ShowDialog();
+            }
         }
 
         private Version ParseInfoFile(Stream stream)
@@ -366,7 +396,7 @@ namespace ModMyFactory.ViewModels
                 });
 
                 Task closeWindowTask =
-                    processModsTask.ContinueWith(t => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
+                    processModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                 progressWindow.ShowDialog();
 
                 await processModsTask;
@@ -431,7 +461,7 @@ namespace ModMyFactory.ViewModels
                 progressWindow.ViewModel.ProgressDescription = directory.Name;
                 progressWindow.ViewModel.IsIndeterminate = true;
 
-                moveDirectoryTask = moveDirectoryTask.ContinueWith(t => Task.Run(() => progressWindow.Dispatcher.Invoke(progressWindow.Close)));
+                moveDirectoryTask = moveDirectoryTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                 progressWindow.ShowDialog();
                 await moveDirectoryTask;
 
