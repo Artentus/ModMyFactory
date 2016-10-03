@@ -172,4 +172,7 @@
     <sys:String x:Key="ViewsToolTip">Aufrufe</sys:String>
     <sys:String x:Key="DownloadsToolTip">Downloads</sys:String>
 
+    <!-- headers -->
+    <sys:String x:Key="ReleasesHeader">Veröffentlichte Versionen</sys:String>
+
 </ResourceDictionary>

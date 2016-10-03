@@ -59,7 +59,7 @@ namespace ModMyFactory.Web
         /// </summary>
         /// <param name="mod">The mod to get the extended information about.</param>
         /// <returns>Returns extended information about the specified mod.</returns>
-        public static async Task<ExtendedModInfo> GetExtendedInfo(ModInfo mod)
+        public static async Task<ExtendedModInfo> GetExtendedInfoAsync(ModInfo mod)
         {
             string modUrl = $"{ModsUrl}/{mod.Name}";
 

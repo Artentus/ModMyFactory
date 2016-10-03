@@ -171,5 +171,8 @@
     <!-- tooltips -->
     <sys:String x:Key="ViewsToolTip">Views</sys:String>
     <sys:String x:Key="DownloadsToolTip">Downloads</sys:String>
+    
+    <!-- headers -->
+    <sys:String x:Key="ReleasesHeader">Releases</sys:String>
 
 </ResourceDictionary>

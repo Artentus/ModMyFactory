@@ -9,16 +9,16 @@ namespace ModMyFactory.Web.ModApi
     {
         [JsonProperty("version")]
         [JsonConverter(typeof(VersionConverter))]
-        public Version Version;
+        public Version Version { get; set; }
 
         [JsonProperty("game_version")]
         [JsonConverter(typeof(VersionConverter))]
-        public Version FactorioVersion;
+        public Version FactorioVersion { get; set; }
 
         [JsonProperty("download_url")]
-        public string DownloadUrl;
+        public string DownloadUrl { get; set; }
 
         [JsonProperty("downloads_count")]
-        public int DownloadCount;
+        public int DownloadCount { get; set; }
     }
 }

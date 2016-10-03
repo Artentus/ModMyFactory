@@ -298,7 +298,7 @@ namespace ModMyFactory.ViewModels
             if (!cancellationSource.IsCancellationRequested)
             {
                 var modsWindow = new OnlineModsWindow() { Owner = Window };
-                mods.ForEach(mod => modsWindow.ViewModel.Mods.Add(mod));
+                modsWindow.ViewModel.Mods = mods;
 
                 modsWindow.ShowDialog();
             }
