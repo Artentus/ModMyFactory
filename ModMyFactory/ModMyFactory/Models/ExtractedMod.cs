@@ -16,20 +16,11 @@ namespace ModMyFactory.Models
         /// </summary>
         public DirectoryInfo Directory { get; }
 
-        protected override string FallbackName => Directory.Name;
+        protected override string FallbackName => Directory.Name.Split('_')[0];
 
-        private FileInfo GetInfoFileRecursive(DirectoryInfo directory)
+        private FileInfo GetInfoFile(DirectoryInfo directory)
         {
-            var file = directory.EnumerateFiles("info.json").FirstOrDefault();
-            if (file != null) return file;
-
-            foreach (var subDirectory in directory.EnumerateDirectories())
-            {
-                file = GetInfoFileRecursive(subDirectory);
-                if (file != null) return file;
-            }
-
-            return null;
+            return directory.EnumerateFiles("info.json").First();
         }
 
         /// <summary>
@@ -45,7 +36,7 @@ namespace ModMyFactory.Models
         {
             Directory = directory;
 
-            FileInfo infoFile = GetInfoFileRecursive(Directory);
+            FileInfo infoFile = GetInfoFile(Directory);
             using (Stream stream = infoFile.OpenRead())
             {
                 base.ReadInfoFile(stream);

@@ -328,7 +328,7 @@ namespace ModMyFactory.ViewModels
             {
                 foreach (var entry in archive.Entries)
                 {
-                    if (entry.FullName.EndsWith("info.json"))
+                    if (entry.Name == "info.json")
                     {
                         using (Stream stream = entry.Open())
                         {

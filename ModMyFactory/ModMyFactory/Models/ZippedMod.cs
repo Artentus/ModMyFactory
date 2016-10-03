@@ -16,7 +16,7 @@ namespace ModMyFactory.Models
         /// </summary>
         public FileInfo File { get; }
 
-        protected override string FallbackName => Path.GetFileNameWithoutExtension(File.Name);
+        protected override string FallbackName => Path.GetFileNameWithoutExtension(File.Name).Split('_')[0];
 
         /// <summary>
         /// Creates a mod.
@@ -35,7 +35,7 @@ namespace ModMyFactory.Models
             {
                 foreach (var entry in archive.Entries)
                 {
-                    if (entry.FullName.EndsWith("info.json"))
+                    if (entry.Name == "info.json")
                     {
                         using (Stream stream = entry.Open())
                         {

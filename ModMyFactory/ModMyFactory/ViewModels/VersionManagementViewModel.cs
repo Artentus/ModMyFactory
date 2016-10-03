@@ -173,9 +173,26 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        private bool TryExtractVersion(Stream stream, out Version version)
+        {
+            version = null;
+
+            using (var reader = new StreamReader(stream))
+            {
+                string content = reader.ReadToEnd();
+                MatchCollection matches = Regex.Matches(content, @"[0-9]+\.[0-9]+\.[0-9]+",
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                if (matches.Count == 0) return false;
+
+                string versionString = matches[0].Value;
+                version = Version.Parse(versionString);
+                return true;
+            }
+        }
+
         private bool ArchiveFileValid(FileInfo archiveFile, out Version validVersion)
         {
-            validVersion = default(Version);
+            validVersion = null;
 
             using (ZipArchive archive = ZipFile.OpenRead(archiveFile.FullName))
             {
@@ -185,17 +202,7 @@ namespace ModMyFactory.ViewModels
                     {
                         using (Stream stream = entry.Open())
                         {
-                            using (var reader = new StreamReader(stream))
-                            {
-                                string content = reader.ReadToEnd();
-                                MatchCollection matches = Regex.Matches(content, @"[0-9]+\.[0-9]+\.[0-9]+",
-                                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                                if (matches.Count == 0) return false;
-
-                                string versionString = matches[0].Value;
-                                validVersion = Version.Parse(versionString);
-                                return true;
-                            }
+                            if (TryExtractVersion(stream, out validVersion)) return true;
                         }
                     }
                 }
@@ -280,81 +287,85 @@ namespace ModMyFactory.ViewModels
 
         private bool LocalInstallationValid(DirectoryInfo directory, out Version validVersion)
         {
-            validVersion = default(Version);
+            validVersion = null;
 
             FileInfo infoFile = new FileInfo(Path.Combine(directory.FullName, @"data\base\info.json"));
             if (infoFile.Exists)
             {
-                using (var reader = infoFile.OpenText())
+                using (Stream stream = infoFile.OpenRead())
                 {
-                    string content = reader.ReadToEnd();
-                    MatchCollection matches = Regex.Matches(content, @"[0-9]+\.[0-9]+\.[0-9]+",
-                        RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                    if (matches.Count == 0) return false;
-
-                    string versionString = matches[0].Value;
-                    validVersion = Version.Parse(versionString);
-                    return true;
+                    if (TryExtractVersion(stream, out validVersion)) return true;
                 }
-                    
             }
 
             return false;
         }
 
-        private void MoveContentsToPreserve(DirectoryInfo destinationDirectory, Version version)
+        private async Task MoveContentsToPreserveAsync(DirectoryInfo sourceDirectory, Version version)
         {
-            var localSaveDirecotry = new DirectoryInfo(Path.Combine(destinationDirectory.FullName, "saves"));
-            if (localSaveDirecotry.Exists)
+            await Task.Run(() =>
             {
-                foreach (var saveFile in localSaveDirecotry.GetFiles())
+                var localSaveDirecotry = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "saves"));
+                if (localSaveDirecotry.Exists)
                 {
-                    string newName = Path.Combine(App.Instance.GlobalSavePath, saveFile.Name);
-                    if (!File.Exists(newName)) saveFile.MoveTo(newName);
-                }
-            }
-
-            var localScenarioDirecotry = new DirectoryInfo(Path.Combine(destinationDirectory.FullName, "scenarios"));
-            if (localScenarioDirecotry.Exists)
-            {
-                foreach (var scenarioFile in localScenarioDirecotry.GetFiles())
-                {
-                    string newName = Path.Combine(App.Instance.GlobalScenarioPath, scenarioFile.Name);
-                    if (!File.Exists(newName)) scenarioFile.MoveTo(newName);
-                }
-            }
-
-            var localModDirecotry = new DirectoryInfo(Path.Combine(destinationDirectory.FullName, "mods"));
-            if (localModDirecotry.Exists)
-            {
-                string globalModPath = App.Instance.Settings.GetModDirectory(version).FullName;
-
-                foreach (var modFile in localModDirecotry.GetFiles("*.zip"))
-                {
-                    string newName = Path.Combine(globalModPath, modFile.Name);
-                    if (!File.Exists(newName))
+                    foreach (var saveFile in localSaveDirecotry.GetFiles())
                     {
-                        modFile.MoveTo(newName);
-                        MainViewModel.Instance.Window.Dispatcher.Invoke(
-                            () => MainViewModel.Instance.Mods.Add(new ZippedMod(modFile, version,
-                                MainViewModel.Instance.Mods, MainViewModel.Instance.Modpacks,
-                                MainViewModel.Instance.Window)));
+                        string newName = Path.Combine(App.Instance.GlobalSavePath, saveFile.Name);
+                        if (!File.Exists(newName)) saveFile.MoveTo(newName);
                     }
                 }
+                localSaveDirecotry.DeleteRecursiveReparsePoint();
 
-                foreach (var modFolder in localModDirecotry.GetDirectories())
+                var localScenarioDirecotry = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "scenarios"));
+                if (localScenarioDirecotry.Exists)
                 {
-                    string newName = Path.Combine(globalModPath, modFolder.Name);
-                    if (!Directory.Exists(newName))
+                    foreach (var scenarioFile in localScenarioDirecotry.GetFiles())
                     {
-                        modFolder.MoveToAsync(newName).Wait();
-                        MainViewModel.Instance.Window.Dispatcher.Invoke(
-                            () => MainViewModel.Instance.Mods.Add(new ExtractedMod(modFolder, version,
-                                MainViewModel.Instance.Mods, MainViewModel.Instance.Modpacks,
-                                MainViewModel.Instance.Window)));
+                        string newName = Path.Combine(App.Instance.GlobalScenarioPath, scenarioFile.Name);
+                        if (!File.Exists(newName)) scenarioFile.MoveTo(newName);
                     }
                 }
-            }
+                localScenarioDirecotry.DeleteRecursiveReparsePoint();
+
+                var localModDirecotry = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "mods"));
+                if (localModDirecotry.Exists)
+                {
+                    string globalModPath = App.Instance.Settings.GetModDirectory(version).FullName;
+
+                    foreach (var modFile in localModDirecotry.GetFiles("*.zip"))
+                    {
+                        string newName = Path.Combine(globalModPath, modFile.Name);
+                        if (!File.Exists(newName))
+                        {
+                            modFile.MoveTo(newName);
+                            MainViewModel.Instance.Window.Dispatcher.Invoke(
+                                () => MainViewModel.Instance.Mods.Add(new ZippedMod(modFile, version,
+                                    MainViewModel.Instance.Mods, MainViewModel.Instance.Modpacks,
+                                    MainViewModel.Instance.Window)));
+                        }
+                    }
+
+                    foreach (var modFolder in localModDirecotry.GetDirectories())
+                    {
+                        string newName = Path.Combine(globalModPath, modFolder.Name);
+                        if (!Directory.Exists(newName))
+                        {
+                            modFolder.MoveToAsync(newName).Wait();
+                            MainViewModel.Instance.Window.Dispatcher.Invoke(
+                                () => MainViewModel.Instance.Mods.Add(new ExtractedMod(modFolder, version,
+                                    MainViewModel.Instance.Mods, MainViewModel.Instance.Modpacks,
+                                    MainViewModel.Instance.Window)));
+                        }
+                    }
+                }
+                localModDirecotry.DeleteRecursiveReparsePoint();
+            });
+        }
+
+        private async Task MoveFactorioInstallationAsync(DirectoryInfo installationDirectory, Version version, DirectoryInfo destinationDirectory)
+        {
+            await MoveContentsToPreserveAsync(installationDirectory, version);
+            await installationDirectory.MoveToAsync(destinationDirectory.FullName);
         }
 
         private async Task AddLocalVersion()
@@ -385,8 +396,7 @@ namespace ModMyFactory.ViewModels
                     progressWindow.ViewModel.ProgressDescription = "Moving files...";
                     progressWindow.ViewModel.IsIndeterminate = true;
 
-                    Task moveTask = installationDirectory.MoveToAsync(destinationDirectory.FullName)
-                        .ContinueWith(t => MoveContentsToPreserve(destinationDirectory, version));
+                    Task moveTask = MoveFactorioInstallationAsync(installationDirectory, version, destinationDirectory);
 
                     Task closeWindowTask = moveTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                     progressWindow.ShowDialog();
