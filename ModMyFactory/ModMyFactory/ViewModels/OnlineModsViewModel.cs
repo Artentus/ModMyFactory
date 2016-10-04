@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -54,6 +55,7 @@ namespace ModMyFactory.ViewModels
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Mods)));
 
                     ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
+                    ModsView.Filter = ModFilter;
                 }
             }
         }
@@ -114,7 +116,10 @@ namespace ModMyFactory.ViewModels
                 SelectedModDescription = extendedInfo.Description;
                 SelectedReleases.Clear();
                 foreach (var release in extendedInfo.Releases)
+                {
+                    release.IsInstalled = Mod.ContainedInCollection(MainViewModel.Instance.Mods, selectedMod.Name, release.Version);
                     SelectedReleases.Add(release);
+                }
             }
         }
 
@@ -152,6 +157,15 @@ namespace ModMyFactory.ViewModels
         {
             ExtendedModInfo extendedInfo = await ModWebsite.GetExtendedInfoAsync(mod);
             ExtendedInfo = extendedInfo;
+        }
+
+        private bool ModFilter(object item)
+        {
+            ModInfo mod = item as ModInfo;
+            if (mod == null) return false;
+
+            if (string.IsNullOrWhiteSpace(filter)) return true;
+            return Thread.CurrentThread.CurrentUICulture.CompareInfo.IndexOf(mod.Title, filter, CompareOptions.IgnoreCase) >= 0;
         }
 
         public OnlineModsViewModel()

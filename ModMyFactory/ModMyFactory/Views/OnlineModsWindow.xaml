@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:ModMyFactory.ViewModels"
         xmlns:modApi="clr-namespace:ModMyFactory.Web.ModApi"
         mc:Ignorable="d"
-        Title="{StaticResource OnlineModsWindowTitle}" Height="300" Width="300"
+        Title="{StaticResource OnlineModsWindowTitle}" Height="600" Width="800"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
         WindowStartupLocation="CenterOwner"
         Icon="..\Images\MMF_Icon.ico">
@@ -22,12 +22,14 @@
         <BitmapImage x:Key="ViewsIcon" UriSource="../Images/Views.png"/>
 
         <BitmapImage x:Key="SearchIcon" UriSource="../Images/Search.png"/>
+        
+        <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
     </Window.Resources>
     
     <Grid Margin="4">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" MaxWidth="500"/>
         </Grid.ColumnDefinitions>
         
         <Grid.RowDefinitions>
@@ -35,7 +37,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ListBox Grid.Column="0" Grid.Row="0" Grid.IsSharedSizeScope="True" ItemsSource="{Binding ModsView}" SelectedItem="{Binding SelectedMod, Mode=TwoWay}">
+        <ListBox Grid.Column="0" Grid.Row="0" Grid.IsSharedSizeScope="True" ScrollViewer.CanContentScroll="True"
+                 ItemsSource="{Binding ModsView}" SelectedItem="{Binding SelectedMod, Mode=TwoWay}">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type modApi:ModInfo}">
                     <Grid>
@@ -80,43 +83,70 @@
             <TextBox DockPanel.Dock="Right" Padding="2" MaxLines="1" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}"/>
         </DockPanel>
 
-        <StackPanel Grid.Column="1" Grid.Row="0" Margin="4,0,0,0" Orientation="Vertical">
-            <TextBlock Margin="4,2" TextWrapping="Wrap" Text="{Binding SelectedModName}"/>
-            <Rectangle Height="4" Fill="{StaticResource SelectionBrush}"/>
+        <Grid Grid.Column="1" Grid.Row="0" Margin="4,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="300">
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="4,2" TextWrapping="Wrap" Text="{Binding SelectedModName}"/>
+            <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Height="4" Fill="{StaticResource SelectionBrush}"/>
+
+            <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="300">
                 <TextBlock Margin="4,10" TextWrapping="Wrap" Text="{Binding SelectedModDescription}"/>
             </ScrollViewer>
 
-            <Grid Margin="0,10,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <TextBlock Grid.Row="3" Grid.Column="0" Margin="4,12,4,2" Text="{DynamicResource ReleasesHeader}"/>
+            <Rectangle Grid.Row="4" Grid.Column="0" Height="4" Fill="{StaticResource SelectionBrush}"/>
+            <ListBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" MaxHeight="300"
+                     ItemsSource="{Binding SelectedReleases}" SelectedItem="{Binding SelectedRelease, Mode=TwoWay}">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsInstalled}" Value="True">
+                                <DataTrigger.Setters>
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger.Setters>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Grid.Row="0" Grid.Column="0" Margin="4,2" Text="{DynamicResource ReleasesHeader}"/>
-                <Rectangle Grid.Row="1" Grid.Column="0" Height="4" Fill="{StaticResource SelectionBrush}"/>
-            </Grid>
-            <ListBox Height="200" ItemsSource="{Binding SelectedReleases}" SelectedItem="{Binding SelectedRelease, Mode=TwoWay}">
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type modApi:ModRelease}">
-                        <StackPanel Margin="2" Orientation="Horizontal">
-                            <TextBlock Margin="4,2" Text="{Binding Version}"/>
-                            <TextBlock Margin="4,2" Text="{Binding FactorioVersion, StringFormat=(Factorio {0})}"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Margin="2" Orientation="Horizontal">
+                                <TextBlock Margin="4,2" Text="{Binding Version}"/>
+                                <TextBlock Margin="4,2" Text="{Binding FactorioVersion, StringFormat=(Factorio {0})}"/>
+                            </StackPanel>
+
+                            <Path Grid.Column="1" Margin="6,0" VerticalAlignment="Center" Fill="LimeGreen" Visibility="{Binding IsInstalled, Converter={StaticResource VisibilityConverter}}"
+                                  Data="F1M9.97498,1.22334L4.6983,9.09834 4.52164,9.09834 0,5.19331 1.27664,3.52165 4.255,6.08833 8.33331,1.52588E-05 9.97498,1.22334z"/>
+                        </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+            <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" FlowDirection="RightToLeft">
                 <Button Margin="0,4" Content="{DynamicResource DownloadButton}" Command="{Binding DownloadCommand}"/>
             </StackPanel>
-        </StackPanel>
+        </Grid>
 
         <StackPanel Grid.Column="1" Grid.Row="1" Margin="4,4,0,0" Orientation="Horizontal" FlowDirection="RightToLeft">
             <Button IsDefault="True" IsCancel="True" Content="{DynamicResource CloseButton}"/>

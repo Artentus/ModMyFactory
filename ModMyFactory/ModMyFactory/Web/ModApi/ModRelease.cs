@@ -1,11 +1,13 @@
 ﻿using System;
+using System.ComponentModel;
+using ModMyFactory.MVVM;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace ModMyFactory.Web.ModApi
 {
     [JsonObject(MemberSerialization.OptOut)]
-    sealed class ModRelease
+    sealed class ModRelease : NotifyPropertyChangedBase
     {
         [JsonProperty("version")]
         [JsonConverter(typeof(VersionConverter))]
@@ -23,5 +25,20 @@ namespace ModMyFactory.Web.ModApi
 
         [JsonProperty("downloads_count")]
         public int DownloadCount { get; set; }
+
+        bool isInstalled;
+
+        public bool IsInstalled
+        {
+            get { return isInstalled; }
+            set
+            {
+                if (value != isInstalled)
+                {
+                    isInstalled = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsInstalled)));
+                }
+            }
+        }
     }
 }

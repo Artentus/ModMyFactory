@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using ModMyFactory.MVVM;
@@ -38,6 +39,20 @@ namespace ModMyFactory.Models
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Checks if a collection contains a mod.
+        /// </summary>
+        /// <param name="collection">The collection to be searched.</param>
+        /// <param name="name">The name of the mod.</param>
+        /// <param name="version">The mods version.</param>
+        /// <returns>Return true if the collection contains the mod, otherwise false.</returns>
+        public static bool ContainedInCollection(ICollection<Mod> collection, string name, Version version)
+        {
+            return collection.Any(mod =>
+                string.Equals(mod.innerName, name, StringComparison.InvariantCultureIgnoreCase)
+                && (mod.Version == version));
         }
 
         private static bool Contains(Version version, out ModTemplateList list)
