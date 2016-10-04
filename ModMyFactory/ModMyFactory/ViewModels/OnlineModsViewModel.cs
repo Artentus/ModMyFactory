@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
+using ModMyFactory.Models;
 using ModMyFactory.MVVM;
 using ModMyFactory.Views;
 using ModMyFactory.Web;
@@ -13,9 +16,14 @@ namespace ModMyFactory.ViewModels
 {
     sealed class OnlineModsViewModel : ViewModelBase<OnlineModsWindow>
     {
+        string token;
+
+        bool LoggedInWithToken => GlobalCredentials.LoggedIn && !string.IsNullOrEmpty(token);
+
         ListCollectionView modsView;
         List<ModInfo> mods;
         string filter;
+        ModRelease selectedRelease;
 
         ModInfo selectedMod;
         ExtendedModInfo extendedInfo;
@@ -65,17 +73,33 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        public ModRelease SelectedRelease
+        {
+            get { return selectedRelease; }
+            set
+            {
+                if (value != selectedRelease)
+                {
+                    selectedRelease = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedRelease)));
+                }
+            }
+        }
+
         public ModInfo SelectedMod
         {
             get { return selectedMod; }
             set
             {
-                selectedMod = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedMod)));
+                if (value != selectedMod)
+                {
+                    selectedMod = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedMod)));
 
-                SelectedModName = selectedMod.Title;
+                    SelectedModName = selectedMod.Title;
 
-                new Action(async () => await LoadExtendedModInfoAsync(selectedMod)).Invoke();
+                    new Action(async () => await LoadExtendedModInfoAsync(selectedMod)).Invoke();
+                }
             }
         }
 
@@ -109,7 +133,7 @@ namespace ModMyFactory.ViewModels
 
         public string SelectedModDescription
         {
-            get { return string.IsNullOrWhiteSpace(selectedModDescription) ? selectedMod.Summary : selectedModDescription; }
+            get { return string.IsNullOrWhiteSpace(selectedModDescription) ? selectedMod?.Summary ?? string.Empty : selectedModDescription; }
             set
             {
                 if (value != selectedModDescription)
@@ -120,7 +144,9 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        public ObservableCollection<ModRelease> SelectedReleases { get; } 
+        public ObservableCollection<ModRelease> SelectedReleases { get; }
+
+        public RelayCommand DownloadCommand { get; }
 
         private async Task LoadExtendedModInfoAsync(ModInfo mod)
         {
@@ -131,6 +157,73 @@ namespace ModMyFactory.ViewModels
         public OnlineModsViewModel()
         {
             SelectedReleases = new ObservableCollection<ModRelease>();
+            DownloadCommand = new RelayCommand(async () => await DownloadSelectedModRelease(), () => SelectedRelease != null);
+        }
+
+        private bool LogIn()
+        {
+            bool failed = false;
+            if (LoggedInWithToken) // Credentials and token available.
+            {
+                // ToDo: check if token is still valid (does it actually expire?).
+            }
+            else if (GlobalCredentials.LoggedIn) // Only credentials available.
+            {
+                GlobalCredentials.LoggedIn = ModWebsite.LogIn(GlobalCredentials.Username, GlobalCredentials.Password, out token);
+                failed = !GlobalCredentials.LoggedIn;
+            }
+
+            while (!LoggedInWithToken)
+            {
+                var loginWindow = new LoginWindow
+                {
+                    Owner = Window,
+                    FailedText = { Visibility = failed ? Visibility.Visible : Visibility.Collapsed }
+                };
+                bool? loginResult = loginWindow.ShowDialog();
+                if (loginResult == null || loginResult == false) return false;
+                GlobalCredentials.Username = loginWindow.UsernameBox.Text;
+                GlobalCredentials.Password = loginWindow.PasswordBox.SecurePassword;
+
+                GlobalCredentials.LoggedIn = ModWebsite.LogIn(GlobalCredentials.Username, GlobalCredentials.Password, out token);
+                failed = !GlobalCredentials.LoggedIn;
+            }
+
+            return true;
+        }
+
+        private async Task DownloadSelectedModRelease()
+        {
+            if (LogIn())
+            {
+                var cancellationSource = new CancellationTokenSource();
+                var progressWindow = new ProgressWindow { Owner = Window };
+                progressWindow.ViewModel.ActionName = "Downloading";
+                progressWindow.ViewModel.ProgressDescription = "Downloading " + selectedRelease.FileName;
+                progressWindow.ViewModel.CanCancel = true;
+                progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+
+                Task<Mod> downloadTask = ModWebsite.DownloadReleaseAsync(selectedRelease, GlobalCredentials.Username, token, new Progress<double>(p =>
+                {
+                    if (p > 1)
+                    {
+                        progressWindow.ViewModel.ProgressDescription = "Extracting...";
+                        progressWindow.ViewModel.IsIndeterminate = true;
+                        progressWindow.ViewModel.CanCancel = false;
+                    }
+                    else
+                    {
+                        progressWindow.ViewModel.Progress = p;
+                    }
+                }), cancellationSource.Token, MainViewModel.Instance.Mods, MainViewModel.Instance.Modpacks, MainViewModel.Instance.Window);
+
+                Task closeWindowTask = downloadTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                progressWindow.ShowDialog();
+
+                Mod newMod = await downloadTask;
+                if (newMod != null) MainViewModel.Instance.Mods.Add(newMod);
+                await closeWindowTask;
+            }
         }
     }
 }

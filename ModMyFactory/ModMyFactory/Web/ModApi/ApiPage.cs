@@ -3,12 +3,12 @@
 namespace ModMyFactory.Web.ModApi
 {
     [JsonObject(MemberSerialization.OptOut)]
-    struct ApiPage
+    sealed class ApiPage
     {
         [JsonProperty("pagination")]
-        public PageInfo Info;
+        public PageInfo Info { get; set; }
 
         [JsonProperty("results")]
-        public ModInfo[] Mods;
+        public ModInfo[] Mods { get; set; }
     }
 }

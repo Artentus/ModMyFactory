@@ -3,7 +3,7 @@
 namespace ModMyFactory.Web.ModApi
 {
     [JsonObject(MemberSerialization.OptOut)]
-    struct ModInfo
+    sealed class ModInfo
     {
         [JsonProperty("title")]
         public string Title { get; set; }

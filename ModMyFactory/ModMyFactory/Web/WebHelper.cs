@@ -151,10 +151,17 @@ namespace ModMyFactory.Web
         {
             try
             {
-                var handler = new HttpClientHandler { CookieContainer = container, UseCookies = true };
+                var handler = new HttpClientHandler();
+                if (container != null)
+                {
+                    handler.CookieContainer = container;
+                    handler.UseCookies = true;
+                }
+
                 using (var client = new HttpClient(handler, true))
                 {
                     client.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
+                    
                     HttpResponseMessage response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
                     response.EnsureSuccessStatusCode();
 

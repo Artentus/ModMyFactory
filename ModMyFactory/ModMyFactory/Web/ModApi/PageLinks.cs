@@ -3,18 +3,18 @@
 namespace ModMyFactory.Web.ModApi
 {
     [JsonObject(MemberSerialization.OptOut)]
-    struct PageLinks
+    sealed class PageLinks
     {
         [JsonProperty("prev")]
-        public string PreviousPage;
+        public string PreviousPage { get; set; }
 
         [JsonProperty("next")]
-        public string NextPage;
+        public string NextPage { get; set; }
 
         [JsonProperty("first")]
-        public string FirstPage;
+        public string FirstPage { get; set; }
 
         [JsonProperty("last")]
-        public string LastPage;
+        public string LastPage { get; set; }
     }
 }

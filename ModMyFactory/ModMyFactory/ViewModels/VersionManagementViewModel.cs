@@ -14,7 +14,6 @@ using ModMyFactory.MVVM;
 using ModMyFactory.Web;
 using Ookii.Dialogs.Wpf;
 using System.Diagnostics;
-using System.Security;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
@@ -98,11 +97,11 @@ namespace ModMyFactory.ViewModels
                 };
                 bool? loginResult = loginWindow.ShowDialog();
                 if (loginResult == null || loginResult == false) return false;
-                string username = loginWindow.UsernameBox.Text;
-                SecureString password = loginWindow.PasswordBox.SecurePassword;
+                GlobalCredentials.Username = loginWindow.UsernameBox.Text;
+                GlobalCredentials.Password = loginWindow.PasswordBox.SecurePassword;
 
                 container = new CookieContainer();
-                GlobalCredentials.LoggedIn = FactorioWebsite.LogIn(container, username, password);
+                GlobalCredentials.LoggedIn = FactorioWebsite.LogIn(container, GlobalCredentials.Username, GlobalCredentials.Password);
                 failed = !GlobalCredentials.LoggedIn;
             }
 
