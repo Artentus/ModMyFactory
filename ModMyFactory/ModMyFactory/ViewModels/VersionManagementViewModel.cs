@@ -14,6 +14,7 @@ using ModMyFactory.MVVM;
 using ModMyFactory.Web;
 using Ookii.Dialogs.Wpf;
 using System.Diagnostics;
+using System.Security;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
@@ -27,10 +28,9 @@ namespace ModMyFactory.ViewModels
 
         public static VersionManagementViewModel Instance = instance ?? (instance = new VersionManagementViewModel());
 
-        bool loggedIn;
-        string username;
-        string password;
         CookieContainer container;
+
+        bool LoggedInWithCookie => GlobalCredentials.LoggedIn && container != null;
 
         FactorioVersion selectedVersion;
 
@@ -67,7 +67,6 @@ namespace ModMyFactory.ViewModels
             FactorioVersionsView = (ListCollectionView)CollectionViewSource.GetDefaultView(FactorioVersions);
             FactorioVersionsView.CustomSort = new FactorioVersionSorter();
 
-            
             DownloadCommand = new RelayCommand(async () => await DownloadOnlineVersion());
             AddFromZipCommand = new RelayCommand(async () => await AddZippedVersion());
             AddFromFolderCommand = new RelayCommand(async () => await AddLocalVersion());
@@ -78,13 +77,19 @@ namespace ModMyFactory.ViewModels
         private bool LogIn()
         {
             bool failed = false;
-            if (loggedIn)
+            if (LoggedInWithCookie) // Credentials and cookie available.
             {
-                loggedIn = FactorioWebsite.EnsureLoggedIn(container);
-                failed = !loggedIn;
+                GlobalCredentials.LoggedIn = FactorioWebsite.EnsureLoggedIn(container);
+                failed = !GlobalCredentials.LoggedIn;
+            }
+            else if (GlobalCredentials.LoggedIn) // Only credentials available.
+            {
+                container = new CookieContainer();
+                GlobalCredentials.LoggedIn = FactorioWebsite.LogIn(container, GlobalCredentials.Username, GlobalCredentials.Password);
+                failed = !GlobalCredentials.LoggedIn;
             }
 
-            while (!loggedIn)
+            while (!LoggedInWithCookie)
             {
                 var loginWindow = new LoginWindow
                 {
@@ -93,12 +98,12 @@ namespace ModMyFactory.ViewModels
                 };
                 bool? loginResult = loginWindow.ShowDialog();
                 if (loginResult == null || loginResult == false) return false;
-                username = loginWindow.UsernameBox.Text;
-                password = loginWindow.PasswordBox.Password;
+                string username = loginWindow.UsernameBox.Text;
+                SecureString password = loginWindow.PasswordBox.SecurePassword;
 
                 container = new CookieContainer();
-                loggedIn = FactorioWebsite.LogIn(container, username, password);
-                failed = !loggedIn;
+                GlobalCredentials.LoggedIn = FactorioWebsite.LogIn(container, username, password);
+                failed = !GlobalCredentials.LoggedIn;
             }
 
             return true;

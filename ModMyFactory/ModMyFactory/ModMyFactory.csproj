@@ -81,7 +81,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GlobalCredentials.cs" />
     <Compile Include="Helpers\DirectoryInfoExtensions.cs" />
+    <Compile Include="Helpers\SecureStringHelper.cs" />
     <Compile Include="ViewModels\OnlineModsViewModel.cs" />
     <Compile Include="Views\OnlineModsWindow.xaml.cs">
       <DependentUpon>OnlineModsWindow.xaml</DependentUpon>

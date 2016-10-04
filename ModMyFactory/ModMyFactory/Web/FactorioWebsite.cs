@@ -5,9 +5,12 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Security;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ModMyFactory.Helpers;
 
 namespace ModMyFactory.Web
 {
@@ -23,7 +26,7 @@ namespace ModMyFactory.Web
         /// <param name="username">The username.</param>
         /// <param name="password">The users password.</param>
         /// <returns>Returns false if the login failed, otherwise true.</returns>
-        public static bool LogIn(CookieContainer container, string username, string password)
+        public static bool LogIn(CookieContainer container, string username, SecureString password)
         {
             const string loginPage = "https://www.factorio.com/login";
             const string pattern = "[0-9]{10}##[0-9a-f]{40}";
@@ -37,7 +40,15 @@ namespace ModMyFactory.Web
             string csrfToken = matches[0].Value;
 
             // Log in using the token and credentials.
-            string content = $"csrf_token={csrfToken}&username_or_email={username}&password={password}&action=Login";
+            byte[] contentPart1 = Encoding.UTF8.GetBytes($"csrf_token={csrfToken}&username_or_email={username}&password=");
+            byte[] contentPart2 = SecureStringHelper.SecureStringToBytes(password);
+            byte[] contentPart3 = Encoding.UTF8.GetBytes("&action=Login");
+            byte[] content = new byte[contentPart1.Length + contentPart2.Length + contentPart3.Length];
+            Array.Copy(contentPart1, 0, content, 0, contentPart1.Length);
+            Array.Copy(contentPart2, 0, content, contentPart1.Length, contentPart2.Length);
+            Array.Copy(contentPart3, 0, content, contentPart1.Length + contentPart2.Length, contentPart3.Length);
+            SecureStringHelper.DestroySecureByteArray(contentPart2);
+
             if (!WebHelper.TryGetDocument(loginPage, container, content, out document)) return false;
             if (!document.Contains("logout")) return false;
 

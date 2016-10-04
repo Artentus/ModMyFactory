@@ -46,7 +46,7 @@ namespace ModMyFactory.Web
         /// <param name="container">The cookie container used to store cookies in the connection.</param>
         /// <param name="content">The content that gets sent to the server.</param>
         /// <returns>Returns a HTTPWebRequest object with its attributes set accordingly.</returns>
-        public static HttpWebRequest CreateHttpRequest(string url, CookieContainer container, string content)
+        public static HttpWebRequest CreateHttpRequest(string url, CookieContainer container, byte[] content)
         {
             HttpWebRequest request = WebRequest.CreateHttp(url);
             request.CookieContainer = container;
@@ -55,10 +55,9 @@ namespace ModMyFactory.Web
             request.UserAgent = UserAgent;
             request.ContentType = "application/x-www-form-urlencoded";
 
-            byte[] contentData = Encoding.UTF8.GetBytes(content);
-            request.ContentLength = contentData.Length;
+            request.ContentLength = content.Length;
             using (var stream = request.GetRequestStream())
-                stream.Write(contentData, 0, contentData.Length);
+                stream.Write(content, 0, content.Length);
 
             return request;
         }
@@ -109,7 +108,7 @@ namespace ModMyFactory.Web
         /// <param name="content">The content that gets sent to the server.</param>
         /// <param name="document">Out. The received document.</param>
         /// <returns>Return false if the request failed, otherwise true.</returns>
-        public static bool TryGetDocument(string url, CookieContainer container, string content, out string document)
+        public static bool TryGetDocument(string url, CookieContainer container, byte[] content, out string document)
         {
             HttpWebRequest request = CreateHttpRequest(url, container, content);
             WebResponse response;
