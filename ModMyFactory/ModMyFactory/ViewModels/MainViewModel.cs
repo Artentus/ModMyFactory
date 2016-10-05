@@ -528,8 +528,8 @@ namespace ModMyFactory.ViewModels
                     string versionString = propertiesWindow.ViewModel.SelectedVersion.Version.ToString(3);
                     string modpackName = propertiesWindow.ViewModel.SelectedModpack?.Name;
 
-                    string arguments = $"-v {versionString}";
-                    if (!string.IsNullOrEmpty(modpackName)) arguments += $" -p \"{modpackName}\"";
+                    string arguments = $"--factorio-version={versionString}";
+                    if (!string.IsNullOrEmpty(modpackName)) arguments += $" --modpack=\"{modpackName}\"";
                     ShellHelper.CreateShortcut(dialog.FileName, applicationPath, arguments, iconPath);
                 }
             }
