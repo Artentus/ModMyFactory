@@ -36,8 +36,8 @@ namespace ModMyFactory.Models
             {
                 parent.Mods.Remove(this);
 
-                MainViewModel.Instance.ModpackTemplateList.Update(MainViewModel.Instance.Modpacks);
-                MainViewModel.Instance.ModpackTemplateList.Save();
+                ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
+                ModpackTemplateList.Instance.Save();
             });
         }
 

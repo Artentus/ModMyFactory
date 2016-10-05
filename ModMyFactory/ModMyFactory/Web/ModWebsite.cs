@@ -135,7 +135,7 @@ namespace ModMyFactory.Web
             var modFile = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
 
             await WebHelper.DownloadFileAsync(downloadUrl, null, modFile, progress, cancellationToken);
-            string name = Path.GetFileNameWithoutExtension(modFile.Name).Split('_')[0];
+            string name = modFile.NameWithoutExtension().Split('_')[0];
             return new ZippedMod(name, release.FactorioVersion, modFile, parentCollection, modpackCollection, messageOwner);
         }
 

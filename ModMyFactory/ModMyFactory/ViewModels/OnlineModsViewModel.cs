@@ -63,6 +63,8 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        public ModCollection InstalledMods { get; set; }
+
         public string Filter
         {
             get { return filter; }
@@ -120,8 +122,8 @@ namespace ModMyFactory.ViewModels
                 SelectedReleases.Clear();
                 foreach (var release in extendedInfo.Releases)
                 {
-                    release.IsInstalled = Mod.ContainedInCollection(MainViewModel.Instance.Mods, selectedMod.Name, release.Version);
-                    release.IsVersionInstalled = !release.IsInstalled && Mod.ContainedInCollectionByFactorioVersion(MainViewModel.Instance.Mods, selectedMod.Name, release.FactorioVersion);
+                    release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
+                    release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.FactorioVersion);
                     SelectedReleases.Add(release);
                 }
             }
@@ -228,19 +230,19 @@ namespace ModMyFactory.ViewModels
                 Task<Mod> downloadTask = ModWebsite.DownloadReleaseAsync(selectedRelease, GlobalCredentials.Username, token, new Progress<double>(p =>
                 {
                     progressWindow.ViewModel.Progress = p;
-                }), cancellationSource.Token, MainViewModel.Instance.Mods, MainViewModel.Instance.Modpacks, MainViewModel.Instance.Window);
+                }), cancellationSource.Token, InstalledMods, MainViewModel.Instance.Modpacks, MainViewModel.Instance.Window);
 
                 Task closeWindowTask = downloadTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                 progressWindow.ShowDialog();
 
                 Mod newMod = await downloadTask;
-                if (newMod != null) MainViewModel.Instance.Mods.Add(newMod);
+                if (newMod != null) InstalledMods.Add(newMod);
                 await closeWindowTask;
 
                 foreach (var release in SelectedReleases)
                 {
-                    release.IsInstalled = Mod.ContainedInCollection(MainViewModel.Instance.Mods, selectedMod.Name, release.Version);
-                    release.IsVersionInstalled = !release.IsInstalled && Mod.ContainedInCollectionByFactorioVersion(MainViewModel.Instance.Mods, selectedMod.Name, release.FactorioVersion);
+                    release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
+                    release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.FactorioVersion);
                 }
             }
         }
@@ -262,7 +264,7 @@ namespace ModMyFactory.ViewModels
             if (LogIn())
             {
                 ModRelease newestRelease = GetNewestRelease(ExtendedInfo, SelectedRelease);
-                Mod mod = Mod.FindInCollection(MainViewModel.Instance.Mods, SelectedMod.Name, newestRelease.FactorioVersion);
+                Mod mod = InstalledMods.Find(SelectedMod.Name, newestRelease.FactorioVersion);
 
                 var cancellationSource = new CancellationTokenSource();
                 var progressWindow = new ProgressWindow { Owner = Window };
@@ -286,7 +288,7 @@ namespace ModMyFactory.ViewModels
                 });
 
                 Task downloadTask = ModWebsite.UpdateReleaseAsync(newestRelease, GlobalCredentials.Username, token,
-                    progress, cancellationSource.Token, MainViewModel.Instance.Mods, MainViewModel.Instance.Modpacks, MainViewModel.Instance.Window);
+                    progress, cancellationSource.Token, InstalledMods, MainViewModel.Instance.Modpacks, MainViewModel.Instance.Window);
                 if (mod is ExtractedMod)
                 {
                     downloadTask = downloadTask.ContinueWith(t =>
@@ -320,8 +322,8 @@ namespace ModMyFactory.ViewModels
 
                 foreach (var release in SelectedReleases)
                 {
-                    release.IsInstalled = Mod.ContainedInCollection(MainViewModel.Instance.Mods, selectedMod.Name, release.Version);
-                    release.IsVersionInstalled = !release.IsInstalled && Mod.ContainedInCollectionByFactorioVersion(MainViewModel.Instance.Mods, selectedMod.Name, release.FactorioVersion);
+                    release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
+                    release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.FactorioVersion);
                 }
             }
         }

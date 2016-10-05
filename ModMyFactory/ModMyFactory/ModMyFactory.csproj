@@ -83,7 +83,10 @@
     </ApplicationDefinition>
     <Compile Include="GlobalCredentials.cs" />
     <Compile Include="Helpers\DirectoryInfoExtensions.cs" />
+    <Compile Include="Helpers\FileInfoExtensions.cs" />
     <Compile Include="Helpers\SecureStringHelper.cs" />
+    <Compile Include="ModCollection.cs" />
+    <Compile Include="ModManager.cs" />
     <Compile Include="ViewModels\OnlineModsViewModel.cs" />
     <Compile Include="Views\OnlineModsWindow.xaml.cs">
       <DependentUpon>OnlineModsWindow.xaml</DependentUpon>

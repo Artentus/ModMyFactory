@@ -37,6 +37,8 @@ namespace ModMyFactory.ViewModels
 
         public ObservableCollection<FactorioVersion> FactorioVersions { get; }
 
+        public ModCollection Mods { get; set; }
+
         public FactorioVersion SelectedVersion
         {
             get { return selectedVersion; }
@@ -342,10 +344,10 @@ namespace ModMyFactory.ViewModels
                         if (!File.Exists(newName))
                         {
                             modFile.MoveTo(newName);
-                            string name = Path.GetFileNameWithoutExtension(modFile.Name).Split('_')[0];
+                            string name = modFile.NameWithoutExtension().Split('_')[0];
                             MainViewModel.Instance.Window.Dispatcher.Invoke(
-                                () => MainViewModel.Instance.Mods.Add(new ZippedMod(name, version, modFile,
-                                    MainViewModel.Instance.Mods, MainViewModel.Instance.Modpacks,
+                                () => Mods.Add(new ZippedMod(name, version, modFile,
+                                    Mods, MainViewModel.Instance.Modpacks,
                                     MainViewModel.Instance.Window)));
                         }
                     }
@@ -358,8 +360,8 @@ namespace ModMyFactory.ViewModels
                             modFolder.MoveToAsync(newName).Wait();
                             string name = modFolder.Name.Split('_')[0];
                             MainViewModel.Instance.Window.Dispatcher.Invoke(
-                                () => MainViewModel.Instance.Mods.Add(new ExtractedMod(name, version, modFolder,
-                                    MainViewModel.Instance.Mods, MainViewModel.Instance.Modpacks,
+                                () => Mods.Add(new ExtractedMod(name, version, modFolder,
+                                    Mods, MainViewModel.Instance.Modpacks,
                                     MainViewModel.Instance.Window)));
                         }
                     }

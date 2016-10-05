@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Windows;
 
@@ -62,12 +61,9 @@ namespace ModMyFactory
                         var mods = new List<Mod>();
                         var modpacks = new List<Modpack>();
 
-                        Mod.LoadTemplates();
-                        Mod.BeginUpdateTemplates();
+                        ModManager.BeginUpdateTemplates();
                         Mod.LoadMods(mods, modpacks, null);
-                        var modpackTemplateList =
-                            ModpackTemplateList.Load(Path.Combine(app.AppDataPath, "modpacks.json"));
-                        modpackTemplateList.PopulateModpackList(mods, modpacks, null, null);
+                        ModpackTemplateList.Instance.PopulateModpackList(mods, modpacks, null, null);
 
                         mods.ForEach(mod => mod.Active = false);
 
@@ -83,8 +79,8 @@ namespace ModMyFactory
                             }
                         }
 
-                        Mod.EndUpdateTemplates(true);
-                        Mod.SaveTemplates();
+                        ModManager.EndUpdateTemplates(true);
+                        ModManager.SaveTemplates();
 
                         Process.Start(factorioVersion.ExecutablePath);
                     }

@@ -51,13 +51,13 @@ namespace ModMyFactory.Models
                     activeChanging = true;
                     if (active.HasValue)
                     {
-                        Mod.BeginUpdateTemplates();
+                        ModManager.BeginUpdateTemplates();
 
                         foreach (var mod in Mods)
                             if (mod.Active != active.Value) mod.Active = active.Value;
 
-                        Mod.EndUpdateTemplates();
-                        Mod.SaveTemplates();
+                        ModManager.EndUpdateTemplates();
+                        ModManager.SaveTemplates();
                     }
                     activeChanging = false;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
@@ -87,8 +87,8 @@ namespace ModMyFactory.Models
                         ParentView.CommitEdit();
 
                         MainViewModel.Instance.Window.ModpacksListBox.ScrollIntoView(this);
-                        MainViewModel.Instance.ModpackTemplateList.Update(MainViewModel.Instance.Modpacks);
-                        MainViewModel.Instance.ModpackTemplateList.Save();
+                        ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
+                        ModpackTemplateList.Instance.Save();
                     }
                 }
             }

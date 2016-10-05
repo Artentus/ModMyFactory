@@ -118,8 +118,8 @@ namespace ModMyFactory.Views
                         }
                     }
 
-                    ViewModel.ModpackTemplateList.Update(ViewModel.Modpacks);
-                    ViewModel.ModpackTemplateList.Save();
+                    ModpackTemplateList.Instance.Update(ViewModel.Modpacks);
+                    ModpackTemplateList.Instance.Save();
                 }
                 else if (e.Data.GetDataPresent(typeof(List<Modpack>)))
                 {
@@ -135,8 +135,8 @@ namespace ModMyFactory.Views
                         }
                     }
 
-                    ViewModel.ModpackTemplateList.Update(ViewModel.Modpacks);
-                    ViewModel.ModpackTemplateList.Save();
+                    ModpackTemplateList.Instance.Update(ViewModel.Modpacks);
+                    ModpackTemplateList.Instance.Save();
                 }
             }
         }

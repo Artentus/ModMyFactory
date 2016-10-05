@@ -79,7 +79,7 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        public ObservableCollection<Mod> Mods { get; }
+        public ModCollection Mods { get; }
 
         public ListCollectionView ModpacksView { get; }
 
@@ -99,8 +99,6 @@ namespace ModMyFactory.ViewModels
         }
 
         public ObservableCollection<Modpack> Modpacks { get; }
-
-        public ModpackTemplateList ModpackTemplateList { get; }
 
         public GridLength ModGridLength
         {
@@ -193,10 +191,8 @@ namespace ModMyFactory.ViewModels
                 AvailableCultures = App.Instance.GetAvailableCultures();
                 AvailableCulturesView = (ListCollectionView)CollectionViewSource.GetDefaultView(AvailableCultures);
                 AvailableCulturesView.CustomSort = new CultureEntrySorter();
-                AvailableCultures.First(
-                    entry =>
-                        string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage,
-                            StringComparison.InvariantCultureIgnoreCase)).Select();
+                AvailableCultures.First(entry =>
+                    string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
 
                 FactorioVersions = new ObservableCollection<FactorioVersion>();
                 FactorioVersion.GetInstalledVersions().ForEach(item => FactorioVersions.Add(item));
@@ -218,7 +214,7 @@ namespace ModMyFactory.ViewModels
                     }
                 }
 
-                Mods = new ObservableCollection<Mod>();
+                Mods = new ModCollection();
                 ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
                 ModsView.CustomSort = new ModSorter();
                 ModsView.GroupDescriptions.Add(new PropertyGroupDescription("FactorioVersion"));
@@ -229,14 +225,12 @@ namespace ModMyFactory.ViewModels
                 ModpacksView.CustomSort = new ModpackSorter();
                 ModpacksView.Filter = ModpackFilter;
 
-                Mod.LoadTemplates();
                 Mod.LoadMods(Mods, Modpacks, Application.Current.MainWindow);
-                ModpackTemplateList = ModpackTemplateList.Load(Path.Combine(App.Instance.AppDataPath, "modpacks.json"));
-                ModpackTemplateList.PopulateModpackList(Mods, Modpacks, ModpacksView, Application.Current.MainWindow);
+                ModpackTemplateList.Instance.PopulateModpackList(Mods, Modpacks, ModpacksView, Application.Current.MainWindow);
                 Modpacks.CollectionChanged += (sender, e) =>
                 {
-                    ModpackTemplateList.Update(Modpacks);
-                    ModpackTemplateList.Save();
+                    ModpackTemplateList.Instance.Update(Modpacks);
+                    ModpackTemplateList.Instance.Save();
                 };
 
                 modGridLength = App.Instance.Settings.ModGridLength;
@@ -288,17 +282,17 @@ namespace ModMyFactory.ViewModels
 
             Task<List<ModInfo>> fetchModsTask = ModWebsite.GetModsAsync(progress, cancellationSource.Token);
 
-            Task closeWindowTask =
-                    fetchModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+            Task closeWindowTask = fetchModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
             progressWindow.ShowDialog();
 
-            List<ModInfo> mods = await fetchModsTask;
+            List<ModInfo> modInfos = await fetchModsTask;
             await closeWindowTask;
 
             if (!cancellationSource.IsCancellationRequested)
             {
                 var modsWindow = new OnlineModsWindow() { Owner = Window };
-                modsWindow.ViewModel.Mods = mods;
+                modsWindow.ViewModel.Mods = modInfos;
+                modsWindow.ViewModel.InstalledMods = Mods;
 
                 modsWindow.ShowDialog();
             }
@@ -384,21 +378,21 @@ namespace ModMyFactory.ViewModels
                     foreach (string fileName in dialog.FileNames)
                     {
                         var archiveFile = new FileInfo(fileName);
-                        Version version;
+                        Version factorioVersion;
                         string name;
 
                         progress1.Report(new Tuple<double, string>((double)counter / fileCount, archiveFile.Name));
 
-                        if (ArchiveFileValid(archiveFile, out version, out name))
+                        if (ArchiveFileValid(archiveFile, out factorioVersion, out name))
                         {
-                            if (!Mod.ContainedInCollectionByFactorioVersion(Mods, name, version))
+                            if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
                             {
-                                var versionDirectory = App.Instance.Settings.GetModDirectory(version);
+                                var versionDirectory = App.Instance.Settings.GetModDirectory(factorioVersion);
                                 if (!versionDirectory.Exists) versionDirectory.Create();
 
                                 var modFilePath = Path.Combine(versionDirectory.FullName, archiveFile.Name);
                                 archiveFile.MoveTo(modFilePath);
-                                progress2.Report(new Tuple<string, Version, FileInfo>(name, version, archiveFile));
+                                progress2.Report(new Tuple<string, Version, FileInfo>(name, factorioVersion, archiveFile));
                             }
                             else
                             {
@@ -452,18 +446,18 @@ namespace ModMyFactory.ViewModels
                 var directory = new DirectoryInfo(dialog.SelectedPath);
 
                 Task moveDirectoryTask;
-                Version version;
+                Version factorioVersion;
                 string name;
-                if (DirectoryValid(directory, out version, out name))
+                if (DirectoryValid(directory, out factorioVersion, out name))
                 {
-                    if (Mod.ContainedInCollectionByFactorioVersion(Mods, name, version))
+                    if (Mods.ContainsByFactorioVersion(name, factorioVersion))
                     {
-                        MessageBox.Show(Window, $"The mod '{name}' for Factorio {version} already exists!",
+                        MessageBox.Show(Window, $"The mod '{name}' for Factorio {factorioVersion} already exists!",
                             "Error adding mod", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
 
-                    var versionDirectory = App.Instance.Settings.GetModDirectory(version);
+                    var versionDirectory = App.Instance.Settings.GetModDirectory(factorioVersion);
                     if (!versionDirectory.Exists) versionDirectory.Create();
 
                     var modDirectoryPath = Path.Combine(versionDirectory.FullName, directory.Name);
@@ -487,7 +481,7 @@ namespace ModMyFactory.ViewModels
 
                 progressWindow.Close();
 
-                Mods.Add(new ExtractedMod(name, version, directory, Mods, Modpacks, Window));
+                Mods.Add(new ExtractedMod(name, factorioVersion, directory, Mods, Modpacks, Window));
             }
         }
 

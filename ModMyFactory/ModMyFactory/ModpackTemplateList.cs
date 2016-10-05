@@ -40,12 +40,16 @@ namespace ModMyFactory
             public string[] Modpacks { get; set; }
         }
 
+        static ModpackTemplateList instance;
+
+        public static ModpackTemplateList Instance => instance ?? (instance = Load(Path.Combine(App.Instance.AppDataPath, "modpacks.json")));
+
         /// <summary>
         /// Loads modpack templates from a file.
         /// </summary>
         /// <param name="path">The file path.</param>
         /// <returns>Returns a ModpackTemplateList representing the specified file.</returns>
-        public static ModpackTemplateList Load(string path)
+        private static ModpackTemplateList Load(string path)
         {
             var file = new FileInfo(path);
             if (file.Exists)
