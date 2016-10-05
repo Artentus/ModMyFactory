@@ -14,38 +14,48 @@ namespace ModMyFactory.Models
         /// <summary>
         /// The mods directory.
         /// </summary>
-        public DirectoryInfo Directory { get; }
+        public DirectoryInfo Directory { get; private set; }
 
-        protected override string FallbackName => Directory.Name.Split('_')[0];
-
-        private FileInfo GetInfoFile(DirectoryInfo directory)
+        private void SetInfo(DirectoryInfo directory)
         {
-            return directory.EnumerateFiles("info.json").First();
-        }
-
-        /// <summary>
-        /// Creates a mod.
-        /// </summary>
-        /// <param name="directory">The mods directory.</param>
-        /// <param name="factorioVersion">The version of Factorio this mod is compatible with.</param>
-        /// <param name="parentCollection">The collection containing this mod.</param>
-        /// <param name="modpackCollection">The collection containing all modpacks.</param>
-        /// <param name="messageOwner">The window that ownes the deletion message box.</param>
-        public ExtractedMod(DirectoryInfo directory, Version factorioVersion, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
-            : base(factorioVersion, parentCollection, modpackCollection, messageOwner)
-        {
-            Directory = directory;
-
-            FileInfo infoFile = GetInfoFile(Directory);
+            FileInfo infoFile = directory.EnumerateFiles("info.json").First();
             using (Stream stream = infoFile.OpenRead())
             {
                 base.ReadInfoFile(stream);
             }
         }
 
+        /// <summary>
+        /// Creates a mod.
+        /// </summary>
+        /// <param name="name">The mods name.</param>
+        /// <param name="factorioVersion">The version of Factorio this mod is compatible with.</param>
+        /// <param name="directory">The mods directory.</param>
+        /// <param name="parentCollection">The collection containing this mod.</param>
+        /// <param name="modpackCollection">The collection containing all modpacks.</param>
+        /// <param name="messageOwner">The window that ownes the deletion message box.</param>
+        public ExtractedMod(string name, Version factorioVersion, DirectoryInfo directory, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
+            : base(name, factorioVersion, parentCollection, modpackCollection, messageOwner)
+        {
+            Directory = directory;
+
+            SetInfo(Directory);
+        }
+
         protected override void DeleteFilesystemObjects()
         {
             Directory.Delete(true);
+        }
+
+        /// <summary>
+        /// Updates this mod.
+        /// </summary>
+        /// <param name="newDirectory">The updated mod directory.</param>
+        public void Update(DirectoryInfo newDirectory)
+        {
+            Directory.Delete(true);
+            Directory = newDirectory;
+            SetInfo(newDirectory);
         }
     }
 }

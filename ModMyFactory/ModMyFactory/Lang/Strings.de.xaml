@@ -10,6 +10,7 @@
     <sys:String x:Key="CloseButton">Schließen</sys:String>
     <sys:String x:Key="CancelButton">Abbrechen</sys:String>
     <sys:String x:Key="DownloadButton">Herunterladen</sys:String>
+    <sys:String x:Key="UpdateButton">Aktualisieren</sys:String>
 
 
     <!--
@@ -171,6 +172,7 @@
     <!-- tooltips -->
     <sys:String x:Key="ViewsToolTip">Aufrufe</sys:String>
     <sys:String x:Key="DownloadsToolTip">Downloads</sys:String>
+    <sys:String x:Key="InstalledToolTip">Installiert</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ReleasesHeader">Veröffentlichte Versionen</sys:String>

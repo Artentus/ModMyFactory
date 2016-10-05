@@ -14,24 +14,11 @@ namespace ModMyFactory.Models
         /// <summary>
         /// The mods file.
         /// </summary>
-        public FileInfo File { get; }
+        public FileInfo File { get; private set; }
 
-        protected override string FallbackName => Path.GetFileNameWithoutExtension(File.Name).Split('_')[0];
-
-        /// <summary>
-        /// Creates a mod.
-        /// </summary>
-        /// <param name="file">The mods file.</param>
-        /// <param name="factorioVersion">The version of Factorio this mod is compatible with.</param>
-        /// <param name="parentCollection">The collection containing this mod.</param>
-        /// <param name="modpackCollection">The collection containing all modpacks.</param>
-        /// <param name="messageOwner">The window that ownes the deletion message box.</param>
-        public ZippedMod(FileInfo file, Version factorioVersion, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
-            : base(factorioVersion, parentCollection, modpackCollection, messageOwner)
+        private void SetInfo(FileInfo archiveFile)
         {
-            File = file;
-
-            using (ZipArchive archive = ZipFile.OpenRead(File.FullName))
+            using (ZipArchive archive = ZipFile.OpenRead(archiveFile.FullName))
             {
                 foreach (var entry in archive.Entries)
                 {
@@ -48,9 +35,37 @@ namespace ModMyFactory.Models
             }
         }
 
+        /// <summary>
+        /// Creates a mod.
+        /// </summary>
+        /// <param name="name">The mods name.</param>
+        /// <param name="factorioVersion">The version of Factorio this mod is compatible with.</param>
+        /// <param name="file">The mods file.</param>
+        /// <param name="parentCollection">The collection containing this mod.</param>
+        /// <param name="modpackCollection">The collection containing all modpacks.</param>
+        /// <param name="messageOwner">The window that ownes the deletion message box.</param>
+        public ZippedMod(string name, Version factorioVersion, FileInfo file, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
+            : base(name, factorioVersion, parentCollection, modpackCollection, messageOwner)
+        {
+            File = file;
+
+            SetInfo(File);
+        }
+
         protected override void DeleteFilesystemObjects()
         {
             File.Delete();
+        }
+
+        /// <summary>
+        /// Updates this mod.
+        /// </summary>
+        /// <param name="newFile">The updated mod file.</param>
+        public void Update(FileInfo newFile)
+        {
+            File.Delete();
+            File = newFile;
+            SetInfo(File);
         }
     }
 }

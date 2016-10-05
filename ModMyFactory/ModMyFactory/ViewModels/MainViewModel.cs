@@ -174,7 +174,7 @@ namespace ModMyFactory.ViewModels
             if (mod == null) return false;
 
             if (string.IsNullOrWhiteSpace(modsFilter)) return true;
-            return Thread.CurrentThread.CurrentUICulture.CompareInfo.IndexOf(mod.Name, modsFilter, CompareOptions.IgnoreCase) >= 0;
+            return Thread.CurrentThread.CurrentUICulture.CompareInfo.IndexOf(mod.Title, modsFilter, CompareOptions.IgnoreCase) >= 0;
         }
 
         private bool ModpackFilter(object item)
@@ -304,25 +304,38 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private Version ParseInfoFile(Stream stream)
+        private bool TryParseInfoFile(Stream stream, out Version version, out string name)
         {
+            version = null;
+            name = null;
+
             using (var reader = new StreamReader(stream))
             {
+                // Factorio version
                 string content = reader.ReadToEnd();
                 MatchCollection matches = Regex.Matches(content, "\"factorio_version\" *: *\"(?<version>[0-9]+\\.[0-9]+(\\.[0-9]+)?)\"",
                     RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                if (matches.Count == 0) return null;
+                if (matches.Count != 1) return false;
 
                 string versionString = matches[0].Groups["version"].Value;
-                var version = Version.Parse(versionString);
+                version = Version.Parse(versionString);
                 version = new Version(version.Major, version.Minor);
-                return version;
+
+                // Name
+                matches = Regex.Matches(content, "\"name\" *: *\"(?<name>.*)\"",
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                if (matches.Count != 1) return false;
+
+                name = matches[0].Groups["name"].Value;
+
+                return true;
             }
         }
 
-        private bool ArchiveFileValid(FileInfo archiveFile, out Version validVersion)
+        private bool ArchiveFileValid(FileInfo archiveFile, out Version validVersion, out string validName)
         {
-            validVersion = default(Version);
+            validVersion = null;
+            validName = null;
 
             using (ZipArchive archive = ZipFile.OpenRead(archiveFile.FullName))
             {
@@ -332,8 +345,7 @@ namespace ModMyFactory.ViewModels
                     {
                         using (Stream stream = entry.Open())
                         {
-                            validVersion = ParseInfoFile(stream);
-                            if (validVersion != null) return true;
+                            if (TryParseInfoFile(stream, out validVersion, out validName)) return true;
                         }
                     }
                 }
@@ -359,9 +371,9 @@ namespace ModMyFactory.ViewModels
                     progressWindow.ViewModel.Progress = info.Item1;
                     progressWindow.ViewModel.ProgressDescription = info.Item2;
                 });
-                IProgress<Tuple<FileInfo, Version>> progress2 = new Progress<Tuple<FileInfo, Version>>(info =>
+                IProgress<Tuple<string, Version, FileInfo>> progress2 = new Progress<Tuple<string, Version, FileInfo>>(info =>
                 {
-                    var mod = new ZippedMod(info.Item1, info.Item2, Mods, Modpacks, Window);
+                    var mod = new ZippedMod(info.Item1, info.Item2, info.Item3, Mods, Modpacks, Window);
                     Mods.Add(mod);
                 });
 
@@ -373,20 +385,29 @@ namespace ModMyFactory.ViewModels
                     {
                         var archiveFile = new FileInfo(fileName);
                         Version version;
+                        string name;
 
                         progress1.Report(new Tuple<double, string>((double)counter / fileCount, archiveFile.Name));
 
-                        if (ArchiveFileValid(archiveFile, out version))
+                        if (ArchiveFileValid(archiveFile, out version, out name))
                         {
-                            var versionDirectory = App.Instance.Settings.GetModDirectory(version);
-                            if (!versionDirectory.Exists) versionDirectory.Create();
-
-                            var modFilePath = Path.Combine(versionDirectory.FullName, archiveFile.Name);
-                            if (!File.Exists(modFilePath))
+                            if (!Mod.ContainedInCollectionByFactorioVersion(Mods, name, version))
                             {
+                                var versionDirectory = App.Instance.Settings.GetModDirectory(version);
+                                if (!versionDirectory.Exists) versionDirectory.Create();
+
+                                var modFilePath = Path.Combine(versionDirectory.FullName, archiveFile.Name);
                                 archiveFile.MoveTo(modFilePath);
-                                progress2.Report(new Tuple<FileInfo, Version>(archiveFile, version));
+                                progress2.Report(new Tuple<string, Version, FileInfo>(name, version, archiveFile));
                             }
+                            else
+                            {
+                                // ToDo: Message for mod existing.
+                            }
+                        }
+                        else
+                        {
+                            // ToDo: Message for invalid mod file.
                         }
 
                         counter++;
@@ -404,17 +425,17 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private bool DirectoryValid(DirectoryInfo directory, out Version validVersion)
+        private bool DirectoryValid(DirectoryInfo directory, out Version validVersion, out string validName)
         {
-            validVersion = default(Version);
+            validVersion = null;
+            validName = null;
 
             var file = directory.EnumerateFiles("info.json").FirstOrDefault();
             if (file != null)
             {
                 using (Stream stream = file.OpenRead())
                 {
-                    validVersion = ParseInfoFile(stream);
-                    if (validVersion != null) return true;
+                    if (TryParseInfoFile(stream, out validVersion, out validName)) return true;
                 }
             }
 
@@ -432,22 +453,21 @@ namespace ModMyFactory.ViewModels
 
                 Task moveDirectoryTask;
                 Version version;
-                if (DirectoryValid(directory, out version))
+                string name;
+                if (DirectoryValid(directory, out version, out name))
                 {
+                    if (Mod.ContainedInCollectionByFactorioVersion(Mods, name, version))
+                    {
+                        MessageBox.Show(Window, $"The mod '{name}' for Factorio {version} already exists!",
+                            "Error adding mod", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
                     var versionDirectory = App.Instance.Settings.GetModDirectory(version);
                     if (!versionDirectory.Exists) versionDirectory.Create();
 
                     var modDirectoryPath = Path.Combine(versionDirectory.FullName, directory.Name);
-                    if (Directory.Exists(modDirectoryPath))
-                    {
-                        MessageBox.Show(Window, $"The mod directory '{modDirectoryPath}' already exists!",
-                            "Error adding mod", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-                    else
-                    {
-                        moveDirectoryTask = directory.MoveToAsync(modDirectoryPath);
-                    }
+                    moveDirectoryTask = directory.MoveToAsync(modDirectoryPath);
                 }
                 else
                 {
@@ -467,7 +487,7 @@ namespace ModMyFactory.ViewModels
 
                 progressWindow.Close();
 
-                Mods.Add(new ExtractedMod(directory, version, Mods, Modpacks, Window));
+                Mods.Add(new ExtractedMod(name, version, directory, Mods, Modpacks, Window));
             }
         }
 

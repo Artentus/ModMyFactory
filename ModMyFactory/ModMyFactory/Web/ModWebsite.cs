@@ -135,7 +135,32 @@ namespace ModMyFactory.Web
             var modFile = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
 
             await WebHelper.DownloadFileAsync(downloadUrl, null, modFile, progress, cancellationToken);
-            return new ZippedMod(modFile, release.FactorioVersion, parentCollection, modpackCollection, messageOwner);
+            string name = Path.GetFileNameWithoutExtension(modFile.Name).Split('_')[0];
+            return new ZippedMod(name, release.FactorioVersion, modFile, parentCollection, modpackCollection, messageOwner);
+        }
+
+        /// <summary>
+        /// Downloads a mod for updating.
+        /// </summary>
+        /// <param name="release">The mods release to be downloaded.</param>
+        /// <param name="username">The username.</param>
+        /// <param name="token">The login token.</param>
+        /// <param name="progress">A progress object used to report the progress of the operation.</param>
+        /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
+        /// <param name="parentCollection">The collection to contain the mods.</param>
+        /// <param name="modpackCollection">The collection containing all modpacks.</param>
+        /// <param name="messageOwner">The window that ownes the deletion message box.</param>
+        public static async Task<FileInfo> UpdateReleaseAsync(ModRelease release, string username, string token, IProgress<double> progress, CancellationToken cancellationToken,
+            ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
+        {
+            DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory(release.FactorioVersion);
+            if (!modDirectory.Exists) modDirectory.Create();
+
+            var downloadUrl = new Uri($"{BaseUrl}{release.DownloadUrl}?username={username}&token={token}");
+            var modFile = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
+
+            await WebHelper.DownloadFileAsync(downloadUrl, null, modFile, progress, cancellationToken);
+            return modFile;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace ModMyFactory.Models
     {
         public Mod Mod { get; }
 
-        public string DisplayName => Mod.Name;
+        public string DisplayName => Mod.Title;
 
         public BitmapImage Image { get; }
 
@@ -50,7 +50,7 @@ namespace ModMyFactory.Models
         {
             switch (e.PropertyName)
             {
-                case nameof(Mod.Name):
+                case nameof(Mod.Title):
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayName)));
                     break;
                 case nameof(Mod.Active):

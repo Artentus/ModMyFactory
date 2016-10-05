@@ -20,16 +20,12 @@ namespace ModMyFactory
             public string Name { get; }
 
             [JsonConverter(typeof(VersionConverter))]
-            public Version Version { get; }
-
-            [JsonConverter(typeof(VersionConverter))]
             public Version FactorioVersion { get; }
 
             [JsonConstructor]
-            public ModpackTemplateMod(string name, Version version, Version factorioVersion)
+            public ModpackTemplateMod(string name, Version factorioVersion)
             {
                 Name = name;
-                Version = version;
                 FactorioVersion = factorioVersion;
             }
         }
@@ -84,17 +80,8 @@ namespace ModMyFactory
 
         private Mod GetMod(ICollection<Mod> modList, ModpackTemplateMod modTemplate)
         {
-            if (modTemplate.Version == null) // Backwards compatibility
-            {
-                return modList.FirstOrDefault(mod => mod.Name == modTemplate.Name
-                && mod.FactorioVersion == modTemplate.FactorioVersion);
-            }
-            else
-            {
-                return modList.FirstOrDefault(mod => mod.Name == modTemplate.Name
-                && mod.Version == modTemplate.Version
-                && mod.FactorioVersion == modTemplate.FactorioVersion);
-            }
+            return modList.FirstOrDefault(mod => mod.Title == modTemplate.Name
+                                                 && mod.FactorioVersion == modTemplate.FactorioVersion);
         }
 
         private Modpack GetModpack(ICollection<Modpack> modpackList, string name)
@@ -148,7 +135,7 @@ namespace ModMyFactory
                 {
                     Name = modpack.Name,
                     Mods = modpack.Mods.Where(item => item is ModReference)
-                    .Select(item => new ModpackTemplateMod(item.DisplayName, ((ModReference)item).Mod.Version, ((ModReference)item).Mod.FactorioVersion)).ToArray(),
+                    .Select(item => new ModpackTemplateMod(item.DisplayName, ((ModReference)item).Mod.FactorioVersion)).ToArray(),
                     Modpacks = modpack.Mods.Where(item => item is ModpackReference).Select(item => item.DisplayName).ToArray(),
                 };
 

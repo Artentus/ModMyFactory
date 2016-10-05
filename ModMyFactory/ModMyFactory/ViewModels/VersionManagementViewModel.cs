@@ -342,8 +342,9 @@ namespace ModMyFactory.ViewModels
                         if (!File.Exists(newName))
                         {
                             modFile.MoveTo(newName);
+                            string name = Path.GetFileNameWithoutExtension(modFile.Name).Split('_')[0];
                             MainViewModel.Instance.Window.Dispatcher.Invoke(
-                                () => MainViewModel.Instance.Mods.Add(new ZippedMod(modFile, version,
+                                () => MainViewModel.Instance.Mods.Add(new ZippedMod(name, version, modFile,
                                     MainViewModel.Instance.Mods, MainViewModel.Instance.Modpacks,
                                     MainViewModel.Instance.Window)));
                         }
@@ -355,8 +356,9 @@ namespace ModMyFactory.ViewModels
                         if (!Directory.Exists(newName))
                         {
                             modFolder.MoveToAsync(newName).Wait();
+                            string name = modFolder.Name.Split('_')[0];
                             MainViewModel.Instance.Window.Dispatcher.Invoke(
-                                () => MainViewModel.Instance.Mods.Add(new ExtractedMod(modFolder, version,
+                                () => MainViewModel.Instance.Mods.Add(new ExtractedMod(name, version, modFolder,
                                     MainViewModel.Instance.Mods, MainViewModel.Instance.Modpacks,
                                     MainViewModel.Instance.Window)));
                         }

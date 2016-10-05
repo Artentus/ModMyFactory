@@ -51,8 +51,36 @@ namespace ModMyFactory.Models
         public static bool ContainedInCollection(ICollection<Mod> collection, string name, Version version)
         {
             return collection.Any(mod =>
-                string.Equals(mod.innerName, name, StringComparison.InvariantCultureIgnoreCase)
+                string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)
                 && (mod.Version == version));
+        }
+
+        /// <summary>
+        /// Checks if a collection contains a mod.
+        /// </summary>
+        /// <param name="collection">The collection to be searched.</param>
+        /// <param name="name">The name of the mod.</param>
+        /// <param name="factorioVersion">The mods Factorio version.</param>
+        /// <returns>Return true if the collection contains the mod, otherwise false.</returns>
+        public static bool ContainedInCollectionByFactorioVersion(ICollection<Mod> collection, string name, Version factorioVersion)
+        {
+            return collection.Any(mod =>
+                string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)
+                && (mod.FactorioVersion == factorioVersion));
+        }
+
+        /// <summary>
+        /// Finds a mod in a collection.
+        /// </summary>
+        /// <param name="collection">The collection to be searched.</param>
+        /// <param name="name">The name of the mod.</param>
+        /// <param name="factorioVersion">The mods Factorio version.</param>
+        /// <returns>Returns the mod searched for.</returns>
+        public static Mod FindInCollection(ICollection<Mod> collection, string name, Version factorioVersion)
+        {
+            return collection.First(mod =>
+                string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)
+                && (mod.FactorioVersion == factorioVersion));
         }
 
         private static bool Contains(Version version, out ModTemplateList list)
@@ -144,13 +172,15 @@ namespace ModMyFactory.Models
                     {
                         foreach (var file in directory.EnumerateFiles("*.zip"))
                         {
-                            var mod = new ZippedMod(file, version, parentCollection, modpackCollection, messageOwner);
+                            string name = Path.GetFileNameWithoutExtension(file.Name).Split('_')[0];
+                            var mod = new ZippedMod(name, version, file, parentCollection, modpackCollection, messageOwner);
                             parentCollection.Add(mod);
                         }
 
                         foreach (var subDirectory in directory.EnumerateDirectories())
                         {
-                            var mod = new ExtractedMod(subDirectory, version, parentCollection, modpackCollection, messageOwner);
+                            string name = subDirectory.Name.Split('_')[0];
+                            var mod = new ExtractedMod(name, version, subDirectory, parentCollection, modpackCollection, messageOwner);
                             parentCollection.Add(mod);
                         }
                     }
@@ -158,38 +188,91 @@ namespace ModMyFactory.Models
             }
         }
 
-        string innerName;
+        string title;
+        string description;
+        string author;
+        Version version;
         bool active;
 
         /// <summary>
-        /// The name of the mod.
+        /// The title of the mod.
         /// </summary>
-        public string Name { get; private set; }
+        public string Title
+        {
+            get { return title; }
+            private set
+            {
+                if (value != title)
+                {
+                    title = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Title)));
+                }
+            }
+        }
 
         /// <summary>
         /// The description of the mod.
         /// </summary>
-        public string Description { get; private set; }
+        public string Description
+        {
+            get { return description; }
+            private set
+            {
+                if (value != description)
+                {
+                    description = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Description)));
+
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ToolTip)));
+                }
+            }
+        }
 
         /// <summary>
         /// The author of the mod.
         /// </summary>
-        public string Author { get; private set; }
+        public string Author
+        {
+            get { return author; }
+            private set
+            {
+                if (value != author)
+                {
+                    author = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Author)));
+
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ToolTip)));
+                }
+            }
+        }
 
         /// <summary>
         /// The version of the mod.
         /// </summary>
-        public Version Version { get; private set; }
+        public Version Version
+        {
+            get { return version; }
+            private set
+            {
+                if (value != version)
+                {
+                    version = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Version)));
+
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ToolTip)));
+                }
+            }
+        }
+
+        /// <summary>
+        /// The name of the mod.
+        /// </summary>
+        public string Name { get; }
 
         /// <summary>
         /// The version of Factorio this mod is compatible with.
         /// </summary>
         public Version FactorioVersion { get; }
-
-        /// <summary>
-        /// A command that deletes this mod from the list and the filesystem.
-        /// </summary>
-        public RelayCommand DeleteCommand { get; }
 
         /// <summary>
         /// Indicates whether the mod is currently active.
@@ -204,7 +287,7 @@ namespace ModMyFactory.Models
                     active = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
 
-                    Mod.SetActive(innerName, FactorioVersion, value);
+                    Mod.SetActive(Name, FactorioVersion, value);
                     Mod.SaveTemplates();
                 }
             }
@@ -223,9 +306,9 @@ namespace ModMyFactory.Models
         }
 
         /// <summary>
-        /// The name this mod should appear under if info.json does not contain any valid names.
+        /// A command that deletes this mod from the list and the filesystem.
         /// </summary>
-        protected abstract string FallbackName { get; }
+        public RelayCommand DeleteCommand { get; }
 
         /// <summary>
         /// Deletes this mod at file system level.
@@ -246,7 +329,7 @@ namespace ModMyFactory.Models
                 }
                 DeleteFilesystemObjects();
                 parentCollection.Remove(this);
-                RemoveTemplate(innerName);
+                RemoveTemplate(Name);
 
                 MainViewModel.Instance.ModpackTemplateList.Update(MainViewModel.Instance.Modpacks);
                 MainViewModel.Instance.ModpackTemplateList.Save();
@@ -255,7 +338,7 @@ namespace ModMyFactory.Models
 
         /// <summary>
         /// Reads a provided info.json file to populate the mods attributes.
-        /// All derived classes should call this method in their constructor.
+        /// All derived classes should call this method in their constructor and when updated.
         /// </summary>
         /// <param name="stream">A stream containing the contents of the info.json file.</param>
         protected void ReadInfoFile(Stream stream)
@@ -264,13 +347,10 @@ namespace ModMyFactory.Models
             {
                 string content = reader.ReadToEnd();
 
-                // Name
-                MatchCollection matches = Regex.Matches(content, "\"name\" *: *\"(?<name>.*)\"",
+                // Title
+                MatchCollection matches = Regex.Matches(content, "\"title\" *: *\"(?<title>.*)\"",
                     RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                innerName = matches.Count > 0 ? matches[0].Groups["name"].Value : FallbackName;
-                matches = Regex.Matches(content, "\"title\" *: *\"(?<title>.*)\"",
-                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                Name = matches.Count > 0 ? matches[0].Groups["title"].Value : innerName;
+                Title = matches.Count > 0 ? matches[0].Groups["title"].Value : Name;
 
                 // Description
                 matches = Regex.Matches(content, "\"description\" *: *\"(?<description>.*)\"",
@@ -301,20 +381,22 @@ namespace ModMyFactory.Models
                     Version = new Version(1, 0);
                 }
             }
-
-            active = Mod.GetActive(innerName, FactorioVersion);
         }
 
         /// <summary>
         /// Creates a mod.
         /// </summary>
+        /// <param name="name">The mods name.</param>
         /// <param name="factorioVersion">The version of Factorio this mod is compatible with.</param>
         /// <param name="parentCollection">The collection containing this mod.</param>
         /// <param name="modpackCollection">The collection containing all modpacks.</param>
         /// <param name="messageOwner">The window that ownes the deletion message box.</param>
-        protected Mod(Version factorioVersion, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
+        protected Mod(string name, Version factorioVersion, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
         {
+            Name = name;
             FactorioVersion = factorioVersion;
+            active = Mod.GetActive(Name, FactorioVersion);
+
             DeleteCommand = new RelayCommand(() => Delete(parentCollection, modpackCollection, messageOwner));
         }
     }
