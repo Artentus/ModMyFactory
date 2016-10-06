@@ -66,9 +66,7 @@ namespace ModMyFactory.Models
             string osPlatform = Environment.Is64BitOperatingSystem ? "x64" : "x86";
             ExecutablePath = Path.Combine(directory.FullName, "bin", osPlatform, "factorio.exe");
 
-            CreateSaveDirectoryLink(forceLinkCreation);
-            CreateScenarioDirectoryLink(forceLinkCreation);
-            CreateModDirectoryLink(forceLinkCreation);
+            CreateLinks(forceLinkCreation);
         }
 
         private void CreateSaveDirectoryLink(DirectoryInfo localSaveDirectory)
@@ -166,6 +164,17 @@ namespace ModMyFactory.Models
             {
                 CreateModDirectoryLink(localModDirectory);
             }
+        }
+
+        /// <summary>
+        /// Creates all directory junctions.
+        /// </summary>
+        /// <param name="forced"></param>
+        public void CreateLinks(bool forced)
+        {
+            CreateSaveDirectoryLink(forced);
+            CreateScenarioDirectoryLink(forced);
+            CreateModDirectoryLink(forced);
         }
 
         /// <summary>

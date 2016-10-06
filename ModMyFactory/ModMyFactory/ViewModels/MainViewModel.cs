@@ -254,7 +254,7 @@ namespace ModMyFactory.ViewModels
 
                 OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
 
-                OpenSettingsCommand = new RelayCommand(OpenSettings);
+                OpenSettingsCommand = new RelayCommand(async () => await OpenSettings());
 
                 // 'Info' menu
                 BrowseFactorioWebsiteCommand = new RelayCommand(() => Process.Start("https://www.factorio.com/"));
@@ -411,8 +411,7 @@ namespace ModMyFactory.ViewModels
                     progress1.Report(new Tuple<double, string>(1, string.Empty));
                 });
 
-                Task closeWindowTask =
-                    processModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                Task closeWindowTask = processModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                 progressWindow.ShowDialog();
 
                 await processModsTask;
@@ -479,8 +478,6 @@ namespace ModMyFactory.ViewModels
                 moveDirectoryTask = moveDirectoryTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                 progressWindow.ShowDialog();
                 await moveDirectoryTask;
-
-                progressWindow.Close();
 
                 Mods.Add(new ExtractedMod(name, factorioVersion, directory, Mods, Modpacks, Window));
             }
@@ -549,7 +546,34 @@ namespace ModMyFactory.ViewModels
             versionManagementWindow.ShowDialog();
         }
 
-        private void OpenSettings()
+        private async Task MoveDirectories(DirectoryInfo oldFactorioDirectory, DirectoryInfo oldModDirectory, DirectoryInfo newFactorioDirectory, DirectoryInfo newModDirectory)
+        {
+            bool moveFactorioDirectory = !newFactorioDirectory.DirectoryEquals(oldFactorioDirectory);
+            bool moveModDirectory = !newModDirectory.DirectoryEquals(oldModDirectory);
+            if (moveFactorioDirectory)
+            {
+                foreach (var version in FactorioVersions)
+                    version.DeleteLinks();
+                await oldFactorioDirectory.MoveToAsync(newFactorioDirectory.FullName);
+            }
+            if (moveModDirectory)
+            {
+                await oldModDirectory.MoveToAsync(newModDirectory.FullName);
+            }
+
+            if (moveFactorioDirectory)
+            {
+                foreach (var version in FactorioVersions)
+                    version.CreateLinks(false);
+            }
+            else if (moveModDirectory)
+            {
+                foreach (var version in FactorioVersions)
+                    version.CreateModDirectoryLink(true);
+            }
+        }
+
+        private async Task OpenSettings()
         {
             var settingsWindow = new SettingsWindow() { Owner = Window };
             settingsWindow.ViewModel.Reset();
@@ -557,6 +581,9 @@ namespace ModMyFactory.ViewModels
             bool? result = settingsWindow.ShowDialog();
             if (result != null && result.Value)
             {
+                DirectoryInfo oldFactorioDirectory = App.Instance.Settings.GetFactorioDirectory();
+                DirectoryInfo oldModDirectory = App.Instance.Settings.GetModDirectory();
+
                 if (settingsWindow.ViewModel.FactorioDirectoryIsAppData)
                 {
                     App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.AppData;
@@ -588,11 +615,23 @@ namespace ModMyFactory.ViewModels
                     App.Instance.Settings.ModDirectoryOption = DirectoryOption.Custom;
                     App.Instance.Settings.ModDirectory = settingsWindow.ViewModel.ModDirectory;
                 }
-
                 App.Instance.Settings.Save();
 
-                foreach (var version in FactorioVersions)
-                    version.CreateModDirectoryLink(true);
+                DirectoryInfo newFactorioDirectory = App.Instance.Settings.GetFactorioDirectory();
+                DirectoryInfo newModDirectory = App.Instance.Settings.GetModDirectory();
+
+                var progressWindow = new ProgressWindow() { Owner = Window };
+                progressWindow.ViewModel.ActionName = "Moving directories";
+                progressWindow.ViewModel.ProgressDescription = "Moving files...";
+                progressWindow.ViewModel.IsIndeterminate = true;
+
+                Task moveDirectoriesTask = MoveDirectories(oldFactorioDirectory, oldModDirectory, newFactorioDirectory, newModDirectory);
+
+                Task closeWindowTask = moveDirectoriesTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                progressWindow.ShowDialog();
+
+                await moveDirectoriesTask;
+                await closeWindowTask;
             }
         }
 

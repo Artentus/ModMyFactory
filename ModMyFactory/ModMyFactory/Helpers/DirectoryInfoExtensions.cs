@@ -60,5 +60,15 @@ namespace ModMyFactory.Helpers
         {
             directory.Delete(!directory.IsReparsePoint());
         }
+
+        /// <summary>
+        /// Checks if two DirectoryInfo objects point to the same directory.
+        /// </summary>
+        public static bool DirectoryEquals(this DirectoryInfo first, DirectoryInfo second)
+        {
+            string firstPath = first.FullName.TrimEnd('\\');
+            string secondPath = second.FullName.TrimEnd('\\');
+            return string.Equals(firstPath, secondPath, StringComparison.InvariantCultureIgnoreCase);
+        }
     }
 }
