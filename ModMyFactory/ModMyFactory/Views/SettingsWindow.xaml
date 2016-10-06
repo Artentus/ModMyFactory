@@ -18,9 +18,24 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
-        <GroupBox Grid.Row="0" Header="{DynamicResource FactorioDirectoryGroupHeader}">
+
+        <GroupBox Grid.Row="0" Margin="0,0,0,4" Header="{DynamicResource ManagerModeGroupHeader}">
+            <Grid Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <RadioButton Grid.Row="0" Margin="2"
+                             IsChecked="{Binding ManagerModeIsPerFactorioVersion}" Content="{DynamicResource PerFactorioVersionGroupItem}"/>
+                <RadioButton Grid.Row="1" Margin="2"
+                             IsChecked="{Binding ManagerModeIsGlobal}" Content="{DynamicResource GlobalGroupItem}"/>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Header="{DynamicResource FactorioDirectoryGroupHeader}">
             <Grid Margin="4">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -46,7 +61,7 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Grid.Row="1" Margin="0,4" Header="{DynamicResource ModDirectoryGroupHeader}">
+        <GroupBox Grid.Row="2" Margin="0,4" Header="{DynamicResource ModDirectoryGroupHeader}">
             <Grid Margin="4">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -72,7 +87,7 @@
             </Grid>
         </GroupBox>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft">
+        <StackPanel Grid.Row="3" Orientation="Horizontal" FlowDirection="RightToLeft">
             <Button Margin="2" IsDefault="True" Click="OKButtonClickHandler" IsEnabled="{Binding SettingsValid}" Content="{DynamicResource OkButton}"/>
             <Button Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
         </StackPanel>

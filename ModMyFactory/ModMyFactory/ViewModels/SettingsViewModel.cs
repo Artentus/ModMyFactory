@@ -13,6 +13,9 @@ namespace ModMyFactory.ViewModels
 
         public static SettingsViewModel Instance => instance ?? (instance = new SettingsViewModel());
 
+        bool managerModeIsPerFactorioVersion;
+        bool managerModeIsGlobal;
+
         bool factorioDirectoryIsAppData;
         bool factorioDirectoryIsAppDirectory;
         bool factorioDirectoryIsCustom;
@@ -24,6 +27,32 @@ namespace ModMyFactory.ViewModels
         string factorioDirectory;
         string modDirectory;
         bool settingsValid;
+
+        public bool ManagerModeIsPerFactorioVersion
+        {
+            get { return managerModeIsPerFactorioVersion; }
+            set
+            {
+                if (value != managerModeIsPerFactorioVersion)
+                {
+                    managerModeIsPerFactorioVersion = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ManagerModeIsPerFactorioVersion)));
+                }
+            }
+        }
+
+        public bool ManagerModeIsGlobal
+        {
+            get { return managerModeIsGlobal; }
+            set
+            {
+                if (value != managerModeIsGlobal)
+                {
+                    managerModeIsGlobal = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ManagerModeIsGlobal)));
+                }
+            }
+        }
 
         public bool FactorioDirectoryIsAppData
         {
@@ -162,6 +191,18 @@ namespace ModMyFactory.ViewModels
 
         public void Reset()
         {
+            ManagerModeIsPerFactorioVersion = false;
+            ManagerModeIsGlobal = false;
+            switch (App.Instance.Settings.ManagerMode)
+            {
+                case ManagerMode.PerFactorioVersion:
+                    ManagerModeIsPerFactorioVersion = true;
+                    break;
+                case ManagerMode.Global:
+                    ManagerModeIsGlobal = true;
+                    break;
+            }
+
             FactorioDirectoryIsAppData = false;
             FactorioDirectoryIsAppDirectory = false;
             FactorioDirectoryIsCustom = false;

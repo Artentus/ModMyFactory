@@ -32,6 +32,7 @@
 
     <!-- 'Edit' menu -->
     <sys:String x:Key="EditMenuItem">_Bearbeiten</sys:String>
+    <sys:String x:Key="OpenFactorioFolderMenuItem">Factorio-Ordner öffnen</sys:String>
     <sys:String x:Key="OpenModFolderMenuItem">Mod-Ordner öffnen</sys:String>
     <sys:String x:Key="OpenSavegameFolderMenuItem">Spielstand-Ordner öffnen</sys:String>
     <sys:String x:Key="OpenScenarioFolderMenuItem">Szenario-Ordner öffnen</sys:String>
@@ -100,11 +101,14 @@
     <sys:String x:Key="SettingsWindowTitle">Einstellungen</sys:String>
 
     <!-- group headers -->
+    <sys:String x:Key="ManagerModeGroupHeader">Managermodus</sys:String>
     <sys:String x:Key="FactorioDirectoryGroupHeader">Factorio Speicherort</sys:String>
     <sys:String x:Key="ModDirectoryGroupHeader">Mod Speicherort</sys:String>
 
 
     <!-- group items -->
+    <sys:String x:Key="PerFactorioVersionGroupItem">Pro Factorio-Version</sys:String>
+    <sys:String x:Key="GlobalGroupItem">Global</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Anwendungsverzeichnis</sys:String>
     <sys:String x:Key="SelectGroupItem">Auswählen:</sys:String>

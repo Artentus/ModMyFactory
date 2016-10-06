@@ -88,6 +88,7 @@
     <Compile Include="Helpers\EnumarableExtensions.cs" />
     <Compile Include="Helpers\FileInfoExtensions.cs" />
     <Compile Include="Helpers\SecureStringHelper.cs" />
+    <Compile Include="ManagerMode.cs" />
     <Compile Include="ModCollection.cs" />
     <Compile Include="ModManager.cs" />
     <Compile Include="VersionComparer.cs" />

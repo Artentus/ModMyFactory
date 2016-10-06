@@ -146,6 +146,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand StartGameCommand { get; }
 
+        public RelayCommand OpenFactorioFolderCommand { get; }
+
         public RelayCommand OpenModFolderCommand { get; }
 
         public RelayCommand OpenSavegameFolderCommand { get; }
@@ -248,6 +250,7 @@ namespace ModMyFactory.ViewModels
                 StartGameCommand = new RelayCommand(StartGame, () => SelectedVersion != null);
 
                 // 'Edit' menu
+                OpenFactorioFolderCommand = new RelayCommand(() => Process.Start(App.Instance.Settings.GetFactorioDirectory().FullName));
                 OpenModFolderCommand = new RelayCommand(() => Process.Start(App.Instance.Settings.GetModDirectory().FullName));
                 OpenSavegameFolderCommand = new RelayCommand(() => Process.Start(Path.Combine(App.Instance.AppDataPath, "saves")));
                 OpenScenarioFolderCommand = new RelayCommand(() => Process.Start(Path.Combine(App.Instance.AppDataPath, "scenarios")));
@@ -584,6 +587,14 @@ namespace ModMyFactory.ViewModels
                 DirectoryInfo oldFactorioDirectory = App.Instance.Settings.GetFactorioDirectory();
                 DirectoryInfo oldModDirectory = App.Instance.Settings.GetModDirectory();
 
+                if (settingsWindow.ViewModel.ManagerModeIsPerFactorioVersion)
+                {
+                    App.Instance.Settings.ManagerMode = ManagerMode.PerFactorioVersion;
+                }
+                else if (settingsWindow.ViewModel.ManagerModeIsGlobal)
+                {
+                    App.Instance.Settings.ManagerMode = ManagerMode.Global;
+                }
                 if (settingsWindow.ViewModel.FactorioDirectoryIsAppData)
                 {
                     App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.AppData;
@@ -599,7 +610,6 @@ namespace ModMyFactory.ViewModels
                     App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.Custom;
                     App.Instance.Settings.FactorioDirectory = settingsWindow.ViewModel.FactorioDirectory;
                 }
-
                 if (settingsWindow.ViewModel.ModDirectoryIsAppData)
                 {
                     App.Instance.Settings.ModDirectoryOption = DirectoryOption.AppData;

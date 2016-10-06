@@ -28,9 +28,17 @@ namespace ModMyFactory
         /// <returns>Returns true if the collection contains the mod, otherwise false.</returns>
         public bool ContainsByFactorioVersion(string name, Version factorioVersion)
         {
-            return this.Any(mod =>
-                string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)
-                && (mod.FactorioVersion == factorioVersion));
+            if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
+            {
+                return this.Any(mod =>
+                    string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)
+                    && (mod.FactorioVersion == factorioVersion));
+            }
+            else
+            {
+                return this.Any(mod =>
+                    string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase));
+            }
         }
 
         /// <summary>
@@ -54,9 +62,17 @@ namespace ModMyFactory
         /// <returns>Returns the mod searched for.</returns>
         public Mod FindByFactorioVersion(string name, Version factorioVersion)
         {
-            return this.FirstOrDefault(mod =>
-                string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)
-                && (mod.FactorioVersion == factorioVersion));
+            if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
+            {
+                return this.FirstOrDefault(mod =>
+                    string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)
+                    && (mod.FactorioVersion == factorioVersion));
+            }
+            else
+            {
+                return this.FirstOrDefault(mod =>
+                    string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase));
+            }
         }
     }
 }

@@ -147,6 +147,8 @@
                           InputGestureText="{DynamicResource CloseHotkey}" Command="Close"/>
             </MenuItem>
             <MenuItem Header="{DynamicResource EditMenuItem}">
+                <MenuItem Header="{DynamicResource OpenFactorioFolderMenuItem}" Icon="{StaticResource OpenFolderIcon}"
+                          Command="{Binding OpenFactorioFolderCommand}"/>
                 <MenuItem Header="{DynamicResource OpenModFolderMenuItem}" Icon="{StaticResource OpenFolderIcon}"
                           Command="{Binding OpenModFolderCommand}"/>
                 <MenuItem Header="{DynamicResource OpenSavegameFolderMenuItem}" Icon="{StaticResource OpenFolderIcon}"
