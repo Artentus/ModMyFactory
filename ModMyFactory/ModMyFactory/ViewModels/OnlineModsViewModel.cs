@@ -104,6 +104,7 @@ namespace ModMyFactory.ViewModels
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedMod)));
 
                     SelectedModName = selectedMod.Title;
+                    SelectedRelease = null;
 
                     new Action(async () => await LoadExtendedModInfoAsync(selectedMod)).Invoke();
                 }
@@ -181,7 +182,9 @@ namespace ModMyFactory.ViewModels
             SelectedReleases = new ObservableCollection<ModRelease>();
 
             DownloadCommand = new RelayCommand(async () => await DownloadSelectedModRelease(), () => SelectedRelease != null && !SelectedRelease.IsInstalled);
-            UpdateCommand = new RelayCommand(async () => await UpdateSelectedModRelease(), () => SelectedRelease != null && SelectedRelease.IsInstalled);
+            UpdateCommand = new RelayCommand(async () => await UpdateSelectedModRelease(), () =>
+                    SelectedRelease != null && SelectedRelease.IsInstalled &&
+                    SelectedRelease != GetNewestRelease(ExtendedInfo, SelectedRelease));
         }
 
         private bool LogIn()
@@ -264,7 +267,9 @@ namespace ModMyFactory.ViewModels
             if (LogIn())
             {
                 ModRelease newestRelease = GetNewestRelease(ExtendedInfo, SelectedRelease);
-                Mod mod = InstalledMods.Find(SelectedMod.Name, newestRelease.FactorioVersion);
+                Mod mod = InstalledMods.FindByFactorioVersion(SelectedMod.Name, newestRelease.FactorioVersion);
+                var zippedMod = mod as ZippedMod;
+                var extractedMod = mod as ExtractedMod;
 
                 var cancellationSource = new CancellationTokenSource();
                 var progressWindow = new ProgressWindow { Owner = Window };
@@ -289,7 +294,7 @@ namespace ModMyFactory.ViewModels
 
                 Task downloadTask = ModWebsite.UpdateReleaseAsync(newestRelease, GlobalCredentials.Username, token,
                     progress, cancellationSource.Token, InstalledMods, MainViewModel.Instance.Modpacks, MainViewModel.Instance.Window);
-                if (mod is ExtractedMod)
+                if (extractedMod != null)
                 {
                     downloadTask = downloadTask.ContinueWith(t =>
                     {
@@ -307,19 +312,20 @@ namespace ModMyFactory.ViewModels
                 Task closeWindowTask = downloadTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                 progressWindow.ShowDialog();
 
-                if (mod is ZippedMod)
+                if (zippedMod != null)
                 {
                     FileInfo newModFile = await (Task<FileInfo>)downloadTask;
-                    ((ZippedMod)mod).Update(newModFile);
+                    zippedMod.Update(newModFile);
                 }
-                else
+                if (extractedMod != null)
                 {
                     DirectoryInfo newModDirectory = await (Task<DirectoryInfo>)downloadTask;
-                    ((ExtractedMod)mod).Update(newModDirectory);
+                    extractedMod.Update(newModDirectory);
                 }
 
                 await closeWindowTask;
 
+                SelectedRelease = null;
                 foreach (var release in SelectedReleases)
                 {
                     release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
