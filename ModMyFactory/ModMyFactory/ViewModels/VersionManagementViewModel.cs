@@ -65,8 +65,9 @@ namespace ModMyFactory.ViewModels
         private VersionManagementViewModel()
         {
             FactorioVersions = MainViewModel.Instance.FactorioVersions;
-            FactorioVersionsView = (ListCollectionView)CollectionViewSource.GetDefaultView(FactorioVersions);
+            FactorioVersionsView = (ListCollectionView)(new CollectionViewSource() { Source = FactorioVersions }).View;
             FactorioVersionsView.CustomSort = new FactorioVersionSorter();
+            FactorioVersionsView.Filter = item => !((FactorioVersion)item).IsSpecialVersion;
 
             DownloadCommand = new RelayCommand(async () => await DownloadOnlineVersion());
             AddFromZipCommand = new RelayCommand(async () => await AddZippedVersion());

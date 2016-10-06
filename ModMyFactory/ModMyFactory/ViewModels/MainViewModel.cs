@@ -194,10 +194,11 @@ namespace ModMyFactory.ViewModels
                 AvailableCultures.First(entry =>
                     string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
 
-                FactorioVersions = new ObservableCollection<FactorioVersion>();
+                FactorioVersions = new ObservableCollection<FactorioVersion>() { FactorioVersion.Latest };
                 FactorioVersion.GetInstalledVersions().ForEach(item => FactorioVersions.Add(item));
-                FactorioVersionsView = (ListCollectionView)CollectionViewSource.GetDefaultView(FactorioVersions);
+                FactorioVersionsView = (ListCollectionView)(new CollectionViewSource() { Source = FactorioVersions }).View;
                 FactorioVersionsView.CustomSort = new FactorioVersionSorter();
+                FactorioVersionsView.Filter = item => !((FactorioVersion)item).IsSpecialVersion;
 
                 Version version = App.Instance.Settings.SelectedVersion;
                 if (version != null)
@@ -215,13 +216,13 @@ namespace ModMyFactory.ViewModels
                 }
 
                 Mods = new ModCollection();
-                ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
+                ModsView = (ListCollectionView)(new CollectionViewSource() { Source = Mods }).View;
                 ModsView.CustomSort = new ModSorter();
                 ModsView.GroupDescriptions.Add(new PropertyGroupDescription("FactorioVersion"));
                 ModsView.Filter = ModFilter;
 
                 Modpacks = new ObservableCollection<Modpack>();
-                ModpacksView = (ListCollectionView)CollectionViewSource.GetDefaultView(Modpacks);
+                ModpacksView = (ListCollectionView)(new CollectionViewSource() { Source = Modpacks }).View;
                 ModpacksView.CustomSort = new ModpackSorter();
                 ModpacksView.Filter = ModpackFilter;
 
@@ -525,7 +526,9 @@ namespace ModMyFactory.ViewModels
                 {
                     string applicationPath = Assembly.GetExecutingAssembly().Location;
                     string iconPath = Path.Combine(Environment.CurrentDirectory, "Factorio_Icon.ico");
-                    string versionString = propertiesWindow.ViewModel.SelectedVersion.Version.ToString(3);
+                    string versionString = propertiesWindow.ViewModel.SelectedVersion.IsSpecialVersion
+                        ? propertiesWindow.ViewModel.SelectedVersion.DisplayName
+                        : propertiesWindow.ViewModel.SelectedVersion.Version.ToString(3);
                     string modpackName = propertiesWindow.ViewModel.SelectedModpack?.Name;
 
                     string arguments = $"--factorio-version={versionString}";

@@ -8,6 +8,20 @@ namespace ModMyFactory.Models
 {
     class FactorioVersion
     {
+        /// <summary>
+        /// Special class.
+        /// </summary>
+        private sealed class LatestFactorioVersion : FactorioVersion
+        {
+            public override bool IsSpecialVersion => true;
+
+            public override string DisplayName => "Latest";
+        }
+
+        static LatestFactorioVersion latest;
+
+        public static FactorioVersion Latest => latest ?? (latest = new LatestFactorioVersion());
+
         public static List<FactorioVersion> GetInstalledVersions()
         {
             var versionList = new List<FactorioVersion>();
@@ -33,11 +47,16 @@ namespace ModMyFactory.Models
 
         public Version Version { get; }
 
-        public string DisplayName => "Factorio " + Version.ToString(3);
+        public virtual bool IsSpecialVersion => false;
+
+        public virtual string DisplayName => "Factorio " + Version.ToString(3);
 
         public DirectoryInfo Directory { get; }
 
         public string ExecutablePath { get; }
+
+        private FactorioVersion()
+        { }
 
         public FactorioVersion(DirectoryInfo directory, Version version, bool forceLinkCreation = false)
         {
