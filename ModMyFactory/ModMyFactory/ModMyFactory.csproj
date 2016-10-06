@@ -82,6 +82,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CommandLine.cs" />
     <Compile Include="GlobalCredentials.cs" />
     <Compile Include="Helpers\DirectoryInfoExtensions.cs" />
     <Compile Include="Helpers\EnumarableExtensions.cs" />

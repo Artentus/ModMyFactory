@@ -16,71 +16,16 @@ namespace ModMyFactory
         /// </summary>
         public static bool UpdateCheckOnStartup { get; private set; }
 
-        private static bool IsOptionSpecified(string[] args, char shortName, string longName)
-        {
-            foreach (var arg in args)
-            {
-                if (arg.StartsWith("-") && arg.Contains(shortName))
-                {
-                    return true;
-                }
-
-                if (arg.StartsWith("--") && (arg.Length == longName.Length + 2)
-                    && string.Equals(arg.Substring(2), longName, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static bool TryGetOptionArgument(string[] args, char? shortName, string longName, out string argument)
-        {
-            for (int i = 0; i < args.Length; i++)
-            {
-                string arg = args[i];
-
-                if (shortName.HasValue)
-                {
-                    if (arg.StartsWith("-") && arg.Contains(shortName.Value))
-                    {
-                        argument = (i + 1 < args.Length) ? args[i + 1] : string.Empty;
-                        return true;
-                    }
-                }
-
-                if (arg.StartsWith("--") && (arg.Length >= longName.Length + 2)
-                    && string.Equals(arg.Substring(2, longName.Length), longName, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    if ((arg.Length > longName.Length + 2))
-                    {
-                        if (arg[longName.Length + 2] == '=')
-                        {
-                            argument = (arg.Length > longName.Length + 3) ? arg.Substring(longName.Length + 3) : string.Empty;
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        argument = string.Empty;
-                        return true;
-                    }
-                }
-            }
-
-            argument = null;
-            return false;
-        }
-
         /// <summary>
         /// Application entry point.
         /// </summary>
         [STAThread]
         public static int Main(string[] args)
         {
+            var commandLine = new CommandLine(args);
+
             // Only display help.
-            if (IsOptionSpecified(args, 'h', "help"))
+            if (commandLine.IsSet('h', "help"))
             {
                 bool attatchedConsole = Kernel32.AttachConsole();
                 if (attatchedConsole)
@@ -122,22 +67,22 @@ namespace ModMyFactory
             }
 
             // Do not create crash logs when debugging.
-            bool createCrashLog = !IsOptionSpecified(args, 'l', "no-logs");
+            bool createCrashLog = !commandLine.IsSet('l', "no-logs");
 
             // Custom AppData path for debugging purposes only.
             App app = null;
             string appDataPath;
-            if (TryGetOptionArgument(args, 'a', "appdata-path", out appDataPath))
+            if (commandLine.TryGetArgument('a', "appdata-path", out appDataPath))
                 app = new App(createCrashLog, appDataPath);
             else
                 app = new App(createCrashLog);
 
             // Prevent update search on startup
-            UpdateCheckOnStartup = !IsOptionSpecified(args, 'u', "no-update");
+            UpdateCheckOnStartup = !commandLine.IsSet('u', "no-update");
 
             // Direct game start logic.
             string versionString;
-            if (TryGetOptionArgument(args, 'f', "factorio-version", out versionString))
+            if (commandLine.TryGetArgument('f', "factorio-version", out versionString))
             {
                 FactorioVersion factorioVersion = null;
                 if (string.Equals(versionString, "latest", StringComparison.InvariantCultureIgnoreCase))
@@ -167,7 +112,7 @@ namespace ModMyFactory
                     mods.ForEach(mod => mod.Active = false);
 
                     string modpackName;
-                    if (TryGetOptionArgument(args, 'p', "modpack", out modpackName))
+                    if (commandLine.TryGetArgument('p', "modpack", out modpackName))
                     {
                         Modpack modpack = modpacks.FirstOrDefault(item => item.Name == modpackName);
                         if (modpack != null)
