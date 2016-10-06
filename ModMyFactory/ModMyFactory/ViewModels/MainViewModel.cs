@@ -154,6 +154,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand OpenScenarioFolderCommand { get; }
 
+        public RelayCommand UpdateModsCommand { get; }
+
         public RelayCommand OpenVersionManagerCommand { get; }
 
         public RelayCommand OpenSettingsCommand { get; }
@@ -254,6 +256,8 @@ namespace ModMyFactory.ViewModels
                 OpenModFolderCommand = new RelayCommand(() => Process.Start(App.Instance.Settings.GetModDirectory().FullName));
                 OpenSavegameFolderCommand = new RelayCommand(() => Process.Start(Path.Combine(App.Instance.AppDataPath, "saves")));
                 OpenScenarioFolderCommand = new RelayCommand(() => Process.Start(Path.Combine(App.Instance.AppDataPath, "scenarios")));
+
+                UpdateModsCommand = new RelayCommand(async () => await UpdateMods());
 
                 OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
 
@@ -541,6 +545,11 @@ namespace ModMyFactory.ViewModels
         private void StartGame()
         {
             Process.Start(SelectedVersion.ExecutablePath);
+        }
+
+        private async Task UpdateMods()
+        {
+            // ToDo: update mods.
         }
 
         private void OpenVersionManager()

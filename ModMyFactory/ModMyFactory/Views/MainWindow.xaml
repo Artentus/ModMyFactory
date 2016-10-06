@@ -32,6 +32,7 @@
         <BitmapImage x:Key="RenameInactiveIcon" UriSource="../Images/RenameInactive.png"/>
         <BitmapImage x:Key="RunIcon" UriSource="../Images/Run.png"/>
         <BitmapImage x:Key="SettingsIcon" UriSource="../Images/Settings.png"/>
+        <BitmapImage x:Key="UpdateIcon" UriSource="../Images/Update.png"/>
         <BitmapImage x:Key="WebDestinationIcon" UriSource="../Images/WebDestination.png"/>
         
         <BitmapImage x:Key="SearchIcon" UriSource="../Images/Search.png"/>
@@ -157,6 +158,11 @@
                           Command="{Binding OpenScenarioFolderCommand}"/>
                 
                 <Separator/>
+
+                <MenuItem Header="{DynamicResource UpdateModsMenuItem}" Icon="{StaticResource UpdateIcon}"
+                          Command="{Binding UpdateModsCommand}"/>
+
+                <Separator/>
                 
                 <MenuItem Header="{DynamicResource VersionManagerMenuItem}" Icon="{StaticResource ConfigureIcon}"
                           InputGestureText="{DynamicResource VersionManagerHotkey}" Command="{Binding OpenVersionManagerCommand}"/>
@@ -202,7 +208,8 @@
                 
                 <Separator/>
                 
-                <MenuItem Header="{DynamicResource CheckUpdateMenuItem}" Command="{Binding UpdateCommand}" CommandParameter="{StaticResource False}"/>
+                <MenuItem Header="{DynamicResource CheckUpdateMenuItem}" Icon="{StaticResource UpdateIcon}"
+                          Command="{Binding UpdateCommand}" CommandParameter="{StaticResource False}"/>
                 <MenuItem Header="{DynamicResource AboutMenuItem}" Icon="{StaticResource InformationIcon}"
                           InputGestureText="{DynamicResource AboutHotkey}" Command="{Binding OpenAboutWindowCommand}"/>
             </MenuItem>
@@ -256,6 +263,13 @@
             </Button>
             <Button ToolTip="{DynamicResource ExportLinkMenuItem}" Command="{Binding ExportLinkCommand}">
                 <Image Margin="1" Source="{StaticResource ExportLinkIcon}"
+                       Stretch="None" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
+            </Button>
+            
+            <Separator/>
+
+            <Button ToolTip="{DynamicResource UpdateModsMenuItem}" Command="{Binding UpdateModsCommand}">
+                <Image Margin="1" Source="{StaticResource UpdateIcon}"
                        Stretch="None" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
             </Button>
 

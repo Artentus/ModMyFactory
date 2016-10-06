@@ -90,9 +90,15 @@
     <Compile Include="Helpers\SecureStringHelper.cs" />
     <Compile Include="ManagerMode.cs" />
     <Compile Include="ModCollection.cs" />
+    <Compile Include="Models\ModUpdateInfo.cs" />
     <Compile Include="ModManager.cs" />
+    <Compile Include="MVVM\Sorters\ModUpdateInfoSorter.cs" />
     <Compile Include="VersionComparer.cs" />
+    <Compile Include="ViewModels\ModUpdateViewModel.cs" />
     <Compile Include="ViewModels\OnlineModsViewModel.cs" />
+    <Compile Include="Views\ModUpdateWindow.xaml.cs">
+      <DependentUpon>ModUpdateWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\OnlineModsWindow.xaml.cs">
       <DependentUpon>OnlineModsWindow.xaml</DependentUpon>
     </Compile>
@@ -175,6 +181,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LinkPropertiesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ModUpdateWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -326,6 +336,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Views.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Update.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

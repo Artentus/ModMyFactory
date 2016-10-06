@@ -36,6 +36,7 @@
     <sys:String x:Key="OpenModFolderMenuItem">Mod-Ordner öffnen</sys:String>
     <sys:String x:Key="OpenSavegameFolderMenuItem">Spielstand-Ordner öffnen</sys:String>
     <sys:String x:Key="OpenScenarioFolderMenuItem">Szenario-Ordner öffnen</sys:String>
+    <sys:String x:Key="UpdateModsMenuItem">Mods aktualisieren</sys:String>
     <sys:String x:Key="VersionManagerMenuItem">Versionsmanager</sys:String>
     <sys:String x:Key="SettingsMenuItem">Einstellungen</sys:String>
 
@@ -180,5 +181,16 @@
 
     <!-- headers -->
     <sys:String x:Key="ReleasesHeader">Veröffentlichte Versionen</sys:String>
+
+
+    <!--
+    ____________________ ModUpdateWindow ____________________
+    -->
+
+    <sys:String x:Key="ModUpdateWindowTitle">Mods zum Aktualisieren auswählen</sys:String>
+
+    <!-- format strings -->
+    <sys:String x:Key="CurrentVersionFormat">Aktuelle Version: {0}</sys:String>
+    <sys:String x:Key="NewestVersionFormat">Neuste Version: {0}</sys:String>
 
 </ResourceDictionary>
