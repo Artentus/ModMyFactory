@@ -308,7 +308,7 @@ namespace ModMyFactory.ViewModels
             return false;
         }
 
-        private async Task MoveContentsToPreserveAsync(DirectoryInfo sourceDirectory, Version version)
+        private async Task MoveContentsToPreserveAsync(DirectoryInfo sourceDirectory, Version factorioVersion)
         {
             await Task.Run(() =>
             {
@@ -337,17 +337,17 @@ namespace ModMyFactory.ViewModels
                 var localModDirecotry = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "mods"));
                 if (localModDirecotry.Exists)
                 {
-                    string globalModPath = App.Instance.Settings.GetModDirectory(version).FullName;
+                    string globalModPath = App.Instance.Settings.GetModDirectory(factorioVersion).FullName;
 
                     foreach (var modFile in localModDirecotry.GetFiles("*.zip"))
                     {
-                        string newName = Path.Combine(globalModPath, modFile.Name);
-                        if (!File.Exists(newName))
+                        string name = modFile.NameWithoutExtension().Split('_')[0];
+                        if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
                         {
-                            modFile.MoveTo(newName);
-                            string name = modFile.NameWithoutExtension().Split('_')[0];
+                            modFile.MoveTo(Path.Combine(globalModPath, modFile.Name));
+                            
                             MainViewModel.Instance.Window.Dispatcher.Invoke(
-                                () => Mods.Add(new ZippedMod(name, version, modFile,
+                                () => Mods.Add(new ZippedMod(name, factorioVersion, modFile,
                                     Mods, MainViewModel.Instance.Modpacks,
                                     MainViewModel.Instance.Window)));
                         }
@@ -355,13 +355,13 @@ namespace ModMyFactory.ViewModels
 
                     foreach (var modFolder in localModDirecotry.GetDirectories())
                     {
-                        string newName = Path.Combine(globalModPath, modFolder.Name);
-                        if (!Directory.Exists(newName))
+                        string name = modFolder.Name.Split('_')[0];
+                        if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
                         {
-                            modFolder.MoveToAsync(newName).Wait();
-                            string name = modFolder.Name.Split('_')[0];
+                            modFolder.MoveToAsync(Path.Combine(globalModPath, modFolder.Name)).Wait();
+                            
                             MainViewModel.Instance.Window.Dispatcher.Invoke(
-                                () => Mods.Add(new ExtractedMod(name, version, modFolder,
+                                () => Mods.Add(new ExtractedMod(name, factorioVersion, modFolder,
                                     Mods, MainViewModel.Instance.Modpacks,
                                     MainViewModel.Instance.Window)));
                         }

@@ -9,7 +9,7 @@ namespace ModMyFactory.Views
             InitializeComponent();
         }
 
-        private void DownloadButtonClickHandler(object sender, RoutedEventArgs e)
+        private void UpdateButtonClickHandler(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
         }

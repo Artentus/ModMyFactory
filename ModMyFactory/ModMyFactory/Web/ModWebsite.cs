@@ -60,14 +60,9 @@ namespace ModMyFactory.Web
             return result;
         }
 
-        /// <summary>
-        /// Gets extended information about a specific mod.
-        /// </summary>
-        /// <param name="mod">The mod to get the extended information about.</param>
-        /// <returns>Returns extended information about the specified mod.</returns>
-        public static async Task<ExtendedModInfo> GetExtendedInfoAsync(ModInfo mod)
+        private static async Task<ExtendedModInfo> GetExtendedInfoAsyncInner(string name)
         {
-            string modUrl = $"{ModsUrl}/{mod.Name}";
+            string modUrl = $"{ModsUrl}/{name}";
 
             ExtendedModInfo info = await Task.Run<ExtendedModInfo>(() =>
             {
@@ -82,6 +77,26 @@ namespace ModMyFactory.Web
             });
 
             return info;
+        }
+
+        /// <summary>
+        /// Gets extended information about a specific mod.
+        /// </summary>
+        /// <param name="mod">The mod to get the extended information about.</param>
+        /// <returns>Returns extended information about the specified mod.</returns>
+        public static async Task<ExtendedModInfo> GetExtendedInfoAsync(ModInfo mod)
+        {
+            return await GetExtendedInfoAsyncInner(mod.Name);
+        }
+
+        /// <summary>
+        /// Gets extended information about a specific mod.
+        /// </summary>
+        /// <param name="mod">The mod to get the extended information about.</param>
+        /// <returns>Returns extended information about the specified mod.</returns>
+        public static async Task<ExtendedModInfo> GetExtendedInfoAsync(Mod mod)
+        {
+            return await GetExtendedInfoAsyncInner(mod.Name);
         }
 
         /// <summary>
@@ -147,11 +162,7 @@ namespace ModMyFactory.Web
         /// <param name="token">The login token.</param>
         /// <param name="progress">A progress object used to report the progress of the operation.</param>
         /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
-        /// <param name="parentCollection">The collection to contain the mods.</param>
-        /// <param name="modpackCollection">The collection containing all modpacks.</param>
-        /// <param name="messageOwner">The window that ownes the deletion message box.</param>
-        public static async Task<FileInfo> UpdateReleaseAsync(ModRelease release, string username, string token, IProgress<double> progress, CancellationToken cancellationToken,
-            ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
+        public static async Task<FileInfo> UpdateReleaseAsync(ModRelease release, string username, string token, IProgress<double> progress, CancellationToken cancellationToken)
         {
             DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory(release.FactorioVersion);
             if (!modDirectory.Exists) modDirectory.Create();

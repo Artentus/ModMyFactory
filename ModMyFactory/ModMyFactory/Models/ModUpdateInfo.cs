@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using ModMyFactory.MVVM;
+using ModMyFactory.Web.ModApi;
 
 namespace ModMyFactory.Models
 {
@@ -8,11 +9,17 @@ namespace ModMyFactory.Models
     {
         bool isSelected;
 
+        public string Title { get; }
+
         public string Name { get; }
 
         public Version CurrentVersion { get; }
 
         public Version NewestVersion { get; }
+
+        public Mod Mod { get; }
+
+        public ModRelease NewestRelease { get; }
 
         public bool IsSelected
         {
@@ -27,11 +34,14 @@ namespace ModMyFactory.Models
             }
         }
 
-        public ModUpdateInfo(string name, Version currentVersion, Version newestVersion)
+        public ModUpdateInfo(string title, string name, Version currentVersion, Version newestVersion, Mod mod, ModRelease newestRelease)
         {
+            Title = title;
             Name = name;
             CurrentVersion = currentVersion;
             NewestVersion = newestVersion;
+            Mod = mod;
+            NewestRelease = newestRelease;
             isSelected = true;
         }
     }

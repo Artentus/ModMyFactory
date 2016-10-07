@@ -31,6 +31,10 @@ namespace ModMyFactory.ViewModels
 
         public static MainViewModel Instance => instance ?? (instance = new MainViewModel());
 
+        string token;
+
+        bool LoggedInWithToken => GlobalCredentials.LoggedIn && !string.IsNullOrEmpty(token);
+
         FactorioVersion selectedVersion;
         string modsFilter;
         string modpacksFilter;
@@ -547,9 +551,222 @@ namespace ModMyFactory.ViewModels
             Process.Start(SelectedVersion.ExecutablePath);
         }
 
+        private bool LogIn()
+        {
+            bool failed = false;
+            if (LoggedInWithToken) // Credentials and token available.
+            {
+                // ToDo: check if token is still valid (does it actually expire?).
+            }
+            else if (GlobalCredentials.LoggedIn) // Only credentials available.
+            {
+                GlobalCredentials.LoggedIn = ModWebsite.LogIn(GlobalCredentials.Username, GlobalCredentials.Password, out token);
+                failed = !GlobalCredentials.LoggedIn;
+            }
+
+            while (!LoggedInWithToken)
+            {
+                var loginWindow = new LoginWindow
+                {
+                    Owner = Window,
+                    FailedText = { Visibility = failed ? Visibility.Visible : Visibility.Collapsed }
+                };
+                bool? loginResult = loginWindow.ShowDialog();
+                if (loginResult == null || loginResult == false) return false;
+                GlobalCredentials.Username = loginWindow.UsernameBox.Text;
+                GlobalCredentials.Password = loginWindow.PasswordBox.SecurePassword;
+
+                GlobalCredentials.LoggedIn = ModWebsite.LogIn(GlobalCredentials.Username, GlobalCredentials.Password, out token);
+                failed = !GlobalCredentials.LoggedIn;
+            }
+
+            return true;
+        }
+
+        private ModRelease GetNewestRelease(ExtendedModInfo info, Mod current)
+        {
+            if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
+            {
+                return info.Releases.Where(release => release.FactorioVersion == current.FactorioVersion)
+                    .MaxBy(release => release.Version, new VersionComparer());
+            }
+            else
+            {
+                return info.Releases.MaxBy(release => release.Version, new VersionComparer());
+            }
+        }
+
+        private async Task<List<ModUpdateInfo>> GetModUpdatesAsync(IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
+        {
+            var modUpdates = new List<ModUpdateInfo>();
+
+            int modCount = Mods.Count;
+            int modIndex = 0;
+            foreach (var mod in Mods)
+            {
+                if (cancellationToken.IsCancellationRequested) return null;
+
+                progress.Report(new Tuple<double, string>((double)modIndex / modCount, mod.Title));
+
+                ExtendedModInfo extendedInfo = await ModWebsite.GetExtendedInfoAsync(mod);
+                ModRelease newestRelease = GetNewestRelease(extendedInfo, mod);
+                if (newestRelease.Version != mod.Version)
+                {
+                    modUpdates.Add(new ModUpdateInfo(mod.Title, mod.Name, mod.Version, newestRelease.Version, mod, newestRelease));
+                }
+
+                modIndex++;
+            }
+
+            return modUpdates;
+        }
+
+        private async Task UpdateModAsyncInner(ModUpdateInfo modUpdate, IProgress<double> progress, CancellationToken cancellationToken)
+        {
+            FileInfo modFile = await ModWebsite.UpdateReleaseAsync(modUpdate.NewestRelease, GlobalCredentials.Username, token, progress, cancellationToken);
+            var zippedMod = modUpdate.Mod as ZippedMod;
+            var extractedMod = modUpdate.Mod as ExtractedMod;
+            if (zippedMod != null)
+            {
+                if (zippedMod.FactorioVersion == modUpdate.NewestRelease.FactorioVersion)
+                {
+                    zippedMod.Update(modFile);
+                }
+                else
+                {
+                    var newMod = new ZippedMod(zippedMod.Name, modUpdate.NewestRelease.FactorioVersion, modFile, Mods, Modpacks, Window);
+                    Mods.Add(newMod);
+                    foreach (var modpack in Modpacks)
+                    {
+                        ModReference reference;
+                        if (modpack.Contains(zippedMod, out reference))
+                        {
+                            modpack.Mods.Remove(reference);
+                            modpack.Mods.Add(new ModReference(newMod, modpack));
+                        }
+                    }
+                    zippedMod.File.Delete();
+                    Mods.Remove(zippedMod);
+                }
+            }
+            else if (extractedMod != null)
+            {
+                DirectoryInfo modDirectory = await Task.Run<DirectoryInfo>(() =>
+                {
+                    DirectoryInfo modsDirectory = App.Instance.Settings.GetModDirectory(modUpdate.NewestRelease.FactorioVersion);
+                    ZipFile.ExtractToDirectory(modFile.FullName, modsDirectory.FullName);
+                    modFile.Delete();
+
+                    return new DirectoryInfo(Path.Combine(modsDirectory.FullName, modFile.NameWithoutExtension()));
+                });
+
+                if (extractedMod.FactorioVersion == modUpdate.NewestRelease.FactorioVersion)
+                {
+                    extractedMod.Update(modDirectory);
+                }
+                else
+                {
+                    var newMod = new ExtractedMod(extractedMod.Name, modUpdate.NewestRelease.FactorioVersion, modDirectory, Mods, Modpacks, Window);
+                    Mods.Add(newMod);
+                    foreach (var modpack in Modpacks)
+                    {
+                        ModReference reference;
+                        if (modpack.Contains(extractedMod, out reference))
+                        {
+                            modpack.Mods.Remove(reference);
+                            modpack.Mods.Add(new ModReference(newMod, modpack));
+                        }
+                    }
+                    extractedMod.Directory.Delete(true);
+                    Mods.Remove(extractedMod);
+                }
+            }
+        }
+
+        private async Task UpdateModsAsyncInner(List<ModUpdateInfo> modUpdates, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
+        {
+            int modCount = modUpdates.Count;
+            double baseProgressValue = 0;
+            foreach (var modUpdate in modUpdates)
+            {
+                if (cancellationToken.IsCancellationRequested) return;
+
+                double modProgressValue = 0;
+                var modProgress = new Progress<double>(value =>
+                {
+                    modProgressValue = value / modCount;
+                    progress.Report(new Tuple<double, string>(baseProgressValue + modProgressValue, modUpdate.Title));
+                });
+
+                await UpdateModAsyncInner(modUpdate, modProgress, cancellationToken);
+
+                baseProgressValue += modProgressValue;
+            }
+        }
+
         private async Task UpdateMods()
         {
-            // ToDo: update mods.
+            var progressWindow = new ProgressWindow() { Owner = Window };
+            progressWindow.ViewModel.ActionName = "Searching for updates";
+
+            var progress = new Progress<Tuple<double, string>>(info =>
+            {
+                progressWindow.ViewModel.Progress = info.Item1;
+                progressWindow.ViewModel.ProgressDescription = info.Item2;
+            });
+
+            var cancellationSource = new CancellationTokenSource();
+            progressWindow.ViewModel.CanCancel = true;
+            progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+
+            Task<List<ModUpdateInfo>> searchForUpdatesTask = GetModUpdatesAsync(progress, cancellationSource.Token);
+            Task closeWindowTask = searchForUpdatesTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+            progressWindow.ShowDialog();
+
+            List<ModUpdateInfo> modUpdates = await searchForUpdatesTask;
+            await closeWindowTask;
+
+            if (!cancellationSource.IsCancellationRequested)
+            {
+                if (modUpdates.Count == 0)
+                {
+                    MessageBox.Show(Window, "All your mods are up to date.", "No updates found",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+                else
+                {
+                    var updateWindow = new ModUpdateWindow() { Owner = Window };
+                    updateWindow.ViewModel.ModsToUpdate = modUpdates;
+                    bool? result = updateWindow.ShowDialog();
+
+                    if (result.HasValue && result.Value)
+                    {
+                        if (LogIn())
+                        {
+                            progressWindow = new ProgressWindow() { Owner = Window };
+                            progressWindow.ViewModel.ActionName = "Updating mods";
+
+                            progress = new Progress<Tuple<double, string>>(info =>
+                            {
+                                progressWindow.ViewModel.Progress = info.Item1;
+                                progressWindow.ViewModel.ProgressDescription = info.Item2;
+                            });
+
+                            cancellationSource = new CancellationTokenSource();
+                            progressWindow.ViewModel.CanCancel = true;
+                            progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+
+                            Task updateTask = UpdateModsAsyncInner(modUpdates, progress, cancellationSource.Token);
+                            closeWindowTask = updateTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                            progressWindow.ShowDialog();
+
+                            await updateTask;
+                            await closeWindowTask;
+                        }
+                    }
+                }
+            }
         }
 
         private void OpenVersionManager()
