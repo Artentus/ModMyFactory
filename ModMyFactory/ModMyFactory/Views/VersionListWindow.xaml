@@ -29,7 +29,8 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <ListBox Grid.Row="0" Grid.Column="0" Margin="2" Grid.ColumnSpan="3" ItemsSource="{Binding FactorioVersions}" SelectedItem="{Binding SelectedVersion, Mode=TwoWay}"
+        <ListBox Grid.Row="0" Grid.Column="0" Margin="2" Grid.ColumnSpan="3" IsSynchronizedWithCurrentItem="False"
+                 ItemsSource="{Binding FactorioVersions}" SelectedItem="{Binding SelectedVersion, Mode=TwoWay}"
                  PreviewMouseDown="VersionListBoxPreviewMouseDownHandler">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">

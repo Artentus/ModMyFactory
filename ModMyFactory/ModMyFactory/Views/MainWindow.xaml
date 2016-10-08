@@ -274,8 +274,8 @@
             </Button>
 
             <Separator/>
-            
-            <ComboBox Margin="2,0" Width="120" ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}">
+
+            <ComboBox Margin="2,0" Width="120" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type model:FactorioVersion}">
                         <TextBlock Margin="4,2" Text="{Binding DisplayName}"/>
@@ -347,7 +347,7 @@
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource ModsHeader}" Margin="2"/>
                 <Rectangle Grid.Row="1" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
             </Grid>
-            <mvvm:DragDropReadyListBox x:Name="ModsListBox" Grid.Row="1" Grid.Column="0" SelectionMode="Extended" ItemsSource="{Binding ModsView}"
+            <mvvm:DragDropReadyListBox x:Name="ModsListBox" Grid.Row="1" Grid.Column="0" IsSynchronizedWithCurrentItem="False" SelectionMode="Extended" ItemsSource="{Binding ModsView}"
                       PreviewMouseDown="ModsListBoxPreviewMouseDownHandler" PreviewMouseMove="ModsListBoxPreviewMouseMoveHandler"
                       PreviewMouseUp="ModsListBoxPreviewMouseUpHandler">
                 <mvvm:DragDropReadyListBox.ItemContainerStyle>
@@ -434,7 +434,7 @@
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource ModpacksHeader}" Margin="2"/>
                 <Rectangle Grid.Row="1" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
             </Grid>
-            <mvvm:DragDropReadyListBox x:Name="ModpacksListBox" Grid.Row="1" Grid.Column="2" SelectionMode="Extended" AllowDrop="True" ItemsSource="{Binding ModpacksView}"
+            <mvvm:DragDropReadyListBox x:Name="ModpacksListBox" Grid.Row="1" Grid.Column="2" IsSynchronizedWithCurrentItem="False" SelectionMode="Extended" AllowDrop="True" ItemsSource="{Binding ModpacksView}"
                       PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler" MouseMove="ModpackListBoxMouseMoveHandler"
                       PreviewMouseUp="ModpackListBoxPreviewMouseUpHandler" Drop="ModpackListBoxDropHandler" DragOver="ModpackListBoxDragOverHandler">
                 <mvvm:DragDropReadyListBox.Resources>

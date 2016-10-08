@@ -24,8 +24,8 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
-        <ListBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" PreviewMouseDown="VersionListBoxPreviewMouseDownHandler"
+
+        <ListBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" IsSynchronizedWithCurrentItem="False" PreviewMouseDown="VersionListBoxPreviewMouseDownHandler"
                  ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type model:FactorioVersion}">

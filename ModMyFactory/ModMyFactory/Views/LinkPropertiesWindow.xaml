@@ -27,7 +27,7 @@
         </Grid.RowDefinitions>
         
         <TextBlock Grid.Row="0" Margin="4,2" Text="{DynamicResource SelectFactorioHeader}"/>
-        <ComboBox Grid.Row="1" Margin="2" ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}">
+        <ComboBox Grid.Row="1" Margin="2" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}">
             <ComboBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type model:FactorioVersion}">
                     <TextBlock Margin="4,2" Text="{Binding DisplayName}"/>
@@ -36,7 +36,7 @@
         </ComboBox>
 
         <TextBlock Grid.Row="2" Margin="4,2" Text="{DynamicResource SelectModpackHeader}"/>
-        <ListBox Grid.Row="3" Margin="2" PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler"
+        <ListBox Grid.Row="3" Margin="2" IsSynchronizedWithCurrentItem="False" PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler"
                  ItemsSource="{Binding ModpacksView}" SelectedItem="{Binding SelectedModpack}">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type model:Modpack}">
