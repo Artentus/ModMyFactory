@@ -37,7 +37,7 @@
 
         <TextBlock Grid.Row="2" Margin="4,2" Text="{DynamicResource SelectModpackHeader}"/>
         <ListBox Grid.Row="3" Margin="2" PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler"
-                 ItemsSource="{Binding Modpacks}" SelectedItem="{Binding SelectedModpack}">
+                 ItemsSource="{Binding ModpacksView}" SelectedItem="{Binding SelectedModpack}">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type model:Modpack}">
                     <TextBlock Margin="4,2" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Name}"/>

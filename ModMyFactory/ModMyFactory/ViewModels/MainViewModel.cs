@@ -521,7 +521,7 @@ namespace ModMyFactory.ViewModels
 
         private void CreateLink()
         {
-            var propertiesWindow = new LinkPropertiesWindow();
+            var propertiesWindow = new LinkPropertiesWindow() { Owner = Window };
             bool? result = propertiesWindow.ShowDialog();
             if (result.HasValue && result.Value)
             {
