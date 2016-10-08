@@ -30,6 +30,7 @@ namespace ModMyFactory.ViewModels
         string filter;
         ModRelease selectedRelease;
 
+        volatile int asyncFetchExtendedInfoIndex;
         ModInfo selectedMod;
         ExtendedModInfo extendedInfo;
         string selectedModName;
@@ -107,7 +108,8 @@ namespace ModMyFactory.ViewModels
                     SelectedModName = selectedMod.Title;
                     SelectedRelease = null;
 
-                    new Action(async () => await LoadExtendedModInfoAsync(selectedMod)).Invoke();
+                    asyncFetchExtendedInfoIndex++;
+                    new Action(async () => await LoadExtendedModInfoAsync(selectedMod, asyncFetchExtendedInfoIndex)).Invoke();
                 }
             }
         }
@@ -163,10 +165,10 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand UpdateCommand { get; }
 
-        private async Task LoadExtendedModInfoAsync(ModInfo mod)
+        private async Task LoadExtendedModInfoAsync(ModInfo mod, int operationIndex)
         {
             ExtendedModInfo extendedInfo = await ModWebsite.GetExtendedInfoAsync(mod);
-            ExtendedInfo = extendedInfo;
+            if (operationIndex == asyncFetchExtendedInfoIndex) ExtendedInfo = extendedInfo;
         }
 
         private bool ModFilter(object item)
@@ -181,6 +183,7 @@ namespace ModMyFactory.ViewModels
         public OnlineModsViewModel()
         {
             SelectedReleases = new ObservableCollection<ModRelease>();
+            asyncFetchExtendedInfoIndex = -1;
 
             DownloadCommand = new RelayCommand(async () => await DownloadSelectedModRelease(), () => SelectedRelease != null && !SelectedRelease.IsInstalled);
             UpdateCommand = new RelayCommand(async () => await UpdateSelectedModRelease(), () =>
