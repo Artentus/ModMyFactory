@@ -685,22 +685,25 @@ namespace ModMyFactory.ViewModels
 
         private async Task UpdateModsAsyncInner(List<ModUpdateInfo> modUpdates, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
-            int modCount = modUpdates.Count;
+            int modCount = modUpdates.Count(item => item.IsSelected);
             double baseProgressValue = 0;
             foreach (var modUpdate in modUpdates)
             {
                 if (cancellationToken.IsCancellationRequested) return;
 
-                double modProgressValue = 0;
-                var modProgress = new Progress<double>(value =>
+                if (modUpdate.IsSelected)
                 {
-                    modProgressValue = value / modCount;
-                    progress.Report(new Tuple<double, string>(baseProgressValue + modProgressValue, modUpdate.Title));
-                });
+                    double modProgressValue = 0;
+                    var modProgress = new Progress<double>(value =>
+                    {
+                        modProgressValue = value / modCount;
+                        progress.Report(new Tuple<double, string>(baseProgressValue + modProgressValue, modUpdate.Title));
+                    });
 
-                await UpdateModAsyncInner(modUpdate, modProgress, cancellationToken);
+                    await UpdateModAsyncInner(modUpdate, modProgress, cancellationToken);
 
-                baseProgressValue += modProgressValue;
+                    baseProgressValue += modProgressValue;
+                }
             }
         }
 
