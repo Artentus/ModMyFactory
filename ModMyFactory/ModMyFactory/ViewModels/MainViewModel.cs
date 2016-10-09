@@ -645,6 +645,9 @@ namespace ModMyFactory.ViewModels
                     }
                     zippedMod.File.Delete();
                     Mods.Remove(zippedMod);
+
+                    ModpackTemplateList.Instance.Update(Modpacks);
+                    ModpackTemplateList.Instance.Save();
                 }
             }
             else if (extractedMod != null)
