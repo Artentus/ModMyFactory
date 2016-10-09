@@ -149,7 +149,7 @@ namespace ModMyFactory
 
                 var version = Version.Parse(latestRelease.TagName.Substring(2));
                 bool updateAvailable = version > AssemblyVersion;
-                string updateUrl = latestRelease.Url;
+                string updateUrl = latestRelease.HtmlUrl;
                 searchResult = new UpdateSearchResult(updateAvailable, updateUrl, version);
             }
 
