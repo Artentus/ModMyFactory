@@ -23,18 +23,19 @@ namespace ModMyFactory.Views
 
             dragging = false;
 
-            if (App.Instance.Settings.Width < 0 && App.Instance.Settings.Height < 0)
+            WindowInfo windowInfo = App.Instance.Settings.MainWindowInfo;
+            if (windowInfo == WindowInfo.Empty)
             {
                 WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }
             else
             {
-                WindowState = App.Instance.Settings.State;
+                WindowState = windowInfo.State;
                 WindowStartupLocation = WindowStartupLocation.Manual;
-                Width = App.Instance.Settings.Width;
-                Height = App.Instance.Settings.Height;
-                Left = App.Instance.Settings.PosX;
-                Top = App.Instance.Settings.PosY;
+                Width = windowInfo.Width;
+                Height = windowInfo.Height;
+                Left = windowInfo.PosX;
+                Top = windowInfo.PosY;
             }
 
             Loaded += LoadedHandler;
@@ -49,23 +50,26 @@ namespace ModMyFactory.Views
 
         private void ClosingHandler(object sender, CancelEventArgs e)
         {
+            var windowInfo = new WindowInfo();
             if (WindowState == WindowState.Normal)
             {
-                App.Instance.Settings.PosX = (int)Left;
-                App.Instance.Settings.PosY = (int)Top;
-                App.Instance.Settings.Width = (int)Width;
-                App.Instance.Settings.Height = (int)Height;
+                windowInfo.PosX = (int)Left;
+                windowInfo.PosY = (int)Top;
+                windowInfo.Width = (int)Width;
+                windowInfo.Height = (int)Height;
             }
             else
             {
-                App.Instance.Settings.PosX = (int)RestoreBounds.Left;
-                App.Instance.Settings.PosY = (int)RestoreBounds.Top;
-                App.Instance.Settings.Width = (int)RestoreBounds.Width;
-                App.Instance.Settings.Height = (int)RestoreBounds.Height;
+                windowInfo.PosX = (int)RestoreBounds.Left;
+                windowInfo.PosY = (int)RestoreBounds.Top;
+                windowInfo.Width = (int)RestoreBounds.Width;
+                windowInfo.Height = (int)RestoreBounds.Height;
             }
-            App.Instance.Settings.State = WindowState == WindowState.Maximized
+            windowInfo.State = WindowState == WindowState.Maximized
                 ? WindowState.Maximized
                 : WindowState.Normal;
+
+            App.Instance.Settings.MainWindowInfo = windowInfo;
             App.Instance.Settings.Save();
         }
 

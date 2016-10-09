@@ -178,6 +178,7 @@
     <Compile Include="Win32\User32.cs" />
     <Compile Include="Win32\WindowLongIndex.cs" />
     <Compile Include="Win32\WindowStyles.cs" />
+    <Compile Include="WindowInfo.cs" />
     <Page Include="Views\AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

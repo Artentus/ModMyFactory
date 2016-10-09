@@ -115,7 +115,6 @@ namespace ModMyFactory.ViewModels
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModGridLength)));
 
                     App.Instance.Settings.ModGridLength = modGridLength;
-                    App.Instance.Settings.Save();
                 }
             }
             
@@ -132,7 +131,6 @@ namespace ModMyFactory.ViewModels
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModpackGridLength)));
 
                     App.Instance.Settings.ModpackGridLength = modpackGridLength;
-                    App.Instance.Settings.Save();
                 }
             }
 

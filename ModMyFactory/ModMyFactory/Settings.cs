@@ -20,11 +20,12 @@ namespace ModMyFactory
                 FactorioDirectory = string.Empty,
                 ModDirectory = string.Empty,
                 SelectedLanguage = "en",
-                State = WindowState.Normal,
-                PosX = 0, PosY = 0, Width = -1, Height = -1,
+                MainWindowInfo = WindowInfo.Empty,
                 ModGridLength = new GridLength(1, GridUnitType.Star),
                 ModpackGridLength = new GridLength(1, GridUnitType.Star),
                 SelectedVersion = default(Version),
+                VersionManagerWindowInfo = WindowInfo.Empty,
+                OnlineModsWindowInfo = WindowInfo.Empty,
             };
             return defaultSettings;
         }
@@ -58,14 +59,16 @@ namespace ModMyFactory
 
         public string SelectedLanguage;
 
-        public WindowState State;
-
-        public int PosX, PosY, Width, Height;
+        public WindowInfo MainWindowInfo;
 
         public GridLength ModGridLength, ModpackGridLength;
 
         [JsonConverter(typeof(VersionConverter))]
         public Version SelectedVersion;
+
+        public WindowInfo VersionManagerWindowInfo;
+
+        public WindowInfo OnlineModsWindowInfo;
 
         [JsonConstructor]
         private Settings()
