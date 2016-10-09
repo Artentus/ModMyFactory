@@ -84,7 +84,7 @@ namespace ModMyFactory
 
         private Mod GetMod(ICollection<Mod> modList, ModpackTemplateMod modTemplate)
         {
-            return modList.FirstOrDefault(mod => mod.Title == modTemplate.Name
+            return modList.FirstOrDefault(mod => (mod.Name == modTemplate.Name || mod.Title == modTemplate.Name)
                                                  && mod.FactorioVersion == modTemplate.FactorioVersion);
         }
 
@@ -138,8 +138,9 @@ namespace ModMyFactory
                 Modpacks[index] = new ModpackTemplate()
                 {
                     Name = modpack.Name,
-                    Mods = modpack.Mods.Where(item => item is ModReference)
-                    .Select(item => new ModpackTemplateMod(item.DisplayName, ((ModReference)item).Mod.FactorioVersion)).ToArray(),
+                    Mods = modpack.Mods.Where(item => item is ModReference).Select(item => ((ModReference)item).Mod)
+                                       .Select(mod => new ModpackTemplateMod(mod.Name, mod.FactorioVersion))
+                                       .ToArray(),
                     Modpacks = modpack.Mods.Where(item => item is ModpackReference).Select(item => item.DisplayName).ToArray(),
                 };
 
