@@ -6,22 +6,38 @@ using ModMyFactory.Helpers;
 
 namespace ModMyFactory.Models
 {
+    /// <summary>
+    /// Represents a version of Factorio.
+    /// </summary>
     class FactorioVersion
     {
+        public const string LatestKey = "latest";
+
         /// <summary>
         /// Special class.
         /// </summary>
         private sealed class LatestFactorioVersion : FactorioVersion
         {
-            public override bool IsSpecialVersion => true;
+            public override string VersionString => LatestKey;
 
             public override string DisplayName => "Latest";
+
+            public LatestFactorioVersion()
+                : base(true, false)
+            { }
         }
 
         static LatestFactorioVersion latest;
 
+        /// <summary>
+        /// The special 'latest' version.
+        /// </summary>
         public static FactorioVersion Latest => latest ?? (latest = new LatestFactorioVersion());
 
+        /// <summary>
+        /// Loads all installed versions of Factorio.
+        /// </summary>
+        /// <returns>Returns a list that contains all installed Factorio versions.</returns>
         public static List<FactorioVersion> GetInstalledVersions()
         {
             var versionList = new List<FactorioVersion>();
@@ -45,21 +61,31 @@ namespace ModMyFactory.Models
             return versionList;
         }
 
+        public bool IsSpecialVersion { get; }
+
+        public bool IsFileSystemEditable { get; }
+
         public Version Version { get; }
 
-        public virtual bool IsSpecialVersion => false;
+        public virtual string VersionString => Version.ToString(3);
 
-        public virtual string DisplayName => "Factorio " + Version.ToString(3);
+        public virtual string DisplayName => "Factorio " + VersionString;
 
         public DirectoryInfo Directory { get; }
 
         public string ExecutablePath { get; }
 
-        private FactorioVersion()
-        { }
+        protected FactorioVersion(bool isSpecialVersion, bool isFileSystemEditable)
+        {
+            IsSpecialVersion = isSpecialVersion;
+            IsFileSystemEditable = isFileSystemEditable;
+        }
 
         public FactorioVersion(DirectoryInfo directory, Version version, bool forceLinkCreation = false)
         {
+            IsSpecialVersion = false;
+            IsFileSystemEditable = true;
+
             Version = version;
             Directory = directory;
 

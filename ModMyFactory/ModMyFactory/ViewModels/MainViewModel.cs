@@ -532,12 +532,10 @@ namespace ModMyFactory.ViewModels
                 {
                     string applicationPath = Assembly.GetExecutingAssembly().Location;
                     string iconPath = Path.Combine(Environment.CurrentDirectory, "Factorio_Icon.ico");
-                    string versionString = propertiesWindow.ViewModel.SelectedVersion.IsSpecialVersion
-                        ? propertiesWindow.ViewModel.SelectedVersion.DisplayName
-                        : propertiesWindow.ViewModel.SelectedVersion.Version.ToString(3);
+                    string versionString = propertiesWindow.ViewModel.SelectedVersion.VersionString;
                     string modpackName = propertiesWindow.ViewModel.SelectedModpack?.Name;
 
-                    string arguments = $"--factorio-version={versionString}";
+                    string arguments = $"--factorio-version=\"{versionString}\"";
                     if (!string.IsNullOrEmpty(modpackName)) arguments += $" --modpack=\"{modpackName}\"";
                     ShellHelper.CreateShortcut(dialog.FileName, applicationPath, arguments, iconPath);
                 }
@@ -786,7 +784,10 @@ namespace ModMyFactory.ViewModels
             if (moveFactorioDirectory)
             {
                 foreach (var version in FactorioVersions)
-                    version.DeleteLinks();
+                {
+                    if (!version.IsSpecialVersion && !version.IsFileSystemEditable)
+                        version.DeleteLinks();
+                }
                 await oldFactorioDirectory.MoveToAsync(newFactorioDirectory.FullName);
             }
             if (moveModDirectory)
@@ -797,12 +798,23 @@ namespace ModMyFactory.ViewModels
             if (moveFactorioDirectory)
             {
                 foreach (var version in FactorioVersions)
-                    version.CreateLinks(false);
+                {
+                    if (!version.IsSpecialVersion)
+                    {
+                        if (version.IsFileSystemEditable)
+                            version.CreateLinks(false);
+                        else
+                            version.CreateModDirectoryLink(true);
+                    }
+                }
             }
             else if (moveModDirectory)
             {
                 foreach (var version in FactorioVersions)
-                    version.CreateModDirectoryLink(true);
+                {
+                    if (!version.IsSpecialVersion)
+                        version.CreateModDirectoryLink(true);
+                }
             }
         }
 
