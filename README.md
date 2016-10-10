@@ -1,6 +1,6 @@
 ## ModMyFactory
 
-![alt tag](http://i.imgur.com/36QfQdu.png)
+![alt tag](http://i.imgur.com/VFnFzyM.png)
 
 ModMyFactory is a Factorio mod manager with lots of extra features.
 These include:
