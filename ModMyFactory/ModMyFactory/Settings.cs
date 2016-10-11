@@ -2,7 +2,6 @@
 using System.IO;
 using System.Windows;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using ModMyFactory.Helpers;
 
 namespace ModMyFactory
@@ -23,9 +22,10 @@ namespace ModMyFactory
                 MainWindowInfo = WindowInfo.Empty,
                 ModGridLength = new GridLength(1, GridUnitType.Star),
                 ModpackGridLength = new GridLength(1, GridUnitType.Star),
-                SelectedVersion = default(Version),
+                SelectedVersion = string.Empty,
                 VersionManagerWindowInfo = WindowInfo.Empty,
                 OnlineModsWindowInfo = WindowInfo.Empty,
+                SteamVersionPath = string.Empty,
             };
             return defaultSettings;
         }
@@ -63,12 +63,13 @@ namespace ModMyFactory
 
         public GridLength ModGridLength, ModpackGridLength;
 
-        [JsonConverter(typeof(VersionConverter))]
-        public Version SelectedVersion;
+        public string SelectedVersion;
 
         public WindowInfo VersionManagerWindowInfo;
 
         public WindowInfo OnlineModsWindowInfo;
+
+        public string SteamVersionPath;
 
         [JsonConstructor]
         private Settings()

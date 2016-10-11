@@ -58,22 +58,28 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand AddFromFolderCommand { get; }
 
+        public RelayCommand SelectSteamCommand { get; }
+
         public RelayCommand OpenFolderCommand { get; }
 
         public RelayCommand RemoveCommand { get; }
 
         private VersionManagementViewModel()
         {
-            FactorioVersions = MainViewModel.Instance.FactorioVersions;
-            FactorioVersionsView = (ListCollectionView)(new CollectionViewSource() { Source = FactorioVersions }).View;
-            FactorioVersionsView.CustomSort = new FactorioVersionSorter();
-            FactorioVersionsView.Filter = item => !((FactorioVersion)item).IsSpecialVersion;
+            if (!App.IsInDesignMode)
+            {
+                FactorioVersions = MainViewModel.Instance.FactorioVersions;
+                FactorioVersionsView = (ListCollectionView)(new CollectionViewSource() { Source = FactorioVersions }).View;
+                FactorioVersionsView.CustomSort = new FactorioVersionSorter();
+                FactorioVersionsView.Filter = item => !((FactorioVersion)item).IsSpecialVersion;
 
-            DownloadCommand = new RelayCommand(async () => await DownloadOnlineVersion());
-            AddFromZipCommand = new RelayCommand(async () => await AddZippedVersion());
-            AddFromFolderCommand = new RelayCommand(async () => await AddLocalVersion());
-            OpenFolderCommand = new RelayCommand(OpenFolder, () => SelectedVersion != null);
-            RemoveCommand = new RelayCommand(async () => await RemoveSelectedVersion(), () => SelectedVersion != null);
+                DownloadCommand = new RelayCommand(async () => await DownloadOnlineVersion());
+                AddFromZipCommand = new RelayCommand(async () => await AddZippedVersion());
+                AddFromFolderCommand = new RelayCommand(async () => await AddLocalVersion());
+                SelectSteamCommand = new RelayCommand(async () => await SelectSteamVersion(), () => string.IsNullOrEmpty(App.Instance.Settings.SteamVersionPath));
+                OpenFolderCommand = new RelayCommand(OpenFolder, () => SelectedVersion != null);
+                RemoveCommand = new RelayCommand(async () => await RemoveSelectedVersion(), () => SelectedVersion != null && SelectedVersion.IsFileSystemEditable);
+            }
         }
 
         private bool LogIn()
@@ -180,44 +186,6 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private bool TryExtractVersion(Stream stream, out Version version)
-        {
-            version = null;
-
-            using (var reader = new StreamReader(stream))
-            {
-                string content = reader.ReadToEnd();
-                MatchCollection matches = Regex.Matches(content, @"[0-9]+\.[0-9]+\.[0-9]+",
-                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                if (matches.Count == 0) return false;
-
-                string versionString = matches[0].Value;
-                version = Version.Parse(versionString);
-                return true;
-            }
-        }
-
-        private bool ArchiveFileValid(FileInfo archiveFile, out Version validVersion)
-        {
-            validVersion = null;
-
-            using (ZipArchive archive = ZipFile.OpenRead(archiveFile.FullName))
-            {
-                foreach (var entry in archive.Entries)
-                {
-                    if (entry.FullName.EndsWith("data/base/info.json"))
-                    {
-                        using (Stream stream = entry.Open())
-                        {
-                            if (TryExtractVersion(stream, out validVersion)) return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
-
         private async Task AddZippedVersion()
         {
             var dialog = new VistaOpenFileDialog();
@@ -250,7 +218,7 @@ namespace ModMyFactory.ViewModels
 
                 Task extractTask = Task.Run(() =>
                 {
-                    if (ArchiveFileValid(archiveFile, out version))
+                    if (FactorioVersion.ArchiveFileValid(archiveFile, out version))
                     {
                         progress.Report(1);
 
@@ -290,22 +258,6 @@ namespace ModMyFactory.ViewModels
                     }
                 }
             }
-        }
-
-        private bool LocalInstallationValid(DirectoryInfo directory, out Version validVersion)
-        {
-            validVersion = null;
-
-            FileInfo infoFile = new FileInfo(Path.Combine(directory.FullName, @"data\base\info.json"));
-            if (infoFile.Exists)
-            {
-                using (Stream stream = infoFile.OpenRead())
-                {
-                    if (TryExtractVersion(stream, out validVersion)) return true;
-                }
-            }
-
-            return false;
         }
 
         private async Task MoveContentsToPreserveAsync(DirectoryInfo sourceDirectory, Version factorioVersion)
@@ -386,7 +338,7 @@ namespace ModMyFactory.ViewModels
                 var installationDirectory = new DirectoryInfo(dialog.SelectedPath);
                 Version version;
 
-                if (!LocalInstallationValid(installationDirectory, out version))
+                if (!FactorioVersion.LocalInstallationValid(installationDirectory, out version))
                 {
                     MessageBox.Show(Window, "This folder does not contain a valid Factorio installation.",
                         "Invalid folder", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -394,7 +346,7 @@ namespace ModMyFactory.ViewModels
                 }
 
                 if (MessageBox.Show(Window,
-                        "The selected installation of Factorio will be moved to the location specified in the settings!\nDo you wish to continue?",
+                        "The selected installation of Factorio will be moved to the location specified in the settings! The creation of a backup is recommended.\nDo you wish to continue?",
                         "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
@@ -414,6 +366,48 @@ namespace ModMyFactory.ViewModels
                     await closeWindowTask;
 
                     FactorioVersions.Add(new FactorioVersion(destinationDirectory, version, true));
+                }
+            }
+        }
+
+        private async Task SelectSteamVersion()
+        {
+            var dialog = new VistaFolderBrowserDialog();
+            bool? result = dialog.ShowDialog(Window);
+
+            if (result.HasValue && result.Value)
+            {
+                var selectedDirectory = new DirectoryInfo(dialog.SelectedPath);
+                Version version;
+
+                if (!FactorioVersion.LocalInstallationValid(selectedDirectory, out version))
+                {
+                    MessageBox.Show(Window, "This folder does not contain a valid Factorio installation.",
+                        "Invalid folder", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (MessageBox.Show(Window,
+                    "All mods, saves and scenarios will be moved to the location specified in the settings! The creation of a backup is recommended.\nDo you wish to continue?",
+                    "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                    App.Instance.Settings.SteamVersionPath = selectedDirectory.FullName;
+                    App.Instance.Settings.Save();
+
+                    var progressWindow = new ProgressWindow() { Owner = Window };
+                    progressWindow.ViewModel.ActionName = "Adding Steam version";
+                    progressWindow.ViewModel.ProgressDescription = "Moving files...";
+                    progressWindow.ViewModel.IsIndeterminate = true;
+
+                    var steamAppDataDirectory = new DirectoryInfo(FactorioSteamVersion.SteamAppDataPath);
+                    Task moveTask = MoveContentsToPreserveAsync(steamAppDataDirectory, version);
+
+                    Task closeWindowTask = moveTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                    progressWindow.ShowDialog();
+                    await moveTask;
+                    await closeWindowTask;
+
+                    FactorioVersions.Add(new FactorioSteamVersion(selectedDirectory, version, true));
                 }
             }
         }

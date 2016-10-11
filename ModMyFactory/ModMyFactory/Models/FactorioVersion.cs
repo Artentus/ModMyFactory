@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
+using System.Text.RegularExpressions;
 using ModMyFactory.Helpers;
 
 namespace ModMyFactory.Models
@@ -21,10 +23,6 @@ namespace ModMyFactory.Models
             public override string VersionString => LatestKey;
 
             public override string DisplayName => "Latest";
-
-            public LatestFactorioVersion()
-                : base(true, false)
-            { }
         }
 
         static LatestFactorioVersion latest;
@@ -33,6 +31,8 @@ namespace ModMyFactory.Models
         /// The special 'latest' version.
         /// </summary>
         public static FactorioVersion Latest => latest ?? (latest = new LatestFactorioVersion());
+
+        readonly DirectoryInfo linkDirectory;
 
         /// <summary>
         /// Loads all installed versions of Factorio.
@@ -61,6 +61,72 @@ namespace ModMyFactory.Models
             return versionList;
         }
 
+        private static bool TryExtractVersion(Stream stream, out Version version)
+        {
+            version = null;
+
+            using (var reader = new StreamReader(stream))
+            {
+                string content = reader.ReadToEnd();
+                MatchCollection matches = Regex.Matches(content, @"[0-9]+\.[0-9]+\.[0-9]+",
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                if (matches.Count == 0) return false;
+
+                string versionString = matches[0].Value;
+                version = Version.Parse(versionString);
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Checks if an archive file contains a valid installation of Factorio.
+        /// </summary>
+        /// <param name="archiveFile">The archive file to check.</param>
+        /// <param name="validVersion">Out. The version of Factorio contained in the archive file.</param>
+        /// <returns>Returns true if the archive file contains a valid Factorio installation, otherwise false.</returns>
+        public static bool ArchiveFileValid(FileInfo archiveFile, out Version validVersion)
+        {
+            validVersion = null;
+
+            using (ZipArchive archive = ZipFile.OpenRead(archiveFile.FullName))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    if (entry.FullName.EndsWith("data/base/info.json"))
+                    {
+                        using (Stream stream = entry.Open())
+                        {
+                            if (TryExtractVersion(stream, out validVersion)) return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if a directory contains a valid installation of Factorio.
+        /// </summary>
+        /// <param name="directory">The directory to check.</param>
+        /// <param name="validVersion">Out. The version of Factorio contained in the directory.</param>
+        /// <returns>Returns true if the directory contains a valid Factorio installation, otherwise false.</returns>
+        public static bool LocalInstallationValid(DirectoryInfo directory, out Version validVersion)
+        {
+            validVersion = null;
+
+            FileInfo infoFile = new FileInfo(Path.Combine(directory.FullName, @"data\base\info.json"));
+            if (infoFile.Exists)
+            {
+                using (Stream stream = infoFile.OpenRead())
+                {
+                    if (TryExtractVersion(stream, out validVersion)) return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool IsSpecialVersion { get; }
 
         public bool IsFileSystemEditable { get; }
@@ -75,10 +141,24 @@ namespace ModMyFactory.Models
 
         public string ExecutablePath { get; }
 
-        protected FactorioVersion(bool isSpecialVersion, bool isFileSystemEditable)
+        private FactorioVersion()
         {
-            IsSpecialVersion = isSpecialVersion;
+            IsSpecialVersion = true;
+            IsFileSystemEditable = false;
+        }
+
+        protected FactorioVersion(bool isFileSystemEditable, DirectoryInfo directory, DirectoryInfo linkDirectory, Version version, bool forceLinkCreation = false)
+        {
+            IsSpecialVersion = false;
             IsFileSystemEditable = isFileSystemEditable;
+            Directory = directory;
+            this.linkDirectory = linkDirectory;
+            Version = version;
+
+            string osPlatform = Environment.Is64BitOperatingSystem ? "x64" : "x86";
+            ExecutablePath = Path.Combine(directory.FullName, "bin", osPlatform, "factorio.exe");
+
+            CreateLinks(forceLinkCreation);
         }
 
         public FactorioVersion(DirectoryInfo directory, Version version, bool forceLinkCreation = false)
@@ -88,6 +168,7 @@ namespace ModMyFactory.Models
 
             Version = version;
             Directory = directory;
+            linkDirectory = directory;
 
             string osPlatform = Environment.Is64BitOperatingSystem ? "x64" : "x86";
             ExecutablePath = Path.Combine(directory.FullName, "bin", osPlatform, "factorio.exe");
@@ -115,7 +196,7 @@ namespace ModMyFactory.Models
         /// <param name="forced">If true, an existing link/directory will be deleted.</param>
         public void CreateSaveDirectoryLink(bool forced)
         {
-            DirectoryInfo localSaveDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "saves"));
+            DirectoryInfo localSaveDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "saves"));
             if (forced && localSaveDirectory.Exists)
             {
                 localSaveDirectory.DeleteRecursiveReparsePoint();
@@ -148,7 +229,7 @@ namespace ModMyFactory.Models
         /// <param name="forced">If true, an existing link/directory will be deleted.</param>
         public void CreateScenarioDirectoryLink(bool forced)
         {
-            DirectoryInfo localScenarioDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "scenarios"));
+            DirectoryInfo localScenarioDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "scenarios"));
             if (forced && localScenarioDirectory.Exists)
             {
                 localScenarioDirectory.DeleteRecursiveReparsePoint();
@@ -180,7 +261,7 @@ namespace ModMyFactory.Models
         /// <param name="forced">If true, an existing link/directory will be deleted.</param>
         public void CreateModDirectoryLink(bool forced)
         {
-            DirectoryInfo localModDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "mods"));
+            DirectoryInfo localModDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "mods"));
             if (forced && localModDirectory.Exists)
             {
                 localModDirectory.DeleteRecursiveReparsePoint();
@@ -208,13 +289,13 @@ namespace ModMyFactory.Models
         /// </summary>
         public void DeleteLinks()
         {
-            DirectoryInfo localSaveDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "saves"));
+            DirectoryInfo localSaveDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "saves"));
             if (localSaveDirectory.Exists) localSaveDirectory.Delete(false);
 
-            DirectoryInfo localScenarioDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "scenarios"));
+            DirectoryInfo localScenarioDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "scenarios"));
             if (localScenarioDirectory.Exists) localScenarioDirectory.Delete(false);
 
-            DirectoryInfo localModDirectory = new DirectoryInfo(Path.Combine(Directory.FullName, "mods"));
+            DirectoryInfo localModDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "mods"));
             if (localModDirectory.Exists) localModDirectory.Delete(false);
         }
     }

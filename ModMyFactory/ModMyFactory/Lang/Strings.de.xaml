@@ -84,6 +84,7 @@
     <!-- buttons -->
     <TextBlock x:Key="AddZipButton" TextAlignment="Center" xml:space="preserve">Aus ZIP&#x0a;hinzufügen</TextBlock>
     <TextBlock x:Key="AddFolderButton" TextAlignment="Center" xml:space="preserve">Aus Ordner&#x0a;hinzufügen</TextBlock>
+    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center" xml:space="preserve">Steam-Version&#x0a;auswählen</TextBlock>
     <sys:String x:Key="OpenFolderButton">Ordner öffnen</sys:String>
     <sys:String x:Key="RemoveButton">Entfernen</sys:String>
 

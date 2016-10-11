@@ -60,7 +60,7 @@ namespace ModMyFactory.ViewModels
                     selectedVersion = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedVersion)));
 
-                    App.Instance.Settings.SelectedVersion = selectedVersion.Version;
+                    App.Instance.Settings.SelectedVersion = selectedVersion.VersionString;
                     App.Instance.Settings.Save();
                 }
             }
@@ -200,23 +200,38 @@ namespace ModMyFactory.ViewModels
                 AvailableCultures.First(entry =>
                     string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
 
+
                 FactorioVersions = new ObservableCollection<FactorioVersion>() { FactorioVersion.Latest };
                 FactorioVersion.GetInstalledVersions().ForEach(item => FactorioVersions.Add(item));
+
+                var steamVersionDirectory = new DirectoryInfo(App.Instance.Settings.SteamVersionPath);
+                Version steamVersion;
+                if (steamVersionDirectory.Exists && FactorioVersion.LocalInstallationValid(steamVersionDirectory, out steamVersion))
+                {
+                    FactorioVersions.Add(new FactorioSteamVersion(steamVersionDirectory, steamVersion));
+                }
+                else
+                {
+                    App.Instance.Settings.SteamVersionPath = string.Empty;
+                    App.Instance.Settings.Save();
+                }
+
                 FactorioVersionsView = (ListCollectionView)(new CollectionViewSource() { Source = FactorioVersions }).View;
                 FactorioVersionsView.CustomSort = new FactorioVersionSorter();
                 FactorioVersionsView.Filter = item => !((FactorioVersion)item).IsSpecialVersion;
 
-                Version version = App.Instance.Settings.SelectedVersion;
-                if (version != null)
+
+                string versionString = App.Instance.Settings.SelectedVersion;
+                if (!string.IsNullOrEmpty(versionString))
                 {
-                    FactorioVersion factorioVersion = FactorioVersions.FirstOrDefault(item => item.Version == version);
+                    FactorioVersion factorioVersion = FactorioVersions.FirstOrDefault(item => item.VersionString == versionString);
                     if (factorioVersion != null)
                     {
                         selectedVersion = factorioVersion;
                     }
                     else
                     {
-                        App.Instance.Settings.SelectedVersion = default(Version);
+                        App.Instance.Settings.SelectedVersion = string.Empty;
                         App.Instance.Settings.Save();
                     }
                 }
