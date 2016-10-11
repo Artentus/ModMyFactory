@@ -150,8 +150,13 @@ namespace ModMyFactory.Web
             var modFile = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
 
             await WebHelper.DownloadFileAsync(downloadUrl, null, modFile, progress, cancellationToken);
-            string name = modFile.NameWithoutExtension().Split('_')[0];
-            return new ZippedMod(name, release.FactorioVersion, modFile, parentCollection, modpackCollection, messageOwner);
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                string name = modFile.NameWithoutExtension().Split('_')[0];
+                return new ZippedMod(name, release.FactorioVersion, modFile, parentCollection, modpackCollection, messageOwner);
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -171,7 +176,7 @@ namespace ModMyFactory.Web
             var modFile = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
 
             await WebHelper.DownloadFileAsync(downloadUrl, null, modFile, progress, cancellationToken);
-            return modFile;
+            return cancellationToken.IsCancellationRequested ? null : modFile;
         }
     }
 }

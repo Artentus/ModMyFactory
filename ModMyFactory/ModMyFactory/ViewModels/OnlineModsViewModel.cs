@@ -227,29 +227,33 @@ namespace ModMyFactory.ViewModels
         {
             if (LogIn())
             {
-                var cancellationSource = new CancellationTokenSource();
                 var progressWindow = new ProgressWindow { Owner = Window };
                 progressWindow.ViewModel.ActionName = "Downloading";
                 progressWindow.ViewModel.ProgressDescription = "Downloading " + selectedRelease.FileName;
+
                 progressWindow.ViewModel.CanCancel = true;
+                var cancellationSource = new CancellationTokenSource();
                 progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
-                Task<Mod> downloadTask = ModWebsite.DownloadReleaseAsync(selectedRelease, GlobalCredentials.Username, token, new Progress<double>(p =>
-                {
-                    progressWindow.ViewModel.Progress = p;
-                }), cancellationSource.Token, InstalledMods, MainViewModel.Instance.Modpacks, MainViewModel.Instance.Window);
+                var progress = new Progress<double>(p => progressWindow.ViewModel.Progress = p);
+
+                Task<Mod> downloadTask = ModWebsite.DownloadReleaseAsync(selectedRelease, GlobalCredentials.Username, token,
+                    progress, cancellationSource.Token, InstalledMods, MainViewModel.Instance.Modpacks, MainViewModel.Instance.Window);
 
                 Task closeWindowTask = downloadTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                 progressWindow.ShowDialog();
 
                 Mod newMod = await downloadTask;
-                if (newMod != null) InstalledMods.Add(newMod);
                 await closeWindowTask;
 
-                foreach (var release in SelectedReleases)
+                if (!cancellationSource.IsCancellationRequested)
                 {
-                    release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
-                    release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.FactorioVersion);
+                    if (newMod != null) InstalledMods.Add(newMod);
+                    foreach (var release in SelectedReleases)
+                    {
+                        release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
+                        release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.FactorioVersion);
+                    }
                 }
             }
         }
