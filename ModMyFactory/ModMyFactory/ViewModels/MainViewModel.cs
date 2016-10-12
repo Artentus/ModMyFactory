@@ -146,6 +146,10 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand ExportLinkCommand { get; }
 
+        public RelayCommand ExportModpacksCommand { get; }
+
+        public RelayCommand ImportModpacksCommand { get; }
+
         public RelayCommand StartGameCommand { get; }
 
         public RelayCommand OpenFactorioFolderCommand { get; }
@@ -201,20 +205,10 @@ namespace ModMyFactory.ViewModels
                     string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
 
 
-                FactorioVersions = new ObservableCollection<FactorioVersion>() { FactorioVersion.Latest };
-                FactorioVersion.GetInstalledVersions().ForEach(item => FactorioVersions.Add(item));
-
-                var steamVersionDirectory = new DirectoryInfo(App.Instance.Settings.SteamVersionPath);
-                Version steamVersion;
-                if (steamVersionDirectory.Exists && FactorioVersion.LocalInstallationValid(steamVersionDirectory, out steamVersion))
-                {
-                    FactorioVersions.Add(new FactorioSteamVersion(steamVersionDirectory, steamVersion));
-                }
-                else
-                {
-                    App.Instance.Settings.SteamVersionPath = string.Empty;
-                    App.Instance.Settings.Save();
-                }
+                var installedVersions = FactorioVersion.GetInstalledVersions();
+                FactorioVersions = new ObservableCollection<FactorioVersion>(installedVersions) { FactorioVersion.Latest };
+                FactorioVersion steamVersion;
+                if (FactorioSteamVersion.TryLoad(out steamVersion)) FactorioVersions.Add(steamVersion);
 
                 FactorioVersionsView = (ListCollectionView)(new CollectionViewSource() { Source = FactorioVersions }).View;
                 FactorioVersionsView.CustomSort = new FactorioVersionSorter();
@@ -265,6 +259,9 @@ namespace ModMyFactory.ViewModels
                 AddModFromFolderCommand = new RelayCommand(async () => await AddModFromFolder());
                 CreateModpackCommand = new RelayCommand(CreateNewModpack);
                 ExportLinkCommand = new RelayCommand(CreateLink);
+
+                ExportModpacksCommand = new RelayCommand(ExportModpacks);
+                ImportModpacksCommand = new RelayCommand(async () => await ImportModpacks());
 
                 StartGameCommand = new RelayCommand(StartGame, () => SelectedVersion != null);
 
@@ -555,6 +552,16 @@ namespace ModMyFactory.ViewModels
                     ShellHelper.CreateShortcut(dialog.FileName, applicationPath, arguments, iconPath);
                 }
             }
+        }
+
+        private void ExportModpacks()
+        {
+            
+        }
+
+        private async Task ImportModpacks()
+        {
+            
         }
 
         private void StartGame()

@@ -85,7 +85,18 @@ namespace ModMyFactory
             if (commandLine.TryGetArgument('f', "factorio-version", out versionString))
             {
                 var versions = FactorioVersion.GetInstalledVersions();
-                FactorioVersion factorioVersion = versions.Find(item => string.Equals(versionString, item.VersionString, StringComparison.InvariantCultureIgnoreCase));
+                FactorioVersion steamVersion;
+                if (FactorioSteamVersion.TryLoad(out steamVersion)) versions.Add(steamVersion);
+
+                FactorioVersion factorioVersion = null;
+                if (string.Equals(versionString, FactorioVersion.LatestKey, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    factorioVersion = versions.MaxBy(item => item.Version, new VersionComparer());
+                }
+                else
+                {
+                    factorioVersion = versions.Find(item => item.VersionString == versionString);
+                }
 
                 if (factorioVersion != null)
                 {

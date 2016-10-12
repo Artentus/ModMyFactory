@@ -85,6 +85,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommandLine.cs" />
+    <Compile Include="Export\ExportTemplate.cs" />
+    <Compile Include="Export\ModpackExport.cs" />
     <Compile Include="GlobalCredentials.cs" />
     <Compile Include="Helpers\DirectoryInfoExtensions.cs" />
     <Compile Include="Helpers\EnumarableExtensions.cs" />
@@ -94,7 +96,9 @@
     <Compile Include="ModCollection.cs" />
     <Compile Include="Models\FactorioSteamVersion.cs" />
     <Compile Include="Models\ModUpdateInfo.cs" />
+    <Compile Include="Export\ModExportTemplate.cs" />
     <Compile Include="ModManager.cs" />
+    <Compile Include="Export\ModpackExportTemplate.cs" />
     <Compile Include="MVVM\Sorters\ModUpdateInfoSorter.cs" />
     <Compile Include="VersionComparer.cs" />
     <Compile Include="ViewModels\ModUpdateViewModel.cs" />
@@ -343,6 +347,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Update.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ExportPackage.png" />
+    <Resource Include="Images\ImportPackage.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -25,6 +25,8 @@
         <BitmapImage x:Key="ConfigureIcon" UriSource="../Images/Configure.png"/>
         <BitmapImage x:Key="DownloadIcon" UriSource="../Images/Download.png"/>
         <BitmapImage x:Key="ExportLinkIcon" UriSource="../Images/ExportLink.png"/>
+        <BitmapImage x:Key="ExportPackageIcon" UriSource="../Images/ExportPackage.png"/>
+        <BitmapImage x:Key="ImportPackageIcon" UriSource="../Images/ImportPackage.png"/>
         <BitmapImage x:Key="InformationIcon" UriSource="../Images/Information.png"/>
         <BitmapImage x:Key="NewPackageIcon" UriSource="../Images/NewPackage.png"/>
         <BitmapImage x:Key="OpenFolderIcon" UriSource="../Images/OpenFolder.png"/>
@@ -136,7 +138,12 @@
                           InputGestureText="{DynamicResource NewModpackHotkey}" Command="{Binding CreateModpackCommand}"/>
                 <MenuItem Header="{DynamicResource ExportLinkMenuItem}" Icon="{StaticResource ExportLinkIcon}"
                           InputGestureText="{DynamicResource ExportLinkHotkey}" Command="{Binding ExportLinkCommand}"/>
-                
+
+                <Separator/>
+
+                <MenuItem Header="{DynamicResource ExportModpacksMenuItem}" Icon="{StaticResource ExportPackageIcon}" Command="{Binding ExportModpacksCommand}"/>
+                <MenuItem Header="{DynamicResource ImportModpacksMenuItem}" Icon="{StaticResource ImportPackageIcon}" Command="{Binding ImportModpacksCommand}"/>
+
                 <Separator/>
                 
                 <MenuItem Header="{DynamicResource StartGameMenuItem}" Icon="{StaticResource RunIcon}"
@@ -270,6 +277,17 @@
 
             <Button ToolTip="{DynamicResource UpdateModsMenuItem}" Command="{Binding UpdateModsCommand}">
                 <Image Margin="1" Source="{StaticResource UpdateIcon}"
+                       Stretch="None" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
+            </Button>
+
+            <Separator/>
+
+            <Button ToolTip="{DynamicResource ExportModpacksMenuItem}" Command="{Binding ExportModpacksCommand}">
+                <Image Margin="1" Source="{StaticResource ExportPackageIcon}"
+                       Stretch="None" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
+            </Button>
+            <Button ToolTip="{DynamicResource ImportModpacksMenuItem}" Command="{Binding ImportModpacksCommand}">
+                <Image Margin="1" Source="{StaticResource ImportPackageIcon}"
                        Stretch="None" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
             </Button>
 

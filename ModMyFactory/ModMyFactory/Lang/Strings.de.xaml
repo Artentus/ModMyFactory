@@ -27,6 +27,8 @@
     <sys:String x:Key="AddModFolderMenuItem">Aus Ordner</sys:String>
     <sys:String x:Key="NewModpackMenuItem">Neues Modpack</sys:String>
     <sys:String x:Key="ExportLinkMenuItem">Link exportieren</sys:String>
+    <sys:String x:Key="ExportModpacksMenuItem">Modpacks exportieren</sys:String>
+    <sys:String x:Key="ImportModpacksMenuItem">Modpacks importieren</sys:String>
     <sys:String x:Key="StartGameMenuItem">Spiel starten</sys:String>
     <sys:String x:Key="CloseMenuItem">Schließen</sys:String>
 
