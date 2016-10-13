@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -270,7 +269,13 @@ namespace ModMyFactory.ViewModels
                     foreach (var saveFile in localSaveDirecotry.GetFiles())
                     {
                         string newName = Path.Combine(App.Instance.GlobalSavePath, saveFile.Name);
-                        if (!File.Exists(newName)) saveFile.MoveTo(newName);
+                        if (File.Exists(newName))
+                        {
+                            int count = 1;
+                            while (File.Exists($"{newName}_{count}")) count++;
+                            newName = $"{newName}_{count}";
+                        }
+                        saveFile.MoveTo(newName);
                     }
                 }
                 localSaveDirecotry.DeleteRecursiveReparsePoint();
@@ -281,7 +286,13 @@ namespace ModMyFactory.ViewModels
                     foreach (var scenarioFile in localScenarioDirecotry.GetFiles())
                     {
                         string newName = Path.Combine(App.Instance.GlobalScenarioPath, scenarioFile.Name);
-                        if (!File.Exists(newName)) scenarioFile.MoveTo(newName);
+                        if (File.Exists(newName))
+                        {
+                            int count = 1;
+                            while (File.Exists($"{newName}_{count}")) count++;
+                            newName = $"{newName}_{count}";
+                        }
+                        scenarioFile.MoveTo(newName);
                     }
                 }
                 localScenarioDirecotry.DeleteRecursiveReparsePoint();
