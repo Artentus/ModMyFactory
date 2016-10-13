@@ -268,14 +268,18 @@ namespace ModMyFactory.ViewModels
                 {
                     foreach (var saveFile in localSaveDirecotry.GetFiles())
                     {
-                        string newName = Path.Combine(App.Instance.GlobalSavePath, saveFile.Name);
-                        if (File.Exists(newName))
+                        string newPath = Path.Combine(App.Instance.GlobalSavePath, saveFile.Name);
+                        if (File.Exists(newPath))
                         {
                             int count = 1;
-                            while (File.Exists($"{newName}_{count}")) count++;
-                            newName = $"{newName}_{count}";
+                            do
+                            {
+                                string newName = $"{saveFile.NameWithoutExtension()}_{count}{saveFile.Extension}";
+                                newPath = Path.Combine(App.Instance.GlobalSavePath, newName);
+                                count++;
+                            } while (File.Exists(newPath));
                         }
-                        saveFile.MoveTo(newName);
+                        saveFile.MoveTo(newPath);
                     }
                 }
                 localSaveDirecotry.DeleteRecursiveReparsePoint();
@@ -285,14 +289,18 @@ namespace ModMyFactory.ViewModels
                 {
                     foreach (var scenarioFile in localScenarioDirecotry.GetFiles())
                     {
-                        string newName = Path.Combine(App.Instance.GlobalScenarioPath, scenarioFile.Name);
-                        if (File.Exists(newName))
+                        string newPath = Path.Combine(App.Instance.GlobalScenarioPath, scenarioFile.Name);
+                        if (File.Exists(newPath))
                         {
                             int count = 1;
-                            while (File.Exists($"{newName}_{count}")) count++;
-                            newName = $"{newName}_{count}";
+                            do
+                            {
+                                string newName = $"{scenarioFile.NameWithoutExtension()}_{count}{scenarioFile.Extension}";
+                                newPath = Path.Combine(App.Instance.GlobalSavePath, newName);
+                                count++;
+                            } while (File.Exists(newPath));
                         }
-                        scenarioFile.MoveTo(newName);
+                        scenarioFile.MoveTo(newPath);
                     }
                 }
                 localScenarioDirecotry.DeleteRecursiveReparsePoint();

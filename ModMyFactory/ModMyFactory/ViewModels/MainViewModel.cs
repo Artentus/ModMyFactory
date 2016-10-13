@@ -320,56 +320,6 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private bool TryParseInfoFile(Stream stream, out Version version, out string name)
-        {
-            version = null;
-            name = null;
-
-            using (var reader = new StreamReader(stream))
-            {
-                // Factorio version
-                string content = reader.ReadToEnd();
-                MatchCollection matches = Regex.Matches(content, "\"factorio_version\" *: *\"(?<version>[0-9]+\\.[0-9]+(\\.[0-9]+)?)\"",
-                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                if (matches.Count != 1) return false;
-
-                string versionString = matches[0].Groups["version"].Value;
-                version = Version.Parse(versionString);
-                version = new Version(version.Major, version.Minor);
-
-                // Name
-                matches = Regex.Matches(content, "\"name\" *: *\"(?<name>.*)\"",
-                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                if (matches.Count != 1) return false;
-
-                name = matches[0].Groups["name"].Value;
-
-                return true;
-            }
-        }
-
-        private bool ArchiveFileValid(FileInfo archiveFile, out Version validVersion, out string validName)
-        {
-            validVersion = null;
-            validName = null;
-
-            using (ZipArchive archive = ZipFile.OpenRead(archiveFile.FullName))
-            {
-                foreach (var entry in archive.Entries)
-                {
-                    if (entry.Name == "info.json")
-                    {
-                        using (Stream stream = entry.Open())
-                        {
-                            if (TryParseInfoFile(stream, out validVersion, out validName)) return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
-
         private async Task AddModsFromFiles()
         {
             var dialog = new VistaOpenFileDialog();
@@ -405,7 +355,7 @@ namespace ModMyFactory.ViewModels
 
                         progress1.Report(new Tuple<double, string>((double)counter / fileCount, archiveFile.Name));
 
-                        if (ArchiveFileValid(archiveFile, out factorioVersion, out name))
+                        if (Mod.ArchiveFileValid(archiveFile, out factorioVersion, out name))
                         {
                             if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
                             {
@@ -440,23 +390,6 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private bool DirectoryValid(DirectoryInfo directory, out Version validVersion, out string validName)
-        {
-            validVersion = null;
-            validName = null;
-
-            var file = directory.EnumerateFiles("info.json").FirstOrDefault();
-            if (file != null)
-            {
-                using (Stream stream = file.OpenRead())
-                {
-                    if (TryParseInfoFile(stream, out validVersion, out validName)) return true;
-                }
-            }
-
-            return false;
-        }
-
         private async Task AddModFromFolder()
         {
             var dialog = new VistaFolderBrowserDialog();
@@ -469,7 +402,7 @@ namespace ModMyFactory.ViewModels
                 Task moveDirectoryTask;
                 Version factorioVersion;
                 string name;
-                if (DirectoryValid(directory, out factorioVersion, out name))
+                if (Mod.DirectoryValid(directory, out factorioVersion, out name))
                 {
                     if (Mods.ContainsByFactorioVersion(name, factorioVersion))
                     {

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.IO.Compression;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using ModMyFactory.MVVM;
@@ -47,6 +49,87 @@ namespace ModMyFactory.Models
                     }
                 }
             }
+        }
+
+        private static bool TryParseInfoFile(Stream stream, out Version version, out string name)
+        {
+            version = null;
+            name = null;
+
+            using (var reader = new StreamReader(stream))
+            {
+                // Factorio version
+                string content = reader.ReadToEnd();
+                MatchCollection matches = Regex.Matches(content, "\"factorio_version\" *: *\"(?<version>[0-9]+\\.[0-9]+(\\.[0-9]+)?)\"",
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                if (matches.Count != 1) return false;
+
+                string versionString = matches[0].Groups["version"].Value;
+                version = Version.Parse(versionString);
+                version = new Version(version.Major, version.Minor);
+
+                // Name
+                matches = Regex.Matches(content, "\"name\" *: *\"(?<name>.*)\"",
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                if (matches.Count != 1) return false;
+
+                name = matches[0].Groups["name"].Value;
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Checks if an archive file contains a valid mod.
+        /// </summary>
+        /// <param name="archiveFile">The archive file to check.</param>
+        /// <param name="validVersion">Out. The version of the mod contained in the archive file.</param>
+        /// <param name="validName">Out. The name of the mod contained in the archive file.</param>
+        /// <returns>Returns true if the specified archive file contains a valid mod, otherwise false.</returns>
+        public static bool ArchiveFileValid(FileInfo archiveFile, out Version validVersion, out string validName)
+        {
+            validVersion = null;
+            validName = null;
+
+            using (ZipArchive archive = ZipFile.OpenRead(archiveFile.FullName))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    if (entry.Name == "info.json")
+                    {
+                        using (Stream stream = entry.Open())
+                        {
+                            if (TryParseInfoFile(stream, out validVersion, out validName)) return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if a directory contains a valid mod.
+        /// </summary>
+        /// <param name="directory">The directory to check.</param>
+        /// <param name="validVersion">Out. The version of the mod contained in the directory.</param>
+        /// <param name="validName">Out. The name of the mod contained in the directory.</param>
+        /// <returns>Returns true if the specified directory contains a valid mod, otherwise false.</returns>
+        public static bool DirectoryValid(DirectoryInfo directory, out Version validVersion, out string validName)
+        {
+            validVersion = null;
+            validName = null;
+
+            var file = directory.EnumerateFiles("info.json").FirstOrDefault();
+            if (file != null)
+            {
+                using (Stream stream = file.OpenRead())
+                {
+                    if (TryParseInfoFile(stream, out validVersion, out validName)) return true;
+                }
+            }
+
+            return false;
         }
 
         string title;
