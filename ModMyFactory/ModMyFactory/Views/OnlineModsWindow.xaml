@@ -38,7 +38,7 @@
         </Grid.RowDefinitions>
 
         <ListBox Grid.Column="0" Grid.Row="0" Grid.IsSharedSizeScope="True" ScrollViewer.CanContentScroll="True" IsSynchronizedWithCurrentItem="False"
-                 ItemsSource="{Binding ModsView}" SelectedItem="{Binding SelectedMod, Mode=TwoWay}">
+                 ItemsSource="{Binding ModsView}" SelectedItem="{Binding SelectedMod, Mode=TwoWay}" UseLayoutRounding="True">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type modApi:ModInfo}">
                     <Grid>
@@ -62,13 +62,11 @@
                                 <TextBlock Margin="2" Text="{Binding Author, StringFormat={StaticResource ByFormat}}" Foreground="Gray"/>
                             </StackPanel>
                         </Border>
-                        <Image Grid.Column="1" Width="16" Height="12" Margin="20,0,4,0" Source="{StaticResource ViewsIcon}"
-                               VerticalAlignment="Center" ToolTip="{DynamicResource ViewsToolTip}"
-                               Stretch="None" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
+                        <Image Grid.Column="1" Width="16" Height="16" Margin="20,0,4,0" Source="{StaticResource ViewsIcon}"
+                               VerticalAlignment="Center" ToolTip="{DynamicResource ViewsToolTip}" Stretch="None"/>
                         <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding ViewCount}"/>
-                        <Image Grid.Column="3" Width="13" Height="12" Margin="20,0,4,0" Source="{StaticResource DownloadsIcon}"
-                               VerticalAlignment="Center" ToolTip="{DynamicResource DownloadsToolTip}"
-                               Stretch="None" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
+                        <Image Grid.Column="3" Width="16" Height="16" Margin="20,0,4,0" Source="{StaticResource DownloadsIcon}"
+                               VerticalAlignment="Center" ToolTip="{DynamicResource DownloadsToolTip}" Stretch="None"/>
                         <TextBlock Grid.Column="4" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding DownloadCount}"/>
                     </Grid>
                 </DataTemplate>
@@ -76,9 +74,8 @@
         </ListBox>
 
         <DockPanel Grid.Column="0" Grid.Row="1" Margin="0,4,0,0">
-            <Border DockPanel.Dock="Left" Background="{StaticResource SelectionBrush}" SnapsToDevicePixels="True" >
-                <Image Margin="1" Width="22" Height="22" Source="{StaticResource SearchIcon}" Stretch="None"
-                           RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
+            <Border DockPanel.Dock="Left" Background="{StaticResource SelectionBrush}">
+                <Image Margin="1" Width="22" Height="22" Source="{StaticResource SearchIcon}" Stretch="None"/>
             </Border>
             <TextBox DockPanel.Dock="Right" Padding="2" MaxLines="1" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}"/>
         </DockPanel>

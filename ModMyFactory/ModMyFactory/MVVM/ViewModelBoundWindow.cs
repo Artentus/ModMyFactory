@@ -14,6 +14,11 @@ namespace ModMyFactory.MVVM
         /// </summary>
         public T ViewModel => (T)DataContext;
 
+        protected ViewModelBoundWindow()
+        {
+            UseLayoutRounding = true;
+        } 
+
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);

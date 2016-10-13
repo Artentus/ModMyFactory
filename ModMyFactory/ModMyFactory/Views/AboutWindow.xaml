@@ -37,8 +37,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="20,10,20,5" Source="{StaticResource Logo}"
-               Stretch="None" SnapsToDevicePixels="True" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+        <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="20,10,20,5" Stretch="None" Source="{StaticResource Logo}"/>
         <TextBlock Grid.Row="1" Grid.Column="0" Margin="20,0" Text="{DynamicResource AuthorLabel}"/>
         <TextBlock Grid.Row="1" Grid.Column="2" Margin="20,0" Text="{Binding VersionString}"/>
 
