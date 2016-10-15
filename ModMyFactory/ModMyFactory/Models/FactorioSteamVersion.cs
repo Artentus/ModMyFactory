@@ -17,6 +17,12 @@ namespace ModMyFactory.Models
         /// <returns>Returns true if the Steam version has been loaded sucessfully, otherwise false.</returns>
         public static bool TryLoad(out FactorioVersion steamVersion)
         {
+            if (string.IsNullOrEmpty(App.Instance.Settings.SteamVersionPath))
+            {
+                steamVersion = null;
+                return false;
+            }
+
             var steamVersionDirectory = new DirectoryInfo(App.Instance.Settings.SteamVersionPath);
             Version version;
             if (steamVersionDirectory.Exists && FactorioVersion.LocalInstallationValid(steamVersionDirectory, out version))

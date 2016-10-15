@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using ModMyFactory.Helpers;
-using ModMyFactory.Views;
 using ModMyFactory.Win32;
 
 namespace ModMyFactory
