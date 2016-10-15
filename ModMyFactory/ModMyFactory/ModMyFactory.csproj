@@ -38,14 +38,15 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <StartupObject>ModMyFactory.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Images\MMF_Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -101,8 +102,12 @@
     <Compile Include="Export\ModpackExportTemplate.cs" />
     <Compile Include="MVVM\Sorters\ModUpdateInfoSorter.cs" />
     <Compile Include="VersionComparer.cs" />
+    <Compile Include="ViewModels\ModpackExportViewModel.cs" />
     <Compile Include="ViewModels\ModUpdateViewModel.cs" />
     <Compile Include="ViewModels\OnlineModsViewModel.cs" />
+    <Compile Include="Views\ModpackExportWindow.xaml.cs">
+      <DependentUpon>ModpackExportWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ModUpdateWindow.xaml.cs">
       <DependentUpon>ModUpdateWindow.xaml</DependentUpon>
     </Compile>
@@ -189,6 +194,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LinkPropertiesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ModpackExportWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

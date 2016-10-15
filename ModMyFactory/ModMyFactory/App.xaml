@@ -118,7 +118,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Image x:Name="Icon" Grid.Column="0" Margin="6,0" Width="16" Height="16" VerticalAlignment="Center" Stretch="None" Source="{TemplateBinding Icon}">
+                        <Image x:Name="Icon" Grid.Column="0" Margin="6,0" Width="18" Height="18" VerticalAlignment="Center" Stretch="None" Source="{TemplateBinding Icon}">
                             <Image.Style>
                                 <Style TargetType="{x:Type Image}" BasedOn="{StaticResource {x:Type Image}}">
                                     <Style.Triggers>
@@ -195,7 +195,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Image x:Name="Icon" Grid.Column="0" Margin="6,0" Width="16" Height="16" VerticalAlignment="Center" Stretch="None" Source="{TemplateBinding Icon}">
+                        <Image x:Name="Icon" Grid.Column="0" Margin="6,0" Width="18" Height="18" VerticalAlignment="Center" Stretch="None" Source="{TemplateBinding Icon}">
                             <Image.Style>
                                 <Style TargetType="{x:Type Image}" BasedOn="{StaticResource {x:Type Image}}">
                                     <Style.Triggers>

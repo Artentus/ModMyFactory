@@ -3,8 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 using ModMyFactory.Helpers;
+using ModMyFactory.Views;
 using ModMyFactory.Win32;
 
 namespace ModMyFactory
@@ -17,55 +21,54 @@ namespace ModMyFactory
         public static bool UpdateCheckOnStartup { get; private set; }
 
         /// <summary>
-        /// Application entry point.
+        /// Displays a help message in the console.
         /// </summary>
-        [STAThread]
-        public static int Main(string[] args)
+        private static void DisplayHelp()
         {
-            var commandLine = new CommandLine(args);
-
-            // Only display help.
-            if (commandLine.IsSet('h', "help"))
+            bool attatchedConsole = Kernel32.AttachConsole();
+            if (attatchedConsole)
             {
-                bool attatchedConsole = Kernel32.AttachConsole();
-                if (attatchedConsole)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine();
-                }
-                else
-                {
-                    Kernel32.AllocConsole();
-                }
-
-                Console.WriteLine("Usage:");
-                Console.WriteLine("  modmyfactory.exe -h | --help");
-                Console.WriteLine("  modmyfactory.exe [options]");
-                Console.WriteLine("  modmyfactory.exe [options] -f <version> | --factorio-version=<version> [(-p <name> | --modpack=<name>)]");
                 Console.WriteLine();
-                Console.WriteLine("Options:");
-                Console.WriteLine("  -h, --help                                 Display this help message.");
-                Console.WriteLine("  -l, --no-logs                              Don't create crash logs.");
-                Console.WriteLine("  -a PATH, --appdata-path=PATH               Overwrite the default application data path.");
-                Console.WriteLine("  -u, --no-update                            Don't search for update on startup.");
-                Console.WriteLine("  -f VERSION, --factorio-version=VERSION     Start the specified version of Factorio.");
-                Console.WriteLine("  -p NAME, --modpack=NAME                    Enable the specified modpack.");
-
-                if (attatchedConsole)
-                {
-                    System.Windows.Forms.SendKeys.SendWait("{Enter}");
-                }
-                else
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("Press any key to continue.");
-                    Console.ReadKey();
-                }
-                Kernel32.FreeConsole();
-
-                return 0;
+                Console.WriteLine();
+            }
+            else
+            {
+                Kernel32.AllocConsole();
             }
 
+            Console.WriteLine(@"Usage:");
+            Console.WriteLine(@"  modmyfactory.exe -h | --help");
+            Console.WriteLine(@"  modmyfactory.exe [options]");
+            Console.WriteLine(@"  modmyfactory.exe [options] -f <version> | --factorio-version=<version> [(-p <name> | --modpack=<name>)]");
+            Console.WriteLine();
+            Console.WriteLine(@"Options:");
+            Console.WriteLine(@"  -h, --help                                 Display this help message.");
+            Console.WriteLine(@"  -l, --no-logs                              Don't create crash logs.");
+            Console.WriteLine(@"  -a PATH, --appdata-path=PATH               Overwrite the default application data path.");
+            Console.WriteLine(@"  -u, --no-update                            Don't search for update on startup.");
+            Console.WriteLine(@"  -f VERSION, --factorio-version=VERSION     Start the specified version of Factorio.");
+            Console.WriteLine(@"  -p NAME, --modpack=NAME                    Enable the specified modpack.");
+
+            if (attatchedConsole)
+            {
+                System.Windows.Forms.SendKeys.SendWait("{Enter}");
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine(@"Press any key to continue.");
+                Console.ReadKey();
+            }
+            Kernel32.FreeConsole();
+        }
+
+        /// <summary>
+        /// Runs the program.
+        /// </summary>
+        /// <param name="commandLine">The programs command line.</param>
+        /// <returns>The programs exit code.</returns>
+        private static int Run(CommandLine commandLine)
+        {
             // Do not create crash logs when debugging.
             bool createCrashLog = !commandLine.IsSet('l', "no-logs");
 
@@ -141,9 +144,56 @@ namespace ModMyFactory
             }
 
             app.InitializeComponent();
-            app.Run();
+            return app.Run();
+        }
 
-            return 0;
+        /// <summary>
+        /// Application entry point.
+        /// </summary>
+        [STAThread]
+        public static int Main(string[] args)
+        {
+            var commandLine = new CommandLine(args);
+
+            // Only display help.
+            if (commandLine.IsSet('h', "help"))
+            {
+                DisplayHelp();
+                return 0;
+            }
+
+
+            string appGuid = ((GuidAttribute)(Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(GuidAttribute), false)[0])).Value;
+            string mutexId = $"{{{appGuid}}}";
+
+            bool createdNew;
+            using (var mutex = new Mutex(false, mutexId, out createdNew))
+            {
+                var hasHandle = false;
+                try
+                {
+                    try
+                    {
+                        hasHandle = mutex.WaitOne(100, false);
+                        if (!hasHandle)
+                        {
+                            // App already running.
+                            return 0;
+                        }
+                    }
+                    catch (AbandonedMutexException)
+                    {
+                        hasHandle = true;
+                    }
+
+                    // App not running.
+                    return Run(commandLine);
+                }
+                finally
+                {
+                    if (hasHandle) mutex.ReleaseMutex();
+                }
+            }
         }
     }
 }

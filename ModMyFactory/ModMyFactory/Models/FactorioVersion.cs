@@ -158,6 +158,7 @@ namespace ModMyFactory.Models
             string osPlatform = Environment.Is64BitOperatingSystem ? "x64" : "x86";
             ExecutablePath = Path.Combine(directory.FullName, "bin", osPlatform, "factorio.exe");
 
+            if (!linkDirectory.Exists) linkDirectory.Create();
             CreateLinks(forceLinkCreation);
         }
 
