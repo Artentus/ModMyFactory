@@ -40,19 +40,28 @@ namespace ModMyFactory.Web
             string csrfToken = matches[0].Value;
 
             // Log in using the token and credentials.
-            byte[] contentPart1 = Encoding.UTF8.GetBytes($"csrf_token={csrfToken}&username_or_email={username}&password=");
-            byte[] contentPart2 = SecureStringHelper.SecureStringToBytes(password);
-            byte[] contentPart3 = Encoding.UTF8.GetBytes("&action=Login");
-            byte[] content = new byte[contentPart1.Length + contentPart2.Length + contentPart3.Length];
-            Array.Copy(contentPart1, 0, content, 0, contentPart1.Length);
-            Array.Copy(contentPart2, 0, content, contentPart1.Length, contentPart2.Length);
-            Array.Copy(contentPart3, 0, content, contentPart1.Length + contentPart2.Length, contentPart3.Length);
-            SecureStringHelper.DestroySecureByteArray(contentPart2);
+            string part1 = $"csrf_token={csrfToken}&username_or_email={username}&password=";
+            int part1Length = Encoding.UTF8.GetByteCount(part1);
+            int part2Length = SecureStringHelper.GetSecureStringByteCount(password);
+            string part3 = "&action=Login";
+            int part3Length = Encoding.UTF8.GetByteCount(part3);
 
-            if (!WebHelper.TryGetDocument(loginPage, container, content, out document)) return false;
-            if (!document.Contains("logout")) return false;
+            byte[] content = new byte[part1Length + part2Length + part3Length];
+            Encoding.UTF8.GetBytes(part1, 0, part1.Length, content, 0);
+            SecureStringHelper.SecureStringToBytes(password, content, part1Length);
+            Encoding.UTF8.GetBytes(part3, 0, part3.Length, content, part1Length + part2Length);
 
-            return true;
+            try
+            {
+                if (!WebHelper.TryGetDocument(loginPage, container, content, out document)) return false;
+                if (!document.Contains("logout")) return false;
+
+                return true;
+            }
+            finally
+            {
+                SecureStringHelper.DestroySecureByteArray(content);
+            }
         }
 
         /// <summary>

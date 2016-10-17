@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -134,6 +135,40 @@ namespace ModMyFactory
 
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
+        }
+
+        /// <summary>
+        /// Gets a localized string from the applications resources.
+        /// </summary>
+        /// <param name="key">The key of the string to get.</param>
+        /// <returns>Returns the requested string resource or null if the specified resource key does not exist.</returns>
+        internal string GetLocalizedResourceString(string key)
+        {
+            if (!Resources.Contains(key)) return null;
+
+            return Resources[key] as string;
+        }
+
+        /// <summary>
+        /// Gets a localized message from the applications resources.
+        /// </summary>
+        /// <param name="key">The key of the message to get.</param>
+        /// <param name="messageType">The type of the message to get.</param>
+        /// <returns>Returns the requested message or null if the specified resource key does not exist.</returns>
+        internal string GetLocalizedMessage(string key, MessageType messageType)
+        {
+            return GetLocalizedResourceString(string.Join(".", messageType.ToString("g"), key, "Message"));
+        }
+
+        /// <summary>
+        /// Gets a localized message title from the applications resources.
+        /// </summary>
+        /// <param name="key">The key of the message title to get.</param>
+        /// <param name="messageType">The type of the message title to get.</param>
+        /// <returns>Returns the requested message title or null if the specified resource key does not exist.</returns>
+        internal string GetLocalizedMessageTitle(string key, MessageType messageType)
+        {
+            return GetLocalizedResourceString(string.Join(".", messageType.ToString("g"), key, "Title"));
         }
 
         /// <summary>

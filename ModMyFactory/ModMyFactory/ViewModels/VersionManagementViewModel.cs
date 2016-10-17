@@ -133,7 +133,10 @@ namespace ModMyFactory.ViewModels
             List<FactorioOnlineVersion> versions;
             if (!FactorioWebsite.GetVersions(container, out versions))
             {
-                MessageBox.Show(Window, "Error retrieving available versions!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("RetrievingVersions", MessageType.Error),
+                    App.Instance.GetLocalizedMessageTitle("RetrievingVersions", MessageType.Error),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
             versions.ForEach(item => item.Downloadable = !VersionAlreadyInstalled(item));
@@ -155,8 +158,8 @@ namespace ModMyFactory.ViewModels
                 {
                     var cancellationSource = new CancellationTokenSource();
                     var progressWindow = new ProgressWindow { Owner = Window };
-                    progressWindow.ViewModel.ActionName = "Downloading";
-                    progressWindow.ViewModel.ProgressDescription = "Downloading " + selectedVersion.DownloadUrl;
+                    progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
+                    progressWindow.ViewModel.ProgressDescription = string.Format(App.Instance.GetLocalizedResourceString("DownloadingDescription"), selectedVersion.DownloadUrl);
                     progressWindow.ViewModel.CanCancel = true;
                     progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
@@ -165,7 +168,7 @@ namespace ModMyFactory.ViewModels
                     {
                         if (p > 1)
                         {
-                            progressWindow.ViewModel.ProgressDescription = "Extracting...";
+                            progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
                             progressWindow.ViewModel.IsIndeterminate = true;
                             progressWindow.ViewModel.CanCancel = false;
                         }
@@ -188,7 +191,7 @@ namespace ModMyFactory.ViewModels
         private async Task AddZippedVersion()
         {
             var dialog = new VistaOpenFileDialog();
-            dialog.Filter = "ZIP-Archives (*.zip)|*.zip";
+            dialog.Filter = App.Instance.GetLocalizedResourceString("ZipDescription") + @" (*.zip)|*.zip";
             bool? result = dialog.ShowDialog(Window);
             if (result.HasValue && result.Value)
             {
@@ -197,8 +200,8 @@ namespace ModMyFactory.ViewModels
                 DirectoryInfo versionDirectory = null;
 
                 var progressWindow = new ProgressWindow() { Owner = Window };
-                progressWindow.ViewModel.ActionName = "Adding from ZIP";
-                progressWindow.ViewModel.ProgressDescription = "Checking validity...";
+                progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingFromZipAction");
+                progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("CheckingValidityDescription");
                 progressWindow.ViewModel.IsIndeterminate = true;
 
                 bool invalidArchiveFile = false;
@@ -207,7 +210,7 @@ namespace ModMyFactory.ViewModels
                     switch (stage)
                     {
                         case 1:
-                            progressWindow.ViewModel.ProgressDescription = "Extracting...";
+                            progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
                             break;
                         case -1:
                             invalidArchiveFile = true;
@@ -243,14 +246,17 @@ namespace ModMyFactory.ViewModels
                 if (invalidArchiveFile)
                 {
                     MessageBox.Show(Window,
-                        "This ZIP archive does not contain a valid Factorio installation.",
-                        "Invalid archive", MessageBoxButton.OK, MessageBoxImage.Error);
+                        App.Instance.GetLocalizedMessage("InvalidFactorioArchive", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("InvalidFactorioArchive", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else
                 {
                     FactorioVersions.Add(new FactorioVersion(versionDirectory, version));
 
-                    if (MessageBox.Show(Window, "Do you want to delete the source file?", "Delete file?",
+                    if (MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("DeleteFactorioArchive", MessageType.Question),
+                        App.Instance.GetLocalizedMessageTitle("DeleteFactorioArchive", MessageType.Question),
                         MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         archiveFile.Delete();
@@ -359,21 +365,24 @@ namespace ModMyFactory.ViewModels
 
                 if (!FactorioVersion.LocalInstallationValid(installationDirectory, out version))
                 {
-                    MessageBox.Show(Window, "This folder does not contain a valid Factorio installation.",
-                        "Invalid folder", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("InvalidFactorioFolder", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("InvalidFactorioFolder", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
                 if (MessageBox.Show(Window,
-                        "The selected installation of Factorio will be moved to the location specified in the settings! The creation of a backup is recommended.\nDo you wish to continue?",
-                        "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                        App.Instance.GetLocalizedMessage("MoveFactorioFolder", MessageType.Warning),
+                        App.Instance.GetLocalizedMessageTitle("MoveFactorioFolder", MessageType.Warning),
+                        MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
                     DirectoryInfo destinationDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.ToString(3)));
 
                     var progressWindow = new ProgressWindow() { Owner = Window };
-                    progressWindow.ViewModel.ActionName = "Adding local installation";
-                    progressWindow.ViewModel.ProgressDescription = "Moving files...";
+                    progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingLocalInstallationAction");
+                    progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
                     progressWindow.ViewModel.IsIndeterminate = true;
 
                     Task moveTask = MoveFactorioInstallationAsync(installationDirectory, version, destinationDirectory);
@@ -401,21 +410,24 @@ namespace ModMyFactory.ViewModels
 
                 if (!FactorioVersion.LocalInstallationValid(selectedDirectory, out version))
                 {
-                    MessageBox.Show(Window, "This folder does not contain a valid Factorio installation.",
-                        "Invalid folder", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("InvalidFactorioFolder", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("InvalidFactorioFolder", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
                 if (MessageBox.Show(Window,
-                    "All mods, saves and scenarios will be moved to the location specified in the settings! The creation of a backup is recommended.\nDo you wish to continue?",
-                    "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                    App.Instance.GetLocalizedMessage("MoveSteamFactorio", MessageType.Warning),
+                    App.Instance.GetLocalizedMessageTitle("MoveSteamFactorio", MessageType.Warning),
+                    MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     App.Instance.Settings.SteamVersionPath = selectedDirectory.FullName;
                     App.Instance.Settings.Save();
 
                     var progressWindow = new ProgressWindow() { Owner = Window };
-                    progressWindow.ViewModel.ActionName = "Adding Steam version";
-                    progressWindow.ViewModel.ProgressDescription = "Moving files...";
+                    progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingSteamVersionAction");
+                    progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
                     progressWindow.ViewModel.IsIndeterminate = true;
 
                     var steamAppDataDirectory = new DirectoryInfo(FactorioSteamVersion.SteamAppDataPath);
@@ -439,12 +451,13 @@ namespace ModMyFactory.ViewModels
         private async Task RemoveSelectedVersion()
         {
             if (MessageBox.Show(Window,
-                    "Do you really want to remove this version of Factorio?\nThis will delete all corresponding files on your hard drive.",
-                    "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    App.Instance.GetLocalizedMessage("RemoveFactorioVersion", MessageType.Question),
+                    App.Instance.GetLocalizedMessageTitle("RemoveFactorioVersion", MessageType.Question),
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 var progressWindow = new ProgressWindow() { Owner = Window };
-                progressWindow.ViewModel.ActionName = "Removing Factorio version";
-                progressWindow.ViewModel.ProgressDescription = "Deleting files...";
+                progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("RemovingFactorioVersionAction");
+                progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("DeletingFilesDescription");
                 progressWindow.ViewModel.IsIndeterminate = true;
 
                 Task deleteTask = Task.Run(() =>

@@ -97,7 +97,7 @@ namespace ModMyFactory
                 }
                 else
                 {
-                    factorioVersion = versions.Find(item => item.VersionString == versionString);
+                    factorioVersion = versions.Find(item => string.Equals(item.VersionString, versionString, StringComparison.InvariantCultureIgnoreCase));
                 }
 
                 if (factorioVersion != null)

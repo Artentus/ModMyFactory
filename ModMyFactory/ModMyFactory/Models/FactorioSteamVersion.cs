@@ -28,6 +28,7 @@ namespace ModMyFactory.Models
             if (steamVersionDirectory.Exists && FactorioVersion.LocalInstallationValid(steamVersionDirectory, out version))
             {
                 steamVersion = new FactorioSteamVersion(steamVersionDirectory, version);
+                steamVersion.CreateModDirectoryLink(true);
                 return true;
             }
             else

@@ -228,8 +228,8 @@ namespace ModMyFactory.ViewModels
             if (LogIn())
             {
                 var progressWindow = new ProgressWindow { Owner = Window };
-                progressWindow.ViewModel.ActionName = "Downloading";
-                progressWindow.ViewModel.ProgressDescription = "Downloading " + selectedRelease.FileName;
+                progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
+                progressWindow.ViewModel.ProgressDescription = string.Format(App.Instance.GetLocalizedResourceString("DownloadingDescription"), selectedRelease.FileName);
 
                 progressWindow.ViewModel.CanCancel = true;
                 var cancellationSource = new CancellationTokenSource();
@@ -282,8 +282,8 @@ namespace ModMyFactory.ViewModels
 
                 var cancellationSource = new CancellationTokenSource();
                 var progressWindow = new ProgressWindow { Owner = Window };
-                progressWindow.ViewModel.ActionName = "Updating";
-                progressWindow.ViewModel.ProgressDescription = "Downloading " + newestRelease.FileName;
+                progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("UpdatingAction");
+                progressWindow.ViewModel.ProgressDescription = string.Format(App.Instance.GetLocalizedResourceString("DownloadingDescription"), newestRelease.FileName);
                 progressWindow.ViewModel.CanCancel = true;
                 progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
@@ -291,7 +291,7 @@ namespace ModMyFactory.ViewModels
                 {
                     if (p > 1)
                     {
-                        progressWindow.ViewModel.ProgressDescription = "Extracting...";
+                        progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
                         progressWindow.ViewModel.IsIndeterminate = true;
                         progressWindow.ViewModel.CanCancel = false;
                     }

@@ -1,6 +1,103 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xml:space="preserve">
+    <!--
+    Newline character: &#x0a;
+    -->
+    
+    
+    
+    <sys:String x:Key="NewModpackName">New modpack</sys:String>
+    
+    
+    
+    <!--
+    ____________________ Dialogs ____________________
+    -->
+
+    <!-- messages -->
+    <sys:String x:Key="Information.ModExistsPerVersion.Message">The mod '{0}' for Factorio {1} already exists!</sys:String>
+    <sys:String x:Key="Information.ModExistsPerVersion.Title">Mod skipped</sys:String>
+    
+    <sys:String x:Key="Information.ModExists.Message">The mod '{0}' already exists!</sys:String>
+    <sys:String x:Key="Information.ModExists.Title">Mod skipped</sys:String>
+    
+    <sys:String x:Key="Error.InvalidModArchive.Message">The ZIP archive '{0}' does not contain a valid mod.</sys:String>
+    <sys:String x:Key="Error.InvalidModArchive.Title">Error adding mod!</sys:String>
+    
+    <sys:String x:Key="Error.InvalidModFolder.Message">The selected folder does not contain a valid mod.</sys:String>
+    <sys:String x:Key="Error.InvalidModFolder.Title">Error adding mod!</sys:String>
+    
+    <sys:String x:Key="Information.NoModUpdates.Message">All your mods are up to date.</sys:String>
+    <sys:String x:Key="Information.NoModUpdates.Title">No updates found</sys:String>
+    
+    <sys:String x:Key="Question.Update.Message">You are running an old version of ModMyFactory (current version is {0}, newest version is {1}).&#x0a;Do you want to download the newest version?</sys:String>
+    <sys:String x:Key="Question.Update.Title">Update available</sys:String>
+    
+    <sys:String x:Key="Information.NoUpdate.Message">You are running the newest version of ModMyFactory.</sys:String>
+    <sys:String x:Key="Information.NoUpdate.Title">No update available</sys:String>
+    
+    <sys:String x:Key="Error.RetrievingVersions.Message">The available Factorio versions could not be retrieved.</sys:String>
+    <sys:String x:Key="Error.RetrievingVersions.Title">Error!</sys:String>
+
+    <sys:String x:Key="Error.InvalidFactorioArchive.Message">This ZIP archive does not contain a valid Factorio installation.</sys:String>
+    <sys:String x:Key="Error.InvalidFactorioArchive.Title">Invalid archive!</sys:String>
+
+    <sys:String x:Key="Question.DeleteFactorioArchive.Message">Do you want to delete the source file?</sys:String>
+    <sys:String x:Key="Question.DeleteFactorioArchive.Title">Delete file?</sys:String>
+
+    <sys:String x:Key="Error.InvalidFactorioFolder.Message">This folder does not contain a valid Factorio installation.</sys:String>
+    <sys:String x:Key="Error.InvalidFactorioFolder.Title">Invalid folder!</sys:String>
+
+    <sys:String x:Key="Warning.MoveFactorioFolder.Message">The selected installation of Factorio will be moved to the location specified in the settings! The creation of a backup is recommended.&#x0a;Do you wish to continue?</sys:String>
+    <sys:String x:Key="Warning.MoveFactorioFolder.Title">Warning</sys:String>
+    
+    <sys:String x:Key="Warning.MoveSteamFactorio.Message">All mods, saves and scenarios will be moved to the location specified in the settings! The creation of a backup is recommended.&#x0a;Do you wish to continue?</sys:String>
+    <sys:String x:Key="Warning.MoveSteamFactorio.Title">Warning</sys:String>
+    
+    <sys:String x:Key="Question.RemoveFactorioVersion.Message">Do you really want to remove this version of Factorio?&#x0a;This will delete all corresponding files on your hard drive.</sys:String>
+    <sys:String x:Key="Question.RemoveFactorioVersion.Title">Confirm</sys:String>
+
+    
+    <!-- file type descriptions -->
+    <sys:String x:Key="ZipDescription">ZIP-Archives</sys:String>
+    <sys:String x:Key="LnkDescription">Shortcuts</sys:String>
+    
+    
+    <!-- progress dialogs -->
+    <sys:String x:Key="MovingFilesDescription">Moving files...</sys:String>
+    <sys:String x:Key="ExtractingDescription">Extracting...</sys:String>
+    
+    <sys:String x:Key="FetchingModsAction">Fetching mods</sys:String>
+    <sys:String x:Key="ParsingFirstPageDescription">Parsing page 1.</sys:String>
+    <sys:String x:Key="ParsingPageDescription">Parsing page {0} of {1}.</sys:String>
+    
+    <sys:String x:Key="ProcessingModsAction">Processing mods</sys:String>
+    <sys:String x:Key="ProcessingModAction">Processing mod</sys:String>
+    
+    <sys:String x:Key="SearchingForUpdatesAction">Searching for updates</sys:String>
+    <sys:String x:Key="UpdatingModsAction">Updating mods</sys:String>
+    
+    <sys:String x:Key="MovingDirectoriesAction">Moving directories</sys:String>
+
+    <sys:String x:Key="DownloadingAction">Downloading</sys:String>
+    <sys:String x:Key="DownloadingDescription">Downloading {0}</sys:String>
+
+    <sys:String x:Key="AddingFromZipAction">Adding from ZIP</sys:String>
+    <sys:String x:Key="CheckingValidityDescription">Checking validity...</sys:String>
+    
+    <sys:String x:Key="AddingLocalInstallationAction">Adding local installation</sys:String>
+    
+    <sys:String x:Key="AddingSteamVersionAction">Adding Steam version</sys:String>
+
+    <sys:String x:Key="RemovingFactorioVersionAction">Removing Factorio version</sys:String>
+    <sys:String x:Key="DeletingFilesDescription">Deleting files...</sys:String>
+    
+    <sys:String x:Key="UpdatingAction">Updating</sys:String>
+
+    
+    
     <!--
     ____________________ Misc ____________________
     -->
@@ -86,7 +183,7 @@
     <!-- buttons -->
     <sys:String x:Key="AddZipButton">Add from ZIP</sys:String>
     <sys:String x:Key="AddFolderButton">Add from folder</sys:String>
-    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center" xml:space="preserve">Select&#x0a;Steam version</TextBlock>
+    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center">Select&#x0a;Steam version</TextBlock>
     <sys:String x:Key="OpenFolderButton">Open folder</sys:String>
     <sys:String x:Key="RemoveButton">Remove</sys:String>
 

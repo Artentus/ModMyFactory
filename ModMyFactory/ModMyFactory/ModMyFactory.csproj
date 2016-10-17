@@ -94,6 +94,7 @@
     <Compile Include="Helpers\FileInfoExtensions.cs" />
     <Compile Include="Helpers\SecureStringHelper.cs" />
     <Compile Include="ManagerMode.cs" />
+    <Compile Include="MessageType.cs" />
     <Compile Include="ModCollection.cs" />
     <Compile Include="Models\FactorioSteamVersion.cs" />
     <Compile Include="Models\ModUpdateInfo.cs" />

@@ -19,7 +19,7 @@ namespace ModMyFactory.Web
     static class ModWebsite
     {
         const string BaseUrl = "https://mods.factorio.com";
-        const string ModsUrl =  BaseUrl + "/api/mods";
+        const string ModsUrl = BaseUrl + "/api/mods";
 
         /// <summary>
         /// Gets all mods that are available online.
@@ -28,6 +28,8 @@ namespace ModMyFactory.Web
         public static async Task<List<ModInfo>> GetModsAsync(IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
             var result = new List<ModInfo>();
+
+            progress.Report(new Tuple<double, string>(0, App.Instance.GetLocalizedResourceString("ParsingFirstPageDescription")));
 
             string currentPageUrl = ModsUrl;
             while (!string.IsNullOrEmpty(currentPageUrl))
@@ -41,9 +43,11 @@ namespace ModMyFactory.Web
                     if (WebHelper.TryGetDocument(currentPageUrl, null, out document))
                     {
                         ApiPage currentPage = JsonHelper.Deserialize<ApiPage>(document);
+
                         int pageNumber = currentPage.Info.PageNumber;
                         int pageCount = currentPage.Info.PageCount;
-                        progress.Report(new Tuple<double, string>((double)pageNumber / pageCount, $"Parsing page {pageNumber + 1} of {pageCount}."));
+                        string progressDescription = string.Format(App.Instance.GetLocalizedResourceString("ParsingPageDescription"), pageNumber + 1, pageCount);
+                        progress.Report(new Tuple<double, string>((double)pageNumber / pageCount, progressDescription));
 
                         currentPageUrl = currentPage.Info.Links.NextPage;
                         return currentPage.Mods;
@@ -113,20 +117,29 @@ namespace ModMyFactory.Web
 
             token = null;
 
-            byte[] contentPart1 = Encoding.UTF8.GetBytes($"require_game_ownership=True&username={username}&password=");
-            byte[] contentPart2 = SecureStringHelper.SecureStringToBytes(password);
-            byte[] content = new byte[contentPart1.Length + contentPart2.Length];
-            Array.Copy(contentPart1, 0, content, 0, contentPart1.Length);
-            Array.Copy(contentPart2, 0, content, contentPart1.Length, contentPart2.Length);
-            SecureStringHelper.DestroySecureByteArray(contentPart2);
+            string part1 = $"require_game_ownership=True&username={username}&password=";
+            int part1Length = Encoding.UTF8.GetByteCount(part1);
+            int part2Length = SecureStringHelper.GetSecureStringByteCount(password);
 
-            string document;
-            if (!WebHelper.TryGetDocument(loginPage, null, content, out document)) return false;
+            byte[] content = new byte[part1Length + part2Length];
+            Encoding.UTF8.GetBytes(part1, 0, part1.Length, content, 0);
+            SecureStringHelper.SecureStringToBytes(password, content, part1Length);
 
-            MatchCollection matches = Regex.Matches(document, pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-            if (matches.Count != 1) return false;
-            token = matches[0].Value;
-            return true;
+            try
+            {
+                string document;
+                if (!WebHelper.TryGetDocument(loginPage, null, content, out document)) return false;
+
+                MatchCollection matches = Regex.Matches(document, pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                if (matches.Count != 1) return false;
+
+                token = matches[0].Value;
+                return true;
+            }
+            finally
+            {
+                SecureStringHelper.DestroySecureByteArray(content);
+            }
         }
 
         /// <summary>
