@@ -35,14 +35,16 @@ namespace ModMyFactory.Models
                     {
                         foreach (var file in directory.EnumerateFiles("*.zip"))
                         {
-                            string name = file.NameWithoutExtension().Split('_')[0];
+                            string name = file.NameWithoutExtension();
+                            name = name.Substring(0, name.LastIndexOf('_'));
                             var mod = new ZippedMod(name, version, file, parentCollection, modpackCollection, messageOwner);
                             parentCollection.Add(mod);
                         }
 
                         foreach (var subDirectory in directory.EnumerateDirectories())
                         {
-                            string name = subDirectory.Name.Split('_')[0];
+                            string name = subDirectory.Name;
+                            name = name.Substring(0, name.LastIndexOf('_'));
                             var mod = new ExtractedMod(name, version, subDirectory, parentCollection, modpackCollection, messageOwner);
                             parentCollection.Add(mod);
                         }

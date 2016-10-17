@@ -165,7 +165,8 @@ namespace ModMyFactory.Web
             await WebHelper.DownloadFileAsync(downloadUrl, null, modFile, progress, cancellationToken);
             if (!cancellationToken.IsCancellationRequested)
             {
-                string name = modFile.NameWithoutExtension().Split('_')[0];
+                string name = modFile.NameWithoutExtension();
+                name = name.Substring(0, name.LastIndexOf('_'));
                 return new ZippedMod(name, release.FactorioVersion, modFile, parentCollection, modpackCollection, messageOwner);
             }
 

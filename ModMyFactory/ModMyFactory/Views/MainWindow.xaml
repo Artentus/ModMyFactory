@@ -355,9 +355,10 @@
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource ModsHeader}" Margin="2"/>
                 <Rectangle Grid.Row="1" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
             </Grid>
-            <mvvm:DragDropReadyListBox x:Name="ModsListBox" Grid.Row="1" Grid.Column="0" IsSynchronizedWithCurrentItem="False" SelectionMode="Extended" ItemsSource="{Binding ModsView}"
-                      PreviewMouseDown="ModsListBoxPreviewMouseDownHandler" PreviewMouseMove="ModsListBoxPreviewMouseMoveHandler"
-                      PreviewMouseUp="ModsListBoxPreviewMouseUpHandler">
+            <mvvm:DragDropReadyListBox x:Name="ModsListBox" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding ModsView}"
+                                       IsSynchronizedWithCurrentItem="False" SelectionMode="Extended"
+                                       PreviewMouseDown="ModsListBoxPreviewMouseDownHandler" PreviewMouseMove="ModsListBoxPreviewMouseMoveHandler"
+                                       PreviewMouseUp="ModsListBoxPreviewMouseUpHandler">
                 <mvvm:DragDropReadyListBox.ItemContainerStyle>
                     <Style TargetType="mvvm:DragDropReadyListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                         <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
@@ -441,7 +442,8 @@
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource ModpacksHeader}" Margin="2"/>
                 <Rectangle Grid.Row="1" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
             </Grid>
-            <mvvm:DragDropReadyListBox x:Name="ModpacksListBox" Grid.Row="1" Grid.Column="2" IsSynchronizedWithCurrentItem="False" SelectionMode="Extended" AllowDrop="True" ItemsSource="{Binding ModpacksView}"
+            <mvvm:DragDropReadyListBox x:Name="ModpacksListBox" Grid.Row="1" Grid.Column="2" ItemsSource="{Binding ModpacksView}"
+                                       IsSynchronizedWithCurrentItem="False" SelectionMode="Extended" AllowDrop="True" ScrollViewer.VerticalScrollBarVisibility="Visible"
                       PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler" MouseMove="ModpackListBoxMouseMoveHandler"
                       PreviewMouseUp="ModpackListBoxPreviewMouseUpHandler" Drop="ModpackListBoxDropHandler" DragOver="ModpackListBoxDragOverHandler">
                 <mvvm:DragDropReadyListBox.Resources>
