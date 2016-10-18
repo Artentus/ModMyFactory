@@ -6,7 +6,7 @@ namespace ModMyFactory.ViewModels
 {
     sealed class AboutViewModel : ViewModelBase<AboutWindow>
     {
-        public string VersionString => "v" + App.Instance.AssemblyVersion.ToString(3) + "pre1";
+        public string VersionString => "v" + App.Instance.AssemblyVersion.ToString(3);
 
         public RelayCommand Url1Command { get; }
 

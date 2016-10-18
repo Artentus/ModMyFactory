@@ -287,8 +287,9 @@ namespace ModMyFactory.ViewModels
                         }
                         saveFile.MoveTo(newPath);
                     }
+
+                    localSaveDirecotry.DeleteRecursiveReparsePoint();
                 }
-                localSaveDirecotry.DeleteRecursiveReparsePoint();
 
                 var localScenarioDirecotry = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "scenarios"));
                 if (localScenarioDirecotry.Exists)
@@ -308,8 +309,9 @@ namespace ModMyFactory.ViewModels
                         }
                         scenarioFile.MoveTo(newPath);
                     }
+
+                    localScenarioDirecotry.DeleteRecursiveReparsePoint();
                 }
-                localScenarioDirecotry.DeleteRecursiveReparsePoint();
 
                 var localModDirecotry = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "mods"));
                 if (localModDirecotry.Exists)
@@ -343,8 +345,9 @@ namespace ModMyFactory.ViewModels
                                     MainViewModel.Instance.Window)));
                         }
                     }
+
+                    localModDirecotry.DeleteRecursiveReparsePoint();
                 }
-                localModDirecotry.DeleteRecursiveReparsePoint();
             });
         }
 
