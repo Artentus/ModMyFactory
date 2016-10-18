@@ -274,18 +274,21 @@ namespace ModMyFactory.ViewModels
                 {
                     foreach (var saveFile in localSaveDirecotry.GetFiles())
                     {
-                        string newPath = Path.Combine(App.Instance.GlobalSavePath, saveFile.Name);
-                        if (File.Exists(newPath))
+                        if (!saveFile.Name.StartsWith("_autosave"))
                         {
-                            int count = 1;
-                            do
+                            string newPath = Path.Combine(App.Instance.GlobalSavePath, saveFile.Name);
+                            if (File.Exists(newPath))
                             {
-                                string newName = $"{saveFile.NameWithoutExtension()}_{count}{saveFile.Extension}";
-                                newPath = Path.Combine(App.Instance.GlobalSavePath, newName);
-                                count++;
-                            } while (File.Exists(newPath));
+                                int count = 1;
+                                do
+                                {
+                                    string newName = $"{saveFile.NameWithoutExtension()}_{count}{saveFile.Extension}";
+                                    newPath = Path.Combine(App.Instance.GlobalSavePath, newName);
+                                    count++;
+                                } while (File.Exists(newPath));
+                            }
+                            saveFile.MoveTo(newPath);
                         }
-                        saveFile.MoveTo(newPath);
                     }
 
                     localSaveDirecotry.DeleteRecursiveReparsePoint();
