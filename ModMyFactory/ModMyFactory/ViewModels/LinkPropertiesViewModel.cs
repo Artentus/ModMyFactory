@@ -65,13 +65,16 @@ namespace ModMyFactory.ViewModels
 
         public LinkPropertiesViewModel()
         {
-            FactorioVersions = MainViewModel.Instance.FactorioVersions;
-            FactorioVersionsView = (ListCollectionView)(new CollectionViewSource() { Source = FactorioVersions }).View;
-            FactorioVersionsView.CustomSort = new FactorioVersionSorter();
+            if (!App.IsInDesignMode)
+            {
+                FactorioVersions = MainViewModel.Instance.FactorioVersions;
+                FactorioVersionsView = (ListCollectionView)(new CollectionViewSource() { Source = FactorioVersions }).View;
+                FactorioVersionsView.CustomSort = new FactorioVersionSorter();
 
-            Modpacks = MainViewModel.Instance.Modpacks;
-            ModpacksView = (ListCollectionView)(new CollectionViewSource() { Source = Modpacks }).View;
-            ModpacksView.CustomSort = new ModpackSorter();
+                Modpacks = MainViewModel.Instance.Modpacks;
+                ModpacksView = (ListCollectionView)(new CollectionViewSource() { Source = Modpacks }).View;
+                ModpacksView.CustomSort = new ModpackSorter();
+            }
         }
     }
 }

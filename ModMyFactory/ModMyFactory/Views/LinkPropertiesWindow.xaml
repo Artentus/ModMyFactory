@@ -30,7 +30,7 @@
         <ComboBox Grid.Row="1" Margin="2" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}">
             <ComboBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type model:FactorioVersion}">
-                    <TextBlock Margin="4,2" Text="{Binding DisplayName}"/>
+                    <TextBlock Margin="4,2" VerticalAlignment="Center" Text="{Binding DisplayName}"/>
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>

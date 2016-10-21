@@ -288,7 +288,7 @@
             <ComboBox Margin="2,0" Width="120" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type model:FactorioVersion}">
-                        <TextBlock Margin="4,2" Text="{Binding DisplayName}"/>
+                        <TextBlock Margin="4,2" VerticalAlignment="Center" Text="{Binding DisplayName}"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>

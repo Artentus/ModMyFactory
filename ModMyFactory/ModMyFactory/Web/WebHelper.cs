@@ -161,7 +161,7 @@ namespace ModMyFactory.Web
                 using (var client = new HttpClient(handler, true))
                 {
                     client.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
-                    
+
                     HttpResponseMessage response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
                     response.EnsureSuccessStatusCode();
 
@@ -185,6 +185,11 @@ namespace ModMyFactory.Web
             catch (TaskCanceledException)
             {
                 if (file.Exists) file.Delete();
+            }
+            catch (Exception)
+            {
+                if (file.Exists) file.Delete();
+                throw;
             }
         }
     }

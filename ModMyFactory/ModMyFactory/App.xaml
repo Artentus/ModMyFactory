@@ -452,11 +452,11 @@
                                     </ToggleButton.Template>
                                 </ToggleButton>
 
-                                <ContentPresenter x:Name="ContentSite" Margin="4,0,20,0" VerticalAlignment="Center" HorizontalAlignment="Left" IsHitTestVisible="False"
+                                <ContentPresenter x:Name="ContentSite" Margin="4,0,20,0" VerticalAlignment="Stretch" HorizontalAlignment="Left" IsHitTestVisible="False"
                                                       Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                                       ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"/>
 
-                                <TextBox x:Name="PART_EditableTextBox"  Margin="0,0,14,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Focusable="True"
+                                <TextBox x:Name="PART_EditableTextBox" Margin="0,0,14,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Focusable="True"
                                          Background="Transparent" Visibility="Hidden" Style="{x:Null}" IsReadOnly="{TemplateBinding IsReadOnly}">
                                     <TextBox.Template>
                                         <ControlTemplate TargetType="{x:Type TextBox}">
@@ -869,7 +869,7 @@
                                     </ToggleButton.Template>
                                 </ToggleButton>
 
-                                <ContentPresenter x:Name="ContentSite" Margin="4,0,20,0" VerticalAlignment="Center" HorizontalAlignment="Left" IsHitTestVisible="False"
+                                <ContentPresenter x:Name="ContentSite" Margin="4,0,20,0" VerticalAlignment="Stretch" HorizontalAlignment="Left" IsHitTestVisible="False"
                                                       Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                                       ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"/>
 

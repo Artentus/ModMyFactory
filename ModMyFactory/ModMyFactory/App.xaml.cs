@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using ModMyFactory.Helpers;
 using ModMyFactory.Lang;
 using Octokit;
 using Application = System.Windows.Application;
 using ModMyFactory.Models;
+using ModMyFactory.Win32;
 using FileMode = System.IO.FileMode;
 
 namespace ModMyFactory
@@ -65,6 +66,11 @@ namespace ModMyFactory
 
             string settingsFile = Path.Combine(appDataDirectory.FullName, "settings.json");
             Settings = Settings.Load(settingsFile, true);
+
+            // Create file type association
+            string handlerName = RegistryHelper.RegisterHandler("FactorioModpack", 1, "Factorio modpack", Path.GetFullPath("Factorio_Modpack_Icon.ico"));
+            RegistryHelper.RegisterFileType(".fmp", handlerName, "application/json", PercievedFileType.Text);
+            Shell32.ChangeNotify(ChangeNotifyEventId.AssociationChanged, ChangeNotifyFlags.IdList);
 
             // Generate log when crashed.
             if (createCrashLog)
