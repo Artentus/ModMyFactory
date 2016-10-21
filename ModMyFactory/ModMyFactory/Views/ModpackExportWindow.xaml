@@ -6,13 +6,47 @@
         xmlns:local="clr-namespace:ModMyFactory.Views"
         xmlns:vm="clr-namespace:ModMyFactory.ViewModels"
         xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
+        xmlns:model="clr-namespace:ModMyFactory.Models"
         mc:Ignorable="d"
-        Title="{DynamicResource VersionListWindowTitle}" Height="500" Width="400"
+        Title="{DynamicResource ModpackExportWindowTitle}" Height="500" Width="400"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon="..\Images\MMF_Icon.ico">
     
-    <Grid>
-        
+    <Window.DataContext>
+        <vm:ModpackExportViewModel/>
+    </Window.DataContext>
+    
+    <Grid Margin="4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <ListBox x:Name="ModpackListBox" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="2" IsSynchronizedWithCurrentItem="False"
+                 SelectionMode="Multiple" ItemsSource="{Binding ModpacksView}" PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type model:Modpack}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Margin="4,2" IsHitTestVisible="False" Text="{Binding Name}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="2,4" Content="{DynamicResource IncludeVersionInfoOption}" IsChecked="{Binding IncludeVersionInfo}"/>
+        <Button Grid.Row="2" Grid.Column="1" Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
+        <Button Grid.Row="2" Grid.Column="2" Margin="2" IsDefault="True" IsEnabled="{Binding CanExport}" Content="{DynamicResource ExportButton}" Click="ExportButtonClickHandler"/>
     </Grid>
 </mvvm:ViewModelBoundWindow>

@@ -62,6 +62,7 @@
     <!-- file type descriptions -->
     <sys:String x:Key="ZipDescription">ZIP-Archive</sys:String>
     <sys:String x:Key="LnkDescription">Verknüpfungen</sys:String>
+    <sys:String x:Key="FmpDescription">Factorio-Modpacks</sys:String>
 
 
     <!-- progress dialogs -->
@@ -291,5 +292,18 @@
     <!-- format strings -->
     <sys:String x:Key="CurrentVersionFormat">Aktuelle Version: {0}</sys:String>
     <sys:String x:Key="NewestVersionFormat">Neuste Version: {0}</sys:String>
+
+
+    <!--
+    ____________________ ModpackExportWindow ____________________
+    -->
+
+    <sys:String x:Key="ModpackExportWindowTitle">Modpacks zum Exportieren auswählen</sys:String>
+
+    <!-- options -->
+    <sys:String x:Key="IncludeVersionInfoOption">Versionsinformationen speichern</sys:String>
+
+    <!-- buttons -->
+    <sys:String x:Key="ExportButton">Exportieren</sys:String>
 
 </ResourceDictionary>

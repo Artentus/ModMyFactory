@@ -7,9 +7,9 @@ namespace ModMyFactory.Export
 {
     static class ModpackExport
     {
-        private static void AddModpacksRecursive(Modpack modpack, ICollection<ModpackExportTemplate> templateCollection)
+        private static void AddModpacksRecursive(Modpack modpack, ICollection<ModpackExportTemplate> templateCollection, bool includeVersionInfo)
         {
-            var template = ModpackExportTemplate.FromModpack(modpack);
+            var template = ModpackExportTemplate.FromModpack(modpack, includeVersionInfo);
             if (!templateCollection.Contains(template)) templateCollection.Add(template);
 
             foreach (var reference in modpack.Mods)
@@ -18,18 +18,18 @@ namespace ModMyFactory.Export
                 if (modpackReference != null)
                 {
                     Modpack subModpack = modpackReference.Modpack;
-                    AddModpacksRecursive(subModpack, templateCollection);
+                    AddModpacksRecursive(subModpack, templateCollection, includeVersionInfo);
                 }
             }
         }
 
-        public static ExportTemplate CreateTemplate(IEnumerable<Modpack> modpacks)
+        public static ExportTemplate CreateTemplate(IEnumerable<Modpack> modpacks, bool includeVersionInfo)
         {
             var modTemplates = new List<ModExportTemplate>();
             var modpackTemplates = new List<ModpackExportTemplate>();
 
             foreach (var modpack in modpacks)
-                AddModpacksRecursive(modpack, modpackTemplates);
+                AddModpacksRecursive(modpack, modpackTemplates, includeVersionInfo);
 
             foreach (var template in modpackTemplates)
             {
@@ -39,16 +39,18 @@ namespace ModMyFactory.Export
                 }
             }
 
-            return new ExportTemplate(modTemplates.ToArray(), modpackTemplates.ToArray());
+            return new ExportTemplate(includeVersionInfo, modTemplates.ToArray(), modpackTemplates.ToArray());
         }
 
-        public static void ExportTemplate(ExportTemplate template, FileInfo file)
+        public static void ExportTemplate(ExportTemplate template, string filePath)
         {
+            var file = new FileInfo(filePath);
             JsonHelper.Serialize(template, file);
         }
 
-        public static ExportTemplate ImportTemplate(FileInfo file)
+        public static ExportTemplate ImportTemplate(string filePath)
         {
+            var file = new FileInfo(filePath);
             return JsonHelper.Deserialize<ExportTemplate>(file);
         }
     }

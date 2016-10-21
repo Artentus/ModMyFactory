@@ -8,9 +8,9 @@ namespace ModMyFactory.Export
     [JsonObject(MemberSerialization.OptOut)]
     sealed class ModExportTemplate : IEquatable<ModExportTemplate>
     {
-        public static ModExportTemplate FromMod(Mod mod)
+        public static ModExportTemplate FromMod(Mod mod, bool includeVersionInfo)
         {
-            return new ModExportTemplate(mod.Name, mod.Version);
+            return new ModExportTemplate(mod.Name, includeVersionInfo ? mod.Version : null);
         }
 
         public string Name { get; }

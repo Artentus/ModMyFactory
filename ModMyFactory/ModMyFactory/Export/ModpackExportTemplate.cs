@@ -8,7 +8,7 @@ namespace ModMyFactory.Export
     [JsonObject(MemberSerialization.OptOut)]
     sealed class ModpackExportTemplate : IEquatable<ModpackExportTemplate>
     {
-        public static ModpackExportTemplate FromModpack(Modpack modpack)
+        public static ModpackExportTemplate FromModpack(Modpack modpack, bool includeVersionInfo)
         {
             var mods = new List<ModExportTemplate>();
             var modpacks = new List<string>();
@@ -20,7 +20,7 @@ namespace ModMyFactory.Export
 
                 if (modReference != null)
                 {
-                    mods.Add(ModExportTemplate.FromMod(modReference.Mod));
+                    mods.Add(ModExportTemplate.FromMod(modReference.Mod, includeVersionInfo));
                 }
                 else if (modpackReference != null)
                 {

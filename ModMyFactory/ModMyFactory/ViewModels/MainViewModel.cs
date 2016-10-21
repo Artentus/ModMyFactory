@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using ModMyFactory.Export;
 using ModMyFactory.Helpers;
 using ModMyFactory.Lang;
 using ModMyFactory.MVVM;
@@ -533,7 +534,23 @@ namespace ModMyFactory.ViewModels
 
         private void ExportModpacks()
         {
-            
+            var exportWindow = new ModpackExportWindow() { Owner = Window };
+            bool? result = exportWindow.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                var dialog = new VistaSaveFileDialog();
+                dialog.Filter = App.Instance.GetLocalizedResourceString("FmpDescription") + @" (*.fmp)|*.fmp";
+                dialog.AddExtension = true;
+                dialog.DefaultExt = ".fmp";
+                result = dialog.ShowDialog(Window);
+                if (result.HasValue && result.Value)
+                {
+                    ExportTemplate template = ModpackExport.CreateTemplate(
+                        exportWindow.ModpackListBox.SelectedItems.Cast<Modpack>(),
+                        exportWindow.ViewModel.IncludeVersionInfo);
+                    ModpackExport.ExportTemplate(template, dialog.FileName);
+                }
+            }
         }
 
         private async Task ImportModpacks()
