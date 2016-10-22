@@ -284,6 +284,10 @@ namespace ModMyFactory.ViewModels
 
                 UpdateCommand = new RelayCommand<bool>(async silent => await Update(silent), () => !updating);
                 OpenAboutWindowCommand = new RelayCommand(OpenAboutWindow);
+
+
+                // New ModMyFactory instance started.
+                Program.NewInstanceStarted += (sender, e) => Window.Dispatcher.Invoke(() => OnNewInstanceStarted(e.CommandLine));
             }
         }
 
@@ -936,6 +940,13 @@ namespace ModMyFactory.ViewModels
         {
             var aboutWindow = new AboutWindow() { Owner = Window };
             aboutWindow.ShowDialog();
+        }
+
+        private void OnNewInstanceStarted(CommandLine commandLine)
+        {
+            Window.Activate();
+
+            // ToDo: Import modpack if given.
         }
     }
 }

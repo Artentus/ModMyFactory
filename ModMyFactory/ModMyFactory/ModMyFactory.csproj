@@ -95,6 +95,7 @@
     <Compile Include="Helpers\PercievedFileType.cs" />
     <Compile Include="Helpers\RegistryHelper.cs" />
     <Compile Include="Helpers\SecureStringHelper.cs" />
+    <Compile Include="InstanceStartedEventArgs.cs" />
     <Compile Include="ManagerMode.cs" />
     <Compile Include="MessageType.cs" />
     <Compile Include="ModCollection.cs" />

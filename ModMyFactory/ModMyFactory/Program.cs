@@ -2,10 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using ModMyFactory.Helpers;
 using ModMyFactory.Win32;
@@ -14,10 +18,23 @@ namespace ModMyFactory
 {
     public static class Program
     {
+        static NamedPipeServerStream server;
+        static ManualResetEvent resetEvent;
+
+        /// <summary>
+        /// Occurs if the program gets started again.
+        /// </summary>
+        internal static event EventHandler<InstanceStartedEventArgs> NewInstanceStarted;
+
         /// <summary>
         /// Indicates whether ModMyFatory should check for updates on startup.
         /// </summary>
-        public static bool UpdateCheckOnStartup { get; private set; }
+        internal static bool UpdateCheckOnStartup { get; private set; }
+
+        /// <summary>
+        /// The assemblys GUID.
+        /// </summary>
+        internal static Guid Guid => Guid.Parse(((GuidAttribute)(Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(GuidAttribute), false)[0])).Value);
 
         /// <summary>
         /// Displays a help message in the console.
@@ -146,6 +163,103 @@ namespace ModMyFactory
             return app.Run();
         }
 
+        private static void SendNewInstanceStartedMessage(string[] arguments)
+        {
+            string appGuid = Program.Guid.ToString();
+            string pipeId = $"{{{appGuid}}}";
+            using (var client = new NamedPipeClientStream(".", pipeId, PipeDirection.Out, PipeOptions.Asynchronous))
+            {
+                client.Connect(10000);
+                if (client.IsConnected)
+                {
+                    using (var writer = new BinaryWriter(client))
+                    {
+                        writer.Write(arguments.Length);
+
+                        for (int i = 0; i < arguments.Length; i++)
+                        {
+                            byte[] argument = Encoding.UTF8.GetBytes(arguments[i]);
+                            writer.Write(argument.Length);
+                            writer.Write(argument);
+                        }
+                    }
+
+                    client.WaitForPipeDrain();
+                }
+            }
+        }
+
+        private static void ListenInner(IAsyncResult result)
+        {
+            try
+            {
+                var tuple = (Tuple<NamedPipeServerStream, ManualResetEvent>)result.AsyncState;
+                var server = tuple.Item1;
+                var resetEvent = tuple.Item2;
+
+                server.EndWaitForConnection(result);
+
+                using (var reader = new BinaryReader(server))
+                {
+                    int argumentCount = reader.ReadInt32();
+                    string[] arguments = new string[argumentCount];
+
+                    for (int i = 0; i < argumentCount; i++)
+                    {
+                        int argumentLength = reader.ReadInt32();
+                        byte[] buffer = new byte[argumentLength];
+                        reader.Read(buffer, 0, argumentLength);
+
+                        string argument = Encoding.UTF8.GetString(buffer);
+                        arguments[i] = argument;
+                    }
+
+                    NewInstanceStarted?.Invoke(null, new InstanceStartedEventArgs(new CommandLine(arguments)));
+                }
+
+                resetEvent.Set();
+            }
+            catch (ObjectDisposedException)
+            { }
+        }
+
+        private static Task ListenForNewInstanceStarted(CancellationToken cancellationToken)
+        {
+            return Task.Run(() =>
+            {
+                cancellationToken.Register(() =>
+                {
+                    server?.Close();
+                    resetEvent?.Set();
+                });
+
+                string appGuid = Program.Guid.ToString();
+                string pipeId = $"{{{appGuid}}}";
+
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    try
+                    {
+                        server = new NamedPipeServerStream(pipeId, PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+                        resetEvent = new ManualResetEvent(false);
+
+                        IAsyncResult result = server.BeginWaitForConnection(ListenInner, new Tuple<NamedPipeServerStream, ManualResetEvent>(server, resetEvent));
+                        result.AsyncWaitHandle.WaitOne();
+
+                        resetEvent.WaitOne();
+                    }
+                    finally
+                    {
+                        resetEvent?.Close();
+                        resetEvent = null;
+
+                        server?.Close();
+                        server = null;
+                    }
+                }
+            });
+        }
+
         /// <summary>
         /// Application entry point.
         /// </summary>
@@ -157,12 +271,12 @@ namespace ModMyFactory
             // Only display help.
             if (commandLine.IsSet('h', "help"))
             {
-                DisplayHelp();
+                Program.DisplayHelp();
                 return 0;
             }
 
 
-            string appGuid = ((GuidAttribute)(Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(GuidAttribute), false)[0])).Value;
+            string appGuid = Program.Guid.ToString();
             string mutexId = $"{{{appGuid}}}";
 
             bool createdNew;
@@ -177,6 +291,7 @@ namespace ModMyFactory
                         if (!hasHandle)
                         {
                             // App already running.
+                            SendNewInstanceStartedMessage(args);
                             return 0;
                         }
                     }
@@ -186,7 +301,15 @@ namespace ModMyFactory
                     }
 
                     // App not running.
-                    return Run(commandLine);
+                    var cancellationSource = new CancellationTokenSource();
+                    Task listenTask = ListenForNewInstanceStarted(cancellationSource.Token);
+
+                    int result = Program.Run(commandLine);
+
+                    cancellationSource.Cancel();
+                    listenTask.Wait();
+                    
+                    return result;
                 }
                 finally
                 {
