@@ -48,6 +48,11 @@ namespace ModMyFactory
         internal string AppDataPath { get; }
 
         /// <summary>
+        /// The application directory.
+        /// </summary>
+        internal string ApplicationDirectoryPath { get; }
+
+        /// <summary>
         /// The global location for savegames.
         /// </summary>
         internal string GlobalSavePath => Path.Combine(AppDataPath, "saves");
@@ -60,6 +65,7 @@ namespace ModMyFactory
         public App(bool createCrashLog, string appDataPath)
         {
             AppDataPath = appDataPath;
+            ApplicationDirectoryPath = Path.GetFullPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
 
             var appDataDirectory = new DirectoryInfo(AppDataPath);
             if (!appDataDirectory.Exists) appDataDirectory.Create();
@@ -68,9 +74,9 @@ namespace ModMyFactory
             Settings = Settings.Load(settingsFile, true);
 
             // Create file type association
-            string handlerName = RegistryHelper.RegisterHandler("FactorioModpack", 1, "Factorio modpack", Path.GetFullPath("Factorio_Modpack_Icon.ico"));
+            string iconPath = Path.Combine(ApplicationDirectoryPath, "Factorio_Modpack_Icon.ico");
+            string handlerName = RegistryHelper.RegisterHandler("FactorioModpack", 1, "Factorio modpack", $"\"{iconPath}\"");
             RegistryHelper.RegisterFileType(".fmp", handlerName, "application/json", PercievedFileType.Text);
-            Shell32.ChangeNotify(ChangeNotifyEventId.AssociationChanged, ChangeNotifyFlags.IdList);
 
             // Generate log when crashed.
             if (createCrashLog)

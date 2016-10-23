@@ -332,9 +332,6 @@
     <Resource Include="Images\RenameInactive.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\ExportLink.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\MMF_Icon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -370,6 +367,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Factorio_Modpack_Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Link.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

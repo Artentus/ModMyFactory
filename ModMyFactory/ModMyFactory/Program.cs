@@ -54,11 +54,12 @@ namespace ModMyFactory
 
             Console.WriteLine(@"Usage:");
             Console.WriteLine(@"  modmyfactory.exe -h | --help");
-            Console.WriteLine(@"  modmyfactory.exe [options]");
+            Console.WriteLine(@"  modmyfactory.exe [options] [<modpack-file>...]");
             Console.WriteLine(@"  modmyfactory.exe [options] -f <version> | --factorio-version=<version> [(-p <name> | --modpack=<name>)]");
             Console.WriteLine();
             Console.WriteLine(@"Options:");
             Console.WriteLine(@"  -h, --help                                 Display this help message.");
+            Console.WriteLine(@"  MODPACK-FILE                               Imports the specified modpack file.");
             Console.WriteLine(@"  -l, --no-logs                              Don't create crash logs.");
             Console.WriteLine(@"  -a PATH, --appdata-path=PATH               Overwrite the default application data path.");
             Console.WriteLine(@"  -u, --no-update                            Don't search for update on startup.");

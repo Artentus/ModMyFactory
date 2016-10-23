@@ -144,7 +144,7 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand CreateModpackCommand { get; }
 
-        public RelayCommand ExportLinkCommand { get; }
+        public RelayCommand CreateLinkCommand { get; }
 
         public RelayCommand ExportModpacksCommand { get; }
 
@@ -258,7 +258,7 @@ namespace ModMyFactory.ViewModels
                 AddModsFromFilesCommand = new RelayCommand(async () => await AddModsFromFiles());
                 AddModFromFolderCommand = new RelayCommand(async () => await AddModFromFolder());
                 CreateModpackCommand = new RelayCommand(CreateNewModpack);
-                ExportLinkCommand = new RelayCommand(CreateLink);
+                CreateLinkCommand = new RelayCommand(CreateLink);
 
                 ExportModpacksCommand = new RelayCommand(ExportModpacks);
                 ImportModpacksCommand = new RelayCommand(async () => await ImportModpacks());
@@ -287,7 +287,7 @@ namespace ModMyFactory.ViewModels
 
 
                 // New ModMyFactory instance started.
-                Program.NewInstanceStarted += (sender, e) => Window.Dispatcher.Invoke(() => OnNewInstanceStarted(e.CommandLine));
+                Program.NewInstanceStarted += NewInstanceStartedHandler;
             }
         }
 
@@ -524,8 +524,8 @@ namespace ModMyFactory.ViewModels
                 result = dialog.ShowDialog(Window);
                 if (result.HasValue && result.Value)
                 {
-                    string applicationPath = Assembly.GetExecutingAssembly().Location;
-                    string iconPath = Path.Combine(Environment.CurrentDirectory, "Factorio_Icon.ico");
+                    string applicationPath = Path.GetFullPath(Assembly.GetExecutingAssembly().Location);
+                    string iconPath = Path.Combine(App.Instance.ApplicationDirectoryPath, "Factorio_Icon.ico");
                     string versionString = propertiesWindow.ViewModel.SelectedVersion.VersionString;
                     string modpackName = propertiesWindow.ViewModel.SelectedModpack?.Name;
 
@@ -940,6 +940,11 @@ namespace ModMyFactory.ViewModels
         {
             var aboutWindow = new AboutWindow() { Owner = Window };
             aboutWindow.ShowDialog();
+        }
+
+        private async void NewInstanceStartedHandler(object sender, InstanceStartedEventArgs e)
+        {
+            await Window.Dispatcher.InvokeAsync(() => OnNewInstanceStarted(e.CommandLine));
         }
 
         private void OnNewInstanceStarted(CommandLine commandLine)

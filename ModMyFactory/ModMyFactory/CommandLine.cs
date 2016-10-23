@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace ModMyFactory
 {
@@ -29,9 +30,13 @@ namespace ModMyFactory
 
         readonly List<CommandLineOption> options;
 
+        public ReadOnlyCollection<string> Arguments { get; }
+
         public CommandLine(string[] arguments)
         {
             options = new List<CommandLineOption>();
+            var argumentList = new List<string>();
+            Arguments = new ReadOnlyCollection<string>(argumentList);
 
             int index = 0;
             while (index < arguments.Length)
@@ -55,6 +60,10 @@ namespace ModMyFactory
                     {
                         options.Add(new CommandLineOption(argument[i], value));
                     }
+                }
+                else
+                {
+                    argumentList.Add(argument);
                 }
 
                 index++;

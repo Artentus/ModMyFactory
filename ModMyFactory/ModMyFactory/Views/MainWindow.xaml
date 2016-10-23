@@ -24,10 +24,10 @@
         <BitmapImage x:Key="CloseIcon" UriSource="../Images/Close.png"/>
         <BitmapImage x:Key="ConfigureIcon" UriSource="../Images/Configure.png"/>
         <BitmapImage x:Key="DownloadIcon" UriSource="../Images/Download.png"/>
-        <BitmapImage x:Key="ExportLinkIcon" UriSource="../Images/ExportLink.png"/>
         <BitmapImage x:Key="ExportPackageIcon" UriSource="../Images/ExportPackage.png"/>
         <BitmapImage x:Key="ImportPackageIcon" UriSource="../Images/ImportPackage.png"/>
         <BitmapImage x:Key="InformationIcon" UriSource="../Images/Information.png"/>
+        <BitmapImage x:Key="LinkIcon" UriSource="../Images/Link.png"/>
         <BitmapImage x:Key="NewPackageIcon" UriSource="../Images/NewPackage.png"/>
         <BitmapImage x:Key="OpenFolderIcon" UriSource="../Images/OpenFolder.png"/>
         <BitmapImage x:Key="RenameActiveIcon" UriSource="../Images/RenameActive.png"/>
@@ -106,7 +106,9 @@
 
     <Window.InputBindings>
         <KeyBinding Modifiers="Control" Key="N" Command="{Binding CreateModpackCommand}"/>
-        <KeyBinding Modifiers="Control" Key="L" Command="{Binding ExportLinkCommand}"/>
+        <KeyBinding Modifiers="Control" Key="L" Command="{Binding CreateLinkCommand}"/>
+        <KeyBinding Key="F9" Command="{Binding ExportModpacksCommand}"/>
+        <KeyBinding Key="F10" Command="{Binding ImportModpacksCommand}"/>
         <KeyBinding Key="F5" Command="{Binding StartGameCommand}"/>
         <KeyBinding Key="F6" Command="{Binding OpenVersionManagerCommand}"/>
         <KeyBinding Key="F12" Command="{Binding OpenSettingsCommand}"/>
@@ -136,13 +138,15 @@
                 </MenuItem>
                 <MenuItem Header="{DynamicResource NewModpackMenuItem}" Icon="{StaticResource NewPackageIcon}"
                           InputGestureText="{DynamicResource NewModpackHotkey}" Command="{Binding CreateModpackCommand}"/>
-                <MenuItem Header="{DynamicResource ExportLinkMenuItem}" Icon="{StaticResource ExportLinkIcon}"
-                          InputGestureText="{DynamicResource ExportLinkHotkey}" Command="{Binding ExportLinkCommand}"/>
+                <MenuItem Header="{DynamicResource CreateLinkMenuItem}" Icon="{StaticResource LinkIcon}"
+                          InputGestureText="{DynamicResource CreateLinkHotkey}" Command="{Binding CreateLinkCommand}"/>
 
                 <Separator/>
 
-                <MenuItem Header="{DynamicResource ExportModpacksMenuItem}" Icon="{StaticResource ExportPackageIcon}" Command="{Binding ExportModpacksCommand}"/>
-                <MenuItem Header="{DynamicResource ImportModpacksMenuItem}" Icon="{StaticResource ImportPackageIcon}" Command="{Binding ImportModpacksCommand}"/>
+                <MenuItem Header="{DynamicResource ExportModpacksMenuItem}" Icon="{StaticResource ExportPackageIcon}"
+                          InputGestureText="{DynamicResource ExportModpacksHotkey}" Command="{Binding ExportModpacksCommand}"/>
+                <MenuItem Header="{DynamicResource ImportModpacksMenuItem}" Icon="{StaticResource ImportPackageIcon}"
+                          InputGestureText="{DynamicResource ImportModpacksHotkey}" Command="{Binding ImportModpacksCommand}"/>
 
                 <Separator/>
                 
@@ -264,8 +268,8 @@
             <Button ToolTip="{DynamicResource NewModpackMenuItem}" Command="{Binding CreateModpackCommand}">
                 <Image Margin="1" Stretch="None" Source="{StaticResource NewPackageIcon}"/>
             </Button>
-            <Button ToolTip="{DynamicResource ExportLinkMenuItem}" Command="{Binding ExportLinkCommand}">
-                <Image Margin="1" Stretch="None" Source="{StaticResource ExportLinkIcon}"/>
+            <Button ToolTip="{DynamicResource CreateLinkMenuItem}" Command="{Binding CreateLinkCommand}">
+                <Image Margin="1" Stretch="None" Source="{StaticResource LinkIcon}"/>
             </Button>
             
             <Separator/>
