@@ -48,9 +48,8 @@ namespace ModMyFactory.Export
             JsonHelper.Serialize(template, file);
         }
 
-        public static ExportTemplate ImportTemplate(string filePath)
+        public static ExportTemplate ImportTemplate(FileInfo file)
         {
-            var file = new FileInfo(filePath);
             return JsonHelper.Deserialize<ExportTemplate>(file);
         }
     }

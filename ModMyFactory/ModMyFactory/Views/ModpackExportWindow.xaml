@@ -45,7 +45,8 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="2,4" Content="{DynamicResource IncludeVersionInfoOption}" IsChecked="{Binding IncludeVersionInfo}"/>
+        <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="2,4" HorizontalAlignment="Left" ToolTip="{DynamicResource IncludeVersionsToolTip}"
+                  Content="{DynamicResource IncludeVersionInfoOption}" IsChecked="{Binding IncludeVersionInfo}"/>
         <Button Grid.Row="2" Grid.Column="1" Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
         <Button Grid.Row="2" Grid.Column="2" Margin="2" IsDefault="True" IsEnabled="{Binding CanExport}" Content="{DynamicResource ExportButton}" Click="ExportButtonClickHandler"/>
     </Grid>

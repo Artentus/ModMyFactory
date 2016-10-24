@@ -32,6 +32,9 @@
     <sys:String x:Key="Information.NoModUpdates.Message">All your mods are up to date.</sys:String>
     <sys:String x:Key="Information.NoModUpdates.Title">No updates found</sys:String>
     
+    <sys:String x:Key="Warning.HasConflicts.Message">The following conflicts occured while importing this modpack file:</sys:String>
+    <sys:String x:Key="Warning.HasConflicts.Title">Modpack file causes conflicts</sys:String>
+    
     <sys:String x:Key="Question.Update.Message">You are running an old version of ModMyFactory (current version is {0}, newest version is {1}).&#x0a;Do you want to download the newest version?</sys:String>
     <sys:String x:Key="Question.Update.Title">Update available</sys:String>
     
@@ -263,6 +266,7 @@
     <sys:String x:Key="FontLabel">Factorio font:</sys:String>
     <sys:String x:Key="DialogsLabel">Dialogs:</sys:String>
     <sys:String x:Key="JsonLabel">JSON Framework:</sys:String>
+    <sys:String x:Key="GitHubLabel">GitHub API:</sys:String>
     
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Contributors</sys:String>
@@ -305,6 +309,9 @@
     
     <!-- options -->
     <sys:String x:Key="IncludeVersionInfoOption">Include version info</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="IncludeVersionsToolTip">This will save the versions of the exported mods into the exported file.&#x0a;On import ModMyFactory will use this info to download specific mod versions.</sys:String>
     
     <!-- buttons -->
     <sys:String x:Key="ExportButton">Export</sys:String>

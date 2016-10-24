@@ -11,6 +11,16 @@ namespace ModMyFactory
         /// Checks if the collection contains a mod.
         /// </summary>
         /// <param name="name">The name of the mod.</param>
+        /// <returns>Returns true if the collection contains the mod, otherwise false.</returns>
+        public bool Contains(string name)
+        {
+            return this.Any(mod => string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        /// <summary>
+        /// Checks if the collection contains a mod.
+        /// </summary>
+        /// <param name="name">The name of the mod.</param>
         /// <param name="version">The mods version.</param>
         /// <returns>Returns true if the collection contains the mod, otherwise false.</returns>
         public bool Contains(string name, Version version)
@@ -39,6 +49,16 @@ namespace ModMyFactory
                 return this.Any(mod =>
                     string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase));
             }
+        }
+
+        /// <summary>
+        /// Finds mods in this collection.
+        /// </summary>
+        /// <param name="name">The name of the mods.</param>
+        /// <returns>Returns the mods searched for.</returns>
+        public Mod[] Find(string name)
+        {
+            return this.Where(mod => string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)).ToArray();
         }
 
         /// <summary>

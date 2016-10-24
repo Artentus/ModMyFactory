@@ -104,6 +104,16 @@ namespace ModMyFactory.Web
         }
 
         /// <summary>
+        /// Gets extended information about a specific mod.
+        /// </summary>
+        /// <param name="modName">The name ot the mod to get the extended information about.</param>
+        /// <returns>Returns extended information about the specified mod.</returns>
+        public static async Task<ExtendedModInfo> GetExtendedInfoAsync(string modName)
+        {
+            return await GetExtendedInfoAsyncInner(modName);
+        }
+
+        /// <summary>
         /// Logs in at the website.
         /// </summary>
         /// <param name="username">The username.</param>

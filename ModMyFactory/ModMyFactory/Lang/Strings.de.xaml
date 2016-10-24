@@ -31,6 +31,9 @@
     <sys:String x:Key="Information.NoModUpdates.Message">Alle Ihre Mods sind auf dem neusten Stand.</sys:String>
     <sys:String x:Key="Information.NoModUpdates.Title">Keine Updates gefunden</sys:String>
 
+    <sys:String x:Key="Warning.HasConflicts.Message">Folgende Konflikte traten beim Importieren der Modpack-Datei auf:</sys:String>
+    <sys:String x:Key="Warning.HasConflicts.Title">Modpack-Datei verursacht Konflikte</sys:String>
+
     <sys:String x:Key="Question.Update.Message">Sie führen eine veraltete Version von ModMyFactory aus (aktuelle Version ist {0}, neuste Version ist {1}).&#x0a;Möchten Sie die neuste Version herunterladen?</sys:String>
     <sys:String x:Key="Question.Update.Title">Update verfügbar</sys:String>
 
@@ -262,6 +265,7 @@
     <sys:String x:Key="FontLabel">Factorio-Schriftart:</sys:String>
     <sys:String x:Key="DialogsLabel">Dialoge:</sys:String>
     <sys:String x:Key="JsonLabel">JSON Framework:</sys:String>
+    <sys:String x:Key="GitHubLabel">GitHub API:</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Mitwirkende</sys:String>
@@ -304,6 +308,9 @@
 
     <!-- options -->
     <sys:String x:Key="IncludeVersionInfoOption">Versionsinformationen speichern</sys:String>
+
+    <!-- tooltips -->
+    <sys:String x:Key="IncludeVersionsToolTip">Ist diese Option aktiviert werden die Mod-Versionen in der exportierten Datei gespeichert.&#x0a;ModMyFactory wird diese Informationen beim Importieren verwenden, um spezifische Mod-Versionen herunterzuladen.</sys:String>
 
     <!-- buttons -->
     <sys:String x:Key="ExportButton">Exportieren</sys:String>

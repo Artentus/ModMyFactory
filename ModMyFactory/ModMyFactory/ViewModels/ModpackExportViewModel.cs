@@ -41,8 +41,6 @@ namespace ModMyFactory.ViewModels
                 ModpacksView = (ListCollectionView)(new CollectionViewSource() { Source = Modpacks }).View;
                 ModpacksView.CustomSort = new ModpackSorter();
 
-                includeVersionInfo = true;
-
                 CommandManager.RequerySuggested += CanExportChanged;
             }
         }

@@ -61,7 +61,7 @@ namespace ModMyFactory
             Console.WriteLine(@"  -h, --help                                 Display this help message.");
             Console.WriteLine(@"  MODPACK-FILE                               Imports the specified modpack file.");
             Console.WriteLine(@"  -l, --no-logs                              Don't create crash logs.");
-            Console.WriteLine(@"  -a PATH, --appdata-path=PATH               Overwrite the default application data path.");
+            Console.WriteLine(@"  -a PATH, --appdata-path=PATH               Override the default application data path.");
             Console.WriteLine(@"  -u, --no-update                            Don't search for update on startup.");
             Console.WriteLine(@"  -f VERSION, --factorio-version=VERSION     Start the specified version of Factorio.");
             Console.WriteLine(@"  -p NAME, --modpack=NAME                    Enable the specified modpack.");

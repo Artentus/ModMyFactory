@@ -12,7 +12,6 @@ using ModMyFactory.Lang;
 using Octokit;
 using Application = System.Windows.Application;
 using ModMyFactory.Models;
-using ModMyFactory.Win32;
 using FileMode = System.IO.FileMode;
 
 namespace ModMyFactory

@@ -291,6 +291,8 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        #region AddMods
+
         private async Task DownloadMods()
         {
             var progressWindow = new ProgressWindow() { Owner = Window };
@@ -487,6 +489,8 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        #endregion
+
         private bool ContainsModpack(string name)
         {
             return Modpacks.Any(item => item.Name == name);
@@ -557,16 +561,6 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private async Task ImportModpacks()
-        {
-            
-        }
-
-        private void StartGame()
-        {
-            Process.Start(SelectedVersion.ExecutablePath);
-        }
-
         private bool LogIn()
         {
             bool failed = false;
@@ -598,6 +592,253 @@ namespace ModMyFactory.ViewModels
 
             return true;
         }
+
+        #region ModpackImport
+
+        private ModRelease GetNewestRelease(ExtendedModInfo info)
+        {
+            return info.Releases.MaxBy(release => release.Version, new VersionComparer());
+        }
+
+        private async Task<Tuple<List<ModRelease>, List<Tuple<Mod, ModExportTemplate>>>> GetModsToDownload(ExportTemplate template)
+        {
+            var toDownload = new List<ModRelease>();
+            var conflicting = new List<Tuple<Mod, ModExportTemplate>>();
+
+            if (template.IncludesVersionInfo)
+            {
+                foreach (var modTemplate in template.Mods)
+                {
+                    if (!Mods.Contains(modTemplate.Name, modTemplate.Version))
+                    {
+                        Mod[] mods = Mods.Find(modTemplate.Name);
+
+                        ExtendedModInfo modInfo = await ModWebsite.GetExtendedInfoAsync(modTemplate.Name);
+                        ModRelease release = modInfo.Releases.FirstOrDefault(r => r.Version == modTemplate.Version);
+
+                        if (release != null)
+                        {
+                            if (mods.Length == 0)
+                            {
+                                toDownload.Add(release);
+                            }
+                            else
+                            {
+                                if ((App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion) &&
+                                    mods.All(mod => mod.FactorioVersion != release.FactorioVersion))
+                                {
+                                    toDownload.Add(release);
+                                }
+                                else
+                                {
+                                    conflicting.Add(new Tuple<Mod, ModExportTemplate>(mods[0], modTemplate));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (var modTemplate in template.Mods)
+                {
+                    Mod[] mods = Mods.Find(modTemplate.Name);
+
+                    if (mods.Length == 0)
+                    {
+                        ExtendedModInfo modInfo = await ModWebsite.GetExtendedInfoAsync(modTemplate.Name);
+                        ModRelease newestRelease = GetNewestRelease(modInfo);
+                        toDownload.Add(newestRelease);
+                    }
+                    else
+                    {
+                        ExtendedModInfo modInfo = await ModWebsite.GetExtendedInfoAsync(modTemplate.Name);
+                        ModRelease newestRelease = GetNewestRelease(modInfo);
+
+                        if (!Mods.Contains(modTemplate.Name, newestRelease.Version))
+                        {
+                            if ((App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion) &&
+                            mods.All(mod => mod.FactorioVersion != newestRelease.FactorioVersion))
+                            {
+                                toDownload.Add(newestRelease);
+                            }
+                            else
+                            {
+                                conflicting.Add(new Tuple<Mod, ModExportTemplate>(mods[0], modTemplate));
+                            }
+                        }
+                    }
+                }
+            }
+
+            return new Tuple<List<ModRelease>, List<Tuple<Mod, ModExportTemplate>>>(toDownload, conflicting);
+        }
+
+        private async Task DownloadModAsyncInner(ModRelease modRelease, IProgress<double> progress, CancellationToken cancellationToken)
+        {
+            Mod mod = await ModWebsite.DownloadReleaseAsync(modRelease, GlobalCredentials.Username, token, progress, cancellationToken, Mods, Modpacks, Window);
+            if (!cancellationToken.IsCancellationRequested && (mod != null)) Mods.Add(mod);
+        }
+
+        private async Task DownloadModsAsyncInner(List<ModRelease> modReleases, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
+        {
+            int modCount = modReleases.Count;
+            double baseProgressValue = 0;
+            foreach (var release in modReleases)
+            {
+                if (cancellationToken.IsCancellationRequested) return;
+
+                double modProgressValue = 0;
+                var modProgress = new Progress<double>(value =>
+                {
+                    modProgressValue = value / modCount;
+                    progress.Report(new Tuple<double, string>(baseProgressValue + modProgressValue, release.FileName));
+                });
+
+                await DownloadModAsyncInner(release, modProgress, cancellationToken);
+
+                baseProgressValue += modProgressValue;
+            }
+        }
+
+        private async Task DownloadModsAsync(List<ModRelease> modReleases)
+        {
+            if (LogIn())
+            {
+                var progressWindow = new ProgressWindow() { Owner = Window };
+                progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
+
+                var progress = new Progress<Tuple<double, string>>(info =>
+                {
+                    progressWindow.ViewModel.Progress = info.Item1;
+                    progressWindow.ViewModel.ProgressDescription = string.Format(App.Instance.GetLocalizedResourceString("DownloadingDescription"), info.Item2);
+                });
+
+                var cancellationSource = new CancellationTokenSource();
+                progressWindow.ViewModel.CanCancel = true;
+                progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+
+                Task updateTask = DownloadModsAsyncInner(modReleases, progress, cancellationSource.Token);
+                Task closeWindowTask = updateTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                progressWindow.ShowDialog();
+
+                await updateTask;
+                await closeWindowTask;
+            }
+        }
+
+        private async Task ImportModpackFile(FileInfo modpackFile)
+        {
+            ExportTemplate template = ModpackExport.ImportTemplate(modpackFile);
+
+            var toDownloadResult = await GetModsToDownload(template);
+            List<ModRelease> toDownload = toDownloadResult.Item1;
+            List<Tuple<Mod, ModExportTemplate>> conflicting = toDownloadResult.Item2;
+
+            if (conflicting.Count > 0)
+            {
+                MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("HasConflicts", MessageType.Warning) + "\n"
+                    + string.Join("\n", conflicting.Select(conflict => $"{conflict.Item1.Name} ({conflict.Item1.Version}) <-> {conflict.Item2.Name}"
+                    + (template.IncludesVersionInfo ? $" ({conflict.Item2.Version})" : " (latest)"))),
+                    App.Instance.GetLocalizedMessageTitle("HasConflicts", MessageType.Warning),
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
+            if (toDownload.Count > 0)
+                await DownloadModsAsync(toDownload);
+
+            foreach (var modpackTemplate in template.Modpacks)
+            {
+                var existingModpack = Modpacks.FirstOrDefault(item => item.Name == modpackTemplate.Name);
+
+                if (existingModpack == null)
+                {
+                    Modpack modpack = new Modpack(modpackTemplate.Name, Modpacks, Window);
+                    modpack.ParentView = ModpacksView;
+
+                    foreach (var modTemplate in modpackTemplate.Mods)
+                    {
+                        if (template.IncludesVersionInfo)
+                        {
+                            Mod mod = Mods.Find(modTemplate.Name, modTemplate.Version);
+                            if (mod != null) modpack.Mods.Add(new ModReference(mod, modpack));
+                        }
+                        else
+                        {
+                            Mod mod = Mods.Find(modTemplate.Name).MaxBy(item => item.Version, new VersionComparer());
+                            if (mod != null) modpack.Mods.Add(new ModReference(mod, modpack));
+                        }
+                    }
+
+                    Modpacks.Add(modpack);
+                }
+                else
+                {
+                    foreach (var modTemplate in modpackTemplate.Mods)
+                    {
+                        if (template.IncludesVersionInfo)
+                        {
+                            Mod mod = Mods.Find(modTemplate.Name, modTemplate.Version);
+                            if ((mod != null) && !existingModpack.Contains(mod)) existingModpack.Mods.Add(new ModReference(mod, existingModpack));
+                        }
+                        else
+                        {
+                            Mod mod = Mods.Find(modTemplate.Name).MaxBy(item => item.Version, new VersionComparer());
+                            if ((mod != null) && !existingModpack.Contains(mod)) existingModpack.Mods.Add(new ModReference(mod, existingModpack));
+                        }
+                    }
+                }
+            }
+            foreach (var modpackTemplate in template.Modpacks)
+            {
+                var existingModpack = Modpacks.FirstOrDefault(item => item.Name == modpackTemplate.Name);
+
+                if (existingModpack != null)
+                {
+                    foreach (var innerTemplate in modpackTemplate.Modpacks)
+                    {
+                        Modpack modpack = Modpacks.FirstOrDefault(item => item.Name == innerTemplate);
+                        if ((modpack != null) && !existingModpack.Contains(modpack)) existingModpack.Mods.Add(new ModpackReference(modpack, existingModpack));
+                    }
+                }
+            }
+        }
+
+        private async Task ImportModpacksInner(IEnumerable<FileInfo> modpackFiles)
+        {
+            foreach (FileInfo file in modpackFiles)
+                await ImportModpackFile(file);
+        }
+
+        private async Task ImportModpacks()
+        {
+            var dialog = new VistaOpenFileDialog();
+            dialog.Filter = App.Instance.GetLocalizedResourceString("FmpDescription") + @" (*.fmp)|*.fmp";
+            dialog.Multiselect = true;
+            bool? result = dialog.ShowDialog(Window);
+            if (result.HasValue && result.Value)
+            {
+                var fileList = new List<FileInfo>();
+                foreach (var fileName in dialog.FileNames)
+                {
+                    var file = new FileInfo(fileName);
+                    fileList.Add(file);
+                }
+                
+                if (fileList.Count > 0)
+                    await ImportModpacksInner(fileList);
+            }
+        }
+
+        #endregion
+
+        private void StartGame()
+        {
+            Process.Start(SelectedVersion.ExecutablePath);
+        }
+
+        #region ModUpdate
 
         private ModRelease GetNewestRelease(ExtendedModInfo info, Mod current)
         {
@@ -792,11 +1033,15 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        #endregion
+
         private void OpenVersionManager()
         {
             var versionManagementWindow = new VersionManagementWindow() { Owner = Window };
             versionManagementWindow.ShowDialog();
         }
+
+        #region Settings
 
         private async Task MoveDirectories(DirectoryInfo oldFactorioDirectory, DirectoryInfo oldModDirectory, DirectoryInfo newFactorioDirectory, DirectoryInfo newModDirectory)
         {
@@ -908,6 +1153,8 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        #endregion
+
         private async Task Update(bool silent)
         {
             updating = true;
@@ -944,14 +1191,25 @@ namespace ModMyFactory.ViewModels
 
         private async void NewInstanceStartedHandler(object sender, InstanceStartedEventArgs e)
         {
-            await Window.Dispatcher.InvokeAsync(() => OnNewInstanceStarted(e.CommandLine));
+            await Window.Dispatcher.InvokeAsync(async () => await OnNewInstanceStarted(e.CommandLine));
         }
 
-        private void OnNewInstanceStarted(CommandLine commandLine)
+        private async Task OnNewInstanceStarted(CommandLine commandLine)
         {
             Window.Activate();
 
-            // ToDo: Import modpack if given.
+            var fileList = new List<FileInfo>();
+            foreach (string argument in commandLine.Arguments)
+            {
+                if (argument.EndsWith(".fmp") && File.Exists(argument))
+                {
+                    var file = new FileInfo(argument);
+                    fileList.Add(file);
+                }
+            }
+
+            if (fileList.Count > 0)
+                await ImportModpacksInner(fileList);
         }
     }
 }
