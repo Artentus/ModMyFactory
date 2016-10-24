@@ -266,10 +266,26 @@ namespace ModMyFactory.ViewModels
                 StartGameCommand = new RelayCommand(StartGame, () => SelectedVersion != null);
 
                 // 'Edit' menu
-                OpenFactorioFolderCommand = new RelayCommand(() => Process.Start(App.Instance.Settings.GetFactorioDirectory().FullName));
-                OpenModFolderCommand = new RelayCommand(() => Process.Start(App.Instance.Settings.GetModDirectory().FullName));
-                OpenSavegameFolderCommand = new RelayCommand(() => Process.Start(Path.Combine(App.Instance.AppDataPath, "saves")));
-                OpenScenarioFolderCommand = new RelayCommand(() => Process.Start(Path.Combine(App.Instance.AppDataPath, "scenarios")));
+                OpenFactorioFolderCommand = new RelayCommand(() =>
+                {
+                    var factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
+                    if (factorioDirectory.Exists) Process.Start(factorioDirectory.FullName);
+                });
+                OpenModFolderCommand = new RelayCommand(() =>
+                {
+                    var modDirectory = App.Instance.Settings.GetModDirectory();
+                    if (modDirectory.Exists) Process.Start(modDirectory.FullName);
+                });
+                OpenSavegameFolderCommand = new RelayCommand(() =>
+                {
+                    string savesPath = Path.Combine(App.Instance.AppDataPath, "saves");
+                    if (Directory.Exists(savesPath)) Process.Start(savesPath);
+                });
+                OpenScenarioFolderCommand = new RelayCommand(() =>
+                {
+                    string scenariosPath = Path.Combine(App.Instance.AppDataPath, "scenarios");
+                    if (Directory.Exists(scenariosPath)) Process.Start(scenariosPath);
+                });
 
                 UpdateModsCommand = new RelayCommand(async () => await UpdateMods());
 
