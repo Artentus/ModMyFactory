@@ -72,6 +72,8 @@ namespace ModMyFactory.ViewModels
                 FactorioVersionsView.CustomSort = new FactorioVersionSorter();
                 FactorioVersionsView.Filter = item => !((FactorioVersion)item).IsSpecialVersion;
 
+                Mods = MainViewModel.Instance.Mods;
+
                 DownloadCommand = new RelayCommand(async () => await DownloadOnlineVersion());
                 AddFromZipCommand = new RelayCommand(async () => await AddZippedVersion());
                 AddFromFolderCommand = new RelayCommand(async () => await AddLocalVersion());
@@ -272,6 +274,9 @@ namespace ModMyFactory.ViewModels
                 var localSaveDirecotry = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "saves"));
                 if (localSaveDirecotry.Exists)
                 {
+                    if (!Directory.Exists(App.Instance.GlobalSavePath))
+                        Directory.CreateDirectory(App.Instance.GlobalSavePath);
+
                     foreach (var saveFile in localSaveDirecotry.GetFiles())
                     {
                         if (!saveFile.Name.StartsWith("_autosave"))
@@ -297,6 +302,9 @@ namespace ModMyFactory.ViewModels
                 var localScenarioDirecotry = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "scenarios"));
                 if (localScenarioDirecotry.Exists)
                 {
+                    if (!Directory.Exists(App.Instance.GlobalScenarioPath))
+                        Directory.CreateDirectory(App.Instance.GlobalScenarioPath);
+
                     foreach (var scenarioFile in localScenarioDirecotry.GetFiles())
                     {
                         string newPath = Path.Combine(App.Instance.GlobalScenarioPath, scenarioFile.Name);
@@ -320,6 +328,7 @@ namespace ModMyFactory.ViewModels
                 if (localModDirecotry.Exists)
                 {
                     string globalModPath = App.Instance.Settings.GetModDirectory(factorioVersion).FullName;
+                    if (!Directory.Exists(globalModPath)) Directory.CreateDirectory(globalModPath);
 
                     foreach (var modFile in localModDirecotry.GetFiles("*.zip"))
                     {
@@ -384,6 +393,7 @@ namespace ModMyFactory.ViewModels
                         MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
+                    if (!factorioDirectory.Exists) factorioDirectory.Create();
                     DirectoryInfo destinationDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.ToString(3)));
 
                     var progressWindow = new ProgressWindow() { Owner = Window };

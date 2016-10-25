@@ -1067,7 +1067,7 @@ namespace ModMyFactory.ViewModels
         {
             bool moveFactorioDirectory = !newFactorioDirectory.DirectoryEquals(oldFactorioDirectory);
             bool moveModDirectory = !newModDirectory.DirectoryEquals(oldModDirectory);
-            if (moveFactorioDirectory)
+            if (oldFactorioDirectory.Exists && moveFactorioDirectory)
             {
                 foreach (var version in FactorioVersions)
                 {
@@ -1076,7 +1076,7 @@ namespace ModMyFactory.ViewModels
                 }
                 await oldFactorioDirectory.MoveToAsync(newFactorioDirectory.FullName);
             }
-            if (moveModDirectory)
+            if (oldModDirectory.Exists && moveModDirectory)
             {
                 await oldModDirectory.MoveToAsync(newModDirectory.FullName);
             }
