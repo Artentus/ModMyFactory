@@ -269,22 +269,26 @@ namespace ModMyFactory.ViewModels
                 OpenFactorioFolderCommand = new RelayCommand(() =>
                 {
                     var factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
-                    if (factorioDirectory.Exists) Process.Start(factorioDirectory.FullName);
+                    if (!factorioDirectory.Exists) factorioDirectory.Create();
+                    Process.Start(factorioDirectory.FullName);
                 });
                 OpenModFolderCommand = new RelayCommand(() =>
                 {
                     var modDirectory = App.Instance.Settings.GetModDirectory();
-                    if (modDirectory.Exists) Process.Start(modDirectory.FullName);
+                    if (!modDirectory.Exists) modDirectory.Create();
+                    Process.Start(modDirectory.FullName);
                 });
                 OpenSavegameFolderCommand = new RelayCommand(() =>
                 {
                     string savesPath = Path.Combine(App.Instance.AppDataPath, "saves");
-                    if (Directory.Exists(savesPath)) Process.Start(savesPath);
+                    if (!Directory.Exists(savesPath)) Directory.CreateDirectory(savesPath);
+                    Process.Start(savesPath);
                 });
                 OpenScenarioFolderCommand = new RelayCommand(() =>
                 {
                     string scenariosPath = Path.Combine(App.Instance.AppDataPath, "scenarios");
-                    if (Directory.Exists(scenariosPath)) Process.Start(scenariosPath);
+                    if (!Directory.Exists(scenariosPath)) Directory.CreateDirectory(scenariosPath);
+                    Process.Start(scenariosPath);
                 });
 
                 UpdateModsCommand = new RelayCommand(async () => await UpdateMods());

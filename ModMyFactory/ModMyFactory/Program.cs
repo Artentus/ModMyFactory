@@ -18,6 +18,7 @@ namespace ModMyFactory
 {
     public static class Program
     {
+        static object syncRoot;
         static NamedPipeServerStream server;
         static ManualResetEvent resetEvent;
 
@@ -35,6 +36,11 @@ namespace ModMyFactory
         /// The assemblys GUID.
         /// </summary>
         internal static Guid Guid => Guid.Parse(((GuidAttribute)(Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(GuidAttribute), false)[0])).Value);
+
+        static Program()
+        {
+            syncRoot = new object();
+        }
 
         /// <summary>
         /// Displays a help message in the console.
@@ -230,8 +236,11 @@ namespace ModMyFactory
             {
                 cancellationToken.Register(() =>
                 {
-                    server?.Close();
-                    resetEvent?.Set();
+                    lock (syncRoot)
+                    {
+                        server?.Close();
+                        resetEvent?.Set();
+                    }
                 });
 
                 string appGuid = Program.Guid.ToString();
@@ -241,21 +250,30 @@ namespace ModMyFactory
                 {
                     try
                     {
-                        server = new NamedPipeServerStream(pipeId, PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
-                        resetEvent = new ManualResetEvent(false);
+                        lock (syncRoot)
+                        {
+                            server = new NamedPipeServerStream(pipeId, PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+                            resetEvent = new ManualResetEvent(false);
+                        }
 
-                        IAsyncResult result = server.BeginWaitForConnection(ListenInner, new Tuple<NamedPipeServerStream, ManualResetEvent>(server, resetEvent));
-                        result.AsyncWaitHandle.WaitOne();
+                        if (!cancellationToken.IsCancellationRequested)
+                        {
+                            IAsyncResult result = server.BeginWaitForConnection(ListenInner, new Tuple<NamedPipeServerStream, ManualResetEvent>(server, resetEvent));
+                            result.AsyncWaitHandle.WaitOne();
 
-                        resetEvent.WaitOne();
+                            resetEvent.WaitOne();
+                        }
                     }
                     finally
                     {
-                        resetEvent?.Close();
-                        resetEvent = null;
+                        lock (syncRoot)
+                        {
+                            resetEvent?.Close();
+                            resetEvent = null;
 
-                        server?.Close();
-                        server = null;
+                            server?.Close();
+                            server = null;
+                        }
                     }
                 }
             });
