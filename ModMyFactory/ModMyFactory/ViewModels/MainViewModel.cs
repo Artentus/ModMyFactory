@@ -886,10 +886,13 @@ namespace ModMyFactory.ViewModels
                 progress.Report(new Tuple<double, string>((double)modIndex / modCount, mod.Title));
 
                 ExtendedModInfo extendedInfo = await ModWebsite.GetExtendedInfoAsync(mod);
-                ModRelease newestRelease = GetNewestRelease(extendedInfo, mod);
-                if (newestRelease.Version != mod.Version)
+                if (extendedInfo != null)
                 {
-                    modUpdates.Add(new ModUpdateInfo(mod.Title, mod.Name, mod.Version, newestRelease.Version, mod, newestRelease));
+                    ModRelease newestRelease = GetNewestRelease(extendedInfo, mod);
+                    if ((newestRelease != null) && (newestRelease.Version > mod.Version))
+                    {
+                        modUpdates.Add(new ModUpdateInfo(mod.Title, mod.Name, mod.Version, newestRelease.Version, mod, newestRelease));
+                    }
                 }
 
                 modIndex++;
