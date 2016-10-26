@@ -140,7 +140,58 @@ namespace ModMyFactory.Web
         }
 
         /// <summary>
-        /// Downloads the answer of an HTTP request and saves it as a file.
+        /// Gets the response document of an HTTP request.
+        /// </summary>
+        /// <param name="url">The URL of the request.</param>
+        /// <param name="container">The cookie container used to store cookies in the connection.</param>
+        /// <returns>Returns the received document.</returns>
+        public static string GetDocument(string url, CookieContainer container)
+        {
+            string document;
+            HttpWebRequest request = CreateHttpRequest(url, container);
+            WebResponse response = null;
+            try
+            {
+                response = request.GetResponse();
+                using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                    document = reader.ReadToEnd();
+            }
+            finally
+            {
+                response?.Close();
+            }
+
+            return document;
+        }
+
+        /// <summary>
+        /// Gets the response document of an HTTP request.
+        /// </summary>
+        /// <param name="url">The URL of the request.</param>
+        /// <param name="container">The cookie container used to store cookies in the connection.</param>
+        /// <param name="content">The content that gets sent to the server.</param>
+        /// <returns>Returns the received document.</returns>
+        public static string GetDocument(string url, CookieContainer container, byte[] content)
+        {
+            string document;
+            HttpWebRequest request = CreateHttpRequest(url, container, content);
+            WebResponse response = null;
+            try
+            {
+                response = request.GetResponse();
+                using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                    document = reader.ReadToEnd();
+            }
+            finally
+            {
+                response?.Close();
+            }
+
+            return document;
+        }
+
+        /// <summary>
+        /// Downloads the response of an HTTP request and saves it as a file.
         /// </summary>
         /// <param name="url">The URL of the request.</param>
         /// <param name="container">The cookie container used to store cookies in the connection.</param>
@@ -167,19 +218,24 @@ namespace ModMyFactory.Web
 
                     using (Stream data = await response.Content.ReadAsStreamAsync())
                     {
-                        long fileSize = response.Content.Headers.ContentLength.Value;
+                        long? fileSize = response.Content.Headers.ContentLength;
+
+                        if (file.Directory?.Exists == false) file.Directory.Create();
                         using (Stream fs = file.OpenWrite())
                         {
-                            byte[] buffer = new byte[81920];
+                            byte[] buffer = new byte[8192];
+                            int byteCount;
                             do
                             {
-                                int byteCount = await data.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
-                                await fs.WriteAsync(buffer, 0, byteCount, cancellationToken);
+                                byteCount = await data.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                                if (byteCount > 0) await fs.WriteAsync(buffer, 0, byteCount, cancellationToken);
 
-                                progress.Report((double)fs.Length / fileSize);
-                            } while (fs.Length < fileSize);
+                                if (fileSize.HasValue) progress.Report((double)fs.Length / fileSize.Value);
+                            } while (byteCount > 0);
                         }
                     }
+
+                    progress.Report(1);
                 }
             }
             catch (TaskCanceledException)
