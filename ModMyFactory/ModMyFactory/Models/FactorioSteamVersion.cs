@@ -52,5 +52,10 @@ namespace ModMyFactory.Models
             if (!forceLinkCreation)
                 CreateModDirectoryLink(true);
         }
+
+        protected override void UpdateLinkDirectoryInner(DirectoryInfo newDirectory)
+        {
+            base.UpdateLinkDirectoryInner(new DirectoryInfo(SteamAppDataPath));
+        }
     }
 }

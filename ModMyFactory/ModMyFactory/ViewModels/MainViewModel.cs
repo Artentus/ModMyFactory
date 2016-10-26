@@ -1071,8 +1071,14 @@ namespace ModMyFactory.ViewModels
             {
                 foreach (var version in FactorioVersions)
                 {
-                    if (!version.IsSpecialVersion && !version.IsFileSystemEditable)
+                    if (!version.IsSpecialVersion)
+                    {
                         version.DeleteLinks();
+
+                        DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
+                        var versionDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.Version.ToString(3)));
+                        version.UpdateDirectory(versionDirectory);
+                    }
                 }
                 await oldFactorioDirectory.MoveToAsync(newFactorioDirectory.FullName);
             }
@@ -1081,26 +1087,10 @@ namespace ModMyFactory.ViewModels
                 await oldModDirectory.MoveToAsync(newModDirectory.FullName);
             }
 
-            if (moveFactorioDirectory)
+            foreach (var version in FactorioVersions)
             {
-                foreach (var version in FactorioVersions)
-                {
-                    if (!version.IsSpecialVersion)
-                    {
-                        if (version.IsFileSystemEditable)
-                            version.CreateLinks(false);
-                        else
-                            version.CreateModDirectoryLink(true);
-                    }
-                }
-            }
-            else if (moveModDirectory)
-            {
-                foreach (var version in FactorioVersions)
-                {
-                    if (!version.IsSpecialVersion)
-                        version.CreateModDirectoryLink(true);
-                }
+                if (!version.IsSpecialVersion)
+                    version.CreateLinks(true);
             }
         }
 

@@ -32,7 +32,7 @@ namespace ModMyFactory.Models
         /// </summary>
         public static FactorioVersion Latest => latest ?? (latest = new LatestFactorioVersion());
 
-        readonly DirectoryInfo linkDirectory;
+        DirectoryInfo linkDirectory;
 
         /// <summary>
         /// Loads all installed versions of Factorio.
@@ -137,9 +137,15 @@ namespace ModMyFactory.Models
 
         public virtual string DisplayName => "Factorio " + VersionString;
 
-        public DirectoryInfo Directory { get; }
+        public DirectoryInfo Directory { get; private set; }
 
-        public string ExecutablePath { get; }
+        public string ExecutablePath { get; private set; }
+
+        private void SetExecutablePath()
+        {
+            string osPlatform = Environment.Is64BitOperatingSystem ? "x64" : "x86";
+            ExecutablePath = Path.Combine(Directory.FullName, "bin", osPlatform, "factorio.exe");
+        }
 
         private FactorioVersion()
         {
@@ -155,8 +161,7 @@ namespace ModMyFactory.Models
             this.linkDirectory = linkDirectory;
             Version = version;
 
-            string osPlatform = Environment.Is64BitOperatingSystem ? "x64" : "x86";
-            ExecutablePath = Path.Combine(directory.FullName, "bin", osPlatform, "factorio.exe");
+            SetExecutablePath();
 
             if (!linkDirectory.Exists) linkDirectory.Create();
             CreateLinks(forceLinkCreation);
@@ -171,10 +176,30 @@ namespace ModMyFactory.Models
             Directory = directory;
             linkDirectory = directory;
 
-            string osPlatform = Environment.Is64BitOperatingSystem ? "x64" : "x86";
-            ExecutablePath = Path.Combine(directory.FullName, "bin", osPlatform, "factorio.exe");
+            SetExecutablePath();
 
             CreateLinks(forceLinkCreation);
+        }
+
+        protected virtual void UpdateDirectoryInner(DirectoryInfo newDirectory)
+        {
+            Directory = newDirectory;
+            SetExecutablePath();
+        }
+
+        protected virtual void UpdateLinkDirectoryInner(DirectoryInfo newDirectory)
+        {
+            linkDirectory = newDirectory;
+        }
+
+        /// <summary>
+        /// Updates the directory of this version of Factorio.
+        /// </summary>
+        /// <param name="newDirectory"></param>
+        public void UpdateDirectory(DirectoryInfo newDirectory)
+        {
+            UpdateDirectoryInner(newDirectory);
+            UpdateLinkDirectoryInner(newDirectory);
         }
 
         private void CreateSaveDirectoryLink(DirectoryInfo localSaveDirectory)
