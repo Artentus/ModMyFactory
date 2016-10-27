@@ -285,6 +285,7 @@
     <sys:String x:Key="ViewsToolTip">Views</sys:String>
     <sys:String x:Key="DownloadsToolTip">Downloads</sys:String>
     <sys:String x:Key="InstalledToolTip">Installed</sys:String>
+    <sys:String x:Key="RefreshToolTip">Refresh list</sys:String>
     
     <!-- headers -->
     <sys:String x:Key="ReleasesHeader">Releases</sys:String>

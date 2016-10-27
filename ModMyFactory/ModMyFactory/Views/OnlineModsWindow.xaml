@@ -11,17 +11,15 @@
         Title="{DynamicResource OnlineModsWindowTitle}" Height="600" Width="800"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
         WindowStartupLocation="CenterOwner"
-        Icon="..\Images\MMF_Icon.ico">
-    
-    <Window.DataContext>
-        <vm:OnlineModsViewModel/>
-    </Window.DataContext>
-    
+        Icon="..\Images\MMF_Icon.ico"
+        DataContext="{x:Static vm:OnlineModsViewModel.Instance}">
+
     <Window.Resources>
         <BitmapImage x:Key="DownloadsIcon" UriSource="../Images/Downloads.png"/>
         <BitmapImage x:Key="ViewsIcon" UriSource="../Images/Views.png"/>
 
         <BitmapImage x:Key="SearchIcon" UriSource="../Images/Search.png"/>
+        <BitmapImage x:Key="RefreshIcon" UriSource="../Images/Refresh.png"/>
         
         <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
     </Window.Resources>
@@ -73,12 +71,21 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <DockPanel Grid.Column="0" Grid.Row="1" Margin="0,4,0,0">
-            <Border DockPanel.Dock="Left" Background="{StaticResource SelectionBrush}">
-                <Image Margin="1" Width="22" Height="22" Source="{StaticResource SearchIcon}" Stretch="None"/>
+        <Grid Grid.Column="0" Grid.Row="1" Margin="0,4,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <Border Grid.Column="0" Background="{StaticResource SelectionBrush}">
+                <Image Margin="1" Width="22" Height="22" Stretch="None" Source="{StaticResource SearchIcon}"/>
             </Border>
-            <TextBox DockPanel.Dock="Right" Padding="2" MaxLines="1" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}"/>
-        </DockPanel>
+            <TextBox Grid.Column="1" Padding="2" MaxLines="1" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Grid.Column="2" Margin="4,0,0,0" MinWidth="0" MinHeight="0" Width="24" Height="24" ToolTip="{DynamicResource RefreshToolTip}" Command="{Binding RefreshCommand}">
+                <Image Margin="-5" Width="16" Height="16" Stretch="None" Source="{StaticResource RefreshIcon}"/>
+            </Button>
+        </Grid>
 
         <Grid Grid.Column="1" Grid.Row="0" Margin="4,0,0,0">
             <Grid.RowDefinitions>

@@ -21,6 +21,10 @@ namespace ModMyFactory.ViewModels
 {
     sealed class OnlineModsViewModel : ViewModelBase<OnlineModsWindow>
     {
+        static OnlineModsViewModel instance;
+
+        public static OnlineModsViewModel Instance => instance ?? (instance = new OnlineModsViewModel());
+
         string token;
 
         bool LoggedInWithToken => GlobalCredentials.LoggedIn && !string.IsNullOrEmpty(token);
@@ -65,7 +69,7 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        public ModCollection InstalledMods { get; set; }
+        public ModCollection InstalledMods { get; }
 
         public string Filter
         {
@@ -165,6 +169,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand UpdateCommand { get; }
 
+        public RelayCommand RefreshCommand { get; }
+
         private async Task LoadExtendedModInfoAsync(ModInfo mod, int operationIndex)
         {
             ExtendedModInfo extendedInfo = await ModWebsite.GetExtendedInfoAsync(mod);
@@ -180,8 +186,10 @@ namespace ModMyFactory.ViewModels
             return Thread.CurrentThread.CurrentUICulture.CompareInfo.IndexOf(mod.Title, filter, CompareOptions.IgnoreCase) >= 0;
         }
 
-        public OnlineModsViewModel()
+        private OnlineModsViewModel()
         {
+            InstalledMods = MainViewModel.Instance.Mods;
+
             SelectedReleases = new ObservableCollection<ModRelease>();
             asyncFetchExtendedInfoIndex = -1;
 
@@ -189,6 +197,7 @@ namespace ModMyFactory.ViewModels
             UpdateCommand = new RelayCommand(async () => await UpdateSelectedModRelease(), () =>
                     SelectedRelease != null && SelectedRelease.IsInstalled &&
                     SelectedRelease != GetNewestRelease(ExtendedInfo, SelectedRelease));
+            RefreshCommand = new RelayCommand(async () => await RefreshModList());
         }
 
         private bool LogIn()
@@ -383,6 +392,16 @@ namespace ModMyFactory.ViewModels
                     release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
                     release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.FactorioVersion);
                 }
+            }
+        }
+
+        private async Task RefreshModList()
+        {
+            List<ModInfo> modInfos = await ModHelper.FetchMods(Window);
+
+            if (modInfos != null)
+            {
+                Mods = modInfos;
             }
         }
     }
