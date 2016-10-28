@@ -210,6 +210,7 @@
     <sys:String x:Key="ManagerModeGroupHeader">Managermodus</sys:String>
     <sys:String x:Key="FactorioDirectoryGroupHeader">Factorio Speicherort</sys:String>
     <sys:String x:Key="ModDirectoryGroupHeader">Mod Speicherort</sys:String>
+    <sys:String x:Key="CredentialsGroupHeader">Anmeldedaten</sys:String>
 
 
     <!-- group items -->
@@ -232,6 +233,7 @@
     <!-- headers -->
     <sys:String x:Key="UsernameHeader">Benutzername oder Email</sys:String>
     <sys:String x:Key="PasswordHeader">Passwort</sys:String>
+    <sys:String x:Key="SaveCredentialsHeader">Anmeldedaten speichern</sys:String>
 
     <!-- messages -->
     <sys:String x:Key="LoginFailedMessage">Einloggen fehlgeschlagen!</sys:String>

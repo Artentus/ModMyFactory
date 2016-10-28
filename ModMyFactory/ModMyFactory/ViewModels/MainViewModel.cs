@@ -31,10 +31,6 @@ namespace ModMyFactory.ViewModels
 
         public static MainViewModel Instance => instance ?? (instance = new MainViewModel());
 
-        string token;
-
-        bool LoggedInWithToken => GlobalCredentials.LoggedIn && !string.IsNullOrEmpty(token);
-
         FactorioVersion selectedVersion;
         string modsFilter;
         string modpacksFilter;
@@ -570,38 +566,6 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private bool LogIn()
-        {
-            bool failed = false;
-            if (LoggedInWithToken) // Credentials and token available.
-            {
-                // ToDo: check if token is still valid (does it actually expire?).
-            }
-            else if (GlobalCredentials.LoggedIn) // Only credentials available.
-            {
-                GlobalCredentials.LoggedIn = ModWebsite.LogIn(GlobalCredentials.Username, GlobalCredentials.Password, out token);
-                failed = !GlobalCredentials.LoggedIn;
-            }
-
-            while (!LoggedInWithToken)
-            {
-                var loginWindow = new LoginWindow
-                {
-                    Owner = Window,
-                    FailedText = { Visibility = failed ? Visibility.Visible : Visibility.Collapsed }
-                };
-                bool? loginResult = loginWindow.ShowDialog();
-                if (loginResult == null || loginResult == false) return false;
-                GlobalCredentials.Username = loginWindow.UsernameBox.Text;
-                GlobalCredentials.Password = loginWindow.PasswordBox.SecurePassword;
-
-                GlobalCredentials.LoggedIn = ModWebsite.LogIn(GlobalCredentials.Username, GlobalCredentials.Password, out token);
-                failed = !GlobalCredentials.LoggedIn;
-            }
-
-            return true;
-        }
-
         #region ModpackImport
 
         private ModRelease GetNewestRelease(ExtendedModInfo info)
@@ -683,13 +647,13 @@ namespace ModMyFactory.ViewModels
             return new Tuple<List<ModRelease>, List<Tuple<Mod, ModExportTemplate>>>(toDownload, conflicting);
         }
 
-        private async Task DownloadModAsyncInner(ModRelease modRelease, IProgress<double> progress, CancellationToken cancellationToken)
+        private async Task DownloadModAsyncInner(ModRelease modRelease, string token, IProgress<double> progress, CancellationToken cancellationToken)
         {
-            Mod mod = await ModWebsite.DownloadReleaseAsync(modRelease, GlobalCredentials.Username, token, progress, cancellationToken, Mods, Modpacks, Window);
+            Mod mod = await ModWebsite.DownloadReleaseAsync(modRelease, GlobalCredentials.Instance.Username, token, progress, cancellationToken, Mods, Modpacks, Window);
             if (!cancellationToken.IsCancellationRequested && (mod != null)) Mods.Add(mod);
         }
 
-        private async Task DownloadModsAsyncInner(List<ModRelease> modReleases, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
+        private async Task DownloadModsAsyncInner(List<ModRelease> modReleases, string token, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
             int modCount = modReleases.Count;
             double baseProgressValue = 0;
@@ -704,7 +668,7 @@ namespace ModMyFactory.ViewModels
                     progress.Report(new Tuple<double, string>(baseProgressValue + modProgressValue, release.FileName));
                 });
 
-                await DownloadModAsyncInner(release, modProgress, cancellationToken);
+                await DownloadModAsyncInner(release, token, modProgress, cancellationToken);
 
                 baseProgressValue += modProgressValue;
             }
@@ -712,7 +676,8 @@ namespace ModMyFactory.ViewModels
 
         private async Task DownloadModsAsync(List<ModRelease> modReleases)
         {
-            if (LogIn())
+            string token;
+            if (GlobalCredentials.Instance.LogIn(Window, out token))
             {
                 var progressWindow = new ProgressWindow() { Owner = Window };
                 progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
@@ -727,7 +692,7 @@ namespace ModMyFactory.ViewModels
                 progressWindow.ViewModel.CanCancel = true;
                 progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
-                Task updateTask = DownloadModsAsyncInner(modReleases, progress, cancellationSource.Token);
+                Task updateTask = DownloadModsAsyncInner(modReleases, token, progress, cancellationSource.Token);
                 Task closeWindowTask = updateTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                 progressWindow.ShowDialog();
 
@@ -890,9 +855,9 @@ namespace ModMyFactory.ViewModels
             return modUpdates;
         }
 
-        private async Task UpdateModAsyncInner(ModUpdateInfo modUpdate, IProgress<double> progress, CancellationToken cancellationToken)
+        private async Task UpdateModAsyncInner(ModUpdateInfo modUpdate, string token, IProgress<double> progress, CancellationToken cancellationToken)
         {
-            FileInfo modFile = await ModWebsite.UpdateReleaseAsync(modUpdate.NewestRelease, GlobalCredentials.Username, token, progress, cancellationToken);
+            FileInfo modFile = await ModWebsite.UpdateReleaseAsync(modUpdate.NewestRelease, GlobalCredentials.Instance.Username, token, progress, cancellationToken);
             var zippedMod = modUpdate.Mod as ZippedMod;
             var extractedMod = modUpdate.Mod as ExtractedMod;
             if (zippedMod != null)
@@ -955,7 +920,7 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private async Task UpdateModsAsyncInner(List<ModUpdateInfo> modUpdates, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
+        private async Task UpdateModsAsyncInner(List<ModUpdateInfo> modUpdates, string token, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
             int modCount = modUpdates.Count(item => item.IsSelected);
             double baseProgressValue = 0;
@@ -972,7 +937,7 @@ namespace ModMyFactory.ViewModels
                         progress.Report(new Tuple<double, string>(baseProgressValue + modProgressValue, modUpdate.Title));
                     });
 
-                    await UpdateModAsyncInner(modUpdate, modProgress, cancellationToken);
+                    await UpdateModAsyncInner(modUpdate, token, modProgress, cancellationToken);
 
                     baseProgressValue += modProgressValue;
                 }
@@ -1011,7 +976,8 @@ namespace ModMyFactory.ViewModels
 
                     if (result.HasValue && result.Value)
                     {
-                        if (LogIn())
+                        string token;
+                        if (GlobalCredentials.Instance.LogIn(Window, out token))
                         {
                             progressWindow = new ProgressWindow() { Owner = Window };
                             progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("UpdatingModsAction");
@@ -1026,7 +992,7 @@ namespace ModMyFactory.ViewModels
                             progressWindow.ViewModel.CanCancel = true;
                             progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
-                            Task updateTask = UpdateModsAsyncInner(modUpdates, progress, cancellationSource.Token);
+                            Task updateTask = UpdateModsAsyncInner(modUpdates, token, progress, cancellationSource.Token);
                             closeWindowTask = updateTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                             progressWindow.ShowDialog();
 
@@ -1088,57 +1054,60 @@ namespace ModMyFactory.ViewModels
 
         private async Task OpenSettings()
         {
+            Settings settings = App.Instance.Settings;
+
             var settingsWindow = new SettingsWindow() { Owner = Window };
             settingsWindow.ViewModel.Reset();
+            settingsWindow.SaveCredentialsBox.IsChecked = settings.SaveCredentials;
 
             bool? result = settingsWindow.ShowDialog();
             if (result != null && result.Value)
             {
-                DirectoryInfo oldFactorioDirectory = App.Instance.Settings.GetFactorioDirectory();
-                DirectoryInfo oldModDirectory = App.Instance.Settings.GetModDirectory();
+                DirectoryInfo oldFactorioDirectory = settings.GetFactorioDirectory();
+                DirectoryInfo oldModDirectory = settings.GetModDirectory();
 
                 if (settingsWindow.ViewModel.ManagerModeIsPerFactorioVersion)
                 {
-                    App.Instance.Settings.ManagerMode = ManagerMode.PerFactorioVersion;
+                    settings.ManagerMode = ManagerMode.PerFactorioVersion;
                 }
                 else if (settingsWindow.ViewModel.ManagerModeIsGlobal)
                 {
-                    App.Instance.Settings.ManagerMode = ManagerMode.Global;
+                    settings.ManagerMode = ManagerMode.Global;
                 }
                 if (settingsWindow.ViewModel.FactorioDirectoryIsAppData)
                 {
-                    App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.AppData;
-                    App.Instance.Settings.FactorioDirectory = string.Empty;
+                    settings.FactorioDirectoryOption = DirectoryOption.AppData;
+                    settings.FactorioDirectory = string.Empty;
                 }
                 else if (settingsWindow.ViewModel.FactorioDirectoryIsAppDirectory)
                 {
-                    App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.ApplicationDirectory;
-                    App.Instance.Settings.FactorioDirectory = string.Empty;
+                    settings.FactorioDirectoryOption = DirectoryOption.ApplicationDirectory;
+                    settings.FactorioDirectory = string.Empty;
                 }
                 else if (settingsWindow.ViewModel.FactorioDirectoryIsCustom)
                 {
-                    App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.Custom;
-                    App.Instance.Settings.FactorioDirectory = settingsWindow.ViewModel.FactorioDirectory;
+                    settings.FactorioDirectoryOption = DirectoryOption.Custom;
+                    settings.FactorioDirectory = settingsWindow.ViewModel.FactorioDirectory;
                 }
                 if (settingsWindow.ViewModel.ModDirectoryIsAppData)
                 {
-                    App.Instance.Settings.ModDirectoryOption = DirectoryOption.AppData;
-                    App.Instance.Settings.ModDirectory = string.Empty;
+                    settings.ModDirectoryOption = DirectoryOption.AppData;
+                    settings.ModDirectory = string.Empty;
                 }
                 else if (settingsWindow.ViewModel.ModDirectoryIsAppDirectory)
                 {
-                    App.Instance.Settings.ModDirectoryOption = DirectoryOption.ApplicationDirectory;
-                    App.Instance.Settings.ModDirectory = string.Empty;
+                    settings.ModDirectoryOption = DirectoryOption.ApplicationDirectory;
+                    settings.ModDirectory = string.Empty;
                 }
                 else if (settingsWindow.ViewModel.ModDirectoryIsCustom)
                 {
-                    App.Instance.Settings.ModDirectoryOption = DirectoryOption.Custom;
-                    App.Instance.Settings.ModDirectory = settingsWindow.ViewModel.ModDirectory;
+                    settings.ModDirectoryOption = DirectoryOption.Custom;
+                    settings.ModDirectory = settingsWindow.ViewModel.ModDirectory;
                 }
-                App.Instance.Settings.Save();
+                settings.Save();
 
-                DirectoryInfo newFactorioDirectory = App.Instance.Settings.GetFactorioDirectory();
-                DirectoryInfo newModDirectory = App.Instance.Settings.GetModDirectory();
+                DirectoryInfo newFactorioDirectory = settings.GetFactorioDirectory();
+                DirectoryInfo newModDirectory = settings.GetModDirectory();
 
                 var progressWindow = new ProgressWindow() { Owner = Window };
                 progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("MovingDirectoriesAction");
@@ -1152,6 +1121,15 @@ namespace ModMyFactory.ViewModels
 
                 await moveDirectoriesTask;
                 await closeWindowTask;
+
+                settings.SaveCredentials = settingsWindow.SaveCredentialsBox.IsChecked ?? false;
+                if (settings.SaveCredentials)
+                {
+                    GlobalCredentials.Instance.Username = settingsWindow.UsernameBox.Text;
+                    if (!string.IsNullOrEmpty(settingsWindow.PasswordBox.Password))
+                        GlobalCredentials.Instance.Password = settingsWindow.PasswordBox.SecurePassword;
+                    GlobalCredentials.Instance.Save();
+                }
             }
         }
 

@@ -8,7 +8,6 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Data;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
@@ -24,10 +23,6 @@ namespace ModMyFactory.ViewModels
         static OnlineModsViewModel instance;
 
         public static OnlineModsViewModel Instance => instance ?? (instance = new OnlineModsViewModel());
-
-        string token;
-
-        bool LoggedInWithToken => GlobalCredentials.LoggedIn && !string.IsNullOrEmpty(token);
 
         ListCollectionView modsView;
         List<ModInfo> mods;
@@ -200,41 +195,10 @@ namespace ModMyFactory.ViewModels
             RefreshCommand = new RelayCommand(async () => await RefreshModList());
         }
 
-        private bool LogIn()
-        {
-            bool failed = false;
-            if (LoggedInWithToken) // Credentials and token available.
-            {
-                // ToDo: check if token is still valid (does it actually expire?).
-            }
-            else if (GlobalCredentials.LoggedIn) // Only credentials available.
-            {
-                GlobalCredentials.LoggedIn = ModWebsite.LogIn(GlobalCredentials.Username, GlobalCredentials.Password, out token);
-                failed = !GlobalCredentials.LoggedIn;
-            }
-
-            while (!LoggedInWithToken)
-            {
-                var loginWindow = new LoginWindow
-                {
-                    Owner = Window,
-                    FailedText = { Visibility = failed ? Visibility.Visible : Visibility.Collapsed }
-                };
-                bool? loginResult = loginWindow.ShowDialog();
-                if (loginResult == null || loginResult == false) return false;
-                GlobalCredentials.Username = loginWindow.UsernameBox.Text;
-                GlobalCredentials.Password = loginWindow.PasswordBox.SecurePassword;
-
-                GlobalCredentials.LoggedIn = ModWebsite.LogIn(GlobalCredentials.Username, GlobalCredentials.Password, out token);
-                failed = !GlobalCredentials.LoggedIn;
-            }
-
-            return true;
-        }
-
         private async Task DownloadSelectedModRelease()
         {
-            if (LogIn())
+            string token;
+            if (GlobalCredentials.Instance.LogIn(Window, out token))
             {
                 var progressWindow = new ProgressWindow { Owner = Window };
                 progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
@@ -246,7 +210,7 @@ namespace ModMyFactory.ViewModels
 
                 var progress = new Progress<double>(p => progressWindow.ViewModel.Progress = p);
 
-                Task<Mod> downloadTask = ModWebsite.DownloadReleaseAsync(selectedRelease, GlobalCredentials.Username, token,
+                Task<Mod> downloadTask = ModWebsite.DownloadReleaseAsync(selectedRelease, GlobalCredentials.Instance.Username, token,
                     progress, cancellationSource.Token, InstalledMods, MainViewModel.Instance.Modpacks, MainViewModel.Instance.Window);
 
                 Task closeWindowTask = downloadTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
@@ -282,7 +246,8 @@ namespace ModMyFactory.ViewModels
 
         private async Task UpdateSelectedModRelease()
         {
-            if (LogIn())
+            string token;
+            if (GlobalCredentials.Instance.LogIn(Window, out token))
             {
                 ModRelease newestRelease = GetNewestRelease(ExtendedInfo, SelectedRelease);
                 Mod mod = InstalledMods.FindByFactorioVersion(SelectedMod.Name, newestRelease.FactorioVersion);
@@ -310,7 +275,7 @@ namespace ModMyFactory.ViewModels
                     }
                 });
 
-                Task downloadTask = ModWebsite.UpdateReleaseAsync(newestRelease, GlobalCredentials.Username, token, progress, cancellationSource.Token);
+                Task downloadTask = ModWebsite.UpdateReleaseAsync(newestRelease, GlobalCredentials.Instance.Username, token, progress, cancellationSource.Token);
 
                 if (extractedMod != null)
                 {

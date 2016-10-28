@@ -191,9 +191,11 @@ namespace ModMyFactory.ViewModels
 
         public void Reset()
         {
+            Settings settings = App.Instance.Settings;
+
             ManagerModeIsPerFactorioVersion = false;
             ManagerModeIsGlobal = false;
-            switch (App.Instance.Settings.ManagerMode)
+            switch (settings.ManagerMode)
             {
                 case ManagerMode.PerFactorioVersion:
                     ManagerModeIsPerFactorioVersion = true;
@@ -207,7 +209,7 @@ namespace ModMyFactory.ViewModels
             FactorioDirectoryIsAppDirectory = false;
             FactorioDirectoryIsCustom = false;
             FactorioDirectory = string.Empty;
-            switch (App.Instance.Settings.FactorioDirectoryOption)
+            switch (settings.FactorioDirectoryOption)
             {
                 case DirectoryOption.AppData:
                     FactorioDirectoryIsAppData = true;
@@ -217,7 +219,7 @@ namespace ModMyFactory.ViewModels
                     break;
                 case DirectoryOption.Custom:
                     FactorioDirectoryIsCustom = true;
-                    FactorioDirectory = App.Instance.Settings.FactorioDirectory;
+                    FactorioDirectory = settings.FactorioDirectory;
                     break;
             }
 
@@ -225,7 +227,7 @@ namespace ModMyFactory.ViewModels
             ModDirectoryIsAppDirectory = false;
             ModDirectoryIsCustom = false;
             ModDirectory = string.Empty;
-            switch (App.Instance.Settings.ModDirectoryOption)
+            switch (settings.ModDirectoryOption)
             {
                 case DirectoryOption.AppData:
                     ModDirectoryIsAppData = true;
@@ -235,7 +237,7 @@ namespace ModMyFactory.ViewModels
                     break;
                 case DirectoryOption.Custom:
                     ModDirectoryIsCustom = true;
-                    ModDirectory = App.Instance.Settings.ModDirectory;
+                    ModDirectory = settings.ModDirectory;
                     break;
             }
 

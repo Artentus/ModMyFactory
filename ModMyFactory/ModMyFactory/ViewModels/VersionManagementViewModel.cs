@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,6 +12,7 @@ using ModMyFactory.MVVM;
 using ModMyFactory.Web;
 using Ookii.Dialogs.Wpf;
 using System.Diagnostics;
+using System.Net;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
@@ -25,10 +25,6 @@ namespace ModMyFactory.ViewModels
         static VersionManagementViewModel instance;
 
         public static VersionManagementViewModel Instance = instance ?? (instance = new VersionManagementViewModel());
-
-        CookieContainer container;
-
-        bool LoggedInWithCookie => GlobalCredentials.LoggedIn && container != null;
 
         FactorioVersion selectedVersion;
 
@@ -83,41 +79,6 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private bool LogIn()
-        {
-            bool failed = false;
-            if (LoggedInWithCookie) // Credentials and cookie available.
-            {
-                GlobalCredentials.LoggedIn = FactorioWebsite.EnsureLoggedIn(container);
-                failed = !GlobalCredentials.LoggedIn;
-            }
-            else if (GlobalCredentials.LoggedIn) // Only credentials available.
-            {
-                container = new CookieContainer();
-                GlobalCredentials.LoggedIn = FactorioWebsite.LogIn(container, GlobalCredentials.Username, GlobalCredentials.Password);
-                failed = !GlobalCredentials.LoggedIn;
-            }
-
-            while (!LoggedInWithCookie)
-            {
-                var loginWindow = new LoginWindow
-                {
-                    Owner = Window,
-                    FailedText = { Visibility = failed ? Visibility.Visible : Visibility.Collapsed }
-                };
-                bool? loginResult = loginWindow.ShowDialog();
-                if (loginResult == null || loginResult == false) return false;
-                GlobalCredentials.Username = loginWindow.UsernameBox.Text;
-                GlobalCredentials.Password = loginWindow.PasswordBox.SecurePassword;
-
-                container = new CookieContainer();
-                GlobalCredentials.LoggedIn = FactorioWebsite.LogIn(container, GlobalCredentials.Username, GlobalCredentials.Password);
-                failed = !GlobalCredentials.LoggedIn;
-            }
-
-            return true;
-        }
-
         private bool VersionAlreadyInstalled(FactorioOnlineVersion version)
         {
             foreach (var localVersion in FactorioVersions)
@@ -129,7 +90,7 @@ namespace ModMyFactory.ViewModels
             return false;
         }
 
-        private bool ShowVersionList(out FactorioOnlineVersion selectedVersion)
+        private bool ShowVersionList(CookieContainer container, out FactorioOnlineVersion selectedVersion)
         {
             selectedVersion = null;
             List<FactorioOnlineVersion> versions;
@@ -153,10 +114,11 @@ namespace ModMyFactory.ViewModels
 
         private async Task DownloadOnlineVersion()
         {
-            if (LogIn())
+            CookieContainer container;
+            if (GlobalCredentials.Instance.LogIn(Window, out container))
             {
                 FactorioOnlineVersion selectedVersion;
-                if (ShowVersionList(out selectedVersion))
+                if (ShowVersionList(container, out selectedVersion))
                 {
                     var cancellationSource = new CancellationTokenSource();
                     var progressWindow = new ProgressWindow { Owner = Window };

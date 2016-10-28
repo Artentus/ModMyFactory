@@ -211,6 +211,7 @@
     <sys:String x:Key="ManagerModeGroupHeader">Manager mode</sys:String>
     <sys:String x:Key="FactorioDirectoryGroupHeader">Factorio location</sys:String>
     <sys:String x:Key="ModDirectoryGroupHeader">Mod location</sys:String>
+    <sys:String x:Key="CredentialsGroupHeader">Login credentials</sys:String>
 
     
     <!-- group items -->
@@ -233,6 +234,7 @@
     <!-- headers -->
     <sys:String x:Key="UsernameHeader">Username or Email</sys:String>
     <sys:String x:Key="PasswordHeader">Password</sys:String>
+    <sys:String x:Key="SaveCredentialsHeader">Remember my login credentials</sys:String>
 
     <!-- messages -->
     <sys:String x:Key="LoginFailedMessage">Login failed!</sys:String>

@@ -94,13 +94,60 @@ namespace ModMyFactory.Helpers
         }
 
         /// <summary>
+        /// Creates a SecureString from a byte array using the specified encoding.
+        /// This method does not create any managed string objects.
+        /// </summary>
+        /// <param name="byteArray">The byte array the SecureString will be created from.</param>
+        /// <param name="encoding">The encoding used to create the SecureString.</param>
+        /// <returns>Returns the created SecureString.</returns>
+        public static SecureString SecureStringFromBytes(byte[] byteArray, Encoding encoding)
+        {
+            char[] chars = encoding.GetChars(byteArray);
+
+            try
+            {
+                var result = new SecureString();
+
+                for (int i = 0; i < chars.Length; i++)
+                    result.AppendChar(chars[i]);
+
+                return result;
+            }
+            finally
+            {
+                DestroySecureCharArray(chars);
+            }
+        }
+
+        /// <summary>
+        /// Creates a SecureString from a byte array.
+        /// This method does not create any managed string objects.
+        /// </summary>
+        /// <param name="byteArray">The byte array the SecureString will be created from.</param>
+        /// <returns>Returns the created SecureString.</returns>
+        public static SecureString SecureStringFromBytes(byte[] byteArray)
+        {
+            return SecureStringFromBytes(byteArray, Encoding.UTF8);
+        }
+
+        /// <summary>
         /// Destroys a byte array filled by the SecureStringToBytes method.
         /// </summary>
-        /// <param name="byteArray">The byte array to destroy.</param>
-        public static void DestroySecureByteArray(byte[] byteArray)
+        /// <param name="charArray">The byte array to destroy.</param>
+        public static void DestroySecureByteArray(byte[] charArray)
         {
-            for (int i = 0; i < byteArray.Length; i++)
-                byteArray[i] = 0;
+            for (int i = 0; i < charArray.Length; i++)
+                charArray[i] = 0;
+        }
+
+        /// <summary>
+        /// Destroys a char array filled by the SecureStringToBytes method.
+        /// </summary>
+        /// <param name="charArray">The char array to destroy.</param>
+        public static void DestroySecureCharArray(char[] charArray)
+        {
+            for (int i = 0; i < charArray.Length; i++)
+                charArray[i] = char.MinValue;
         }
     }
 }
