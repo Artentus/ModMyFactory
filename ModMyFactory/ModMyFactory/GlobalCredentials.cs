@@ -105,13 +105,13 @@ namespace ModMyFactory
             token = null;
             container = null;
 
-            if (App.Instance.Settings.SaveCredentials && CredentialsFile.Exists)
+            if (App.Instance.Settings.SaveCredentials)
             {
-                Load(CredentialsFile);
+                if (CredentialsFile.Exists) Load(CredentialsFile);
             }
-            else if (CredentialsFile.Exists)
+            else
             {
-                CredentialsFile.Delete();
+                DeleteSave();
             }
         }
 
@@ -263,6 +263,11 @@ namespace ModMyFactory
         public void Save()
         {
             Save(CredentialsFile);
+        }
+
+        public void DeleteSave()
+        {
+            if (CredentialsFile.Exists) CredentialsFile.Delete();
         }
     }
 }

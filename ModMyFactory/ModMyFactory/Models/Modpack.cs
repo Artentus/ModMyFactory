@@ -54,7 +54,10 @@ namespace ModMyFactory.Models
                         ModManager.BeginUpdateTemplates();
 
                         foreach (var mod in Mods)
-                            if (mod.Active != active.Value) mod.Active = active.Value;
+                        {
+                            if (mod.Active != active.Value)
+                                mod.Active = active.Value;
+                        }
 
                         ModManager.EndUpdateTemplates();
                         ModManager.SaveTemplates();

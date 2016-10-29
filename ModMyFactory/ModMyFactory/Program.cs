@@ -18,7 +18,7 @@ namespace ModMyFactory
 {
     public static class Program
     {
-        static object syncRoot;
+        static readonly object SyncRoot;
         static NamedPipeServerStream server;
         static ManualResetEvent resetEvent;
 
@@ -39,7 +39,7 @@ namespace ModMyFactory
 
         static Program()
         {
-            syncRoot = new object();
+            SyncRoot = new object();
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace ModMyFactory
             {
                 cancellationToken.Register(() =>
                 {
-                    lock (syncRoot)
+                    lock (SyncRoot)
                     {
                         server?.Close();
                         resetEvent?.Set();
@@ -250,7 +250,7 @@ namespace ModMyFactory
                 {
                     try
                     {
-                        lock (syncRoot)
+                        lock (SyncRoot)
                         {
                             server = new NamedPipeServerStream(pipeId, PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
                             resetEvent = new ManualResetEvent(false);
@@ -266,7 +266,7 @@ namespace ModMyFactory
                     }
                     finally
                     {
-                        lock (syncRoot)
+                        lock (SyncRoot)
                         {
                             resetEvent?.Close();
                             resetEvent = null;

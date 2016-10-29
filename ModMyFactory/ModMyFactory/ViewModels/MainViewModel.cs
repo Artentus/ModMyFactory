@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -36,6 +37,10 @@ namespace ModMyFactory.ViewModels
         string modpacksFilter;
         GridLength modGridLength;
         GridLength modpackGridLength;
+        bool? allModsSelected;
+        bool? allModpacksSelected;
+        bool allModsSelectedChanging;
+        bool allModpacksSelectedChanging;
         bool updating;
 
         public ListCollectionView AvailableCulturesView { get; }
@@ -132,6 +137,56 @@ namespace ModMyFactory.ViewModels
 
         }
 
+        public bool? AllModsSelected
+        {
+            get { return allModsSelected; }
+            set
+            {
+                if (value != allModsSelected)
+                {
+                    allModsSelected = value;
+                    allModsSelectedChanging = true;
+
+                    if (allModsSelected.HasValue)
+                    {
+                        foreach (var mod in Mods)
+                        {
+                            if (mod.Active != allModsSelected.Value)
+                                mod.Active = allModsSelected.Value;
+                        }
+                    }
+
+                    allModsSelectedChanging = false;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModsSelected)));
+                }
+            }
+        }
+
+        public bool? AllModpacksSelected
+        {
+            get { return allModpacksSelected; }
+            set
+            {
+                if (value != allModpacksSelected)
+                {
+                    allModpacksSelected = value;
+                    allModpacksSelectedChanging = true;
+
+                    if (allModpacksSelected.HasValue)
+                    {
+                        foreach (var modpack in Modpacks)
+                        {
+                            if (modpack.Active != allModpacksSelected.Value)
+                                modpack.Active = allModpacksSelected.Value;
+                        }
+                    }
+
+                    allModpacksSelectedChanging = false;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModpacksSelected)));
+                }
+            }
+        }
+
         public RelayCommand DownloadModsCommand { get; }
 
         public RelayCommand AddModsFromFilesCommand { get; }
@@ -190,6 +245,114 @@ namespace ModMyFactory.ViewModels
             return Thread.CurrentThread.CurrentUICulture.CompareInfo.IndexOf(modpack.Name, modpacksFilter, CompareOptions.IgnoreCase) >= 0;
         }
 
+        private void SetAllModsSelected()
+        {
+            if (Mods.Count == 0 || allModsSelectedChanging)
+                return;
+
+            bool? newValue = Mods[0].Active;
+            for (int i = 1; i < Mods.Count; i++)
+            {
+                if (Mods[i].Active != newValue)
+                {
+                    newValue = null;
+                    break;
+                }
+            }
+
+            if (newValue != allModsSelected)
+            {
+                allModsSelected = newValue;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModsSelected)));
+            }
+        }
+
+        private void ModPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Mod.Active))
+            {
+                SetAllModsSelected();
+            }
+        }
+
+        private void ModsChangedHandler(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (Mod mod in e.NewItems)
+                        mod.PropertyChanged += ModPropertyChanged;
+                    SetAllModsSelected();
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (Mod mod in e.OldItems)
+                        mod.PropertyChanged -= ModPropertyChanged;
+                    SetAllModsSelected();
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    foreach (Mod mod in e.NewItems)
+                        mod.PropertyChanged += ModPropertyChanged;
+                    foreach (Mod mod in e.OldItems)
+                        mod.PropertyChanged -= ModPropertyChanged;
+                    SetAllModsSelected();
+                    break;
+            }
+        }
+
+        private void SetAllModpacksSelected()
+        {
+            if (Modpacks.Count == 0 || allModpacksSelectedChanging)
+                return;
+
+            bool? newValue = Modpacks[0].Active;
+            for (int i = 1; i < Modpacks.Count; i++)
+            {
+                if (Modpacks[i].Active != newValue)
+                {
+                    newValue = null;
+                    break;
+                }
+            }
+
+            if (newValue != allModpacksSelected)
+            {
+                allModpacksSelected = newValue;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModpacksSelected)));
+            }
+        }
+
+        private void ModpackPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Modpack.Active))
+            {
+                SetAllModpacksSelected();
+            }
+        }
+
+        private void ModpacksChangedHandler(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (Modpack modpack in e.NewItems)
+                        modpack.PropertyChanged += ModpackPropertyChanged;
+                    SetAllModpacksSelected();
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (Modpack modpack in e.OldItems)
+                        modpack.PropertyChanged -= ModpackPropertyChanged;
+                    SetAllModpacksSelected();
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    foreach (Modpack modpack in e.NewItems)
+                        modpack.PropertyChanged += ModpackPropertyChanged;
+                    foreach (Modpack modpack in e.OldItems)
+                        modpack.PropertyChanged -= ModpackPropertyChanged;
+                    SetAllModpacksSelected();
+                    break;
+            }
+        }
+
         private MainViewModel()
         {
             if (!App.IsInDesignMode) // Make view model designer friendly.
@@ -231,11 +394,15 @@ namespace ModMyFactory.ViewModels
                 ModsView.CustomSort = new ModSorter();
                 ModsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(Mod.FactorioVersion)));
                 ModsView.Filter = ModFilter;
+                Mods.CollectionChanged += ModsChangedHandler;
+                SetAllModsSelected();
 
                 Modpacks = new ObservableCollection<Modpack>();
                 ModpacksView = (ListCollectionView)(new CollectionViewSource() { Source = Modpacks }).View;
                 ModpacksView.CustomSort = new ModpackSorter();
                 ModpacksView.Filter = ModpackFilter;
+                Modpacks.CollectionChanged += ModpacksChangedHandler;
+                SetAllModpacksSelected();
 
                 Mod.LoadMods(Mods, Modpacks, Application.Current.MainWindow);
                 ModpackTemplateList.Instance.PopulateModpackList(Mods, Modpacks, ModpacksView, Application.Current.MainWindow);
@@ -1129,6 +1296,10 @@ namespace ModMyFactory.ViewModels
                     if (!string.IsNullOrEmpty(settingsWindow.PasswordBox.Password))
                         GlobalCredentials.Instance.Password = settingsWindow.PasswordBox.SecurePassword;
                     GlobalCredentials.Instance.Save();
+                }
+                else
+                {
+                    GlobalCredentials.Instance.DeleteSave();
                 }
             }
         }

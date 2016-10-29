@@ -59,6 +59,24 @@
             </Style.Triggers>
         </Style>
 
+        <Style x:Key="AllActiveInactiveCheckBoxStyle" TargetType="{x:Type CheckBox}">
+            <Style.Setters>
+                <Setter Property="ToolTip" Value="{DynamicResource SetAllActiveToolTip}"/>
+            </Style.Setters>
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Trigger.Setters>
+                        <Setter Property="ToolTip" Value="{DynamicResource SetAllInactiveToolTip}"/>
+                    </Trigger.Setters>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="{x:Null}">
+                    <Trigger.Setters>
+                        <Setter Property="ToolTip" Value="{DynamicResource SetAllInactiveToolTip}"/>
+                    </Trigger.Setters>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="SmallCloseButton" TargetType="Button">
             <Style.Setters>
                 <Setter Property="Template">
@@ -292,7 +310,7 @@
             <ComboBox Margin="2,0" Width="120" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type model:FactorioVersion}">
-                        <TextBlock Margin="4,2" VerticalAlignment="Center" Text="{Binding DisplayName}"/>
+                        <TextBlock Margin="4,1" VerticalAlignment="Center" Text="{Binding DisplayName}"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
@@ -356,7 +374,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource ModsHeader}" Margin="2"/>
+                <CheckBox Grid.Row="0" Grid.Column="0" Margin="2" Content="{DynamicResource ModsHeader}" Style="{StaticResource AllActiveInactiveCheckBoxStyle}"
+                          IsChecked="{Binding AllModsSelected}"/>
                 <Rectangle Grid.Row="1" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
             </Grid>
             <mvvm:DragDropReadyListBox x:Name="ModsListBox" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding ModsView}"
@@ -443,7 +462,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource ModpacksHeader}" Margin="2"/>
+                <CheckBox Grid.Row="0" Grid.Column="0" Margin="2" Content="{DynamicResource ModpacksHeader}" Style="{StaticResource AllActiveInactiveCheckBoxStyle}"
+                          IsChecked="{Binding AllModpacksSelected}"/>
                 <Rectangle Grid.Row="1" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
             </Grid>
             <mvvm:DragDropReadyListBox x:Name="ModpacksListBox" Grid.Row="1" Grid.Column="2" ItemsSource="{Binding ModpacksView}"

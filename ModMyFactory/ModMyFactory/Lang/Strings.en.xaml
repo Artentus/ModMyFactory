@@ -176,8 +176,10 @@
     <sys:String x:Key="RenameToolTip">Rename</sys:String>
     <sys:String x:Key="DeleteToolTip">Delete</sys:String>
     <sys:String x:Key="RemoveToolTip">Remove from modpack</sys:String>
-    <sys:String x:Key="SetActiveToolTip">Set to active</sys:String>
-    <sys:String x:Key="SetInactiveToolTip">Set to inactive</sys:String>
+    <sys:String x:Key="SetActiveToolTip">Activate</sys:String>
+    <sys:String x:Key="SetInactiveToolTip">Deactivate</sys:String>
+    <sys:String x:Key="SetAllActiveToolTip">Activate all</sys:String>
+    <sys:String x:Key="SetAllInactiveToolTip">Deactivate all</sys:String>
     
     
     <!--
