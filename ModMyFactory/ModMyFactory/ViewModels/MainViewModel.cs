@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -835,7 +836,18 @@ namespace ModMyFactory.ViewModels
                     progress.Report(new Tuple<double, string>(baseProgressValue + modProgressValue, release.FileName));
                 });
 
-                await DownloadModAsyncInner(release, token, modProgress, cancellationToken);
+                try
+                {
+                    await DownloadModAsyncInner(release, token, modProgress, cancellationToken);
+                }
+                catch (HttpRequestException)
+                {
+                    MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
 
                 baseProgressValue += modProgressValue;
             }
@@ -1104,7 +1116,18 @@ namespace ModMyFactory.ViewModels
                         progress.Report(new Tuple<double, string>(baseProgressValue + modProgressValue, modUpdate.Title));
                     });
 
-                    await UpdateModAsyncInner(modUpdate, token, modProgress, cancellationToken);
+                    try
+                    {
+                        await UpdateModAsyncInner(modUpdate, token, modProgress, cancellationToken);
+                    }
+                    catch (HttpRequestException)
+                    {
+                        MessageBox.Show(Window,
+                            App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
+                            App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
 
                     baseProgressValue += modProgressValue;
                 }
@@ -1310,28 +1333,54 @@ namespace ModMyFactory.ViewModels
         {
             updating = true;
 
-            UpdateSearchResult result = await App.Instance.SearchForUpdateAsync();
-            if (result.UpdateAvailable)
+            try
             {
-                string currentVersionString = App.Instance.AssemblyVersion.ToString(3);
-                string newVersionString = result.Version.ToString(3);
-                if (MessageBox.Show(Window,
-                        string.Format(App.Instance.GetLocalizedMessage("Update", MessageType.Question), currentVersionString, newVersionString),
-                        App.Instance.GetLocalizedMessageTitle("Update", MessageType.Question),
-                        MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                UpdateSearchResult result = null;
+
+                try
                 {
-                    Process.Start(result.UpdateUrl);
+                    result = await App.Instance.SearchForUpdateAsync();
+                }
+                catch (HttpRequestException)
+                {
+                    if (!silent)
+                    {
+                        MessageBox.Show(Window,
+                            App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
+                            App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
+                    return;
+                }
+
+                if (result != null)
+                {
+                    if (result.UpdateAvailable)
+                    {
+                        string currentVersionString = App.Instance.AssemblyVersion.ToString(3);
+                        string newVersionString = result.Version.ToString(3);
+                        if (MessageBox.Show(Window,
+                                string.Format(App.Instance.GetLocalizedMessage("Update", MessageType.Question), currentVersionString, newVersionString),
+                                App.Instance.GetLocalizedMessageTitle("Update", MessageType.Question),
+                                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        {
+                            Process.Start(result.UpdateUrl);
+                        }
+                    }
+                    else if (!silent)
+                    {
+                        MessageBox.Show(Window,
+                            App.Instance.GetLocalizedMessage("NoUpdate", MessageType.Information),
+                            App.Instance.GetLocalizedMessageTitle("NoUpdate", MessageType.Information),
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
                 }
             }
-            else if (!silent)
+            finally
             {
-                MessageBox.Show(Window,
-                    App.Instance.GetLocalizedMessage("NoUpdate", MessageType.Information),
-                    App.Instance.GetLocalizedMessageTitle("NoUpdate", MessageType.Information),
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                updating = false;
             }
-
-            updating = false;
         }
 
         private void OpenAboutWindow()

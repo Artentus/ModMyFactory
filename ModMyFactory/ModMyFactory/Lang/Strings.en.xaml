@@ -17,6 +17,9 @@
     -->
 
     <!-- messages -->
+    <sys:String x:Key="Error.InternetConnection.Message">There was a problem with your internet connection.&#x0a;Please make sure your computer has a stable internet connection, then try again.</sys:String>
+    <sys:String x:Key="Error.InternetConnection.Title">Network error!</sys:String>
+    
     <sys:String x:Key="Information.ModExistsPerVersion.Message">The mod '{0}' for Factorio {1} already exists!</sys:String>
     <sys:String x:Key="Information.ModExistsPerVersion.Title">Mod skipped</sys:String>
     
@@ -28,7 +31,7 @@
     
     <sys:String x:Key="Error.InvalidModFolder.Message">The selected folder does not contain a valid mod.</sys:String>
     <sys:String x:Key="Error.InvalidModFolder.Title">Error adding mod!</sys:String>
-    
+
     <sys:String x:Key="Information.NoModUpdates.Message">All your mods are up to date.</sys:String>
     <sys:String x:Key="Information.NoModUpdates.Title">No updates found</sys:String>
     

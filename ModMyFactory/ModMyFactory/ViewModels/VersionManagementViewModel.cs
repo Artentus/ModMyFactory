@@ -13,6 +13,7 @@ using ModMyFactory.Web;
 using Ookii.Dialogs.Wpf;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
@@ -127,27 +128,47 @@ namespace ModMyFactory.ViewModels
                     progressWindow.ViewModel.CanCancel = true;
                     progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
-                    DirectoryInfo directory = App.Instance.Settings.GetFactorioDirectory();
-                    Task<FactorioVersion> downloadTask = FactorioWebsite.DownloadFactorioPackageAsync(selectedVersion, directory, container, new Progress<double>(p =>
+                    FactorioVersion newVersion;
+                    try
                     {
-                        if (p > 1)
+                        Task closeWindowTask = null;
+                        try
                         {
-                            progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
-                            progressWindow.ViewModel.IsIndeterminate = true;
-                            progressWindow.ViewModel.CanCancel = false;
+                            DirectoryInfo directory = App.Instance.Settings.GetFactorioDirectory();
+                            Task<FactorioVersion> downloadTask = FactorioWebsite.DownloadFactorioPackageAsync(selectedVersion, directory, container, new Progress<double>(p =>
+                            {
+                                if (p > 1)
+                                {
+                                    progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
+                                    progressWindow.ViewModel.IsIndeterminate = true;
+                                    progressWindow.ViewModel.CanCancel = false;
+                                }
+                                else
+                                {
+                                    progressWindow.ViewModel.Progress = p;
+                                }
+                            }), cancellationSource.Token);
+
+                            closeWindowTask = downloadTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                            progressWindow.ShowDialog();
+
+                            newVersion = await downloadTask;
                         }
-                        else
+                        finally
                         {
-                            progressWindow.ViewModel.Progress = p;
+                            if (closeWindowTask != null) await closeWindowTask;
                         }
-                    }), cancellationSource.Token);
+                    }
+                    catch (HttpRequestException)
+                    {
+                        MessageBox.Show(Window,
+                            App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
+                            App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
 
-                    Task closeWindowTask = downloadTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-                    progressWindow.ShowDialog();
-
-                    FactorioVersion newVersion = await downloadTask;
                     if (newVersion != null) FactorioVersions.Add(newVersion);
-                    await closeWindowTask;
                 }
             }
         }

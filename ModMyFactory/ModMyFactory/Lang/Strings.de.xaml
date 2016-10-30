@@ -16,6 +16,9 @@
     -->
 
     <!-- messages -->
+    <sys:String x:Key="Error.InternetConnection.Message">Es gibt ein Problem mit Ihrer Internetverbindung.&#x0a;Bitte stellen sie sicher, dass Ihr Computer mit dem Internet verbunden ist, und versuchen Sie es dann erneut.</sys:String>
+    <sys:String x:Key="Error.InternetConnection.Title">Netzwerkfehler!</sys:String>
+    
     <sys:String x:Key="Information.ModExistsPerVersion.Message">Die Mod '{0}' für Factorio {1} existiert bereits!</sys:String>
     <sys:String x:Key="Information.ModExistsPerVersion.Title">Mod übersprungen</sys:String>
 
