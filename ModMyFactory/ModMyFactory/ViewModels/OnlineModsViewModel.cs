@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -170,7 +171,20 @@ namespace ModMyFactory.ViewModels
 
         private async Task LoadExtendedModInfoAsync(ModInfo mod, int operationIndex)
         {
-            ExtendedModInfo extendedInfo = await ModWebsite.GetExtendedInfoAsync(mod);
+            ExtendedModInfo extendedInfo;
+            try
+            {
+                extendedInfo = await ModWebsite.GetExtendedInfoAsync(mod);
+            }
+            catch (WebException)
+            {
+                MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
+                    App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            
             if (operationIndex == asyncFetchExtendedInfoIndex) ExtendedInfo = extendedInfo;
         }
 
@@ -402,7 +416,19 @@ namespace ModMyFactory.ViewModels
 
         private async Task RefreshModList()
         {
-            List<ModInfo> modInfos = await ModHelper.FetchMods(Window);
+            List<ModInfo> modInfos;
+            try
+            {
+                modInfos = await ModHelper.FetchMods(Window);
+            }
+            catch (WebException)
+            {
+                MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
+                    App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             if (modInfos != null)
             {

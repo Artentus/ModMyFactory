@@ -67,97 +67,28 @@ namespace ModMyFactory.Web
         /// </summary>
         /// <param name="url">The URL of the request.</param>
         /// <param name="container">The cookie container used to store cookies in the connection.</param>
-        /// <param name="document">Out. The received document.</param>
-        /// <returns>Return false if the request failed, otherwise true.</returns>
-        public static bool TryGetDocument(string url, CookieContainer container, out string document)
-        {
-            HttpWebRequest request = CreateHttpRequest(url, container);
-            WebResponse response;
-            try
-            {
-                response = request.GetResponse();
-            }
-            catch (WebException)
-            {
-                document = null;
-                return false;
-            }
-            try
-            {
-                using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-                    document = reader.ReadToEnd();
-            }
-            catch (ProtocolViolationException)
-            {
-                document = null;
-                return false;
-            }
-            finally
-            {
-                response.Close();
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Gets the response document of an HTTP request.
-        /// </summary>
-        /// <param name="url">The URL of the request.</param>
-        /// <param name="container">The cookie container used to store cookies in the connection.</param>
-        /// <param name="content">The content that gets sent to the server.</param>
-        /// <param name="document">Out. The received document.</param>
-        /// <returns>Return false if the request failed, otherwise true.</returns>
-        public static bool TryGetDocument(string url, CookieContainer container, byte[] content, out string document)
-        {
-            HttpWebRequest request = CreateHttpRequest(url, container, content);
-            WebResponse response;
-            try
-            {
-                response = request.GetResponse();
-            }
-            catch (WebException)
-            {
-                document = null;
-                return false;
-            }
-            try
-            {
-                using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-                    document = reader.ReadToEnd();
-            }
-            catch (ProtocolViolationException)
-            {
-                document = null;
-                return false;
-            }
-            finally
-            {
-                response.Close();
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Gets the response document of an HTTP request.
-        /// </summary>
-        /// <param name="url">The URL of the request.</param>
-        /// <param name="container">The cookie container used to store cookies in the connection.</param>
         /// <returns>Returns the received document.</returns>
         public static string GetDocument(string url, CookieContainer container)
         {
-            string document;
+            string document = string.Empty;
             HttpWebRequest request = CreateHttpRequest(url, container);
+
             WebResponse response = null;
+            Stream responseStream = null;
             try
             {
                 response = request.GetResponse();
-                using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-                    document = reader.ReadToEnd();
+                responseStream = response.GetResponseStream();
+
+                if (responseStream != null)
+                {
+                    using (var reader = new StreamReader(responseStream, Encoding.UTF8))
+                        document = reader.ReadToEnd();
+                }
             }
             finally
             {
+                responseStream?.Close();
                 response?.Close();
             }
 
@@ -173,17 +104,25 @@ namespace ModMyFactory.Web
         /// <returns>Returns the received document.</returns>
         public static string GetDocument(string url, CookieContainer container, byte[] content)
         {
-            string document;
+            string document = string.Empty;
             HttpWebRequest request = CreateHttpRequest(url, container, content);
+
             WebResponse response = null;
+            Stream responseStream = null;
             try
             {
                 response = request.GetResponse();
-                using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-                    document = reader.ReadToEnd();
+                responseStream = response.GetResponseStream();
+
+                if (responseStream != null)
+                {
+                    using (var reader = new StreamReader(responseStream, Encoding.UTF8))
+                        document = reader.ReadToEnd();
+                }
             }
             finally
             {
+                responseStream?.Close();
                 response?.Close();
             }
 

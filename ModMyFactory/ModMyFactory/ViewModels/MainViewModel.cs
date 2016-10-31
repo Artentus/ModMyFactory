@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading;
@@ -486,7 +487,19 @@ namespace ModMyFactory.ViewModels
             }
             else
             {
-                List<ModInfo> modInfos = await ModHelper.FetchMods(Window);
+                List<ModInfo> modInfos;
+                try
+                {
+                    modInfos = await ModHelper.FetchMods(Window);
+                }
+                catch (WebException)
+                {
+                    MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
+                }
 
                 if (modInfos != null)
                 {
@@ -741,15 +754,22 @@ namespace ModMyFactory.ViewModels
             return info.Releases.MaxBy(release => release.Version, new VersionComparer());
         }
 
-        private async Task<Tuple<List<ModRelease>, List<Tuple<Mod, ModExportTemplate>>>> GetModsToDownload(ExportTemplate template)
+        private async Task<Tuple<List<ModRelease>, List<Tuple<Mod, ModExportTemplate>>>> GetModsToDownload(ExportTemplate template, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
             var toDownload = new List<ModRelease>();
             var conflicting = new List<Tuple<Mod, ModExportTemplate>>();
 
             if (template.IncludesVersionInfo)
             {
+                int modCount = template.Mods.Length;
+                int counter = 0;
                 foreach (var modTemplate in template.Mods)
                 {
+                    if (cancellationToken.IsCancellationRequested) return null;
+
+                    progress.Report(new Tuple<double, string>((double)counter / modCount, modTemplate.Name));
+                    counter++;
+
                     if (!Mods.Contains(modTemplate.Name, modTemplate.Version))
                     {
                         Mod[] mods = Mods.Find(modTemplate.Name);
@@ -778,11 +798,20 @@ namespace ModMyFactory.ViewModels
                         }
                     }
                 }
+
+                progress.Report(new Tuple<double, string>(1, string.Empty));
             }
             else
             {
+                int modCount = template.Mods.Length;
+                int counter = 0;
                 foreach (var modTemplate in template.Mods)
                 {
+                    if (cancellationToken.IsCancellationRequested) return null;
+
+                    progress.Report(new Tuple<double, string>((double)counter / modCount, modTemplate.Name));
+                    counter++;
+
                     Mod[] mods = Mods.Find(modTemplate.Name);
 
                     if (mods.Length == 0)
@@ -810,6 +839,8 @@ namespace ModMyFactory.ViewModels
                         }
                     }
                 }
+
+                progress.Report(new Tuple<double, string>(1, string.Empty));
             }
 
             return new Tuple<List<ModRelease>, List<Tuple<Mod, ModExportTemplate>>>(toDownload, conflicting);
@@ -884,7 +915,45 @@ namespace ModMyFactory.ViewModels
         {
             ExportTemplate template = ModpackExport.ImportTemplate(modpackFile);
 
-            var toDownloadResult = await GetModsToDownload(template);
+            var progressWindow = new ProgressWindow() { Owner = Window };
+            progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
+
+            var progress = new Progress<Tuple<double, string>>(info =>
+            {
+                progressWindow.ViewModel.Progress = info.Item1;
+                progressWindow.ViewModel.ProgressDescription = info.Item2;
+            });
+
+            var cancellationSource = new CancellationTokenSource();
+            progressWindow.ViewModel.CanCancel = true;
+            progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+
+            Tuple<List<ModRelease>, List<Tuple<Mod, ModExportTemplate>>> toDownloadResult;
+            try
+            {
+                Task closeWindowTask = null;
+                try
+                {
+                    var getModsTask = GetModsToDownload(template, progress, cancellationSource.Token);
+
+                    closeWindowTask = getModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                    progressWindow.ShowDialog();
+
+                    toDownloadResult = await getModsTask;
+                }
+                finally
+                {
+                    if (closeWindowTask != null) await closeWindowTask;
+                }
+            }
+            catch (WebException)
+            {
+                MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
+                    App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             List<ModRelease> toDownload = toDownloadResult.Item1;
             List<Tuple<Mod, ModExportTemplate>> conflicting = toDownloadResult.Item2;
 
@@ -898,8 +967,19 @@ namespace ModMyFactory.ViewModels
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
-            if (toDownload.Count > 0)
-                await DownloadModsAsync(toDownload);
+            try
+            {
+                if (toDownload.Count > 0)
+                    await DownloadModsAsync(toDownload);
+            }
+            catch (HttpRequestException)
+            {
+                MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
+                    App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             foreach (var modpackTemplate in template.Modpacks)
             {
@@ -1149,12 +1229,32 @@ namespace ModMyFactory.ViewModels
             progressWindow.ViewModel.CanCancel = true;
             progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
-            Task<List<ModUpdateInfo>> searchForUpdatesTask = GetModUpdatesAsync(progress, cancellationSource.Token);
-            Task closeWindowTask = searchForUpdatesTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-            progressWindow.ShowDialog();
+            List<ModUpdateInfo> modUpdates;
+            try
+            {
+                Task closeWindowTask = null;
+                try
+                {
+                    Task<List<ModUpdateInfo>> searchForUpdatesTask = GetModUpdatesAsync(progress, cancellationSource.Token);
 
-            List<ModUpdateInfo> modUpdates = await searchForUpdatesTask;
-            await closeWindowTask;
+                    closeWindowTask = searchForUpdatesTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                    progressWindow.ShowDialog();
+
+                    modUpdates = await searchForUpdatesTask;
+                }
+                finally
+                {
+                    if (closeWindowTask != null) await closeWindowTask;
+                }
+            }
+            catch (WebException)
+            {
+                MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
+                    App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             if (!cancellationSource.IsCancellationRequested)
             {
@@ -1183,7 +1283,8 @@ namespace ModMyFactory.ViewModels
                             progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
                             Task updateTask = UpdateModsAsyncInner(modUpdates, token, progress, cancellationSource.Token);
-                            closeWindowTask = updateTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+
+                            Task closeWindowTask = updateTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                             progressWindow.ShowDialog();
 
                             await updateTask;

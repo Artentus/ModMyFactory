@@ -31,10 +31,8 @@ namespace ModMyFactory.Web
             const string loginPage = "https://www.factorio.com/login";
             const string pattern = "[0-9]{10}##[0-9a-f]{40}";
 
-            string document;
-
             // Get a csrf token.
-            if (!WebHelper.TryGetDocument(loginPage, container, out document)) return false;
+            string document = WebHelper.GetDocument(loginPage, container);
             MatchCollection matches = Regex.Matches(document, pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
             if (matches.Count != 1) return false;
             string csrfToken = matches[0].Value;
@@ -53,7 +51,7 @@ namespace ModMyFactory.Web
 
             try
             {
-                if (!WebHelper.TryGetDocument(loginPage, container, content, out document)) return false;
+                document = WebHelper.GetDocument(loginPage, container, content);
                 if (!document.Contains("logout")) return false;
 
                 return true;
@@ -73,8 +71,7 @@ namespace ModMyFactory.Web
         {
             const string mainPage = "https://www.factorio.com";
 
-            string document;
-            if (!WebHelper.TryGetDocument(mainPage, container, out document)) return false;
+            string document = WebHelper.GetDocument(mainPage, container);
             return document.Contains("logout");
         }
 
@@ -104,11 +101,10 @@ namespace ModMyFactory.Web
             const string pattern = @"<h3> *(?<version>[0-9]+\.[0-9]+\.[0-9]+) *(?<modifier>\([a-z]+\)) *</h3>";
             string[] allowedModifiers = { "(alpha)" };
 
-            string document;
             versions = new List<FactorioOnlineVersion>();
 
             // Get stable versions.
-            if (!WebHelper.TryGetDocument(downloadPage, container, out document)) return false;
+            string document = WebHelper.GetDocument(downloadPage, container);
             MatchCollection matches = Regex.Matches(document, pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
             foreach (Match match in matches)
             {
@@ -124,7 +120,7 @@ namespace ModMyFactory.Web
             }
 
             // Get experimental versions.
-            if (!WebHelper.TryGetDocument(experimentalDownloadPage, container, out document)) return false;
+            document = WebHelper.GetDocument(experimentalDownloadPage, container);
             matches = Regex.Matches(document, pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
             foreach (Match match in matches)
             {

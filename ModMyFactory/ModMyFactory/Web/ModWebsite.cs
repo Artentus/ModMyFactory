@@ -39,8 +39,8 @@ namespace ModMyFactory.Web
 
                 ModInfo[] pageResult = await Task.Run<ModInfo[]>(() =>
                 {
-                    string document;
-                    if (WebHelper.TryGetDocument(currentPageUrl, null, out document))
+                    string document = WebHelper.GetDocument(currentPageUrl, null);
+                    if (!string.IsNullOrEmpty(document))
                     {
                         ApiPage currentPage = JsonHelper.Deserialize<ApiPage>(document);
 
@@ -70,8 +70,8 @@ namespace ModMyFactory.Web
 
             ExtendedModInfo info = await Task.Run<ExtendedModInfo>(() =>
             {
-                string document;
-                if (WebHelper.TryGetDocument(modUrl, null, out document))
+                string document = WebHelper.GetDocument(modUrl, null);
+                if (!string.IsNullOrEmpty(document))
                 {
                     ExtendedModInfo result = JsonHelper.Deserialize<ExtendedModInfo>(document);
                     return result;
@@ -137,9 +137,7 @@ namespace ModMyFactory.Web
 
             try
             {
-                string document;
-                if (!WebHelper.TryGetDocument(loginPage, null, content, out document)) return false;
-
+                string document = WebHelper.GetDocument(loginPage, null, content);
                 MatchCollection matches = Regex.Matches(document, pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
                 if (matches.Count != 1) return false;
 

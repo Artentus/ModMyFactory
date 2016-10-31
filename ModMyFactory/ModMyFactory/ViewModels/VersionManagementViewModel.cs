@@ -95,7 +95,18 @@ namespace ModMyFactory.ViewModels
         {
             selectedVersion = null;
             List<FactorioOnlineVersion> versions;
-            if (!FactorioWebsite.GetVersions(container, out versions))
+            try
+            {
+                if (!FactorioWebsite.GetVersions(container, out versions))
+                {
+                    MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("RetrievingVersions", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("RetrievingVersions", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+            }
+            catch (WebException)
             {
                 MessageBox.Show(Window,
                     App.Instance.GetLocalizedMessage("RetrievingVersions", MessageType.Error),
