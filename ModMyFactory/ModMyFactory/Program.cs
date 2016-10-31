@@ -33,6 +33,11 @@ namespace ModMyFactory
         internal static bool UpdateCheckOnStartup { get; private set; }
 
         /// <summary>
+        /// A list of files that should be imported on startup.
+        /// </summary>
+        internal static List<FileInfo> ImportFileList { get; private set; } 
+
+        /// <summary>
         /// The assemblys GUID.
         /// </summary>
         internal static Guid Guid => Guid.Parse(((GuidAttribute)(Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(GuidAttribute), false)[0])).Value);
@@ -165,6 +170,17 @@ namespace ModMyFactory
 
                 return 0;
             }
+
+            var fileList = new List<FileInfo>();
+            foreach (string argument in commandLine.Arguments)
+            {
+                if (argument.EndsWith(".fmp") && File.Exists(argument))
+                {
+                    var file = new FileInfo(argument);
+                    fileList.Add(file);
+                }
+            }
+            ImportFileList = fileList;
 
             app.InitializeComponent();
             return app.Run();

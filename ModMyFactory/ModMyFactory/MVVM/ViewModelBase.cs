@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 
 namespace ModMyFactory.MVVM
 {
@@ -15,7 +16,9 @@ namespace ModMyFactory.MVVM
 
         void IViewModelBase.SetWindow(Window window)
         {
-            Window = (T)window;
+            if (window == null) Window = null;
+            else Window = (T)window;
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Window)));
         }
     }
 }

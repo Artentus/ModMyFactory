@@ -25,5 +25,12 @@ namespace ModMyFactory.MVVM
 
             ViewModel.SetWindow(this);
         }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            ViewModel.SetWindow(null);
+
+            base.OnClosed(e);
+        }
     }
 }

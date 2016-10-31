@@ -1512,5 +1512,22 @@ namespace ModMyFactory.ViewModels
             if (fileList.Count > 0)
                 await ImportModpacksInner(fileList);
         }
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if ((e.PropertyName == nameof(Window)) && (Window != null))
+            {
+                Window.Loaded += async (sender, ea) =>
+                {
+                    if (Program.UpdateCheckOnStartup)
+                        await Update(true);
+
+                    if (Program.ImportFileList.Count > 0)
+                        await ImportModpacksInner(Program.ImportFileList);
+                };
+            }
+        }
     }
 }

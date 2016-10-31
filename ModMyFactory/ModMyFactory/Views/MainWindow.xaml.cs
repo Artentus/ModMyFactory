@@ -38,14 +38,7 @@ namespace ModMyFactory.Views
                 Top = windowInfo.PosY;
             }
 
-            Loaded += LoadedHandler;
             Closing += ClosingHandler;
-        }
-
-        private void LoadedHandler(object sender, EventArgs e)
-        {
-            if (Program.UpdateCheckOnStartup)
-                ViewModel.UpdateCommand.Execute(true);
         }
 
         private void ClosingHandler(object sender, CancelEventArgs e)
