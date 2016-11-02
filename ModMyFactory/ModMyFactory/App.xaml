@@ -755,12 +755,14 @@
 
             <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" BasedOn="{StaticResource ToolBarButtonBaseStyle}" TargetType="{x:Type Button}">
                 <Style.Setters>
-                    <Setter Property="MinWidth" Value="24"/>
+                    <Setter Property="MinWidth" Value="22"/>
+                    <Setter Property="MinHeight" Value="22"/>
                 </Style.Setters>
             </Style>
             <Style x:Key="{x:Static ToolBar.ToggleButtonStyleKey}" BasedOn="{StaticResource ToolBarButtonBaseStyle}" TargetType="{x:Type ToggleButton}">
                 <Style.Setters>
-                    <Setter Property="MinWidth" Value="24"/>
+                    <Setter Property="MinWidth" Value="22"/>
+                    <Setter Property="MinHeight" Value="22"/>
                 </Style.Setters>
             </Style>
             <Style x:Key="{x:Static ToolBar.CheckBoxStyleKey}" BasedOn="{StaticResource ToolBarButtonBaseStyle}" TargetType="{x:Type CheckBox}"/>
