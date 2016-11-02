@@ -229,6 +229,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand OpenAboutWindowCommand { get; }
 
+        public RelayCommand BrowseWikiCommand { get; }
+
         private bool ModFilter(object item)
         {
             Mod mod = item as Mod;
@@ -469,6 +471,7 @@ namespace ModMyFactory.ViewModels
 
                 UpdateCommand = new RelayCommand<bool>(async silent => await Update(silent), () => !updating);
                 OpenAboutWindowCommand = new RelayCommand(OpenAboutWindow);
+                BrowseWikiCommand = new RelayCommand(() => Process.Start("https://github.com/Artentus/ModMyFactory/wiki"));
 
 
                 // New ModMyFactory instance started.

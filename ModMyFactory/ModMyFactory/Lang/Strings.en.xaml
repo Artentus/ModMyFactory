@@ -156,6 +156,7 @@
     <sys:String x:Key="ForumThreadMenuItem">ModMyFactory forum thread</sys:String>
     <sys:String x:Key="CheckUpdateMenuItem">Check for update</sys:String>
     <sys:String x:Key="AboutMenuItem">About ModMyFactory</sys:String>
+    <sys:String x:Key="HelpMenuItem">Help</sys:String>
     
     <!-- hotkeys -->
     <sys:String x:Key="NewModpackHotkey">Ctrl+N</sys:String>
@@ -166,10 +167,8 @@
     <sys:String x:Key="CloseHotkey">Alt+F4</sys:String>
     <sys:String x:Key="VersionManagerHotkey">F6</sys:String>
     <sys:String x:Key="SettingsHotkey">F12</sys:String>
-    <sys:String x:Key="FactorioComHotkey">Ctrl+F</sys:String>
-    <sys:String x:Key="FactorioModsComHotkey">Ctrl+M</sys:String>
-    <sys:String x:Key="ForumThreadHotkey">F1</sys:String>
     <sys:String x:Key="AboutHotkey">Ctrl+F1</sys:String>
+    <sys:String x:Key="HelpHotkey">F1</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ModsHeader">Mods</sys:String>

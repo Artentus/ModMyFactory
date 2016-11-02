@@ -25,6 +25,7 @@
         <BitmapImage x:Key="ConfigureIcon" UriSource="../Images/Configure.png"/>
         <BitmapImage x:Key="DownloadIcon" UriSource="../Images/Download.png"/>
         <BitmapImage x:Key="ExportPackageIcon" UriSource="../Images/ExportPackage.png"/>
+        <BitmapImage x:Key="HelpIcon" UriSource="../Images/Help.png"/>
         <BitmapImage x:Key="ImportPackageIcon" UriSource="../Images/ImportPackage.png"/>
         <BitmapImage x:Key="InformationIcon" UriSource="../Images/Information.png"/>
         <BitmapImage x:Key="LinkIcon" UriSource="../Images/Link.png"/>
@@ -130,10 +131,8 @@
         <KeyBinding Key="F5" Command="{Binding StartGameCommand}"/>
         <KeyBinding Key="F6" Command="{Binding OpenVersionManagerCommand}"/>
         <KeyBinding Key="F12" Command="{Binding OpenSettingsCommand}"/>
-        <KeyBinding Modifiers="Control" Key="F" Command="{Binding BrowseFactorioWebsiteCommand}"/>
-        <KeyBinding Modifiers="Control" Key="M" Command="{Binding BrowseModWebsiteCommand}"/>
-        <KeyBinding Key="F1" Command="{Binding BrowseForumThreadCommand}"/>
         <KeyBinding Modifiers="Control" Key="F1" Command="{Binding OpenAboutWindowCommand}"/>
+        <KeyBinding Key="F1" Command="{Binding BrowseWikiCommand}"/>
     </Window.InputBindings>
     
     <Window.CommandBindings>
@@ -228,12 +227,9 @@
                     <sys:Boolean x:Key="False">False</sys:Boolean>
                 </MenuItem.Resources>
                 
-                <MenuItem Header="{DynamicResource FactorioComMenuItem}" Icon="{StaticResource WebDestinationIcon}"
-                          InputGestureText="{DynamicResource FactorioComHotkey}" Command="{Binding BrowseFactorioWebsiteCommand}"/>
-                <MenuItem Header="{DynamicResource FactorioModsComMenuItem}" Icon="{StaticResource WebDestinationIcon}"
-                          InputGestureText="{DynamicResource FactorioModsComHotkey}" Command="{Binding BrowseModWebsiteCommand}"/>
-                <MenuItem Header="{DynamicResource ForumThreadMenuItem}" Icon="{StaticResource WebDestinationIcon}"
-                          InputGestureText="{DynamicResource ForumThreadHotkey}" Command="{Binding BrowseForumThreadCommand}"/>
+                <MenuItem Header="{DynamicResource FactorioComMenuItem}" Icon="{StaticResource WebDestinationIcon}" Command="{Binding BrowseFactorioWebsiteCommand}"/>
+                <MenuItem Header="{DynamicResource FactorioModsComMenuItem}" Icon="{StaticResource WebDestinationIcon}" Command="{Binding BrowseModWebsiteCommand}"/>
+                <MenuItem Header="{DynamicResource ForumThreadMenuItem}" Icon="{StaticResource WebDestinationIcon}" Command="{Binding BrowseForumThreadCommand}"/>
                 
                 <Separator/>
                 
@@ -241,6 +237,8 @@
                           Command="{Binding UpdateCommand}" CommandParameter="{StaticResource False}"/>
                 <MenuItem Header="{DynamicResource AboutMenuItem}" Icon="{StaticResource InformationIcon}"
                           InputGestureText="{DynamicResource AboutHotkey}" Command="{Binding OpenAboutWindowCommand}"/>
+                <MenuItem Header="{DynamicResource HelpMenuItem}" Icon="{StaticResource HelpIcon}"
+                          InputGestureText="{DynamicResource HelpHotkey}" Command="{Binding BrowseWikiCommand}"/>
             </MenuItem>
         </Menu>
 

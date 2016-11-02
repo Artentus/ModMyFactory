@@ -377,6 +377,9 @@
   <ItemGroup>
     <Resource Include="Images\Refresh.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Help.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(ProjectDir)Images\Factorio_Icon.ico" "$(TargetDir)Factorio_Icon.ico"
