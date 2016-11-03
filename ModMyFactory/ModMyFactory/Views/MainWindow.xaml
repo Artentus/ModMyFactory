@@ -226,19 +226,23 @@
                 <MenuItem.Resources>
                     <sys:Boolean x:Key="False">False</sys:Boolean>
                 </MenuItem.Resources>
+
+                <MenuItem Header="{DynamicResource HelpMenuItem}" Icon="{StaticResource HelpIcon}"
+                          InputGestureText="{DynamicResource HelpHotkey}" Command="{Binding BrowseWikiCommand}"/>
+
+                <MenuItem Header="{DynamicResource CheckUpdateMenuItem}" Icon="{StaticResource UpdateIcon}"
+                          Command="{Binding UpdateCommand}" CommandParameter="{StaticResource False}"/>
+
+                <Separator/>
                 
                 <MenuItem Header="{DynamicResource FactorioComMenuItem}" Icon="{StaticResource WebDestinationIcon}" Command="{Binding BrowseFactorioWebsiteCommand}"/>
                 <MenuItem Header="{DynamicResource FactorioModsComMenuItem}" Icon="{StaticResource WebDestinationIcon}" Command="{Binding BrowseModWebsiteCommand}"/>
                 <MenuItem Header="{DynamicResource ForumThreadMenuItem}" Icon="{StaticResource WebDestinationIcon}" Command="{Binding BrowseForumThreadCommand}"/>
                 
                 <Separator/>
-                
-                <MenuItem Header="{DynamicResource CheckUpdateMenuItem}" Icon="{StaticResource UpdateIcon}"
-                          Command="{Binding UpdateCommand}" CommandParameter="{StaticResource False}"/>
+
                 <MenuItem Header="{DynamicResource AboutMenuItem}" Icon="{StaticResource InformationIcon}"
                           InputGestureText="{DynamicResource AboutHotkey}" Command="{Binding OpenAboutWindowCommand}"/>
-                <MenuItem Header="{DynamicResource HelpMenuItem}" Icon="{StaticResource HelpIcon}"
-                          InputGestureText="{DynamicResource HelpHotkey}" Command="{Binding BrowseWikiCommand}"/>
             </MenuItem>
         </Menu>
 
