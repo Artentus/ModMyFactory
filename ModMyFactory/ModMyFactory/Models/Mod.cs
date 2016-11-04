@@ -247,7 +247,7 @@ namespace ModMyFactory.Models
             get
             {
                 var authorAndVersion = $"Author: {Author}     Version: {Version}";
-                return $"{authorAndVersion}\n\n{StringHelper.Wrap(Description, authorAndVersion.Length)}";
+                return $"{authorAndVersion}\n\n{Description.Wrap(authorAndVersion.Length)}";
             }
         }
 

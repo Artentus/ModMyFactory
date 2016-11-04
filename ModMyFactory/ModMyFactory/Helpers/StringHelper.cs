@@ -1,38 +1,10 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace ModMyFactory.Helpers
 {
-    public static class StringHelper
+    static class StringHelper
     {
-        public static string Wrap(string text, int columnWidth)
-        {
-            string[] words = text.Split(' ');
-
-            var wrappedText = new StringBuilder();
-
-            var line = "";
-            foreach (var word in words)
-            {
-                if ((line + word).Length > columnWidth)
-                {
-                    wrappedText.AppendLine(line);
-                    line = "";
-                }
-
-                line += $"{word} ";
-            }
-
-            if (line.Length > 0)
-            {
-                wrappedText.Append(line);
-            }
-
-            return wrappedText.ToString();
-        }
-
         private static int[,] CreateTable(int width, int height)
         {
             int[,] table = new int[width, height];
@@ -110,14 +82,6 @@ namespace ModMyFactory.Helpers
         public static int GetEditDistance(string first, string second)
         {
             return GetEditDistance(first, second, CultureInfo.CurrentCulture, CompareOptions.None);
-        }
-
-        /// <summary>
-        /// Splits this string on whitespace.
-        /// </summary>
-        public static string[] SplitOnWhitespace(this string value)
-        {
-            return value.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }
