@@ -15,6 +15,7 @@ using System.Windows.Data;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM;
+using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.Views;
 using ModMyFactory.Web;
 using ModMyFactory.Web.ModApi;
@@ -63,6 +64,7 @@ namespace ModMyFactory.ViewModels
 
                     ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
                     ModsView.Filter = ModFilter;
+                    ModsView.CustomSort = new ModInfoSorter();
                 }
             }
         }
@@ -79,7 +81,7 @@ namespace ModMyFactory.ViewModels
                     filter = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Filter)));
 
-                    modsView.Refresh();
+                    ModsView.Refresh();
                 }
             }
         }
@@ -194,7 +196,8 @@ namespace ModMyFactory.ViewModels
             if (mod == null) return false;
 
             if (string.IsNullOrWhiteSpace(filter)) return true;
-            return Thread.CurrentThread.CurrentUICulture.CompareInfo.IndexOf(mod.Title, filter, CompareOptions.IgnoreCase) >= 0;
+
+            return StringHelper.FilterIsContained(filter, $"{mod.Title} {mod.Author}");
         }
 
         private OnlineModsViewModel()

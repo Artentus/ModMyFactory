@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace ModMyFactory.Helpers
@@ -78,6 +79,32 @@ namespace ModMyFactory.Helpers
         public static int EditDistanceTo(this string first, string second)
         {
             return StringHelper.GetEditDistance(first, second);
+        }
+
+        /// <summary>
+        /// Returns a new string in which all occurrences of the specified Unicode characters in this instance are replaced with another specified Unicode character.
+        /// </summary>
+        /// <param name="oldChars">The Unicode characters to be replaced.</param>
+        /// <param name="newChar">The Unicode character to replace all occurrences of the old characters.</param>
+        /// <returns>A string that is equivalent to this instance except that all instances of the old characters are replaced with newChar. If the old characters are not found in the current instance, the method returns the current instance unchanged.</returns>
+        public static string Replace(this string value, char[] oldChars, char? newChar)
+        {
+            var sb = new StringBuilder(value.Length);
+
+            foreach (char c in value)
+            {
+                if (oldChars.Contains(c))
+                {
+                    if (newChar.HasValue)
+                        sb.Append(newChar.Value);
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+            }
+
+            return sb.ToString();
         }
     }
 }

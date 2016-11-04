@@ -1,5 +1,8 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 
 namespace ModMyFactory.Helpers
 {
@@ -82,6 +85,61 @@ namespace ModMyFactory.Helpers
         public static int GetEditDistance(string first, string second)
         {
             return GetEditDistance(first, second, CultureInfo.CurrentCulture, CompareOptions.None);
+        }
+
+        private static bool FilterWordIsContained(string filterWord, IEnumerable<string> modWords)
+        {
+            foreach (string modWord in modWords)
+            {
+                int lengthDifference = Math.Abs(modWord.Length - filterWord.Length);
+                if (modWord.Length < filterWord.Length)
+                {
+                    if (lengthDifference > Math.Ceiling(modWord.Length * 0.2)) continue;
+
+                    for (int i = 0; i <= lengthDifference; i++)
+                    {
+                        string subFilterWord = filterWord.Substring(i, modWord.Length);
+
+                        int distance = subFilterWord.EditDistanceTo(modWord, Thread.CurrentThread.CurrentCulture, CompareOptions.IgnoreCase);
+                        if (distance <= Math.Ceiling(modWord.Length * 0.2)) return true;
+                    }
+                }
+                else
+                {
+                    if (lengthDifference > Math.Floor(modWord.Length * 0.5)) continue;
+
+                    for (int i = 0; i <= lengthDifference; i++)
+                    {
+                        string subModWord = modWord.Substring(i, filterWord.Length);
+
+                        int distance = filterWord.EditDistanceTo(subModWord, Thread.CurrentThread.CurrentCulture, CompareOptions.IgnoreCase);
+                        if (distance <= Math.Ceiling(filterWord.Length * 0.2)) return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if a text contains a filter pattern.
+        /// A heuristic function is used to determine if the filter pattern is contained.
+        /// </summary>
+        /// <param name="filter">The filter pattern.</param>
+        /// <param name="text">The text to check on.</param>
+        /// <returns>Returns true if the text appears to contain the filter pattern, otherwise false.</returns>
+        public static bool FilterIsContained(string filter, string text)
+        {
+            char[] whitespaceChars = { '-', '_', '.', ':', ',', ';', '=', '?', '!', '(', ')', '[', ']', '{', '}', '+', '/', '\\', '&', '|', '<', '>' };
+            char[] nullChars = { '\'', '\"', '*', '~', '#', '%', '$', '§', '^', '°' };
+
+            filter = filter.Replace(whitespaceChars, ' ').Replace(nullChars, null);
+            string[] filterWords = filter.SplitOnWhitespace();
+
+            text = text.Replace(whitespaceChars, ' ').Replace(nullChars, null);
+            IEnumerable<string> textWords = text.SplitOnWhitespace();
+
+            return filterWords.All(filterWord => FilterWordIsContained(filterWord, textWords));
         }
     }
 }

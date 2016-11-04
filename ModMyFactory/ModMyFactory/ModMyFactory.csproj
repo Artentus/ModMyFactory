@@ -108,6 +108,7 @@
     <Compile Include="Export\ModExportTemplate.cs" />
     <Compile Include="ModManager.cs" />
     <Compile Include="Export\ModpackExportTemplate.cs" />
+    <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\ModUpdateInfoSorter.cs" />
     <Compile Include="VersionComparer.cs" />
     <Compile Include="ViewModels\ModpackExportViewModel.cs" />

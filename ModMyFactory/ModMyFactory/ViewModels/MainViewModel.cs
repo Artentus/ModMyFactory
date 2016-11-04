@@ -237,7 +237,8 @@ namespace ModMyFactory.ViewModels
             if (mod == null) return false;
 
             if (string.IsNullOrWhiteSpace(modsFilter)) return true;
-            return Thread.CurrentThread.CurrentUICulture.CompareInfo.IndexOf(mod.Name, modsFilter, CompareOptions.IgnoreCase) >= 0;
+
+            return StringHelper.FilterIsContained(modsFilter, $"{mod.Title} {mod.Author}");
         }
 
         private bool ModpackFilter(object item)
@@ -246,7 +247,8 @@ namespace ModMyFactory.ViewModels
             if (modpack == null) return false;
 
             if (string.IsNullOrWhiteSpace(modpacksFilter)) return true;
-            return Thread.CurrentThread.CurrentUICulture.CompareInfo.IndexOf(modpack.Name, modpacksFilter, CompareOptions.IgnoreCase) >= 0;
+
+            return StringHelper.FilterIsContained(modpacksFilter, modpack.Name);
         }
 
         private void SetAllModsSelected()
