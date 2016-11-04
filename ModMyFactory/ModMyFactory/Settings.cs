@@ -97,7 +97,7 @@ namespace ModMyFactory
                 case DirectoryOption.AppData:
                     return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
                 case DirectoryOption.ApplicationDirectory:
-                    return new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, directoryName));
+                    return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
                 case DirectoryOption.Custom:
                     return new DirectoryInfo(FactorioDirectory);
             }
@@ -119,9 +119,9 @@ namespace ModMyFactory
 
                 case DirectoryOption.ApplicationDirectory:
                     if (version != null)
-                        return new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, directoryName, version.ToString(2)));
+                        return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName, version.ToString(2)));
                     else
-                        return new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, directoryName));
+                        return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
 
                 case DirectoryOption.Custom:
                     if (version != null)

@@ -237,7 +237,7 @@ namespace ModMyFactory.ViewModels
             if (mod == null) return false;
 
             if (string.IsNullOrWhiteSpace(modsFilter)) return true;
-            return Thread.CurrentThread.CurrentUICulture.CompareInfo.IndexOf(mod.Title, modsFilter, CompareOptions.IgnoreCase) >= 0;
+            return Thread.CurrentThread.CurrentUICulture.CompareInfo.IndexOf(mod.Name, modsFilter, CompareOptions.IgnoreCase) >= 0;
         }
 
         private bool ModpackFilter(object item)
