@@ -123,6 +123,7 @@
     <Compile Include="Views\OnlineModsWindow.xaml.cs">
       <DependentUpon>OnlineModsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Web\ApiAuthentication.cs" />
     <Compile Include="Web\ModApi\ApiPage.cs" />
     <Compile Include="Models\ExtractedMod.cs" />
     <Compile Include="Models\ZippedMod.cs" />
@@ -191,6 +192,9 @@
     <Compile Include="Web\ModApi\PageInfo.cs" />
     <Compile Include="Web\ModApi\PageLinks.cs" />
     <Compile Include="Web\ModWebsite.cs" />
+    <Compile Include="Web\UpdateApi\UpdateInfo.cs" />
+    <Compile Include="Web\UpdateApi\UpdateStep.cs" />
+    <Compile Include="Web\UpdateWebsite.cs" />
     <Compile Include="Web\WebHelper.cs" />
     <Compile Include="Helpers\ShellHelper.cs" />
     <Compile Include="Win32\ChangeNotifyEventId.cs" />
@@ -389,6 +393,7 @@
   <ItemGroup>
     <Resource Include="Images\Lang\ru.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(ProjectDir)Images\Factorio_Icon.ico" "$(TargetDir)Factorio_Icon.ico"

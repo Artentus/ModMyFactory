@@ -130,7 +130,7 @@ namespace ModMyFactory
             }
             else if (IsLoggedIn()) // Only credentials available.
             {
-                failed = !ModWebsite.LogIn(Username, Password, out token);
+                failed = !ApiAuthentication.LogIn(Username, Password, out token);
             }
 
             if (failed)
@@ -155,7 +155,7 @@ namespace ModMyFactory
                 bool saveCredentials = loginWindow.SaveCredentialsBox.IsChecked ?? false;
                 App.Instance.Settings.SaveCredentials = saveCredentials;
 
-                failed = !ModWebsite.LogIn(Username, Password, out token);
+                failed = !ApiAuthentication.LogIn(Username, Password, out token);
                 if (failed)
                 {
                     token = null;
