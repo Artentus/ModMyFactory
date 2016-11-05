@@ -1,0 +1,326 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xml:space="preserve">
+    <!--
+    Newline character: &#x0a;
+    -->
+    
+    
+    
+    <sys:String x:Key="NewModpackName">Новый модпак</sys:String>
+    
+    
+    
+    <!--
+    ____________________ Dialogs ____________________
+    -->
+
+    <!-- messages -->
+    <sys:String x:Key="Error.InternetConnection.Message">Проеблема с Интернет соединеним.&#x0a;Убедитесь, что ваш компьютер имеет стабильный доступ к интернету, затем попробуйте ещё раз.</sys:String>
+    <sys:String x:Key="Error.InternetConnection.Title">Сетевая ошибка!</sys:String>
+    
+    <sys:String x:Key="Information.ModExistsPerVersion.Message">Мод '{0}' для Факторио {1} уже существует!</sys:String>
+    <sys:String x:Key="Information.ModExistsPerVersion.Title">Мод пропущен</sys:String>
+    
+    <sys:String x:Key="Information.ModExists.Message">Мод '{0}' уже существует!</sys:String>
+    <sys:String x:Key="Information.ModExists.Title">Мод пропущен</sys:String>
+    
+    <sys:String x:Key="Error.InvalidModArchive.Message">ZIP-архив '{0}' does not contain a valid mod.</sys:String>
+    <sys:String x:Key="Error.InvalidModArchive.Title">Ошибка добавления мода!</sys:String>
+    
+    <sys:String x:Key="Error.InvalidModFolder.Message">The selected folder does not contain a valid mod.</sys:String>
+    <sys:String x:Key="Error.InvalidModFolder.Title">Ошибка добавления мода!</sys:String>
+
+    <sys:String x:Key="Information.NoModUpdates.Message">All your mods are up to date.</sys:String>
+    <sys:String x:Key="Information.NoModUpdates.Title">No updates found</sys:String>
+    
+    <sys:String x:Key="Warning.HasConflicts.Message">The following conflicts occured while importing this modpack file:</sys:String>
+    <sys:String x:Key="Warning.HasConflicts.Title">Modpack file causes conflicts</sys:String>
+    
+    <sys:String x:Key="Question.Update.Message">You are running an old version of ModMyFactory (current version is {0}, newest version is {1}).&#x0a;Do you want to download the newest version?</sys:String>
+    <sys:String x:Key="Question.Update.Title">Update available</sys:String>
+    
+    <sys:String x:Key="Information.NoUpdate.Message">You are running the newest version of ModMyFactory.</sys:String>
+    <sys:String x:Key="Information.NoUpdate.Title">No update available</sys:String>
+    
+    <sys:String x:Key="Error.RetrievingVersions.Message">The available Factorio versions could not be retrieved.</sys:String>
+    <sys:String x:Key="Error.RetrievingVersions.Title">Error!</sys:String>
+
+    <sys:String x:Key="Error.InvalidFactorioArchive.Message">This ZIP archive does not contain a valid Factorio installation.</sys:String>
+    <sys:String x:Key="Error.InvalidFactorioArchive.Title">Invalid archive!</sys:String>
+
+    <sys:String x:Key="Question.DeleteFactorioArchive.Message">Do you want to delete the source file?</sys:String>
+    <sys:String x:Key="Question.DeleteFactorioArchive.Title">Delete file?</sys:String>
+
+    <sys:String x:Key="Error.InvalidFactorioFolder.Message">This folder does not contain a valid Factorio installation.</sys:String>
+    <sys:String x:Key="Error.InvalidFactorioFolder.Title">Invalid folder!</sys:String>
+
+    <sys:String x:Key="Warning.MoveFactorioFolder.Message">The selected installation of Factorio will be moved to the location specified in the settings! The creation of a backup is recommended.&#x0a;Do you wish to continue?</sys:String>
+    <sys:String x:Key="Warning.MoveFactorioFolder.Title">Warning</sys:String>
+    
+    <sys:String x:Key="Warning.MoveSteamFactorio.Message">All mods, saves and scenarios will be moved to the location specified in the settings! The creation of a backup is recommended.&#x0a;Do you wish to continue?</sys:String>
+    <sys:String x:Key="Warning.MoveSteamFactorio.Title">Warning</sys:String>
+    
+    <sys:String x:Key="Question.RemoveFactorioVersion.Message">Do you really want to remove this version of Factorio?&#x0a;This will delete all corresponding files on your hard drive.</sys:String>
+    <sys:String x:Key="Question.RemoveFactorioVersion.Title">Confirm</sys:String>
+
+    
+    <!-- file type descriptions -->
+    <sys:String x:Key="ZipDescription">ZIP-Archives</sys:String>
+    <sys:String x:Key="LnkDescription">Shortcuts</sys:String>
+    <sys:String x:Key="FmpDescription">Factorio modpacks</sys:String>
+    
+    
+    <!-- progress dialogs -->
+    <sys:String x:Key="MovingFilesDescription">Moving files...</sys:String>
+    <sys:String x:Key="ExtractingDescription">Extracting...</sys:String>
+    
+    <sys:String x:Key="FetchingModsAction">Fetching mods</sys:String>
+    <sys:String x:Key="ParsingFirstPageDescription">Parsing page 1.</sys:String>
+    <sys:String x:Key="ParsingPageDescription">Parsing page {0} of {1}.</sys:String>
+    
+    <sys:String x:Key="ProcessingModsAction">Processing mods</sys:String>
+    <sys:String x:Key="ProcessingModAction">Processing mod</sys:String>
+    
+    <sys:String x:Key="SearchingForUpdatesAction">Searching for updates</sys:String>
+    <sys:String x:Key="UpdatingModsAction">Updating mods</sys:String>
+    
+    <sys:String x:Key="MovingDirectoriesAction">Moving directories</sys:String>
+
+    <sys:String x:Key="DownloadingAction">Downloading</sys:String>
+    <sys:String x:Key="DownloadingDescription">Downloading {0}</sys:String>
+
+    <sys:String x:Key="AddingFromZipAction">Adding from ZIP</sys:String>
+    <sys:String x:Key="CheckingValidityDescription">Checking validity...</sys:String>
+    
+    <sys:String x:Key="AddingLocalInstallationAction">Adding local installation</sys:String>
+    
+    <sys:String x:Key="AddingSteamVersionAction">Adding Steam version</sys:String>
+
+    <sys:String x:Key="RemovingFactorioVersionAction">Removing Factorio version</sys:String>
+    <sys:String x:Key="DeletingFilesDescription">Deleting files...</sys:String>
+    
+    <sys:String x:Key="UpdatingAction">Updating</sys:String>
+
+    
+    
+    <!--
+    ____________________ Misc ____________________
+    -->
+    
+    <!-- buttons -->
+    <sys:String x:Key="OkButton">OK</sys:String>
+    <sys:String x:Key="CloseButton">Close</sys:String>
+    <sys:String x:Key="CancelButton">Cancel</sys:String>
+    <sys:String x:Key="DownloadButton">Download</sys:String>
+    <sys:String x:Key="UpdateButton">Update</sys:String>
+
+
+    <!--
+    ____________________ MainWindow ____________________
+    -->
+
+    <sys:String x:Key="MainWindowTitle">ModMyFactory</sys:String>
+
+    <!-- 'File' menu -->
+    <sys:String x:Key="FileMenuItem">_File</sys:String>
+    <sys:String x:Key="AddModsMenuItem">Add mods</sys:String>
+    <sys:String x:Key="DownloadModsMenuItem">Download</sys:String>
+    <sys:String x:Key="AddModFilesMenuItem">From files</sys:String>
+    <sys:String x:Key="AddModFolderMenuItem">From folder</sys:String>
+    <sys:String x:Key="NewModpackMenuItem">New modpack</sys:String>
+    <sys:String x:Key="CreateLinkMenuItem">Create link</sys:String>
+    <sys:String x:Key="ExportModpacksMenuItem">Export modpacks</sys:String>
+    <sys:String x:Key="ImportModpacksMenuItem">Import modpacks</sys:String>
+    <sys:String x:Key="StartGameMenuItem">Start game</sys:String>
+    <sys:String x:Key="CloseMenuItem">Close</sys:String>
+    
+    <!-- 'Edit' menu -->
+    <sys:String x:Key="EditMenuItem">_Edit</sys:String>
+    <sys:String x:Key="OpenFactorioFolderMenuItem">Open Factorio folder</sys:String>
+    <sys:String x:Key="OpenModFolderMenuItem">Open mod folder</sys:String>
+    <sys:String x:Key="OpenSavegameFolderMenuItem">Open savegame folder</sys:String>
+    <sys:String x:Key="OpenScenarioFolderMenuItem">Open scenario folder</sys:String>
+    <sys:String x:Key="UpdateModsMenuItem">Update mods</sys:String>
+    <sys:String x:Key="VersionManagerMenuItem">Version manager</sys:String>
+    <sys:String x:Key="SettingsMenuItem">Settings</sys:String>
+    
+    <!-- 'Language' menu -->
+    <sys:String x:Key="LanguageMenuItem">_Language</sys:String>
+    
+    <!-- 'Info' menu -->
+    <sys:String x:Key="InfoMenuItem">_Info</sys:String>
+    <sys:String x:Key="FactorioComMenuItem">Factorio.com</sys:String>
+    <sys:String x:Key="FactorioModsComMenuItem">Factoriomods.com</sys:String>
+    <sys:String x:Key="ForumThreadMenuItem">ModMyFactory forum thread</sys:String>
+    <sys:String x:Key="CheckUpdateMenuItem">Check for update</sys:String>
+    <sys:String x:Key="AboutMenuItem">About ModMyFactory</sys:String>
+    <sys:String x:Key="HelpMenuItem">Help</sys:String>
+    
+    <!-- hotkeys -->
+    <sys:String x:Key="NewModpackHotkey">Ctrl+N</sys:String>
+    <sys:String x:Key="CreateLinkHotkey">Ctrl+L</sys:String>
+    <sys:String x:Key="ExportModpacksHotkey">F9</sys:String>
+    <sys:String x:Key="ImportModpacksHotkey">F10</sys:String>
+    <sys:String x:Key="StartGameHotkey">F5</sys:String>
+    <sys:String x:Key="CloseHotkey">Alt+F4</sys:String>
+    <sys:String x:Key="VersionManagerHotkey">F6</sys:String>
+    <sys:String x:Key="SettingsHotkey">F12</sys:String>
+    <sys:String x:Key="AboutHotkey">Ctrl+F1</sys:String>
+    <sys:String x:Key="HelpHotkey">F1</sys:String>
+
+    <!-- headers -->
+    <sys:String x:Key="ModsHeader">Mods</sys:String>
+    <sys:String x:Key="ModpacksHeader">Modpacks</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="RenameToolTip">Rename</sys:String>
+    <sys:String x:Key="DeleteToolTip">Delete</sys:String>
+    <sys:String x:Key="RemoveToolTip">Remove from modpack</sys:String>
+    <sys:String x:Key="SetActiveToolTip">Activate</sys:String>
+    <sys:String x:Key="SetInactiveToolTip">Deactivate</sys:String>
+    <sys:String x:Key="SetAllActiveToolTip">Activate all</sys:String>
+    <sys:String x:Key="SetAllInactiveToolTip">Deactivate all</sys:String>
+    
+    
+    <!--
+    ____________________ VersionManagementWindow ____________________
+    -->
+
+    <sys:String x:Key="VersionManagementWindowTitle">Version manager</sys:String>
+
+    <!-- buttons -->
+    <sys:String x:Key="AddZipButton">Add from ZIP</sys:String>
+    <sys:String x:Key="AddFolderButton">Add from folder</sys:String>
+    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center">Select&#x0a;Steam version</TextBlock>
+    <sys:String x:Key="OpenFolderButton">Open folder</sys:String>
+    <sys:String x:Key="RemoveButton">Remove</sys:String>
+
+
+    <!--
+    ____________________ VersionListWindow ____________________
+    -->
+
+    <sys:String x:Key="VersionListWindowTitle">Select version</sys:String>
+
+
+    <!--
+    ____________________ SettingsWindow ____________________
+    -->
+
+    <sys:String x:Key="SettingsWindowTitle">Settings</sys:String>
+
+    <!-- group headers -->
+    <sys:String x:Key="ManagerModeGroupHeader">Manager mode</sys:String>
+    <sys:String x:Key="FactorioDirectoryGroupHeader">Factorio location</sys:String>
+    <sys:String x:Key="ModDirectoryGroupHeader">Mod location</sys:String>
+    <sys:String x:Key="CredentialsGroupHeader">Login credentials</sys:String>
+
+    
+    <!-- group items -->
+    <sys:String x:Key="PerFactorioVersionGroupItem">Per Factorio version</sys:String>
+    <sys:String x:Key="GlobalGroupItem">Global</sys:String>
+    <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
+    <sys:String x:Key="AppDirectoryGroupItem">Application directory</sys:String>
+    <sys:String x:Key="SelectGroupItem">Select:</sys:String>
+
+    <!-- buttons -->
+    <sys:String x:Key="BrowseButton">Browse</sys:String>
+
+
+    <!--
+    ____________________ LoginWindow ____________________
+    -->
+
+    <sys:String x:Key="LoginWindowTitle">Login</sys:String>
+    
+    <!-- headers -->
+    <sys:String x:Key="UsernameHeader">Username or Email</sys:String>
+    <sys:String x:Key="PasswordHeader">Password</sys:String>
+    <sys:String x:Key="SaveCredentialsHeader">Remember my login credentials</sys:String>
+
+    <!-- messages -->
+    <sys:String x:Key="LoginFailedMessage">Login failed!</sys:String>
+
+
+    <!--
+    ____________________ LinkPropertiesWindow ____________________
+    -->
+
+    <sys:String x:Key="LinkPropertiesWindowTitle">Choose link properties</sys:String>
+    
+    <!-- headers -->
+    <sys:String x:Key="SelectFactorioHeader">Select Factorio version:</sys:String>
+    <sys:String x:Key="SelectModpackHeader">Select modpack:</sys:String>
+    
+    
+    <!-- buttons -->
+    <sys:String x:Key="CreateButton">Create</sys:String>
+
+
+    <!--
+    ____________________ AboutWindow ____________________
+    -->
+
+    <sys:String x:Key="AboutWindowTitle">About ModMyFactory</sys:String>
+
+    
+    <!-- labels -->
+    <sys:String x:Key="AuthorLabel">by Mathis Rech</sys:String>
+    <sys:String x:Key="FlagsLabel">Flag icons:</sys:String>
+    <sys:String x:Key="FontLabel">Factorio font:</sys:String>
+    <sys:String x:Key="DialogsLabel">Dialogs:</sys:String>
+    <sys:String x:Key="JsonLabel">JSON Framework:</sys:String>
+    <sys:String x:Key="GitHubLabel">GitHub API:</sys:String>
+    
+    <!-- headers -->
+    <sys:String x:Key="ContributorsHeader">Contributors</sys:String>
+
+
+    <!--
+    ____________________ OnlineModsWindow ____________________
+    -->
+
+    <sys:String x:Key="OnlineModsWindowTitle">Browse online mods</sys:String>
+    
+    <!-- format strings -->
+    <sys:String x:Key="ByFormat">by {0}</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="ViewsToolTip">Views</sys:String>
+    <sys:String x:Key="DownloadsToolTip">Downloads</sys:String>
+    <sys:String x:Key="InstalledToolTip">Installed</sys:String>
+    <sys:String x:Key="RefreshToolTip">Refresh list</sys:String>
+    
+    <!-- headers -->
+    <sys:String x:Key="ReleasesHeader">Releases</sys:String>
+
+
+    <!--
+    ____________________ ModUpdateWindow ____________________
+    -->
+    
+    <sys:String x:Key="ModUpdateWindowTitle">Select mods to update</sys:String>
+    
+    <!-- format strings -->
+    <sys:String x:Key="CurrentVersionFormat">Current version: {0}</sys:String>
+    <sys:String x:Key="NewestVersionFormat">Newest version: {0}</sys:String>
+    
+    
+    <!--
+    ____________________ ModpackExportWindow ____________________
+    -->
+    
+    <sys:String x:Key="ModpackExportWindowTitle">Select modpacks to export</sys:String>
+    
+    <!-- options -->
+    <sys:String x:Key="IncludeVersionInfoOption">Include version info</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="IncludeVersionsToolTip">This will save the versions of the exported mods into the exported file.&#x0a;On import ModMyFactory will use this info to download specific mod versions.</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="ExportButton">Export</sys:String>
+
+</ResourceDictionary>
