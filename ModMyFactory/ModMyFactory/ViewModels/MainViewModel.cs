@@ -763,36 +763,75 @@ namespace ModMyFactory.ViewModels
             var toDownload = new List<ModRelease>();
             var conflicting = new List<Tuple<Mod, ModExportTemplate>>();
 
-            if (template.IncludesVersionInfo)
+            int modCount = template.Mods.Length;
+            int counter = 0;
+            foreach (var modTemplate in template.Mods)
             {
-                int modCount = template.Mods.Length;
-                int counter = 0;
-                foreach (var modTemplate in template.Mods)
+                if (cancellationToken.IsCancellationRequested) return null;
+
+                progress.Report(new Tuple<double, string>((double)counter / modCount, modTemplate.Name));
+                counter++;
+
+                ExtendedModInfo modInfo = null;
+                try
                 {
-                    if (cancellationToken.IsCancellationRequested) return null;
+                    modInfo = await ModWebsite.GetExtendedInfoAsync(modTemplate.Name);
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Status != WebExceptionStatus.ProtocolError) throw;
+                }
 
-                    progress.Report(new Tuple<double, string>((double)counter / modCount, modTemplate.Name));
-                    counter++;
+                if (modInfo != null)
+                {
+                    if (template.IncludesVersionInfo)
+                    {
+                        if (!Mods.Contains(modTemplate.Name, modTemplate.Version))
+                        {
+                            Mod[] mods = Mods.Find(modTemplate.Name);
 
-                    if (!Mods.Contains(modTemplate.Name, modTemplate.Version))
+                            ModRelease release = modInfo.Releases.FirstOrDefault(r => r.Version == modTemplate.Version);
+
+                            if (release != null)
+                            {
+                                if (mods.Length == 0)
+                                {
+                                    toDownload.Add(release);
+                                }
+                                else
+                                {
+                                    if ((App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion) &&
+                                        mods.All(mod => mod.FactorioVersion != release.FactorioVersion))
+                                    {
+                                        toDownload.Add(release);
+                                    }
+                                    else
+                                    {
+                                        conflicting.Add(new Tuple<Mod, ModExportTemplate>(mods[0], modTemplate));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
                     {
                         Mod[] mods = Mods.Find(modTemplate.Name);
 
-                        ExtendedModInfo modInfo = await ModWebsite.GetExtendedInfoAsync(modTemplate.Name);
-                        ModRelease release = modInfo.Releases.FirstOrDefault(r => r.Version == modTemplate.Version);
-
-                        if (release != null)
+                        if (mods.Length == 0)
                         {
-                            if (mods.Length == 0)
-                            {
-                                toDownload.Add(release);
-                            }
-                            else
+                            ModRelease newestRelease = GetNewestRelease(modInfo);
+                            toDownload.Add(newestRelease);
+                        }
+                        else
+                        {
+                            ModRelease newestRelease = GetNewestRelease(modInfo);
+
+                            if (!Mods.Contains(modTemplate.Name, newestRelease.Version))
                             {
                                 if ((App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion) &&
-                                    mods.All(mod => mod.FactorioVersion != release.FactorioVersion))
+                                    mods.All(mod => mod.FactorioVersion != newestRelease.FactorioVersion))
                                 {
-                                    toDownload.Add(release);
+                                    toDownload.Add(newestRelease);
                                 }
                                 else
                                 {
@@ -802,50 +841,9 @@ namespace ModMyFactory.ViewModels
                         }
                     }
                 }
-
-                progress.Report(new Tuple<double, string>(1, string.Empty));
             }
-            else
-            {
-                int modCount = template.Mods.Length;
-                int counter = 0;
-                foreach (var modTemplate in template.Mods)
-                {
-                    if (cancellationToken.IsCancellationRequested) return null;
 
-                    progress.Report(new Tuple<double, string>((double)counter / modCount, modTemplate.Name));
-                    counter++;
-
-                    Mod[] mods = Mods.Find(modTemplate.Name);
-
-                    if (mods.Length == 0)
-                    {
-                        ExtendedModInfo modInfo = await ModWebsite.GetExtendedInfoAsync(modTemplate.Name);
-                        ModRelease newestRelease = GetNewestRelease(modInfo);
-                        toDownload.Add(newestRelease);
-                    }
-                    else
-                    {
-                        ExtendedModInfo modInfo = await ModWebsite.GetExtendedInfoAsync(modTemplate.Name);
-                        ModRelease newestRelease = GetNewestRelease(modInfo);
-
-                        if (!Mods.Contains(modTemplate.Name, newestRelease.Version))
-                        {
-                            if ((App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion) &&
-                            mods.All(mod => mod.FactorioVersion != newestRelease.FactorioVersion))
-                            {
-                                toDownload.Add(newestRelease);
-                            }
-                            else
-                            {
-                                conflicting.Add(new Tuple<Mod, ModExportTemplate>(mods[0], modTemplate));
-                            }
-                        }
-                    }
-                }
-
-                progress.Report(new Tuple<double, string>(1, string.Empty));
-            }
+            progress.Report(new Tuple<double, string>(1, string.Empty));
 
             return new Tuple<List<ModRelease>, List<Tuple<Mod, ModExportTemplate>>>(toDownload, conflicting);
         }
@@ -1102,7 +1100,16 @@ namespace ModMyFactory.ViewModels
 
                 progress.Report(new Tuple<double, string>((double)modIndex / modCount, mod.Title));
 
-                ExtendedModInfo extendedInfo = await ModWebsite.GetExtendedInfoAsync(mod);
+                ExtendedModInfo extendedInfo = null;
+                try
+                {
+                    extendedInfo = await ModWebsite.GetExtendedInfoAsync(mod);
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Status != WebExceptionStatus.ProtocolError) throw;
+                }
+
                 if (extendedInfo != null)
                 {
                     ModRelease newestRelease = GetNewestRelease(extendedInfo, mod);
