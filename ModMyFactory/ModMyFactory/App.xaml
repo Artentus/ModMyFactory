@@ -15,6 +15,7 @@
 
             <ResourceDictionary x:Key="Strings.en" Source="Lang/Strings.en.xaml"/>
             <ResourceDictionary x:Key="Strings.de" Source="Lang/Strings.de.xaml"/>
+            <ResourceDictionary x:Key="Strings.ru" Source="Lang/Strings.ru.xaml"/>
 
             <Color x:Key="BackgroundColor">White</Color>
             <Color x:Key="BorderColor">LightGray</Color>
@@ -1099,6 +1100,7 @@
                 <Style.Setters>
                     <Setter Property="MinWidth" Value="75"/>
                     <Setter Property="MinHeight" Value="23"/>
+                    <Setter Property="UseLayoutRounding" Value="False"/>
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type Button}">
@@ -1106,7 +1108,7 @@
                                 <Border x:Name="Border1" BorderBrush="#FFADADAD" BorderThickness="1" Background="#FFE1E1E1">
 
                                     <Border x:Name="Border2" BorderBrush="Transparent" BorderThickness="2" Background="Transparent" Margin="-1" Padding="4,2">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <ContentPresenter UseLayoutRounding="True" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 
                                     <VisualStateManager.VisualStateGroups>

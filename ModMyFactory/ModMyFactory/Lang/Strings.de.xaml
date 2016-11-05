@@ -275,6 +275,7 @@
 
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Mitwirkende</sys:String>
+    <sys:String x:Key="TranslatorsHeader">Übersetzer</sys:String>
 
     
     <!--
