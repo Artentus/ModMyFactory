@@ -197,10 +197,17 @@
     <Compile Include="Web\UpdateWebsite.cs" />
     <Compile Include="Web\WebHelper.cs" />
     <Compile Include="Helpers\ShellHelper.cs" />
+    <Compile Include="Win32\FileAccessRights.cs" />
     <Compile Include="Win32\ChangeNotifyEventId.cs" />
     <Compile Include="Win32\ChangeNotifyFlags.cs" />
+    <Compile Include="Win32\DeviceType.cs" />
+    <Compile Include="Win32\FileFlags.cs" />
+    <Compile Include="Win32\GenericAccessRights.cs" />
+    <Compile Include="Win32\IOControlCode.cs" />
+    <Compile Include="Win32\IOMethod.cs" />
     <Compile Include="Win32\Kernel32.cs" />
     <Compile Include="Win32\Shell32.cs" />
+    <Compile Include="Win32\StandardAccessRights.cs" />
     <Compile Include="Win32\User32.cs" />
     <Compile Include="Win32\WindowLongIndex.cs" />
     <Compile Include="Win32\WindowStyles.cs" />
