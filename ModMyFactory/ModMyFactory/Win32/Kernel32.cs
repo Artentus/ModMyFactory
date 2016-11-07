@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Security;
 using Microsoft.Win32.SafeHandles;
 
 namespace ModMyFactory.Win32
@@ -77,6 +79,20 @@ namespace ModMyFactory.Win32
             IntPtr outBuffer, int outBufferSize,
             out int bytesReturned, IntPtr overlapped);
 
+        private static void DeviceIOControlInternal(
+            IntPtr deviceHandle, IOControlCode controlCode,
+            IntPtr inBuffer, int inBufferSize,
+            IntPtr outBuffer, int outBufferSize,
+            out int bytesReturned)
+        {
+            if (!DeviceIOControlNative(deviceHandle, controlCode, inBuffer, inBufferSize,
+                outBuffer, outBufferSize, out bytesReturned, IntPtr.Zero))
+            {
+                int hResult = Marshal.GetHRForLastWin32Error();
+                Marshal.ThrowExceptionForHR(hResult);
+            }
+        }
+
         /// <summary>
         /// Sends a control code directly to a specified device driver, causing the corresponding device to perform the corresponding operation.
         /// </summary>
@@ -110,12 +126,23 @@ namespace ModMyFactory.Win32
             IntPtr outBuffer, int outBufferSize,
             out int bytesReturned)
         {
-            if (!DeviceIOControlNative(deviceHandle, controlCode, inBuffer, inBufferSize, outBuffer,
-                outBufferSize, out bytesReturned, IntPtr.Zero))
-            {
-                int hResult = Marshal.GetHRForLastWin32Error();
-                Marshal.ThrowExceptionForHR(hResult);
-            }
+            DeviceIOControlInternal(deviceHandle, controlCode, inBuffer, inBufferSize, outBuffer, outBufferSize, out bytesReturned);
+        }
+
+        /// <summary>
+        /// Sends a control code directly to a specified device driver, causing the corresponding device to perform the corresponding operation.
+        /// </summary>
+        /// <param name="deviceHandle">
+        /// A handle to the device on which the operation is to be performed. The device is typically a volume, directory, file, or stream.
+        /// To retrieve a device handle, use the CreateFile function.
+        /// </param>
+        /// <param name="controlCode">
+        /// The control code for the operation. This value identifies the specific operation to be performed and the type of device on which to perform it.
+        /// </param>
+        public static void DeviceIOControl(IntPtr deviceHandle, IOControlCode controlCode)
+        {
+            int bytesReturned;
+            DeviceIOControlInternal(deviceHandle, controlCode, IntPtr.Zero, 0, IntPtr.Zero, 0, out bytesReturned);
         }
 
         #endregion
@@ -133,7 +160,7 @@ namespace ModMyFactory.Win32
         [DllImport("kernel32.dll", EntryPoint = "CreateFileW",
             CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
         private static extern SafeFileHandle CreateFileNative(
-            [MarshalAs(UnmanagedType.LPWStr)] string filename,
+            [MarshalAs(UnmanagedType.LPWStr)] string path,
             [MarshalAs(UnmanagedType.U4)] uint access,
             [MarshalAs(UnmanagedType.U4)] FileShare share,
             [MarshalAs(UnmanagedType.Struct), In] ref SecurityAttributes securityAttributes,
@@ -141,7 +168,7 @@ namespace ModMyFactory.Win32
             [MarshalAs(UnmanagedType.U4)] uint attributes,
             IntPtr templateFile);
 
-        private static SafeFileHandle CreateFileInternal(string filename, uint access, FileShare share, FileMode mode, uint attributes, IntPtr templateFile)
+        private static SafeFileHandle CreateFileInternal(string path, uint access, FileShare share, FileMode mode, uint attributes, IntPtr templateFile)
         {
             var securityAttributes = new SecurityAttributes();
             securityAttributes.Length = Marshal.SizeOf(securityAttributes);
@@ -154,7 +181,7 @@ namespace ModMyFactory.Win32
                 securityAttributes.InheritHandle = true;
             }
 
-            SafeFileHandle fileHandle = CreateFileNative(filename, access, share, ref securityAttributes, mode, attributes, templateFile);
+            SafeFileHandle fileHandle = CreateFileNative(path, access, share, ref securityAttributes, mode, attributes, templateFile);
 
             if (fileHandle.IsInvalid)
             {
@@ -171,7 +198,7 @@ namespace ModMyFactory.Win32
         /// Creates or opens a file or I/O device. The most commonly used I/O devices are as follows: file, file stream, directory, physical disk, volume, console buffer, tape drive, communications resource, mailslot, and pipe.
         /// The function returns a handle that can be used to access the file or device for various types of I/O depending on the file or device and the flags and attributes specified.
         /// </summary>
-        /// <param name="filename">
+        /// <param name="path">
         /// The name of the file or device to be created or opened. You may use either forward slashes (/) or backslashes (\) in this name.
         /// </param>
         /// <param name="access">
@@ -196,16 +223,16 @@ namespace ModMyFactory.Win32
         /// When opening an existing file, CreateFile ignores this parameter.
         /// </param>
         /// <returns>If the function succeeds, the return value is an open handle to the specified file, device, named pipe, or mail slot.</returns>
-        public static SafeFileHandle CreateFile(string filename, FileAccessRights access, FileShare share, FileMode mode, FileAttributes attributes, FileFlags flags, IntPtr templateFile)
+        public static SafeFileHandle CreateFile(string path, FileAccessRights access, FileShare share, FileMode mode, FileAttributes attributes, FileFlags flags, IntPtr templateFile)
         {
-            return CreateFileInternal(filename, (uint)access, share, mode, (uint)attributes | (uint)flags, templateFile);
+            return CreateFileInternal(path, (uint)access, share, mode, (uint)attributes | (uint)flags, templateFile);
         }
 
         /// <summary>
         /// Creates or opens a file or I/O device. The most commonly used I/O devices are as follows: file, file stream, directory, physical disk, volume, console buffer, tape drive, communications resource, mailslot, and pipe.
         /// The function returns a handle that can be used to access the file or device for various types of I/O depending on the file or device and the flags and attributes specified.
         /// </summary>
-        /// <param name="filename">
+        /// <param name="path">
         /// The name of the file or device to be created or opened. You may use either forward slashes (/) or backslashes (\) in this name.
         /// </param>
         /// <param name="access">
@@ -226,16 +253,16 @@ namespace ModMyFactory.Win32
         /// The file or device flags.
         /// </param>
         /// <returns>If the function succeeds, the return value is an open handle to the specified file, device, named pipe, or mail slot.</returns>
-        public static SafeFileHandle CreateFile(string filename, FileAccessRights access, FileShare share, FileMode mode, FileAttributes attributes, FileFlags flags)
+        public static SafeFileHandle CreateFile(string path, FileAccessRights access, FileShare share, FileMode mode, FileAttributes attributes, FileFlags flags)
         {
-            return CreateFileInternal(filename, (uint)access, share, mode, (uint)attributes | (uint)flags, IntPtr.Zero);
+            return CreateFileInternal(path, (uint)access, share, mode, (uint)attributes | (uint)flags, IntPtr.Zero);
         }
 
         /// <summary>
         /// Creates or opens a file or I/O device. The most commonly used I/O devices are as follows: file, file stream, directory, physical disk, volume, console buffer, tape drive, communications resource, mailslot, and pipe.
         /// The function returns a handle that can be used to access the file or device for various types of I/O depending on the file or device and the flags and attributes specified.
         /// </summary>
-        /// <param name="filename">
+        /// <param name="path">
         /// The name of the file or device to be created or opened. You may use either forward slashes (/) or backslashes (\) in this name.
         /// </param>
         /// <param name="access">
@@ -260,16 +287,16 @@ namespace ModMyFactory.Win32
         /// When opening an existing file, CreateFile ignores this parameter.
         /// </param>
         /// <returns>If the function succeeds, the return value is an open handle to the specified file, device, named pipe, or mail slot.</returns>
-        public static SafeFileHandle CreateFile(string filename, GenericAccessRights access, FileShare share, FileMode mode, FileAttributes attributes, FileFlags flags, IntPtr templateFile)
+        public static SafeFileHandle CreateFile(string path, GenericAccessRights access, FileShare share, FileMode mode, FileAttributes attributes, FileFlags flags, IntPtr templateFile)
         {
-            return CreateFileInternal(filename, (uint)access, share, mode, (uint)attributes | (uint)flags, templateFile);
+            return CreateFileInternal(path, (uint)access, share, mode, (uint)attributes | (uint)flags, templateFile);
         }
 
         /// <summary>
         /// Creates or opens a file or I/O device. The most commonly used I/O devices are as follows: file, file stream, directory, physical disk, volume, console buffer, tape drive, communications resource, mailslot, and pipe.
         /// The function returns a handle that can be used to access the file or device for various types of I/O depending on the file or device and the flags and attributes specified.
         /// </summary>
-        /// <param name="filename">
+        /// <param name="path">
         /// The name of the file or device to be created or opened. You may use either forward slashes (/) or backslashes (\) in this name.
         /// </param>
         /// <param name="access">
@@ -290,9 +317,100 @@ namespace ModMyFactory.Win32
         /// The file or device flags.
         /// </param>
         /// <returns>If the function succeeds, the return value is an open handle to the specified file, device, named pipe, or mail slot.</returns>
-        public static SafeFileHandle CreateFile(string filename, GenericAccessRights access, FileShare share, FileMode mode, FileAttributes attributes, FileFlags flags)
+        public static SafeFileHandle CreateFile(string path, GenericAccessRights access, FileShare share, FileMode mode, FileAttributes attributes, FileFlags flags)
         {
-            return CreateFileInternal(filename, (uint)access, share, mode, (uint)attributes | (uint)flags, IntPtr.Zero);
+            return CreateFileInternal(path, (uint)access, share, mode, (uint)attributes | (uint)flags, IntPtr.Zero);
+        }
+
+        #endregion
+
+        #region RemoveDirectory
+
+        [DllImport("kernel32.dll", EntryPoint = "RemoveDirectoryW",
+            CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
+        private static extern bool RemoveDirectoryNative(string path);
+
+        /// <summary>
+        /// Deletes an existing empty directory.
+        /// </summary>
+        /// <param name="path">The path of the directory to be removed. This path must specify an empty directory, and the calling process must have delete access to the directory.</param>
+        public static void RemoveDirectory(string path)
+        {
+            if (!RemoveDirectoryNative(path))
+            {
+                int hResult = Marshal.GetHRForLastWin32Error();
+                Marshal.ThrowExceptionForHR(hResult);
+            }
+        }
+
+        #endregion
+
+        #region GetFileAttributes
+
+        [DllImport("kernel32.dll", EntryPoint = "GetFileAttributesW",
+            CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
+        private static extern int GetFileAttributesNative(string path);
+
+        /// <summary>
+        /// Retrieves file system attributes for a specified file or directory.
+        /// </summary>
+        /// <param name="path">The name of the file or directory.</param>
+        /// <returns>Returns the attributes of the specified file or directory.</returns>
+        public static FileAttributes GetFileAttributes(string path)
+        {
+            const int invalidFileAttributes = -1;
+
+            int result = GetFileAttributesNative(path);
+            if (result == invalidFileAttributes)
+            {
+                int hResult = Marshal.GetHRForLastWin32Error();
+                Marshal.ThrowExceptionForHR(hResult);
+            }
+
+            return (FileAttributes)result;
+        }
+
+        /// <summary>
+        /// Tries to retrieve file system attributes for a specified file or directory.
+        /// </summary>
+        /// <param name="path">The name of the file or directory.</param>
+        /// <param name="attributes">Out. If the function succeeds, contains the attributes of the specified file or directory.</param>
+        /// <returns>Returns true if the function succeeds, othwerwise false.</returns>
+        public static bool TryGetFileAttributes(string path, out FileAttributes attributes)
+        {
+            const int invalidFileAttributes = -1;
+
+            int result = GetFileAttributesNative(path);
+            if (result == invalidFileAttributes)
+            {
+                attributes = FileAttributes.Normal;
+                return false;
+            }
+
+            attributes = (FileAttributes)result;
+            return true;
+        }
+
+        #endregion
+
+        #region CloseHandle
+
+        [DllImport("kernel32.dll", EntryPoint = "CloseHandle", SetLastError = true)]
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        [SuppressUnmanagedCodeSecurity]
+        private static extern bool CloseHandleNative(IntPtr handle);
+
+        /// <summary>
+        /// Closes an open object handle.
+        /// </summary>
+        /// <param name="handle">A valid handle to an open object.</param>
+        public static void CloseHandle(IntPtr handle)
+        {
+            if (!CloseHandleNative(handle))
+            {
+                int hResult = Marshal.GetHRForLastWin32Error();
+                Marshal.ThrowExceptionForHR(hResult);
+            }
         }
 
         #endregion

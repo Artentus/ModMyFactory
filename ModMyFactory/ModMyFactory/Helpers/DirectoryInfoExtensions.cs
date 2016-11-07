@@ -43,25 +43,6 @@ namespace ModMyFactory.Helpers
         }
 
         /// <summary>
-        /// Checks whether this directory is a reparse point.
-        /// </summary>
-        /// <param name="directory">The directory to check.</param>
-        /// <returns>Returns true if the directory is a reparse point, otherwise false.</returns>
-        public static bool IsReparsePoint(this DirectoryInfo directory)
-        {
-            return directory.Attributes.HasFlag(FileAttributes.ReparsePoint);
-        }
-
-        /// <summary>
-        /// Deletes this directory and its contents. If the directory is a reparse point, the contents will not be deleted.
-        /// </summary>
-        /// <param name="directory">The directory to delete.</param>
-        public static void DeleteRecursiveReparsePoint(this DirectoryInfo directory)
-        {
-            directory.Delete(!directory.IsReparsePoint());
-        }
-
-        /// <summary>
         /// Checks if two DirectoryInfo objects point to the same directory.
         /// </summary>
         public static bool DirectoryEquals(this DirectoryInfo first, DirectoryInfo second)

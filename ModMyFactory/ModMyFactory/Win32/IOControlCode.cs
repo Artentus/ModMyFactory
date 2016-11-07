@@ -4,8 +4,6 @@ namespace ModMyFactory.Win32
 {
     enum IOControlCode : uint
     {
-        //ToDo: Clean this mess up.
-
         // FileAccess.Any = 0
 
         // STORAGE

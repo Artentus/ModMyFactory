@@ -100,6 +100,8 @@
     <Compile Include="Helpers\SecureStringHelper.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="InstanceStartedEventArgs.cs" />
+    <Compile Include="IO\Junction.cs" />
+    <Compile Include="IO\JunctionInfo.cs" />
     <Compile Include="ManagerMode.cs" />
     <Compile Include="MessageType.cs" />
     <Compile Include="ModCollection.cs" />
@@ -197,6 +199,7 @@
     <Compile Include="Web\UpdateWebsite.cs" />
     <Compile Include="Web\WebHelper.cs" />
     <Compile Include="Helpers\ShellHelper.cs" />
+    <Compile Include="Win32\AdvApi32.cs" />
     <Compile Include="Win32\FileAccessRights.cs" />
     <Compile Include="Win32\ChangeNotifyEventId.cs" />
     <Compile Include="Win32\ChangeNotifyFlags.cs" />
@@ -206,8 +209,12 @@
     <Compile Include="Win32\IOControlCode.cs" />
     <Compile Include="Win32\IOMethod.cs" />
     <Compile Include="Win32\Kernel32.cs" />
+    <Compile Include="Win32\Luid.cs" />
+    <Compile Include="Win32\Privilege.cs" />
+    <Compile Include="Win32\PrivilegeName.cs" />
     <Compile Include="Win32\Shell32.cs" />
     <Compile Include="Win32\StandardAccessRights.cs" />
+    <Compile Include="Win32\TokenPrivileges.cs" />
     <Compile Include="Win32\User32.cs" />
     <Compile Include="Win32\WindowLongIndex.cs" />
     <Compile Include="Win32\WindowStyles.cs" />
