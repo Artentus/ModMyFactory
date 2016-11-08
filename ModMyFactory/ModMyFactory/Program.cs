@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using ModMyFactory.Helpers;
+using ModMyFactory.IO;
 using ModMyFactory.Win32;
 
 namespace ModMyFactory
@@ -52,7 +53,7 @@ namespace ModMyFactory
         /// </summary>
         private static void DisplayHelp()
         {
-            bool attatchedConsole = Kernel32.AttachConsole();
+            bool attatchedConsole = Kernel32.TryAttachConsole();
             if (attatchedConsole)
             {
                 Console.WriteLine();

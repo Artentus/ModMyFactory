@@ -1326,32 +1326,27 @@ namespace ModMyFactory.ViewModels
         private async Task MoveDirectories(DirectoryInfo oldFactorioDirectory, DirectoryInfo oldModDirectory, DirectoryInfo newFactorioDirectory, DirectoryInfo newModDirectory)
         {
             bool moveFactorioDirectory = !newFactorioDirectory.DirectoryEquals(oldFactorioDirectory);
-            bool moveModDirectory = !newModDirectory.DirectoryEquals(oldModDirectory);
             if (oldFactorioDirectory.Exists && moveFactorioDirectory)
             {
                 foreach (var version in FactorioVersions)
                 {
-                    if (!version.IsSpecialVersion)
-                    {
-                        version.DeleteLinks();
+                    version.DeleteLinks();
 
-                        DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
-                        var versionDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.Version.ToString(3)));
-                        version.UpdateDirectory(versionDirectory);
-                    }
+                    DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
+                    var versionDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.VersionString));
+                    version.UpdateDirectory(versionDirectory);
                 }
                 await oldFactorioDirectory.MoveToAsync(newFactorioDirectory.FullName);
             }
+
+            bool moveModDirectory = !newModDirectory.DirectoryEquals(oldModDirectory);
             if (oldModDirectory.Exists && moveModDirectory)
             {
                 await oldModDirectory.MoveToAsync(newModDirectory.FullName);
             }
 
             foreach (var version in FactorioVersions)
-            {
-                if (!version.IsSpecialVersion)
-                    version.CreateLinks(true);
-            }
+                version.CreateLinks();
         }
 
         private async Task OpenSettings()

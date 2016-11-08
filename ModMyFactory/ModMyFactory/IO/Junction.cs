@@ -11,7 +11,8 @@ namespace ModMyFactory.IO
 {
     static class Junction
     {
-        private const FileAttributes JunctionAttributes = FileAttributes.Directory | FileAttributes.ReparsePoint;
+        const FileAttributes JunctionAttributes = FileAttributes.Directory | FileAttributes.ReparsePoint;
+        const string DestinationPrefix = @"\??\";
 
         [StructLayout(LayoutKind.Sequential)]
         private struct ReparseDataBuffer
@@ -53,9 +54,9 @@ namespace ModMyFactory.IO
                     var privileges = new TokenPrivileges
                     {
                         PrivilegeCount = 1,
-                        Privileges =
+                        Privileges = new []
                         {
-                            [0] = new Privilege()
+                            new Privilege()
                             {
                                 Luid = luid,
                                 Attributes = Privilege.EnabledAttribute,
@@ -178,7 +179,7 @@ namespace ModMyFactory.IO
                 if (data.ReparseTag == ReparseTagType.MountPoint)
                 {
                     string destination = Encoding.Unicode.GetString(data.PathBuffer, data.SubstituteNameOffset, data.SubstituteNameLength);
-                    if (destination.StartsWith(@"\??\")) destination = destination.Substring(4);
+                    if (destination.StartsWith(DestinationPrefix)) destination = destination.Substring(DestinationPrefix.Length);
                     return destination;
                 }
             }
@@ -201,24 +202,26 @@ namespace ModMyFactory.IO
 
             if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
             {
+                destination = Path.GetFullPath(destination);
+                string print = destination;
+                destination = DestinationPrefix + destination;
+
                 int destinationLength = Encoding.Unicode.GetByteCount(destination);
-                const int printLength = 0;
+                int printLength = Encoding.Unicode.GetByteCount(print);
+
                 var data = new ReparseDataBuffer()
                 {
                     ReparseTag = ReparseTagType.MountPoint,
                     ReparseDataLength = (ushort)(4 * sizeof(ushort) + destinationLength + sizeof(char) + printLength + sizeof(char)),
                     SubstituteNameOffset = 0,
                     SubstituteNameLength = (ushort)destinationLength,
-                    PrintNameOffset = (ushort)(destinationLength + 2),
-                    PrintNameLength = 0,
-                    PathBuffer = new byte[destinationLength + sizeof(char) + printLength + sizeof(char)]
+                    PrintNameOffset = (ushort)(destinationLength + sizeof(char)),
+                    PrintNameLength = (ushort)printLength,
+                    PathBuffer = new byte[0x3FF0]
                 };
 
                 Encoding.Unicode.GetBytes(destination, 0, destination.Length, data.PathBuffer, 0);
-                for (int i = destinationLength; i < destinationLength + sizeof(char); i++)
-                    data.PathBuffer[i] = 0;
-                for (int i = destinationLength + sizeof(char) + printLength; i < destinationLength + sizeof(char) + printLength + sizeof(char); i++)
-                    data.PathBuffer[i] = 0;
+                Encoding.Unicode.GetBytes(print, 0, print.Length, data.PathBuffer, destinationLength + sizeof(char));
 
                 SetReparseData(path, data);
                 return;
@@ -240,11 +243,25 @@ namespace ModMyFactory.IO
             if (string.IsNullOrEmpty(destination))
                 throw new ArgumentNullException(nameof(destination));
 
-            if (File.Exists(path) || Directory.Exists(path) || Junction.Exists(path))
-                throw new IOException($"The path '{path}' already exists.");
-
-            Directory.CreateDirectory(path);
-            SetDestination(path, destination);
+            if (Junction.Exists(path))
+            {
+                destination = Path.GetFullPath(destination);
+                SetDestination(path, destination);
+            }
+            else if (File.Exists(path))
+            {
+                throw new InvalidOperationException($"The path '{path}' already exists but points to a file.");
+            }
+            else if (Directory.Exists(path))
+            {
+                throw new InvalidOperationException($"The path '{path}' already exists but points to a directory.");
+            }
+            else
+            {
+                Directory.CreateDirectory(path);
+                destination = Path.GetFullPath(destination);
+                SetDestination(path, destination);
+            }
         }
 
         /// <summary>

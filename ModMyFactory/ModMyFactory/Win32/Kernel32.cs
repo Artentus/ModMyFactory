@@ -11,6 +11,8 @@ namespace ModMyFactory.Win32
     {
         #region Console
 
+        const int AttachToParentProcess = -1;
+
         [DllImport("kernel32.dll", EntryPoint = "AttachConsole", SetLastError = true)]
         private static extern bool AttachConsoleNative(int processId);
 
@@ -32,9 +34,24 @@ namespace ModMyFactory.Win32
         /// </summary>
         public static void AttachConsole()
         {
-            const int attachToParentProcess = -1;
+            AttachConsole(AttachToParentProcess);
+        }
 
-            AttachConsole(attachToParentProcess);
+        /// <summary>
+        /// Tries to attach the calling process to the console of the specified process.
+        /// </summary>
+        /// <param name="processId">The identifier of the process whose console is to be used.</param>
+        public static bool TryAttachConsole(int processId)
+        {
+            return AttachConsoleNative(processId);
+        }
+
+        /// <summary>
+        /// Tries to attach the calling process to the console of its parent process.
+        /// </summary>
+        public static bool TryAttachConsole()
+        {
+            return AttachConsoleNative(AttachToParentProcess);
         }
 
         [DllImport("kernel32.dll", EntryPoint = "AllocConsole", SetLastError = true)]

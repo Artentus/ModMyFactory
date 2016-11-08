@@ -37,37 +37,14 @@ namespace ModMyFactory.IO
 
         public void Create(string destinationPath)
         {
-            if (Exists)
-            {
-                Junction.SetDestination(FullName, destinationPath);
-                DestinationPath = destinationPath;
-            }
-            else if (File.Exists(FullName))
-            {
-                throw new InvalidOperationException(@"The path already exists but points to a file.");
-            }
-            else if (Directory.Exists(FullName))
-            {
-                throw new InvalidOperationException(@"The path already exists but points to a directory.");
-            }
-            else
-            {
-                Junction.Create(FullName, destinationPath);
-                DestinationPath = destinationPath;
-            }
+            Junction.Create(FullName, destinationPath);
+            DestinationPath = destinationPath;
         }
 
         public void SetDestination(string destinationPath)
         {
-            if (Exists)
-            {
-                Junction.SetDestination(FullName, destinationPath);
-                DestinationPath = destinationPath;
-            }
-            else
-            {
-                throw new InvalidOperationException("The junction does not exist.");
-            }
+            Junction.SetDestination(FullName, destinationPath);
+            DestinationPath = destinationPath;
         }
 
         public void Delete()
