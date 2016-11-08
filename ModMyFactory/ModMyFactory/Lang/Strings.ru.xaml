@@ -17,10 +17,10 @@
     -->
 
     <!-- messages -->
-    <sys:String x:Key="Error.InternetConnection.Message">Проеблема с Интернет соединеним.&#x0a;Убедитесь, что ваш компьютер имеет стабильный доступ к интернету, затем попробуйте ещё раз.</sys:String>
+    <sys:String x:Key="Error.InternetConnection.Message">Проблема с Интернет-соединением.&#x0a;Убедитесь, что ваш компьютер имеет стабильный доступ к интернету, затем попробуйте ещё раз.</sys:String>
     <sys:String x:Key="Error.InternetConnection.Title">Сетевая ошибка!</sys:String>
     
-    <sys:String x:Key="Information.ModExistsPerVersion.Message">Мод '{0}' для Факторио {1} уже существует!</sys:String>
+    <sys:String x:Key="Information.ModExistsPerVersion.Message">Мод '{0}' для Factorio {1} уже существует!</sys:String>
     <sys:String x:Key="Information.ModExistsPerVersion.Title">Мод пропущен</sys:String>
     
     <sys:String x:Key="Information.ModExists.Message">Мод '{0}' уже существует!</sys:String>
@@ -68,7 +68,7 @@
     
     <!-- file type descriptions -->
     <sys:String x:Key="ZipDescription">ZIP-Архивы</sys:String>
-    <sys:String x:Key="LnkDescription">Shortcuts</sys:String>
+    <sys:String x:Key="LnkDescription">Ярлыки</sys:String>
     <sys:String x:Key="FmpDescription">Factorio модпаки</sys:String>
     
     
@@ -78,7 +78,7 @@
     
     <sys:String x:Key="FetchingModsAction">Поиск модов</sys:String>
     <sys:String x:Key="ParsingFirstPageDescription">Просмотр 1 страницы.</sys:String>
-    <sys:String x:Key="ParsingPageDescription">Просмотри {0} страницы из {1}.</sys:String>
+    <sys:String x:Key="ParsingPageDescription">Просмотр {0} страницы из {1}.</sys:String>
     
     <sys:String x:Key="ProcessingModsAction">Подготовка модов</sys:String>
     <sys:String x:Key="ProcessingModAction">Подготовка мода</sys:String>
@@ -92,9 +92,9 @@
     <sys:String x:Key="DownloadingDescription">Загрузка {0}</sys:String>
 
     <sys:String x:Key="AddingFromZipAction">Добавление из ZIP-архива</sys:String>
-    <sys:String x:Key="CheckingValidityDescription">Проверка исправновсти...</sys:String>
+    <sys:String x:Key="CheckingValidityDescription">Проверка исправности...</sys:String>
     
-    <sys:String x:Key="AddingLocalInstallationAction">Добавление местной установки</sys:String>
+    <sys:String x:Key="AddingLocalInstallationAction">Добавление локальной установки</sys:String>
     
     <sys:String x:Key="AddingSteamVersionAction">Добавление Steam версии</sys:String>
 
@@ -130,7 +130,7 @@
     <sys:String x:Key="AddModFilesMenuItem">Из файла</sys:String>
     <sys:String x:Key="AddModFolderMenuItem">Из папки</sys:String>
     <sys:String x:Key="NewModpackMenuItem">Новый модпак</sys:String>
-    <sys:String x:Key="CreateLinkMenuItem">СОздать ссылку</sys:String>
+    <sys:String x:Key="CreateLinkMenuItem">Создать ссылку</sys:String>
     <sys:String x:Key="ExportModpacksMenuItem">Экспорт модпаков</sys:String>
     <sys:String x:Key="ImportModpacksMenuItem">Импорт подпаков</sys:String>
     <sys:String x:Key="StartGameMenuItem">Запустить игру</sys:String>
@@ -248,7 +248,7 @@
     ____________________ LinkPropertiesWindow ____________________
     -->
 
-    <sys:String x:Key="LinkPropertiesWindowTitle">Выбрать параметры ссылки</sys:String>
+    <sys:String x:Key="LinkPropertiesWindowTitle">Выбрать параметры сборки</sys:String>
     
     <!-- headers -->
     <sys:String x:Key="SelectFactorioHeader">Выбрать версию Factorio:</sys:String>
@@ -294,7 +294,7 @@
     <sys:String x:Key="RefreshToolTip">Обновить список</sys:String>
     
     <!-- headers -->
-    <sys:String x:Key="ReleasesHeader">Releases</sys:String>
+    <sys:String x:Key="ReleasesHeader">Релизы</sys:String>
 
 
     <!--
@@ -318,7 +318,7 @@
     <sys:String x:Key="IncludeVersionInfoOption">Добавить информацию о версии</sys:String>
     
     <!-- tooltips -->
-    <sys:String x:Key="IncludeVersionsToolTip">Это добавит версию экспортируемых модов в экспортируемый файл.&#x0a;При ModMyFactory использует эту информацию для загрузки указанных версий модов.</sys:String>
+    <sys:String x:Key="IncludeVersionsToolTip">Это добавит версию экспортируемых модов в сборку.&#x0a;ModMyFactory использует эту информацию для загрузки указанных версий модов.</sys:String>
     
     <!-- buttons -->
     <sys:String x:Key="ExportButton">Экспортировать</sys:String>
