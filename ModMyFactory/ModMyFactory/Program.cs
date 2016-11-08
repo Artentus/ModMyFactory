@@ -12,7 +12,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using ModMyFactory.Helpers;
-using ModMyFactory.IO;
 using ModMyFactory.Win32;
 
 namespace ModMyFactory

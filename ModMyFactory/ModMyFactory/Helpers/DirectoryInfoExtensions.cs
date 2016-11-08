@@ -30,16 +30,7 @@ namespace ModMyFactory.Helpers
         public static async Task MoveToAsync(this DirectoryInfo source, string destination)
         {
             var destinationDirectory = new DirectoryInfo(destination);
-
-            if (string.Equals(source.Root.Name, destinationDirectory.Root.Name,
-                StringComparison.InvariantCultureIgnoreCase))
-            {
-                source.MoveTo(destinationDirectory.FullName);
-            }
-            else
-            {
-                await MoveDirectoryRecursiveInnerAsync(source, destinationDirectory);
-            }
+            await MoveDirectoryRecursiveInnerAsync(source, destinationDirectory);
         }
 
         /// <summary>

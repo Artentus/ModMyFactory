@@ -18,6 +18,7 @@ using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.Views;
+using ModMyFactory.Web.UpdateApi;
 
 namespace ModMyFactory.ViewModels
 {
@@ -58,6 +59,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand OpenFolderCommand { get; }
 
+        public RelayCommand UpdateCommand { get; }
+
         public RelayCommand RemoveCommand { get; }
 
         private VersionManagementViewModel()
@@ -76,6 +79,7 @@ namespace ModMyFactory.ViewModels
                 AddFromFolderCommand = new RelayCommand(async () => await AddLocalVersion());
                 SelectSteamCommand = new RelayCommand(async () => await SelectSteamVersion(), () => string.IsNullOrEmpty(App.Instance.Settings.SteamVersionPath));
                 OpenFolderCommand = new RelayCommand(OpenFolder, () => SelectedVersion != null);
+                UpdateCommand = new RelayCommand(async () => await UpdateSelectedVersion(), () => SelectedVersion != null && SelectedVersion.IsFileSystemEditable);
                 RemoveCommand = new RelayCommand(async () => await RemoveSelectedVersion(), () => SelectedVersion != null && SelectedVersion.IsFileSystemEditable);
             }
         }
@@ -359,7 +363,8 @@ namespace ModMyFactory.ViewModels
 
         private async Task MoveFactorioInstallationAsync(DirectoryInfo installationDirectory, Version version, DirectoryInfo destinationDirectory)
         {
-            await MoveContentsToPreserveAsync(installationDirectory, version);
+            Version factorioVersion = new Version(version.Major, version.Minor);
+            await MoveContentsToPreserveAsync(installationDirectory, factorioVersion);
             await installationDirectory.MoveToAsync(destinationDirectory.FullName);
         }
 
@@ -441,7 +446,8 @@ namespace ModMyFactory.ViewModels
                     progressWindow.ViewModel.IsIndeterminate = true;
 
                     var steamAppDataDirectory = new DirectoryInfo(FactorioSteamVersion.SteamAppDataPath);
-                    Task moveTask = MoveContentsToPreserveAsync(steamAppDataDirectory, version);
+                    Version factorioVersion = new Version(version.Major, version.Minor);
+                    Task moveTask = MoveContentsToPreserveAsync(steamAppDataDirectory, factorioVersion);
 
                     Task closeWindowTask = moveTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                     progressWindow.ShowDialog();
@@ -456,6 +462,15 @@ namespace ModMyFactory.ViewModels
         private void OpenFolder()
         {
             Process.Start(SelectedVersion.Directory.FullName);
+        }
+
+        private async Task UpdateSelectedVersion()
+        {
+            string token;
+            if (GlobalCredentials.Instance.LogIn(Window, out token))
+            {
+                UpdateInfo updateInfo = UpdateWebsite.GetUpdateInfo(GlobalCredentials.Instance.Username, token);
+            }
         }
 
         private async Task RemoveSelectedVersion()
