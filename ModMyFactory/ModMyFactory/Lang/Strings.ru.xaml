@@ -275,8 +275,8 @@
     <sys:String x:Key="GitHubLabel">GitHub API:</sys:String>
     
     <!-- headers -->
-    <sys:String x:Key="ContributorsHeader">Помогали в создании: </sys:String>
-    <sys:String x:Key="TranslatorsHeader">Translators</sys:String>
+    <sys:String x:Key="ContributorsHeader">Помогали в создании:</sys:String>
+    <sys:String x:Key="TranslatorsHeader">Переводчики:</sys:String>
 
 
     <!--
