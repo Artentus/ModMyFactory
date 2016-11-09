@@ -17,91 +17,91 @@
     -->
 
     <!-- messages -->
-    <sys:String x:Key="Error.InternetConnection.Message">Проеблема с Интернет соединеним.&#x0a;Убедитесь, что ваш компьютер имеет стабильный доступ к интернету, затем попробуйте ещё раз.</sys:String>
+    <sys:String x:Key="Error.InternetConnection.Message">Проблема с Интернет-соединением.&#x0a;Убедитесь, что ваш компьютер имеет стабильный доступ к интернету, затем попробуйте ещё раз.</sys:String>
     <sys:String x:Key="Error.InternetConnection.Title">Сетевая ошибка!</sys:String>
     
-    <sys:String x:Key="Information.ModExistsPerVersion.Message">Мод '{0}' для Факторио {1} уже существует!</sys:String>
+    <sys:String x:Key="Information.ModExistsPerVersion.Message">Мод '{0}' для Factorio {1} уже существует!</sys:String>
     <sys:String x:Key="Information.ModExistsPerVersion.Title">Мод пропущен</sys:String>
     
     <sys:String x:Key="Information.ModExists.Message">Мод '{0}' уже существует!</sys:String>
     <sys:String x:Key="Information.ModExists.Title">Мод пропущен</sys:String>
     
-    <sys:String x:Key="Error.InvalidModArchive.Message">ZIP-архив '{0}' does not contain a valid mod.</sys:String>
+    <sys:String x:Key="Error.InvalidModArchive.Message">ZIP-архив '{0}' не содержит файлов мода.</sys:String>
     <sys:String x:Key="Error.InvalidModArchive.Title">Ошибка добавления мода!</sys:String>
     
-    <sys:String x:Key="Error.InvalidModFolder.Message">The selected folder does not contain a valid mod.</sys:String>
+    <sys:String x:Key="Error.InvalidModFolder.Message">Выбранная папка не содержит модов.</sys:String>
     <sys:String x:Key="Error.InvalidModFolder.Title">Ошибка добавления мода!</sys:String>
 
-    <sys:String x:Key="Information.NoModUpdates.Message">All your mods are up to date.</sys:String>
-    <sys:String x:Key="Information.NoModUpdates.Title">No updates found</sys:String>
+    <sys:String x:Key="Information.NoModUpdates.Message">Все ваши моды не нуждаются в обновлении.</sys:String>
+    <sys:String x:Key="Information.NoModUpdates.Title">Обновлений не найдено</sys:String>
     
-    <sys:String x:Key="Warning.HasConflicts.Message">The following conflicts occured while importing this modpack file:</sys:String>
-    <sys:String x:Key="Warning.HasConflicts.Title">Modpack file causes conflicts</sys:String>
+    <sys:String x:Key="Warning.HasConflicts.Message">При добавлении файлов модпака возникли следующие конфликты:</sys:String>
+    <sys:String x:Key="Warning.HasConflicts.Title">Файл модпака создаёт конфликт</sys:String>
     
-    <sys:String x:Key="Question.Update.Message">You are running an old version of ModMyFactory (current version is {0}, newest version is {1}).&#x0a;Do you want to download the newest version?</sys:String>
-    <sys:String x:Key="Question.Update.Title">Update available</sys:String>
+    <sys:String x:Key="Question.Update.Message">Вы используете старую версию ModMyFactory (текущая версия: {0}, последняя версия: {1}).&#x0a;Вы хотите загрузить последнюю версию?</sys:String>
+    <sys:String x:Key="Question.Update.Title">Доступно обновление</sys:String>
     
-    <sys:String x:Key="Information.NoUpdate.Message">You are running the newest version of ModMyFactory.</sys:String>
-    <sys:String x:Key="Information.NoUpdate.Title">No update available</sys:String>
+    <sys:String x:Key="Information.NoUpdate.Message">Вы используете последнюю версию ModMyFactory.</sys:String>
+    <sys:String x:Key="Information.NoUpdate.Title">Обновлений не найдено</sys:String>
     
-    <sys:String x:Key="Error.RetrievingVersions.Message">The available Factorio versions could not be retrieved.</sys:String>
-    <sys:String x:Key="Error.RetrievingVersions.Title">Error!</sys:String>
+    <sys:String x:Key="Error.RetrievingVersions.Message">Доступные версии Factorio не могут быть получены.</sys:String>
+    <sys:String x:Key="Error.RetrievingVersions.Title">Ошибка!</sys:String>
 
-    <sys:String x:Key="Error.InvalidFactorioArchive.Message">This ZIP archive does not contain a valid Factorio installation.</sys:String>
-    <sys:String x:Key="Error.InvalidFactorioArchive.Title">Invalid archive!</sys:String>
+    <sys:String x:Key="Error.InvalidFactorioArchive.Message">Данный ZIP-архив не содержит файл установки Factorio.</sys:String>
+    <sys:String x:Key="Error.InvalidFactorioArchive.Title">Неправильный архив!</sys:String>
 
-    <sys:String x:Key="Question.DeleteFactorioArchive.Message">Do you want to delete the source file?</sys:String>
-    <sys:String x:Key="Question.DeleteFactorioArchive.Title">Delete file?</sys:String>
+    <sys:String x:Key="Question.DeleteFactorioArchive.Message">Вы хотите удалить файл-источник?</sys:String>
+    <sys:String x:Key="Question.DeleteFactorioArchive.Title">Удалить файл?</sys:String>
 
-    <sys:String x:Key="Error.InvalidFactorioFolder.Message">This folder does not contain a valid Factorio installation.</sys:String>
-    <sys:String x:Key="Error.InvalidFactorioFolder.Title">Invalid folder!</sys:String>
+    <sys:String x:Key="Error.InvalidFactorioFolder.Message">Данная папка не содержит файл установки Factorio.</sys:String>
+    <sys:String x:Key="Error.InvalidFactorioFolder.Title">Неправильная папка!</sys:String>
 
-    <sys:String x:Key="Warning.MoveFactorioFolder.Message">The selected installation of Factorio will be moved to the location specified in the settings! The creation of a backup is recommended.&#x0a;Do you wish to continue?</sys:String>
-    <sys:String x:Key="Warning.MoveFactorioFolder.Title">Warning</sys:String>
+    <sys:String x:Key="Warning.MoveFactorioFolder.Message">Выбранная установка Factorio будет перемещена согласно настройкам! Рекомендуется создание бэкапа.&#x0a;Вы хотите продолжить?</sys:String>
+    <sys:String x:Key="Warning.MoveFactorioFolder.Title">Предупреждение</sys:String>
     
-    <sys:String x:Key="Warning.MoveSteamFactorio.Message">All mods, saves and scenarios will be moved to the location specified in the settings! The creation of a backup is recommended.&#x0a;Do you wish to continue?</sys:String>
-    <sys:String x:Key="Warning.MoveSteamFactorio.Title">Warning</sys:String>
+    <sys:String x:Key="Warning.MoveSteamFactorio.Message">Все моды, сохранения и сценарии будут перемещены согласно настройкам! Рекомендуется создание бэкапа.&#x0a;Вы хотите продолжить?</sys:String>
+    <sys:String x:Key="Warning.MoveSteamFactorio.Title">Предупреждение</sys:String>
     
-    <sys:String x:Key="Question.RemoveFactorioVersion.Message">Do you really want to remove this version of Factorio?&#x0a;This will delete all corresponding files on your hard drive.</sys:String>
-    <sys:String x:Key="Question.RemoveFactorioVersion.Title">Confirm</sys:String>
+    <sys:String x:Key="Question.RemoveFactorioVersion.Message">Вы действительно хотите удалить данную версию Factorio?&#x0a;Это удалит все соответствующие файлы с вашего жёсткого диска.</sys:String>
+    <sys:String x:Key="Question.RemoveFactorioVersion.Title">Подтверждение</sys:String>
 
     
     <!-- file type descriptions -->
-    <sys:String x:Key="ZipDescription">ZIP-Archives</sys:String>
-    <sys:String x:Key="LnkDescription">Shortcuts</sys:String>
-    <sys:String x:Key="FmpDescription">Factorio modpacks</sys:String>
+    <sys:String x:Key="ZipDescription">ZIP-Архивы</sys:String>
+    <sys:String x:Key="LnkDescription">Ярлыки</sys:String>
+    <sys:String x:Key="FmpDescription">Factorio модпаки</sys:String>
     
     
     <!-- progress dialogs -->
-    <sys:String x:Key="MovingFilesDescription">Moving files...</sys:String>
-    <sys:String x:Key="ExtractingDescription">Extracting...</sys:String>
+    <sys:String x:Key="MovingFilesDescription">Перемещение файлов...</sys:String>
+    <sys:String x:Key="ExtractingDescription">Извлечение...</sys:String>
     
-    <sys:String x:Key="FetchingModsAction">Fetching mods</sys:String>
-    <sys:String x:Key="ParsingFirstPageDescription">Parsing page 1.</sys:String>
-    <sys:String x:Key="ParsingPageDescription">Parsing page {0} of {1}.</sys:String>
+    <sys:String x:Key="FetchingModsAction">Поиск модов</sys:String>
+    <sys:String x:Key="ParsingFirstPageDescription">Просмотр 1 страницы.</sys:String>
+    <sys:String x:Key="ParsingPageDescription">Просмотр {0} страницы из {1}.</sys:String>
     
-    <sys:String x:Key="ProcessingModsAction">Processing mods</sys:String>
-    <sys:String x:Key="ProcessingModAction">Processing mod</sys:String>
+    <sys:String x:Key="ProcessingModsAction">Подготовка модов</sys:String>
+    <sys:String x:Key="ProcessingModAction">Подготовка мода</sys:String>
     
-    <sys:String x:Key="SearchingForUpdatesAction">Searching for updates</sys:String>
-    <sys:String x:Key="UpdatingModsAction">Updating mods</sys:String>
+    <sys:String x:Key="SearchingForUpdatesAction">Поиск обновлений</sys:String>
+    <sys:String x:Key="UpdatingModsAction">Обновление модов</sys:String>
     
-    <sys:String x:Key="MovingDirectoriesAction">Moving directories</sys:String>
+    <sys:String x:Key="MovingDirectoriesAction">Перемещение директорий</sys:String>
 
-    <sys:String x:Key="DownloadingAction">Downloading</sys:String>
-    <sys:String x:Key="DownloadingDescription">Downloading {0}</sys:String>
+    <sys:String x:Key="DownloadingAction">Загрузка</sys:String>
+    <sys:String x:Key="DownloadingDescription">Загрузка {0}</sys:String>
 
-    <sys:String x:Key="AddingFromZipAction">Adding from ZIP</sys:String>
-    <sys:String x:Key="CheckingValidityDescription">Checking validity...</sys:String>
+    <sys:String x:Key="AddingFromZipAction">Добавление из ZIP-архива</sys:String>
+    <sys:String x:Key="CheckingValidityDescription">Проверка исправности...</sys:String>
     
-    <sys:String x:Key="AddingLocalInstallationAction">Adding local installation</sys:String>
+    <sys:String x:Key="AddingLocalInstallationAction">Добавление локальной установки</sys:String>
     
-    <sys:String x:Key="AddingSteamVersionAction">Adding Steam version</sys:String>
+    <sys:String x:Key="AddingSteamVersionAction">Добавление Steam версии</sys:String>
 
-    <sys:String x:Key="RemovingFactorioVersionAction">Removing Factorio version</sys:String>
-    <sys:String x:Key="DeletingFilesDescription">Deleting files...</sys:String>
+    <sys:String x:Key="RemovingFactorioVersionAction">Удаление версии Factorio</sys:String>
+    <sys:String x:Key="DeletingFilesDescription">Удаление файлов...</sys:String>
     
-    <sys:String x:Key="UpdatingAction">Updating</sys:String>
+    <sys:String x:Key="UpdatingAction">Обновление</sys:String>
 
     
     
@@ -110,11 +110,11 @@
     -->
     
     <!-- buttons -->
-    <sys:String x:Key="OkButton">OK</sys:String>
-    <sys:String x:Key="CloseButton">Close</sys:String>
-    <sys:String x:Key="CancelButton">Cancel</sys:String>
-    <sys:String x:Key="DownloadButton">Download</sys:String>
-    <sys:String x:Key="UpdateButton">Update</sys:String>
+    <sys:String x:Key="OkButton">ОК</sys:String>
+    <sys:String x:Key="CloseButton">Закрыть</sys:String>
+    <sys:String x:Key="CancelButton">Отменить</sys:String>
+    <sys:String x:Key="DownloadButton">Загрузить</sys:String>
+    <sys:String x:Key="UpdateButton">Обновить</sys:String>
 
 
     <!--
@@ -124,39 +124,39 @@
     <sys:String x:Key="MainWindowTitle">ModMyFactory</sys:String>
 
     <!-- 'File' menu -->
-    <sys:String x:Key="FileMenuItem">_File</sys:String>
-    <sys:String x:Key="AddModsMenuItem">Add mods</sys:String>
-    <sys:String x:Key="DownloadModsMenuItem">Download</sys:String>
-    <sys:String x:Key="AddModFilesMenuItem">From files</sys:String>
-    <sys:String x:Key="AddModFolderMenuItem">From folder</sys:String>
-    <sys:String x:Key="NewModpackMenuItem">New modpack</sys:String>
-    <sys:String x:Key="CreateLinkMenuItem">Create link</sys:String>
-    <sys:String x:Key="ExportModpacksMenuItem">Export modpacks</sys:String>
-    <sys:String x:Key="ImportModpacksMenuItem">Import modpacks</sys:String>
-    <sys:String x:Key="StartGameMenuItem">Start game</sys:String>
-    <sys:String x:Key="CloseMenuItem">Close</sys:String>
+    <sys:String x:Key="FileMenuItem">_Файл</sys:String>
+    <sys:String x:Key="AddModsMenuItem">Добавить моды</sys:String>
+    <sys:String x:Key="DownloadModsMenuItem">Загрузить</sys:String>
+    <sys:String x:Key="AddModFilesMenuItem">Из файла</sys:String>
+    <sys:String x:Key="AddModFolderMenuItem">Из папки</sys:String>
+    <sys:String x:Key="NewModpackMenuItem">Новый модпак</sys:String>
+    <sys:String x:Key="CreateLinkMenuItem">Создать ссылку</sys:String>
+    <sys:String x:Key="ExportModpacksMenuItem">Экспорт модпаков</sys:String>
+    <sys:String x:Key="ImportModpacksMenuItem">Импорт подпаков</sys:String>
+    <sys:String x:Key="StartGameMenuItem">Запустить игру</sys:String>
+    <sys:String x:Key="CloseMenuItem">Закрыть</sys:String>
     
     <!-- 'Edit' menu -->
-    <sys:String x:Key="EditMenuItem">_Edit</sys:String>
-    <sys:String x:Key="OpenFactorioFolderMenuItem">Open Factorio folder</sys:String>
-    <sys:String x:Key="OpenModFolderMenuItem">Open mod folder</sys:String>
-    <sys:String x:Key="OpenSavegameFolderMenuItem">Open savegame folder</sys:String>
-    <sys:String x:Key="OpenScenarioFolderMenuItem">Open scenario folder</sys:String>
-    <sys:String x:Key="UpdateModsMenuItem">Update mods</sys:String>
-    <sys:String x:Key="VersionManagerMenuItem">Version manager</sys:String>
-    <sys:String x:Key="SettingsMenuItem">Settings</sys:String>
+    <sys:String x:Key="EditMenuItem">_Изменить</sys:String>
+    <sys:String x:Key="OpenFactorioFolderMenuItem">Открыть папку Factorio</sys:String>
+    <sys:String x:Key="OpenModFolderMenuItem">Открыть папку мода</sys:String>
+    <sys:String x:Key="OpenSavegameFolderMenuItem">Открыть папку сохранений</sys:String>
+    <sys:String x:Key="OpenScenarioFolderMenuItem">Открыть папку сценариев</sys:String>
+    <sys:String x:Key="UpdateModsMenuItem">Обновить моды</sys:String>
+    <sys:String x:Key="VersionManagerMenuItem">Менеджер версий</sys:String>
+    <sys:String x:Key="SettingsMenuItem">Настройки</sys:String>
     
     <!-- 'Language' menu -->
-    <sys:String x:Key="LanguageMenuItem">_Language</sys:String>
+    <sys:String x:Key="LanguageMenuItem">_Язык</sys:String>
     
     <!-- 'Info' menu -->
-    <sys:String x:Key="InfoMenuItem">_Info</sys:String>
+    <sys:String x:Key="InfoMenuItem">_Информация</sys:String>
     <sys:String x:Key="FactorioComMenuItem">Factorio.com</sys:String>
     <sys:String x:Key="FactorioModsComMenuItem">Factoriomods.com</sys:String>
-    <sys:String x:Key="ForumThreadMenuItem">ModMyFactory forum thread</sys:String>
-    <sys:String x:Key="CheckUpdateMenuItem">Check for update</sys:String>
-    <sys:String x:Key="AboutMenuItem">About ModMyFactory</sys:String>
-    <sys:String x:Key="HelpMenuItem">Help</sys:String>
+    <sys:String x:Key="ForumThreadMenuItem">Обсуждение ModMyFactory на форуме</sys:String>
+    <sys:String x:Key="CheckUpdateMenuItem">Проверить обновления</sys:String>
+    <sys:String x:Key="AboutMenuItem">О ModMyFactory</sys:String>
+    <sys:String x:Key="HelpMenuItem">Помощь</sys:String>
     
     <!-- hotkeys -->
     <sys:String x:Key="NewModpackHotkey">Ctrl+N</sys:String>
@@ -171,157 +171,156 @@
     <sys:String x:Key="HelpHotkey">F1</sys:String>
 
     <!-- headers -->
-    <sys:String x:Key="ModsHeader">Mods</sys:String>
-    <sys:String x:Key="ModpacksHeader">Modpacks</sys:String>
+    <sys:String x:Key="ModsHeader">Моды</sys:String>
+    <sys:String x:Key="ModpacksHeader">Модпаки</sys:String>
     
     <!-- tooltips -->
-    <sys:String x:Key="RenameToolTip">Rename</sys:String>
-    <sys:String x:Key="DeleteToolTip">Delete</sys:String>
-    <sys:String x:Key="RemoveToolTip">Remove from modpack</sys:String>
-    <sys:String x:Key="SetActiveToolTip">Activate</sys:String>
-    <sys:String x:Key="SetInactiveToolTip">Deactivate</sys:String>
-    <sys:String x:Key="SetAllActiveToolTip">Activate all</sys:String>
-    <sys:String x:Key="SetAllInactiveToolTip">Deactivate all</sys:String>
+    <sys:String x:Key="RenameToolTip">Переименовать</sys:String>
+    <sys:String x:Key="DeleteToolTip">Удалить</sys:String>
+    <sys:String x:Key="RemoveToolTip">Удалить из модпака</sys:String>
+    <sys:String x:Key="SetActiveToolTip">Включить</sys:String>
+    <sys:String x:Key="SetInactiveToolTip">Выключить</sys:String>
+    <sys:String x:Key="SetAllActiveToolTip">Включить всё</sys:String>
+    <sys:String x:Key="SetAllInactiveToolTip">Выключить всё</sys:String>
     
     
     <!--
     ____________________ VersionManagementWindow ____________________
     -->
 
-    <sys:String x:Key="VersionManagementWindowTitle">Version manager</sys:String>
+    <sys:String x:Key="VersionManagementWindowTitle">Менеждер версий</sys:String>
 
     <!-- buttons -->
-    <sys:String x:Key="AddZipButton">Add from ZIP</sys:String>
-    <sys:String x:Key="AddFolderButton">Add from folder</sys:String>
-    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center">Select&#x0a;Steam version</TextBlock>
-    <sys:String x:Key="OpenFolderButton">Open folder</sys:String>
-    <sys:String x:Key="RemoveButton">Remove</sys:String>
+    <sys:String x:Key="AddZipButton">Добавить из ZIP-архива</sys:String>
+    <sys:String x:Key="AddFolderButton">Добавить из папки</sys:String>
+    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center">Выбрать&#x0a;Steam версию</TextBlock>
+    <sys:String x:Key="OpenFolderButton">Открыть папку</sys:String>
+    <sys:String x:Key="RemoveButton">Удалить</sys:String>
 
 
     <!--
     ____________________ VersionListWindow ____________________
     -->
 
-    <sys:String x:Key="VersionListWindowTitle">Select version</sys:String>
+    <sys:String x:Key="VersionListWindowTitle">Выбрать версию</sys:String>
 
 
     <!--
     ____________________ SettingsWindow ____________________
     -->
 
-    <sys:String x:Key="SettingsWindowTitle">Settings</sys:String>
+    <sys:String x:Key="SettingsWindowTitle">Настройки</sys:String>
 
     <!-- group headers -->
-    <sys:String x:Key="ManagerModeGroupHeader">Manager mode</sys:String>
-    <sys:String x:Key="FactorioDirectoryGroupHeader">Factorio location</sys:String>
-    <sys:String x:Key="ModDirectoryGroupHeader">Mod location</sys:String>
-    <sys:String x:Key="CredentialsGroupHeader">Login credentials</sys:String>
+    <sys:String x:Key="ManagerModeGroupHeader">Режим работы менеджера</sys:String>
+    <sys:String x:Key="FactorioDirectoryGroupHeader">Расположение Factorio</sys:String>
+    <sys:String x:Key="ModDirectoryGroupHeader">Расположение модов</sys:String>
+    <sys:String x:Key="CredentialsGroupHeader">Данные для авторизации</sys:String>
 
     
     <!-- group items -->
-    <sys:String x:Key="PerFactorioVersionGroupItem">Per Factorio version</sys:String>
-    <sys:String x:Key="GlobalGroupItem">Global</sys:String>
+    <sys:String x:Key="PerFactorioVersionGroupItem">Для каждой версии Factorio</sys:String>
+    <sys:String x:Key="GlobalGroupItem">Глобально</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
-    <sys:String x:Key="AppDirectoryGroupItem">Application directory</sys:String>
-    <sys:String x:Key="SelectGroupItem">Select:</sys:String>
+    <sys:String x:Key="AppDirectoryGroupItem">Директория программы</sys:String>
+    <sys:String x:Key="SelectGroupItem">Выбрать:</sys:String>
 
     <!-- buttons -->
-    <sys:String x:Key="BrowseButton">Browse</sys:String>
+    <sys:String x:Key="BrowseButton">Найти</sys:String>
 
 
     <!--
     ____________________ LoginWindow ____________________
     -->
 
-    <sys:String x:Key="LoginWindowTitle">Login</sys:String>
+    <sys:String x:Key="LoginWindowTitle">Авторизация</sys:String>
     
     <!-- headers -->
-    <sys:String x:Key="UsernameHeader">Username or Email</sys:String>
-    <sys:String x:Key="PasswordHeader">Password</sys:String>
-    <sys:String x:Key="SaveCredentialsHeader">Remember my login credentials</sys:String>
+    <sys:String x:Key="UsernameHeader">Имя пользователя или Email</sys:String>
+    <sys:String x:Key="PasswordHeader">Пароль</sys:String>
+    <sys:String x:Key="SaveCredentialsHeader">Запомнить данные для авторизации</sys:String>
 
     <!-- messages -->
-    <sys:String x:Key="LoginFailedMessage">Login failed!</sys:String>
+    <sys:String x:Key="LoginFailedMessage">Ошибка авторизации!</sys:String>
 
 
     <!--
     ____________________ LinkPropertiesWindow ____________________
     -->
 
-    <sys:String x:Key="LinkPropertiesWindowTitle">Choose link properties</sys:String>
+    <sys:String x:Key="LinkPropertiesWindowTitle">Выбрать параметры сборки</sys:String>
     
     <!-- headers -->
-    <sys:String x:Key="SelectFactorioHeader">Select Factorio version:</sys:String>
-    <sys:String x:Key="SelectModpackHeader">Select modpack:</sys:String>
+    <sys:String x:Key="SelectFactorioHeader">Выбрать версию Factorio:</sys:String>
+    <sys:String x:Key="SelectModpackHeader">Выбрать модпак:</sys:String>
     
     
     <!-- buttons -->
-    <sys:String x:Key="CreateButton">Create</sys:String>
+    <sys:String x:Key="CreateButton">Создать</sys:String>
 
 
     <!--
     ____________________ AboutWindow ____________________
     -->
 
-    <sys:String x:Key="AboutWindowTitle">About ModMyFactory</sys:String>
+    <sys:String x:Key="AboutWindowTitle">О ModMyFactory</sys:String>
 
     
     <!-- labels -->
-    <sys:String x:Key="AuthorLabel">by Mathis Rech</sys:String>
-    <sys:String x:Key="FlagsLabel">Flag icons:</sys:String>
-    <sys:String x:Key="FontLabel">Factorio font:</sys:String>
-    <sys:String x:Key="DialogsLabel">Dialogs:</sys:String>
+    <sys:String x:Key="AuthorLabel">Автор: Mathis Rech</sys:String>
+    <sys:String x:Key="FlagsLabel">Иконки флагов:</sys:String>
+    <sys:String x:Key="FontLabel">Шрифт Factorio:</sys:String>
+    <sys:String x:Key="DialogsLabel">Окна диалогов:</sys:String>
     <sys:String x:Key="JsonLabel">JSON Framework:</sys:String>
     <sys:String x:Key="GitHubLabel">GitHub API:</sys:String>
     
     <!-- headers -->
-    <sys:String x:Key="ContributorsHeader">Contributors</sys:String>
-    <sys:String x:Key="TranslatorsHeader">Translators</sys:String>
+    <sys:String x:Key="ContributorsHeader">Помогали в создании: </sys:String>
 
 
     <!--
     ____________________ OnlineModsWindow ____________________
     -->
 
-    <sys:String x:Key="OnlineModsWindowTitle">Browse online mods</sys:String>
+    <sys:String x:Key="OnlineModsWindowTitle">Поиск модов</sys:String>
     
     <!-- format strings -->
-    <sys:String x:Key="ByFormat">by {0}</sys:String>
+    <sys:String x:Key="ByFormat">{0}</sys:String>
     
     <!-- tooltips -->
-    <sys:String x:Key="ViewsToolTip">Views</sys:String>
-    <sys:String x:Key="DownloadsToolTip">Downloads</sys:String>
-    <sys:String x:Key="InstalledToolTip">Installed</sys:String>
-    <sys:String x:Key="RefreshToolTip">Refresh list</sys:String>
+    <sys:String x:Key="ViewsToolTip">Просмотрели</sys:String>
+    <sys:String x:Key="DownloadsToolTip">Загрузили</sys:String>
+    <sys:String x:Key="InstalledToolTip">Установлено</sys:String>
+    <sys:String x:Key="RefreshToolTip">Обновить список</sys:String>
     
     <!-- headers -->
-    <sys:String x:Key="ReleasesHeader">Releases</sys:String>
+    <sys:String x:Key="ReleasesHeader">Релизы</sys:String>
 
 
     <!--
     ____________________ ModUpdateWindow ____________________
     -->
     
-    <sys:String x:Key="ModUpdateWindowTitle">Select mods to update</sys:String>
+    <sys:String x:Key="ModUpdateWindowTitle">Выбрать моды для обновления</sys:String>
     
     <!-- format strings -->
-    <sys:String x:Key="CurrentVersionFormat">Current version: {0}</sys:String>
-    <sys:String x:Key="NewestVersionFormat">Newest version: {0}</sys:String>
+    <sys:String x:Key="CurrentVersionFormat">Текущая версия: {0}</sys:String>
+    <sys:String x:Key="NewestVersionFormat">Последняя версия: {0}</sys:String>
     
     
     <!--
     ____________________ ModpackExportWindow ____________________
     -->
     
-    <sys:String x:Key="ModpackExportWindowTitle">Select modpacks to export</sys:String>
+    <sys:String x:Key="ModpackExportWindowTitle">Выбрать модппак для экспорта</sys:String>
     
     <!-- options -->
-    <sys:String x:Key="IncludeVersionInfoOption">Include version info</sys:String>
+    <sys:String x:Key="IncludeVersionInfoOption">Добавить информацию о версии</sys:String>
     
     <!-- tooltips -->
-    <sys:String x:Key="IncludeVersionsToolTip">This will save the versions of the exported mods into the exported file.&#x0a;On import ModMyFactory will use this info to download specific mod versions.</sys:String>
+    <sys:String x:Key="IncludeVersionsToolTip">Это добавит версию экспортируемых модов в сборку.&#x0a;ModMyFactory использует эту информацию для загрузки указанных версий модов.</sys:String>
     
     <!-- buttons -->
-    <sys:String x:Key="ExportButton">Export</sys:String>
+    <sys:String x:Key="ExportButton">Экспортировать</sys:String>
 
 </ResourceDictionary>
