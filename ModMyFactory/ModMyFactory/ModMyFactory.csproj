@@ -194,8 +194,11 @@
     <Compile Include="Web\ModApi\PageInfo.cs" />
     <Compile Include="Web\ModApi\PageLinks.cs" />
     <Compile Include="Web\ModWebsite.cs" />
+    <Compile Include="Web\UpdateApi\Package.cs" />
     <Compile Include="Web\UpdateApi\UpdateInfo.cs" />
+    <Compile Include="Web\UpdateApi\UpdateInfoTemplate.cs" />
     <Compile Include="Web\UpdateApi\UpdateStep.cs" />
+    <Compile Include="Web\UpdateApi\UpdateStepTemplate.cs" />
     <Compile Include="Web\UpdateWebsite.cs" />
     <Compile Include="Web\WebHelper.cs" />
     <Compile Include="Helpers\ShellHelper.cs" />
