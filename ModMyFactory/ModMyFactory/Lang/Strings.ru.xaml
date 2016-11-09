@@ -276,6 +276,7 @@
     
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Помогали в создании: </sys:String>
+    <sys:String x:Key="TranslatorsHeader">Translators</sys:String>
 
 
     <!--
