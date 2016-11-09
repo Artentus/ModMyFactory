@@ -26,7 +26,7 @@ Available locations are AppData, the ModMyFactory installation directory and com
 
 #### Localization
 ModMyFactory has full support of localization.  
-Currently available languages are: English, German (hopefully more to come).
+Currently available languages are: English, German, Russian (hopefully more to come).
 
 ### System requirements
 ModMyFactory has the following system requirements:
