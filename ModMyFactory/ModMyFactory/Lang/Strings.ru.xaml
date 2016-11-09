@@ -191,8 +191,8 @@
     <sys:String x:Key="VersionManagementWindowTitle">Менеждер версий</sys:String>
 
     <!-- buttons -->
-    <sys:String x:Key="AddZipButton">Добавить из ZIP-архива</sys:String>
-    <sys:String x:Key="AddFolderButton">Добавить из папки</sys:String>
+    <TextBlock x:Key="AddZipButton" TextAlignment="Center">Добавить&#x0a;из ZIP-архива</TextBlock>
+    <TextBlock x:Key="AddFolderButton" TextAlignment="Center">Добавить&#x0a;из папки</TextBlock>
     <TextBlock x:Key="SelectSteamButton" TextAlignment="Center">Выбрать&#x0a;Steam версию</TextBlock>
     <sys:String x:Key="OpenFolderButton">Открыть папку</sys:String>
     <sys:String x:Key="RemoveButton">Удалить</sys:String>
