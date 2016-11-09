@@ -91,7 +91,7 @@ namespace ModMyFactory
                         }
                     }
 
-                    MessageBox.Show(this.MainWindow, "A crash log has been created in %AppData%\\ModMyFactory.",
+                    MessageBox.Show("A crash log has been created in %AppData%\\ModMyFactory.",
                         "ModMyFactory crashed!", MessageBoxButton.OK, MessageBoxImage.Error);
 
                     e.Handled = true;

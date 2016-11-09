@@ -38,14 +38,12 @@
             <Button Margin="0,0,0,2" Content="{DynamicResource DownloadButton}" Command="{Binding DownloadCommand}"/>
             <Button Margin="0,2" Content="{DynamicResource AddZipButton}" Command="{Binding AddFromZipCommand}"/>
             <Button Margin="0,2" Content="{DynamicResource AddFolderButton}" Command="{Binding AddFromFolderCommand}"/>
-
-            <Rectangle Margin="0,4" Height="1" Fill="{StaticResource BorderBrush}"/>
-
             <Button Margin="0,2" Content="{DynamicResource SelectSteamButton}" Command="{Binding SelectSteamCommand}"/>
 
             <Rectangle Margin="0,4" Height="1" Fill="{StaticResource BorderBrush}"/>
             
             <Button Margin="0,2" Content="{DynamicResource OpenFolderButton}" Command="{Binding OpenFolderCommand}"/>
+            <!--<Button Margin="0,2" Content="{DynamicResource UpdateButton}" Command="{Binding UpdateCommand}"/>-->
             <Button Margin="0,2" Content="{DynamicResource RemoveButton}" Command="{Binding RemoveCommand}"/>
         </StackPanel>
         

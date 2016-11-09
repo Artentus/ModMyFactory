@@ -276,6 +276,7 @@
     
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Contributors</sys:String>
+    <sys:String x:Key="TranslatorsHeader">Translators</sys:String>
 
 
     <!--

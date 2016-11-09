@@ -30,35 +30,7 @@ namespace ModMyFactory.Helpers
         public static async Task MoveToAsync(this DirectoryInfo source, string destination)
         {
             var destinationDirectory = new DirectoryInfo(destination);
-
-            if (string.Equals(source.Root.Name, destinationDirectory.Root.Name,
-                StringComparison.InvariantCultureIgnoreCase))
-            {
-                source.MoveTo(destinationDirectory.FullName);
-            }
-            else
-            {
-                await MoveDirectoryRecursiveInnerAsync(source, destinationDirectory);
-            }
-        }
-
-        /// <summary>
-        /// Checks whether this directory is a reparse point.
-        /// </summary>
-        /// <param name="directory">The directory to check.</param>
-        /// <returns>Returns true if the directory is a reparse point, otherwise false.</returns>
-        public static bool IsReparsePoint(this DirectoryInfo directory)
-        {
-            return directory.Attributes.HasFlag(FileAttributes.ReparsePoint);
-        }
-
-        /// <summary>
-        /// Deletes this directory and its contents. If the directory is a reparse point, the contents will not be deleted.
-        /// </summary>
-        /// <param name="directory">The directory to delete.</param>
-        public static void DeleteRecursiveReparsePoint(this DirectoryInfo directory)
-        {
-            directory.Delete(!directory.IsReparsePoint());
+            await MoveDirectoryRecursiveInnerAsync(source, destinationDirectory);
         }
 
         /// <summary>

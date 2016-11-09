@@ -27,6 +27,7 @@
             <RowDefinition Height="20"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="20"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -90,12 +91,26 @@
             
             <Rectangle Grid.Row="0" Margin="0,10" Height="1" Fill="{StaticResource BorderBrush}"/>
             <TextBlock Grid.Row="1" Text="{DynamicResource ContributorsHeader}"/>
-            <WrapPanel Grid.Row="2" Margin="0,2" Orientation="Horizontal">
-                <TextBlock Margin="0,0,4,0"> <Hyperlink Command="{Binding Contributor1Command}">plague006</Hyperlink></TextBlock>
-                <TextBlock Margin="4,0"> <Hyperlink Command="{Binding Contributor2Command}">jodli</Hyperlink> </TextBlock>
+            <WrapPanel Grid.Row="2" Margin="-4,2" Orientation="Horizontal">
+                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor1Command}">plague006</Hyperlink></TextBlock>
+                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor2Command}">jodli</Hyperlink> </TextBlock>
             </WrapPanel>
         </Grid>
-        
-        <Button Grid.Row="6" Grid.Column="2" Margin="2" HorizontalAlignment="Right" Content="{DynamicResource CloseButton}" IsDefault="True" IsCancel="True"/>
+
+        <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="20,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Rectangle Grid.Row="0" Margin="0,10" Height="1" Fill="{StaticResource BorderBrush}"/>
+            <TextBlock Grid.Row="1" Text="{DynamicResource TranslatorsHeader}"/>
+            <WrapPanel Grid.Row="2" Margin="-6,2" Orientation="Horizontal">
+                <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator1Command}">Averssem</Hyperlink> (Russian)</TextBlock>
+            </WrapPanel>
+        </Grid>
+
+        <Button Grid.Row="7" Grid.Column="2" Margin="2" HorizontalAlignment="Right" Content="{DynamicResource CloseButton}" IsDefault="True" IsCancel="True"/>
     </Grid>
 </mvvm:ViewModelBoundWindow>

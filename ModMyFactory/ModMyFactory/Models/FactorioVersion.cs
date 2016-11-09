@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
-using ModMyFactory.Helpers;
+using ModMyFactory.IO;
 
 namespace ModMyFactory.Models
 {
@@ -153,7 +152,7 @@ namespace ModMyFactory.Models
             IsFileSystemEditable = false;
         }
 
-        protected FactorioVersion(bool isFileSystemEditable, DirectoryInfo directory, DirectoryInfo linkDirectory, Version version, bool forceLinkCreation = false)
+        protected FactorioVersion(bool isFileSystemEditable, DirectoryInfo directory, DirectoryInfo linkDirectory, Version version)
         {
             IsSpecialVersion = false;
             IsFileSystemEditable = isFileSystemEditable;
@@ -164,10 +163,10 @@ namespace ModMyFactory.Models
             SetExecutablePath();
 
             if (!linkDirectory.Exists) linkDirectory.Create();
-            CreateLinks(forceLinkCreation);
+            CreateLinks();
         }
 
-        public FactorioVersion(DirectoryInfo directory, Version version, bool forceLinkCreation = false)
+        public FactorioVersion(DirectoryInfo directory, Version version)
         {
             IsSpecialVersion = false;
             IsFileSystemEditable = true;
@@ -178,7 +177,7 @@ namespace ModMyFactory.Models
 
             SetExecutablePath();
 
-            CreateLinks(forceLinkCreation);
+            CreateLinks();
         }
 
         protected virtual void UpdateDirectoryInner(DirectoryInfo newDirectory)
@@ -195,119 +194,95 @@ namespace ModMyFactory.Models
         /// <summary>
         /// Updates the directory of this version of Factorio.
         /// </summary>
-        /// <param name="newDirectory"></param>
         public void UpdateDirectory(DirectoryInfo newDirectory)
         {
-            UpdateDirectoryInner(newDirectory);
-            UpdateLinkDirectoryInner(newDirectory);
+            if (!IsSpecialVersion)
+            {
+                UpdateDirectoryInner(newDirectory);
+                UpdateLinkDirectoryInner(newDirectory);
+            }
         }
 
-        private void CreateSaveDirectoryLink(DirectoryInfo localSaveDirectory)
+        private void CreateSaveDirectoryLinkInternal(string localSavePath)
         {
             var globalSaveDirectory = new DirectoryInfo(App.Instance.GlobalSavePath);
             if (!globalSaveDirectory.Exists) globalSaveDirectory.Create();
 
-            var info = new ProcessStartInfo("cmd")
-            {
-                Arguments = $"/K mklink /J \"{localSaveDirectory.FullName}\" \"{globalSaveDirectory.FullName}\"",
-                CreateNoWindow = true,
-                UseShellExecute = false
-            };
-            Process.Start(info);
+            var localSaveJunction = new JunctionInfo(localSavePath);
+            localSaveJunction.Create(globalSaveDirectory.FullName);
         }
 
         /// <summary>
         /// Creates the directory junction for saves.
         /// </summary>
-        /// <param name="forced">If true, an existing link/directory will be deleted.</param>
-        public void CreateSaveDirectoryLink(bool forced)
+        public void CreateSaveDirectoryLink()
         {
-            DirectoryInfo localSaveDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "saves"));
-            if (forced && localSaveDirectory.Exists)
+            if (!IsSpecialVersion)
             {
-                localSaveDirectory.DeleteRecursiveReparsePoint();
-                CreateSaveDirectoryLink(localSaveDirectory);
-            }
-            else if (!localSaveDirectory.Exists)
-            {
-                CreateSaveDirectoryLink(localSaveDirectory);
+                DirectoryInfo localSaveDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "saves"));
+                if (!Junction.Exists(localSaveDirectory.FullName) && localSaveDirectory.Exists) localSaveDirectory.Delete(true);
+
+                CreateSaveDirectoryLinkInternal(localSaveDirectory.FullName);
             }
         }
 
-        private void CreateScenarioDirectoryLink(DirectoryInfo localScenarioDirectory)
+        private void CreateScenarioDirectoryLinkInternal(string localScenarioPath)
         {
             var globalScenarioDirectory = new DirectoryInfo(App.Instance.GlobalScenarioPath);
             if (!globalScenarioDirectory.Exists) globalScenarioDirectory.Create();
 
-            var info = new ProcessStartInfo("cmd")
-            {
-                Arguments = $"/K mklink /J \"{localScenarioDirectory.FullName}\" \"{globalScenarioDirectory.FullName}\"",
-                CreateNoWindow = true,
-                UseShellExecute = false
-            };
-            Process.Start(info);
+            var localScenarioJunction = new JunctionInfo(localScenarioPath);
+            localScenarioJunction.Create(globalScenarioDirectory.FullName);
         }
-
 
         /// <summary>
         /// Creates the directory junction for scenarios.
         /// </summary>
-        /// <param name="forced">If true, an existing link/directory will be deleted.</param>
-        public void CreateScenarioDirectoryLink(bool forced)
+        public void CreateScenarioDirectoryLink()
         {
-            DirectoryInfo localScenarioDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "scenarios"));
-            if (forced && localScenarioDirectory.Exists)
+            if (!IsSpecialVersion)
             {
-                localScenarioDirectory.DeleteRecursiveReparsePoint();
-                CreateScenarioDirectoryLink(localScenarioDirectory);
-            }
-            else if (!localScenarioDirectory.Exists)
-            {
-                CreateScenarioDirectoryLink(localScenarioDirectory);
+                DirectoryInfo localScenarioDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "scenarios"));
+                if (!Junction.Exists(localScenarioDirectory.FullName) && localScenarioDirectory.Exists) localScenarioDirectory.Delete(true);
+
+                CreateScenarioDirectoryLinkInternal(localScenarioDirectory.FullName);
             }
         }
 
-        private void CreateModDirectoryLink(DirectoryInfo localModDirectory)
+        private void CreateModDirectoryLinkInternal(string localModPath)
         {
             var globalModDirectory = App.Instance.Settings.GetModDirectory(Version);
             if (!globalModDirectory.Exists) globalModDirectory.Create();
 
-            var info = new ProcessStartInfo("cmd")
-            {
-                Arguments = $"/K mklink /J \"{localModDirectory.FullName}\" \"{globalModDirectory.FullName}\"",
-                CreateNoWindow = true,
-                UseShellExecute = false
-            };
-            Process.Start(info);
+            var localModJunction = new JunctionInfo(localModPath);
+            localModJunction.Create(globalModDirectory.FullName);
         }
 
         /// <summary>
         /// Creates the directory junction for mods.
         /// </summary>
-        /// <param name="forced">If true, an existing link/directory will be deleted.</param>
-        public void CreateModDirectoryLink(bool forced)
+        public void CreateModDirectoryLink()
         {
-            DirectoryInfo localModDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "mods"));
-            if (forced && localModDirectory.Exists)
+            if (!IsSpecialVersion)
             {
-                localModDirectory.DeleteRecursiveReparsePoint();
-                CreateModDirectoryLink(localModDirectory);
-            }
-            else if (!localModDirectory.Exists)
-            {
-                CreateModDirectoryLink(localModDirectory);
+                DirectoryInfo localModDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "mods"));
+                if (!Junction.Exists(localModDirectory.FullName) && localModDirectory.Exists) localModDirectory.Delete(true);
+
+                CreateModDirectoryLinkInternal(localModDirectory.FullName);
             }
         }
 
         /// <summary>
         /// Creates all directory junctions.
         /// </summary>
-        /// <param name="forced"></param>
-        public void CreateLinks(bool forced)
+        public void CreateLinks()
         {
-            CreateSaveDirectoryLink(forced);
-            CreateScenarioDirectoryLink(forced);
-            CreateModDirectoryLink(forced);
+            if (!IsSpecialVersion)
+            {
+                CreateSaveDirectoryLink();
+                CreateScenarioDirectoryLink();
+                CreateModDirectoryLink();
+            }
         }
 
         /// <summary>
@@ -315,14 +290,17 @@ namespace ModMyFactory.Models
         /// </summary>
         public void DeleteLinks()
         {
-            DirectoryInfo localSaveDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "saves"));
-            if (localSaveDirectory.Exists) localSaveDirectory.Delete(false);
+            if (!IsSpecialVersion)
+            {
+                JunctionInfo localSaveJunction = new JunctionInfo(Path.Combine(linkDirectory.FullName, "saves"));
+                if (localSaveJunction.Exists) localSaveJunction.Delete();
 
-            DirectoryInfo localScenarioDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "scenarios"));
-            if (localScenarioDirectory.Exists) localScenarioDirectory.Delete(false);
+                JunctionInfo localScenarioJunction = new JunctionInfo(Path.Combine(linkDirectory.FullName, "scenarios"));
+                if (localScenarioJunction.Exists) localScenarioJunction.Delete();
 
-            DirectoryInfo localModDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "mods"));
-            if (localModDirectory.Exists) localModDirectory.Delete(false);
+                JunctionInfo localModJunction = new JunctionInfo(Path.Combine(linkDirectory.FullName, "mods"));
+                if (localModJunction.Exists) localModJunction.Delete();
+            }
         }
     }
 }
