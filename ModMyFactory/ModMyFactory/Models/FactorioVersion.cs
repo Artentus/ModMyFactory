@@ -209,7 +209,17 @@ namespace ModMyFactory.Models
             if (!globalSaveDirectory.Exists) globalSaveDirectory.Create();
 
             var localSaveJunction = new JunctionInfo(localSavePath);
-            localSaveJunction.Create(globalSaveDirectory.FullName);
+            if (localSaveJunction.Exists)
+            {
+                localSaveJunction.SetDestination(globalSaveDirectory.FullName);
+            }
+            else
+            {
+                if (System.IO.Directory.Exists(localSaveJunction.FullName))
+                    System.IO.Directory.Delete(localSaveJunction.FullName, true);
+
+                localSaveJunction.Create(globalSaveDirectory.FullName);
+            }
         }
 
         /// <summary>
@@ -219,10 +229,8 @@ namespace ModMyFactory.Models
         {
             if (!IsSpecialVersion)
             {
-                DirectoryInfo localSaveDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "saves"));
-                if (!Junction.Exists(localSaveDirectory.FullName) && localSaveDirectory.Exists) localSaveDirectory.Delete(true);
-
-                CreateSaveDirectoryLinkInternal(localSaveDirectory.FullName);
+                string localSavePath = Path.Combine(linkDirectory.FullName, "saves");
+                CreateSaveDirectoryLinkInternal(localSavePath);
             }
         }
 
@@ -232,7 +240,17 @@ namespace ModMyFactory.Models
             if (!globalScenarioDirectory.Exists) globalScenarioDirectory.Create();
 
             var localScenarioJunction = new JunctionInfo(localScenarioPath);
-            localScenarioJunction.Create(globalScenarioDirectory.FullName);
+            if (localScenarioJunction.Exists)
+            {
+                localScenarioJunction.SetDestination(globalScenarioDirectory.FullName);
+            }
+            else
+            {
+                if (System.IO.Directory.Exists(localScenarioJunction.FullName))
+                    System.IO.Directory.Delete(localScenarioJunction.FullName, true);
+
+                localScenarioJunction.Create(globalScenarioDirectory.FullName);
+            }
         }
 
         /// <summary>
@@ -242,10 +260,8 @@ namespace ModMyFactory.Models
         {
             if (!IsSpecialVersion)
             {
-                DirectoryInfo localScenarioDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "scenarios"));
-                if (!Junction.Exists(localScenarioDirectory.FullName) && localScenarioDirectory.Exists) localScenarioDirectory.Delete(true);
-
-                CreateScenarioDirectoryLinkInternal(localScenarioDirectory.FullName);
+                string localScenarioPath = Path.Combine(linkDirectory.FullName, "scenarios");
+                CreateScenarioDirectoryLinkInternal(localScenarioPath);
             }
         }
 
@@ -255,7 +271,17 @@ namespace ModMyFactory.Models
             if (!globalModDirectory.Exists) globalModDirectory.Create();
 
             var localModJunction = new JunctionInfo(localModPath);
-            localModJunction.Create(globalModDirectory.FullName);
+            if (localModJunction.Exists)
+            {
+                localModJunction.SetDestination(globalModDirectory.FullName);
+            }
+            else
+            {
+                if (System.IO.Directory.Exists(localModJunction.FullName))
+                    System.IO.Directory.Delete(localModJunction.FullName, true);
+
+                localModJunction.Create(globalModDirectory.FullName);
+            }
         }
 
         /// <summary>
@@ -265,10 +291,8 @@ namespace ModMyFactory.Models
         {
             if (!IsSpecialVersion)
             {
-                DirectoryInfo localModDirectory = new DirectoryInfo(Path.Combine(linkDirectory.FullName, "mods"));
-                if (!Junction.Exists(localModDirectory.FullName) && localModDirectory.Exists) localModDirectory.Delete(true);
-
-                CreateModDirectoryLinkInternal(localModDirectory.FullName);
+                string localModPath = Path.Combine(linkDirectory.FullName, "mods");
+                CreateModDirectoryLinkInternal(localModPath);
             }
         }
 
