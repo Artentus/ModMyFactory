@@ -52,7 +52,7 @@ namespace ModMyFactory
         /// </summary>
         private static void DisplayHelp()
         {
-            bool attatchedConsole = Kernel32.AttachConsole();
+            bool attatchedConsole = Kernel32.TryAttachConsole();
             if (attatchedConsole)
             {
                 Console.WriteLine();

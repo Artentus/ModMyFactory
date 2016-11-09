@@ -18,6 +18,7 @@ using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.Views;
+using ModMyFactory.Web.UpdateApi;
 
 namespace ModMyFactory.ViewModels
 {
@@ -58,6 +59,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand OpenFolderCommand { get; }
 
+        public RelayCommand UpdateCommand { get; }
+
         public RelayCommand RemoveCommand { get; }
 
         private VersionManagementViewModel()
@@ -76,6 +79,7 @@ namespace ModMyFactory.ViewModels
                 AddFromFolderCommand = new RelayCommand(async () => await AddLocalVersion());
                 SelectSteamCommand = new RelayCommand(async () => await SelectSteamVersion(), () => string.IsNullOrEmpty(App.Instance.Settings.SteamVersionPath));
                 OpenFolderCommand = new RelayCommand(OpenFolder, () => SelectedVersion != null);
+                UpdateCommand = new RelayCommand(async () => await UpdateSelectedVersion(), () => SelectedVersion != null && SelectedVersion.IsFileSystemEditable);
                 RemoveCommand = new RelayCommand(async () => await RemoveSelectedVersion(), () => SelectedVersion != null && SelectedVersion.IsFileSystemEditable);
             }
         }
@@ -265,13 +269,13 @@ namespace ModMyFactory.ViewModels
         {
             await Task.Run(() =>
             {
-                var localSaveDirecotry = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "saves"));
-                if (localSaveDirecotry.Exists)
+                var localSaveDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "saves"));
+                if (localSaveDirectory.Exists)
                 {
                     if (!Directory.Exists(App.Instance.GlobalSavePath))
                         Directory.CreateDirectory(App.Instance.GlobalSavePath);
 
-                    foreach (var saveFile in localSaveDirecotry.GetFiles())
+                    foreach (var saveFile in localSaveDirectory.GetFiles())
                     {
                         if (!saveFile.Name.StartsWith("_autosave"))
                         {
@@ -290,16 +294,16 @@ namespace ModMyFactory.ViewModels
                         }
                     }
 
-                    localSaveDirecotry.DeleteRecursiveReparsePoint();
+                    localSaveDirectory.Delete(true);
                 }
 
-                var localScenarioDirecotry = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "scenarios"));
-                if (localScenarioDirecotry.Exists)
+                var localScenarioDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "scenarios"));
+                if (localScenarioDirectory.Exists)
                 {
                     if (!Directory.Exists(App.Instance.GlobalScenarioPath))
                         Directory.CreateDirectory(App.Instance.GlobalScenarioPath);
 
-                    foreach (var scenarioFile in localScenarioDirecotry.GetFiles())
+                    foreach (var scenarioFile in localScenarioDirectory.GetFiles())
                     {
                         string newPath = Path.Combine(App.Instance.GlobalScenarioPath, scenarioFile.Name);
                         if (File.Exists(newPath))
@@ -315,16 +319,16 @@ namespace ModMyFactory.ViewModels
                         scenarioFile.MoveTo(newPath);
                     }
 
-                    localScenarioDirecotry.DeleteRecursiveReparsePoint();
+                    localScenarioDirectory.Delete(true);
                 }
 
-                var localModDirecotry = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "mods"));
-                if (localModDirecotry.Exists)
+                var localModDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "mods"));
+                if (localModDirectory.Exists)
                 {
                     string globalModPath = App.Instance.Settings.GetModDirectory(factorioVersion).FullName;
                     if (!Directory.Exists(globalModPath)) Directory.CreateDirectory(globalModPath);
 
-                    foreach (var modFile in localModDirecotry.GetFiles("*.zip"))
+                    foreach (var modFile in localModDirectory.GetFiles("*.zip"))
                     {
                         string name = modFile.NameWithoutExtension().Split('_')[0];
                         if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
@@ -338,7 +342,7 @@ namespace ModMyFactory.ViewModels
                         }
                     }
 
-                    foreach (var modFolder in localModDirecotry.GetDirectories())
+                    foreach (var modFolder in localModDirectory.GetDirectories())
                     {
                         string name = modFolder.Name.Split('_')[0];
                         if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
@@ -352,14 +356,15 @@ namespace ModMyFactory.ViewModels
                         }
                     }
 
-                    localModDirecotry.DeleteRecursiveReparsePoint();
+                    localModDirectory.Delete(true);
                 }
             });
         }
 
         private async Task MoveFactorioInstallationAsync(DirectoryInfo installationDirectory, Version version, DirectoryInfo destinationDirectory)
         {
-            await MoveContentsToPreserveAsync(installationDirectory, version);
+            Version factorioVersion = new Version(version.Major, version.Minor);
+            await MoveContentsToPreserveAsync(installationDirectory, factorioVersion);
             await installationDirectory.MoveToAsync(destinationDirectory.FullName);
         }
 
@@ -403,7 +408,7 @@ namespace ModMyFactory.ViewModels
                     await moveTask;
                     await closeWindowTask;
 
-                    FactorioVersions.Add(new FactorioVersion(destinationDirectory, version, true));
+                    FactorioVersions.Add(new FactorioVersion(destinationDirectory, version));
                 }
             }
         }
@@ -441,14 +446,15 @@ namespace ModMyFactory.ViewModels
                     progressWindow.ViewModel.IsIndeterminate = true;
 
                     var steamAppDataDirectory = new DirectoryInfo(FactorioSteamVersion.SteamAppDataPath);
-                    Task moveTask = MoveContentsToPreserveAsync(steamAppDataDirectory, version);
+                    Version factorioVersion = new Version(version.Major, version.Minor);
+                    Task moveTask = MoveContentsToPreserveAsync(steamAppDataDirectory, factorioVersion);
 
                     Task closeWindowTask = moveTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                     progressWindow.ShowDialog();
                     await moveTask;
                     await closeWindowTask;
 
-                    FactorioVersions.Add(new FactorioSteamVersion(selectedDirectory, version, true));
+                    FactorioVersions.Add(new FactorioSteamVersion(selectedDirectory, version));
                 }
             }
         }
@@ -456,6 +462,15 @@ namespace ModMyFactory.ViewModels
         private void OpenFolder()
         {
             Process.Start(SelectedVersion.Directory.FullName);
+        }
+
+        private async Task UpdateSelectedVersion()
+        {
+            string token;
+            if (GlobalCredentials.Instance.LogIn(Window, out token))
+            {
+                UpdateInfo updateInfo = UpdateWebsite.GetUpdateInfo(GlobalCredentials.Instance.Username, token);
+            }
         }
 
         private async Task RemoveSelectedVersion()

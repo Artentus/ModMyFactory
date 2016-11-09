@@ -106,8 +106,6 @@ namespace ModMyFactory.Helpers
                 }
                 else
                 {
-                    if (lengthDifference > Math.Floor(modWord.Length * 0.5)) continue;
-
                     for (int i = 0; i <= lengthDifference; i++)
                     {
                         string subModWord = modWord.Substring(i, filterWord.Length);

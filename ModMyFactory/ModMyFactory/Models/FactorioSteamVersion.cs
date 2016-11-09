@@ -46,12 +46,9 @@ namespace ModMyFactory.Models
 
         public override string DisplayName => $"Steam ({Version.ToString(3)})";
 
-        public FactorioSteamVersion(DirectoryInfo directory, Version version, bool forceLinkCreation = false)
-            : base(false, directory, new DirectoryInfo(SteamAppDataPath), version, forceLinkCreation)
-        {
-            if (!forceLinkCreation)
-                CreateModDirectoryLink(true);
-        }
+        public FactorioSteamVersion(DirectoryInfo directory, Version version)
+            : base(false, directory, new DirectoryInfo(SteamAppDataPath), version)
+        { }
 
         protected override void UpdateLinkDirectoryInner(DirectoryInfo newDirectory)
         {
