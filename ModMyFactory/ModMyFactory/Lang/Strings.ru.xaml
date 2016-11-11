@@ -56,8 +56,8 @@
     <sys:String x:Key="Error.InvalidFactorioFolder.Message">Данная папка не содержит файл установки Factorio.</sys:String>
     <sys:String x:Key="Error.InvalidFactorioFolder.Title">Неправильная папка!</sys:String>
     
-    <sys:String x:Key="Error.IncompatiblePlatform.Message">This version of Factorio is not compatible with your platform.&#x0a;Make sure to use 32 bit Factorio on 32 bit Windows and 64 bit Factorio on 64 bit Windows.</sys:String>
-    <sys:String x:Key="Error.IncompatiblePlatform.Title">Incompatible platform!</sys:String>
+    <sys:String x:Key="Error.IncompatiblePlatform.Message">Данная версия Factorio не совместима с вашей операционной системой.&#x0a;Убедитесь, что вы используете 32-разрядную версию игры на 32-разрядной версии Windows, а 64-разрядную версию игры на 64-разрядной версии Windows.</sys:String>
+    <sys:String x:Key="Error.IncompatiblePlatform.Title">Несовместимая операционная система!</sys:String>
 
     <sys:String x:Key="Warning.MoveFactorioFolder.Message">Выбранная установка Factorio будет перемещена согласно настройкам! Рекомендуется создание бэкапа.&#x0a;Вы хотите продолжить?</sys:String>
     <sys:String x:Key="Warning.MoveFactorioFolder.Title">Предупреждение</sys:String>
