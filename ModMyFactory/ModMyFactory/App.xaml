@@ -13,7 +13,6 @@
                 <ResourceDictionary Source="Lang/Strings.en.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
-            <ResourceDictionary x:Key="Strings.en" Source="Lang/Strings.en.xaml"/>
             <ResourceDictionary x:Key="Strings.de" Source="Lang/Strings.de.xaml"/>
             <ResourceDictionary x:Key="Strings.ru" Source="Lang/Strings.ru.xaml"/>
 

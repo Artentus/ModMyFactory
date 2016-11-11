@@ -20,6 +20,9 @@
     <sys:String x:Key="Error.InternetConnection.Message">There was a problem with your internet connection.&#x0a;Please make sure your computer has a stable internet connection, then try again.</sys:String>
     <sys:String x:Key="Error.InternetConnection.Title">Network error!</sys:String>
     
+    <sys:String x:Key="Information.32Bit.Message">You are running a 32 bit version of Windows. You will not be able to play Factorio versions from 0.15 onwards.</sys:String>
+    <sys:String x:Key="Information.32Bit.Title">32 bit Windows detected</sys:String>
+    
     <sys:String x:Key="Information.ModExistsPerVersion.Message">The mod '{0}' for Factorio {1} already exists!</sys:String>
     <sys:String x:Key="Information.ModExistsPerVersion.Title">Mod skipped</sys:String>
     

@@ -81,7 +81,7 @@ namespace ModMyFactory.ViewModels
                 OpenFolderCommand = new RelayCommand(OpenFolder, () => SelectedVersion != null);
                 UpdateCommand = new RelayCommand(async () => await UpdateSelectedVersion(), () =>
                 {
-                    return SelectedVersion != null && SelectedVersion.IsFileSystemEditable;
+                    return SelectedVersion != null && SelectedVersion.IsFileSystemEditable && (SelectedVersion.Version >= new Version(0, 12));
                 });
                 RemoveCommand = new RelayCommand(async () => await RemoveSelectedVersion(), () =>
                 {

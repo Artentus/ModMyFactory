@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xml:space="preserve">
     <!--
     Newline character: &#x0a;
     -->
@@ -18,7 +19,10 @@
     <!-- messages -->
     <sys:String x:Key="Error.InternetConnection.Message">Es gibt ein Problem mit Ihrer Internetverbindung.&#x0a;Bitte stellen sie sicher, dass Ihr Computer mit dem Internet verbunden ist, und versuchen Sie es dann erneut.</sys:String>
     <sys:String x:Key="Error.InternetConnection.Title">Netzwerkfehler!</sys:String>
-    
+
+    <sys:String x:Key="Information.32Bit.Message">Sie führen eine 32-Bit-Version von Windows aus. Sie können keine Version von Factorio ab 0.15 spielen.</sys:String>
+    <sys:String x:Key="Information.32Bit.Title">32-Bit-Windows erkannt</sys:String>
+
     <sys:String x:Key="Information.ModExistsPerVersion.Message">Die Mod '{0}' für Factorio {1} existiert bereits!</sys:String>
     <sys:String x:Key="Information.ModExistsPerVersion.Title">Mod übersprungen</sys:String>
 

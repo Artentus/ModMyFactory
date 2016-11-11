@@ -476,7 +476,7 @@
                     <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
                     
                     <DataTemplate x:Key="SubitemTemplate" DataType="{x:Type model:IModReference}">
-                        <Border x:Name="Border" BorderBrush="Transparent" BorderThickness="1" Background="Transparent">
+                        <Border BorderBrush="Transparent" BorderThickness="1" Background="Transparent">
                             <Border.Style>
                                 <Style TargetType="{x:Type Border}">
                                     <Style.Triggers>
@@ -484,7 +484,7 @@
                                             <Trigger.EnterActions>
                                                 <BeginStoryboard>
                                                     <Storyboard>
-                                                        <ColorAnimation Storyboard.Target="{Binding ElementName=Border}" Storyboard.TargetProperty="BorderBrush.Color"
+                                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
                                                                         To="{StaticResource SelectionColor}" Duration="0:0:0:0.2"/>
                                                     </Storyboard>
                                                 </BeginStoryboard>
@@ -492,7 +492,7 @@
                                             <Trigger.ExitActions>
                                                 <BeginStoryboard>
                                                     <Storyboard>
-                                                        <ColorAnimation Storyboard.Target="{Binding ElementName=Border}" Storyboard.TargetProperty="BorderBrush.Color"
+                                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
                                                                         To="Transparent" Duration="0:0:0:0"/>
                                                     </Storyboard>
                                                 </BeginStoryboard>

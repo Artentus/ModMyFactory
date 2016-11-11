@@ -110,7 +110,11 @@ namespace ModMyFactory
         /// <returns>Returns a list containing all available cultures.</returns>
         internal List<CultureEntry> GetAvailableCultures()
         {
-            var availableCultures = new List<CultureEntry>();
+            var availableCultures = new List<CultureEntry>()
+            {
+                new CultureEntry(new CultureInfo("en"))
+            };
+
             foreach (var key in Resources.Keys)
             {
                 string stringKey = key as string;
@@ -124,6 +128,7 @@ namespace ModMyFactory
                     }
                 }
             }
+
             return availableCultures;
         }
 
@@ -133,13 +138,9 @@ namespace ModMyFactory
         /// <param name="culture">The culture to set as UI culture.</param>
         internal void SelectCulture(CultureInfo culture)
         {
-            if (enDictionary == null)
-                enDictionary = (ResourceDictionary)Resources["Strings.en"];
-
             var mergedDictionaries = Resources.MergedDictionaries;
-            mergedDictionaries.Clear();
-
-            mergedDictionaries.Add(enDictionary);
+            if (mergedDictionaries.Count == 2) mergedDictionaries.RemoveAt(1);
+            
             string resourceName = "Strings." + culture.TwoLetterISOLanguageName;
             if (culture.TwoLetterISOLanguageName != "en" && Resources.Contains(resourceName))
                 mergedDictionaries.Add((ResourceDictionary)Resources[resourceName]);
