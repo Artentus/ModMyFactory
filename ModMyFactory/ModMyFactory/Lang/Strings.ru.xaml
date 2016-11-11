@@ -20,8 +20,8 @@
     <sys:String x:Key="Error.InternetConnection.Message">Проблема с Интернет-соединением.&#x0a;Убедитесь, что ваш компьютер имеет стабильный доступ к интернету, затем попробуйте ещё раз.</sys:String>
     <sys:String x:Key="Error.InternetConnection.Title">Сетевая ошибка!</sys:String>
     
-    <sys:String x:Key="Information.32Bit.Message">You are running a 32 bit version of Windows. You will not be able to play Factorio versions from 0.15 onwards.</sys:String>
-    <sys:String x:Key="Information.32Bit.Title">32 bit Windows detected</sys:String>
+    <sys:String x:Key="Information.32Bit.Message">Вы используете 32-разрядную версию Windows. Начиная с версии 0.15 вы не сможете играть в Factorio.</sys:String>
+    <sys:String x:Key="Information.32Bit.Title">Обнаружена 32-разрядная версия Windows</sys:String>
     
     <sys:String x:Key="Information.ModExistsPerVersion.Message">Мод '{0}' для Factorio {1} уже существует!</sys:String>
     <sys:String x:Key="Information.ModExistsPerVersion.Title">Мод пропущен</sys:String>
