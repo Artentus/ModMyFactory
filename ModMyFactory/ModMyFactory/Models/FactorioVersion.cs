@@ -96,19 +96,19 @@ namespace ModMyFactory.Models
             {
                 foreach (var entry in archive.Entries)
                 {
-                    if (!hasValidVersion && entry.FullName.EndsWith("data/base/info.json"))
+                    if (!hasValidVersion && entry.FullName.EndsWith("data/base/info.json", StringComparison.InvariantCultureIgnoreCase))
                     {
                         using (Stream stream = entry.Open())
                         {
                             if (TryExtractVersion(stream, out validVersion)) hasValidVersion = true;
                         }
                     }
-                    else if (!hasValidPlatform && entry.FullName.EndsWith("Win32/factorio.exe"))
+                    else if (!hasValidPlatform && entry.FullName.EndsWith("Win32/factorio.exe", StringComparison.InvariantCultureIgnoreCase))
                     {
                         hasValidPlatform = true;
                         is64Bit = true;
                     }
-                    else if (!hasValidPlatform && entry.FullName.EndsWith("x64/factorio.exe"))
+                    else if (!hasValidPlatform && entry.FullName.EndsWith("x64/factorio.exe", StringComparison.InvariantCultureIgnoreCase))
                     {
                         hasValidPlatform = true;
                         is64Bit = false;

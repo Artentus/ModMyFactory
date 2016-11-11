@@ -27,6 +27,7 @@ namespace ModMyFactory
                 OnlineModsWindowInfo = WindowInfo.Empty,
                 SteamVersionPath = string.Empty,
                 SaveCredentials = false,
+                WarningShown = false,
             };
             return defaultSettings;
         }
@@ -73,6 +74,8 @@ namespace ModMyFactory
         public string SteamVersionPath;
 
         public bool SaveCredentials;
+
+        public bool WarningShown;
 
         [JsonConstructor]
         private Settings()

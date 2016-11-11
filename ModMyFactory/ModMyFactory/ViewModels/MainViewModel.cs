@@ -368,6 +368,15 @@ namespace ModMyFactory.ViewModels
                 AvailableCultures.First(entry =>
                     string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
 
+                if (!Environment.Is64BitOperatingSystem && !App.Instance.Settings.WarningShown)
+                {
+                    MessageBox.Show(
+                        App.Instance.GetLocalizedMessage("32Bit", MessageType.Information),
+                        App.Instance.GetLocalizedMessageTitle("32Bit", MessageType.Information),
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                App.Instance.Settings.WarningShown = true;
+
 
                 var installedVersions = FactorioVersion.GetInstalledVersions();
                 FactorioVersions = new ObservableCollection<FactorioVersion>(installedVersions) { FactorioVersion.Latest };

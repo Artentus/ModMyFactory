@@ -64,16 +64,18 @@ namespace ModMyFactory.Web
         /// <param name="username">The username.</param>
         /// <param name="token">The login token.</param>
         /// <param name="step">The update step to download.</param>
-        /// <param name="destinationPath">The path to the file the update step will be downloaded to.</param>
         /// <param name="progress">A progress object used to report the progress of the operation.</param>
         /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
         /// <returns>Returns the downloaded file.</returns>
-        public static async Task<FileInfo> DownloadUpdateStepAsync(string username, string token, UpdateStep step, string destinationPath,
+        public static async Task<FileInfo> DownloadUpdateStepAsync(string username, string token, UpdateStep step,
             IProgress<double> progress, CancellationToken cancellationToken)
         {
             string url = GetUpdateLink(username, token, step);
 
-            var file = new FileInfo(destinationPath);
+            string fileName = Path.GetFileName(url);
+            fileName = fileName.Substring(0, fileName.LastIndexOf('?'));
+            var file = new FileInfo(Path.Combine(Path.GetTempPath(), fileName));
+
             await WebHelper.DownloadFileAsync(new Uri(url), null, file, progress, cancellationToken);
 
             return cancellationToken.IsCancellationRequested ? null : file;
