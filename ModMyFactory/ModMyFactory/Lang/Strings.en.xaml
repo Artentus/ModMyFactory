@@ -55,6 +55,9 @@
 
     <sys:String x:Key="Error.InvalidFactorioFolder.Message">This folder does not contain a valid Factorio installation.</sys:String>
     <sys:String x:Key="Error.InvalidFactorioFolder.Title">Invalid folder!</sys:String>
+    
+    <sys:String x:Key="Error.IncompatiblePlatform.Message">This version of Factorio is not compatible with your platform.&#x0a;Make sure to use 32 bit Factorio on 32 bit Windows and 64 bit Factorio on 64 bit Windows.</sys:String>
+    <sys:String x:Key="Error.IncompatiblePlatform.Title">Incompatible platform!</sys:String>
 
     <sys:String x:Key="Warning.MoveFactorioFolder.Message">The selected installation of Factorio will be moved to the location specified in the settings! The creation of a backup is recommended.&#x0a;Do you wish to continue?</sys:String>
     <sys:String x:Key="Warning.MoveFactorioFolder.Title">Warning</sys:String>

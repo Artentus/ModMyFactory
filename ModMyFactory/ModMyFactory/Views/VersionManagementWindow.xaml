@@ -43,7 +43,7 @@
             <Rectangle Margin="0,4" Height="1" Fill="{StaticResource BorderBrush}"/>
             
             <Button Margin="0,2" Content="{DynamicResource OpenFolderButton}" Command="{Binding OpenFolderCommand}"/>
-            <!--<Button Margin="0,2" Content="{DynamicResource UpdateButton}" Command="{Binding UpdateCommand}"/>-->
+            <Button Margin="0,2" Content="{DynamicResource UpdateButton}" Command="{Binding UpdateCommand}"/>
             <Button Margin="0,2" Content="{DynamicResource RemoveButton}" Command="{Binding RemoveCommand}"/>
         </StackPanel>
         

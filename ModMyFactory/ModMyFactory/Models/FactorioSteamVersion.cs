@@ -25,8 +25,16 @@ namespace ModMyFactory.Models
 
             var steamVersionDirectory = new DirectoryInfo(App.Instance.Settings.SteamVersionPath);
             Version version;
-            if (steamVersionDirectory.Exists && FactorioVersion.LocalInstallationValid(steamVersionDirectory, out version))
+            bool is64Bit;
+            if (steamVersionDirectory.Exists && FactorioVersion.LocalInstallationValid(steamVersionDirectory, out version, out is64Bit))
             {
+                if (is64Bit != Environment.Is64BitOperatingSystem)
+                {
+                    // This should be impossible.
+                    steamVersion = null;
+                    return false;
+                }
+
                 steamVersion = new FactorioSteamVersion(steamVersionDirectory, version);
                 return true;
             }

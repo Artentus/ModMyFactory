@@ -79,8 +79,14 @@ namespace ModMyFactory.ViewModels
                 AddFromFolderCommand = new RelayCommand(async () => await AddLocalVersion());
                 SelectSteamCommand = new RelayCommand(async () => await SelectSteamVersion(), () => string.IsNullOrEmpty(App.Instance.Settings.SteamVersionPath));
                 OpenFolderCommand = new RelayCommand(OpenFolder, () => SelectedVersion != null);
-                UpdateCommand = new RelayCommand(async () => await UpdateSelectedVersion(), () => SelectedVersion != null && SelectedVersion.IsFileSystemEditable);
-                RemoveCommand = new RelayCommand(async () => await RemoveSelectedVersion(), () => SelectedVersion != null && SelectedVersion.IsFileSystemEditable);
+                UpdateCommand = new RelayCommand(async () => await UpdateSelectedVersion(), () =>
+                {
+                    return SelectedVersion != null && SelectedVersion.IsFileSystemEditable;
+                });
+                RemoveCommand = new RelayCommand(async () => await RemoveSelectedVersion(), () =>
+                {
+                    return SelectedVersion != null && SelectedVersion.IsFileSystemEditable;
+                });
             }
         }
 
@@ -205,6 +211,7 @@ namespace ModMyFactory.ViewModels
                 progressWindow.ViewModel.IsIndeterminate = true;
 
                 bool invalidArchiveFile = false;
+                bool invalidPlatform = false;
                 IProgress<int> progress = new Progress<int>(stage =>
                 {
                     switch (stage)
@@ -215,20 +222,31 @@ namespace ModMyFactory.ViewModels
                         case -1:
                             invalidArchiveFile = true;
                             break;
+                        case -2:
+                            invalidPlatform = true;
+                            break;
                     }
                 });
 
                 Task extractTask = Task.Run(() =>
                 {
-                    if (FactorioVersion.ArchiveFileValid(archiveFile, out version))
+                    bool is64Bit;
+                    if (FactorioVersion.ArchiveFileValid(archiveFile, out version, out is64Bit))
                     {
-                        progress.Report(1);
+                        if (is64Bit == Environment.Is64BitOperatingSystem)
+                        {
+                            progress.Report(1);
 
-                        DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
-                        ZipFile.ExtractToDirectory(archiveFile.FullName, factorioDirectory.FullName);
+                            DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
+                            ZipFile.ExtractToDirectory(archiveFile.FullName, factorioDirectory.FullName);
 
-                        versionDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, "Factorio_" + version.ToString(3)));
-                        versionDirectory.MoveTo(Path.Combine(factorioDirectory.FullName, version.ToString(3)));
+                            versionDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, "Factorio_" + version.ToString(3)));
+                            versionDirectory.MoveTo(Path.Combine(factorioDirectory.FullName, version.ToString(3)));
+                        }
+                        else
+                        {
+                            progress.Report(-2);
+                        }
                     }
                     else
                     {
@@ -248,6 +266,13 @@ namespace ModMyFactory.ViewModels
                     MessageBox.Show(Window,
                         App.Instance.GetLocalizedMessage("InvalidFactorioArchive", MessageType.Error),
                         App.Instance.GetLocalizedMessageTitle("InvalidFactorioArchive", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else if (invalidPlatform)
+                {
+                    MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else
@@ -377,11 +402,20 @@ namespace ModMyFactory.ViewModels
                 var installationDirectory = new DirectoryInfo(dialog.SelectedPath);
                 Version version;
 
-                if (!FactorioVersion.LocalInstallationValid(installationDirectory, out version))
+                bool is64Bit;
+                if (!FactorioVersion.LocalInstallationValid(installationDirectory, out version, out is64Bit))
                 {
                     MessageBox.Show(Window,
                         App.Instance.GetLocalizedMessage("InvalidFactorioFolder", MessageType.Error),
                         App.Instance.GetLocalizedMessageTitle("InvalidFactorioFolder", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                if (is64Bit != Environment.Is64BitOperatingSystem)
+                {
+                    MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
@@ -423,11 +457,20 @@ namespace ModMyFactory.ViewModels
                 var selectedDirectory = new DirectoryInfo(dialog.SelectedPath);
                 Version version;
 
-                if (!FactorioVersion.LocalInstallationValid(selectedDirectory, out version))
+                bool is64Bit;
+                if (!FactorioVersion.LocalInstallationValid(selectedDirectory, out version, out is64Bit))
                 {
                     MessageBox.Show(Window,
                         App.Instance.GetLocalizedMessage("InvalidFactorioFolder", MessageType.Error),
                         App.Instance.GetLocalizedMessageTitle("InvalidFactorioFolder", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                if (is64Bit != Environment.Is64BitOperatingSystem)
+                {
+                    MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }

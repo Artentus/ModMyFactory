@@ -82,26 +82,43 @@ namespace ModMyFactory.Models
         /// </summary>
         /// <param name="archiveFile">The archive file to check.</param>
         /// <param name="validVersion">Out. The version of Factorio contained in the archive file.</param>
+        /// <param name="is64Bit">Out. Specifies if the valid installation contains a 64 bit executable.</param>
         /// <returns>Returns true if the archive file contains a valid Factorio installation, otherwise false.</returns>
-        public static bool ArchiveFileValid(FileInfo archiveFile, out Version validVersion)
+        public static bool ArchiveFileValid(FileInfo archiveFile, out Version validVersion, out bool is64Bit)
         {
             validVersion = null;
+            is64Bit = false;
+
+            bool hasValidVersion = false;
+            bool hasValidPlatform = false;
 
             using (ZipArchive archive = ZipFile.OpenRead(archiveFile.FullName))
             {
                 foreach (var entry in archive.Entries)
                 {
-                    if (entry.FullName.EndsWith("data/base/info.json"))
+                    if (!hasValidVersion && entry.FullName.EndsWith("data/base/info.json"))
                     {
                         using (Stream stream = entry.Open())
                         {
-                            if (TryExtractVersion(stream, out validVersion)) return true;
+                            if (TryExtractVersion(stream, out validVersion)) hasValidVersion = true;
                         }
                     }
+                    else if (!hasValidPlatform && entry.FullName.EndsWith("Win32/factorio.exe"))
+                    {
+                        hasValidPlatform = true;
+                        is64Bit = true;
+                    }
+                    else if (!hasValidPlatform && entry.FullName.EndsWith("x64/factorio.exe"))
+                    {
+                        hasValidPlatform = true;
+                        is64Bit = false;
+                    }
+
+                    if (hasValidVersion && hasValidPlatform) break;
                 }
             }
 
-            return false;
+            return hasValidVersion && hasValidPlatform;
         }
 
         /// <summary>
@@ -109,21 +126,42 @@ namespace ModMyFactory.Models
         /// </summary>
         /// <param name="directory">The directory to check.</param>
         /// <param name="validVersion">Out. The version of Factorio contained in the directory.</param>
+        /// <param name="is64Bit">Out. Specifies if the valid installation contains a 64 bit executable.</param>
         /// <returns>Returns true if the directory contains a valid Factorio installation, otherwise false.</returns>
-        public static bool LocalInstallationValid(DirectoryInfo directory, out Version validVersion)
+        public static bool LocalInstallationValid(DirectoryInfo directory, out Version validVersion, out bool is64Bit)
         {
             validVersion = null;
+            is64Bit = false;
 
             FileInfo infoFile = new FileInfo(Path.Combine(directory.FullName, @"data\base\info.json"));
             if (infoFile.Exists)
             {
                 using (Stream stream = infoFile.OpenRead())
                 {
-                    if (TryExtractVersion(stream, out validVersion)) return true;
+                    if (!TryExtractVersion(stream, out validVersion)) return false;
                 }
             }
+            else
+            {
+                return false;
+            }
 
-            return false;
+            DirectoryInfo win32Dir = new DirectoryInfo(Path.Combine(directory.FullName, @"bin\Win32"));
+            DirectoryInfo win64Dir = new DirectoryInfo(Path.Combine(directory.FullName, @"bin\x64"));
+            if (win32Dir.Exists)
+            {
+                is64Bit = false;
+            }
+            else if (win64Dir.Exists)
+            {
+                is64Bit = true;
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public bool IsSpecialVersion { get; }
@@ -142,7 +180,7 @@ namespace ModMyFactory.Models
 
         private void SetExecutablePath()
         {
-            string osPlatform = Environment.Is64BitOperatingSystem ? "x64" : "x86";
+            string osPlatform = Environment.Is64BitOperatingSystem ? "x64" : "Win32";
             ExecutablePath = Path.Combine(Directory.FullName, "bin", osPlatform, "factorio.exe");
         }
 
