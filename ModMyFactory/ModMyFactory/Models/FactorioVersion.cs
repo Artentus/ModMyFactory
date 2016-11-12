@@ -106,12 +106,12 @@ namespace ModMyFactory.Models
                     else if (!hasValidPlatform && entry.FullName.EndsWith("Win32/factorio.exe", StringComparison.InvariantCultureIgnoreCase))
                     {
                         hasValidPlatform = true;
-                        is64Bit = true;
+                        is64Bit = false;
                     }
                     else if (!hasValidPlatform && entry.FullName.EndsWith("x64/factorio.exe", StringComparison.InvariantCultureIgnoreCase))
                     {
                         hasValidPlatform = true;
-                        is64Bit = false;
+                        is64Bit = true;
                     }
 
                     if (hasValidVersion && hasValidPlatform) break;

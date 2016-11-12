@@ -108,14 +108,18 @@
     <Compile Include="Models\FactorioSteamVersion.cs" />
     <Compile Include="Models\ModUpdateInfo.cs" />
     <Compile Include="Export\ModExportTemplate.cs" />
+    <Compile Include="Models\UpdateTarget.cs" />
     <Compile Include="ModManager.cs" />
     <Compile Include="Export\ModpackExportTemplate.cs" />
     <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\ModUpdateInfoSorter.cs" />
+    <Compile Include="MVVM\Sorters\UpdateTargetSorter.cs" />
     <Compile Include="VersionComparer.cs" />
     <Compile Include="ViewModels\ModpackExportViewModel.cs" />
     <Compile Include="ViewModels\ModUpdateViewModel.cs" />
     <Compile Include="ViewModels\OnlineModsViewModel.cs" />
+    <Compile Include="ViewModels\UpdateListViewModel.cs" />
+    <Compile Include="ViewModels\UpdateProgressViewModel.cs" />
     <Compile Include="Views\ModpackExportWindow.xaml.cs">
       <DependentUpon>ModpackExportWindow.xaml</DependentUpon>
     </Compile>
@@ -124,6 +128,12 @@
     </Compile>
     <Compile Include="Views\OnlineModsWindow.xaml.cs">
       <DependentUpon>OnlineModsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UpdateListWindow.xaml.cs">
+      <DependentUpon>UpdateListWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UpdateProgressWindow.xaml.cs">
+      <DependentUpon>UpdateProgressWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Web\ApiAuthentication.cs" />
     <Compile Include="Web\ModApi\ApiPage.cs" />
@@ -247,6 +257,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ProgressWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UpdateListWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UpdateProgressWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
