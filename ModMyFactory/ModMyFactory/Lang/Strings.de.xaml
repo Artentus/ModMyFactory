@@ -67,6 +67,9 @@
 
     <sys:String x:Key="Warning.MoveSteamFactorio.Message">Alle Mods, Spielstände und Szenarios werden in den Pfad, der in den Einstellungen angegeben ist, verschoben! Das Erstellen eines Backups ist empfohlen.&#x0a;Möchten Sie fortfahren?</sys:String>
     <sys:String x:Key="Warning.MoveSteamFactorio.Title">Warnung</sys:String>
+    
+    <sys:String x:Key="Information.NoFactorioUpdate.Message">Diese Version von Factorio ist auf dem neusten Stand.</sys:String>
+    <sys:String x:Key="Information.NoFactorioUpdate.Title">Kein Update verfügbar</sys:String>
 
     <sys:String x:Key="Question.RemoveFactorioVersion.Message">Möchten Sie diese Factorio-Version wirklich entfernen?&#x0a;Dies wird alle zugehörigen Dateien von Ihrer Festplatte löschen.</sys:String>
     <sys:String x:Key="Question.RemoveFactorioVersion.Title">Bestätigen</sys:String>
@@ -329,5 +332,12 @@
 
     <!-- buttons -->
     <sys:String x:Key="ExportButton">Exportieren</sys:String>
+    
+    
+    <!--
+    ____________________ UpdateListWindow ____________________
+    -->
+
+    <sys:String x:Key="UpdateListWindowTitle">Zielversion auswählen</sys:String>
 
 </ResourceDictionary>

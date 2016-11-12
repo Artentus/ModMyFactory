@@ -12,6 +12,7 @@ using ModMyFactory.MVVM;
 using ModMyFactory.Web;
 using Ookii.Dialogs.Wpf;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using ModMyFactory.Helpers;
@@ -507,12 +508,169 @@ namespace ModMyFactory.ViewModels
             Process.Start(SelectedVersion.Directory.FullName);
         }
 
+        private UpdateStep GetOptimalStep(IEnumerable<UpdateStep> updateSteps, Version from, Version maxTo)
+        {
+            return updateSteps.Where(step => (step.From == from) && (step.To <= maxTo)).MaxBy(step => step.To, new VersionComparer());
+        }
+
+        private List<UpdateStep> GetStepChain(IEnumerable<UpdateStep> updateSteps, Version from, Version to)
+        {
+            var chain = new List<UpdateStep>();
+
+            UpdateStep currentStep = GetOptimalStep(updateSteps, from, to);
+            chain.Add(currentStep);
+
+            while (currentStep.To < to)
+            {
+                UpdateStep nextStep = GetOptimalStep(updateSteps, currentStep.To, to);
+                chain.Add(nextStep);
+
+                currentStep = nextStep;
+            }
+
+            return chain;
+        }
+
+        private List<UpdateTarget> GetUpdateTargets(List<UpdateStep> updateSteps)
+        {
+            var targets = new List<UpdateTarget>();
+            var groups = updateSteps.GroupBy(step => new Version(step.To.Major, step.To.Minor));
+            foreach (var group in groups)
+            {
+                UpdateStep targetStep = group.MaxBy(step => step.To, new VersionComparer());
+                List<UpdateStep> stepChain = GetStepChain(updateSteps, SelectedVersion.Version, targetStep.To);
+                bool isValid = FactorioVersions.All(version => version.Version != targetStep.To);
+                UpdateTarget target = new UpdateTarget(stepChain, targetStep.To, targetStep.IsStable, isValid);
+                targets.Add(target);
+
+                if (!targetStep.IsStable)
+                {
+                    UpdateStep stableStep = group.FirstOrDefault(step => step.IsStable);
+                    if (stableStep != null)
+                    {
+                        stepChain = GetStepChain(updateSteps, SelectedVersion.Version, stableStep.To);
+                        isValid = FactorioVersions.All(version => version.Version != stableStep.To);
+                        target = new UpdateTarget(stepChain, stableStep.To, true, isValid);
+                        targets.Add(target);
+                    }
+                }
+            }
+            return targets;
+        }
+
+        private async Task<List<FileInfo>> DownloadUpdatePackages(string username, string token, UpdateTarget target, IProgress<double> progress, CancellationToken cancellationToken)
+        {
+            var packageFiles = new List<FileInfo>();
+
+            try
+            {
+                int stepCount = target.Steps.Count;
+                int counter = 0;
+                foreach (var step in target.Steps)
+                {
+                    if (cancellationToken.IsCancellationRequested) break;
+
+                    var subProgress = new Progress<double>(value => progress.Report((1.0 / stepCount) * counter + (value / stepCount)));
+                    var packageFile = await UpdateWebsite.DownloadUpdateStepAsync(username, token, step, subProgress, cancellationToken);
+                    if (packageFile != null) packageFiles.Add(packageFile);
+
+                    counter++;
+                }
+                progress.Report(1);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    foreach (var file in packageFiles)
+                    {
+                        if (file.Exists)
+                            file.Delete();
+                    }
+
+                    return null;
+                }
+
+                return packageFiles;
+            }
+            catch (Exception)
+            {
+                foreach (var file in packageFiles)
+                {
+                    if (file.Exists)
+                        file.Delete();
+                }
+
+                throw;
+            }
+        }
+
         private async Task UpdateSelectedVersion()
         {
             string token;
             if (GlobalCredentials.Instance.LogIn(Window, out token))
             {
                 UpdateInfo updateInfo = UpdateWebsite.GetUpdateInfo(GlobalCredentials.Instance.Username, token);
+                List<UpdateStep> updateSteps = updateInfo.Package.Where(step => step.From >= SelectedVersion.Version).ToList();
+
+                if (updateSteps.Count > 0)
+                {
+                    List<UpdateTarget> targets = GetUpdateTargets(updateSteps);
+
+                    var updateListWindow = new UpdateListWindow() { Owner = Window };
+                    updateListWindow.ViewModel.UpdateTargets = targets;
+                    bool? result = updateListWindow.ShowDialog();
+                    if (result.HasValue && result.Value)
+                    {
+                        
+                        var progressWindow = new ProgressWindow { Owner = Window };
+                        progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
+
+                        progressWindow.ViewModel.CanCancel = true;
+                        var cancellationSource = new CancellationTokenSource();
+                        progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+
+                        var progress = new Progress<double>(value => progressWindow.ViewModel.Progress = value);
+
+                        List<FileInfo> packageFiles;
+                        try
+                        {
+                            Task closeWindowTask = null;
+                            try
+                            {
+                                Task<List<FileInfo>> downloadTask = DownloadUpdatePackages(GlobalCredentials.Instance.Username, token,
+                                        updateListWindow.ViewModel.SelectedTarget, progress, cancellationSource.Token);
+
+                                closeWindowTask = downloadTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                                progressWindow.ShowDialog();
+
+                                packageFiles = await downloadTask;
+                            }
+                            finally
+                            {
+                                if (closeWindowTask != null) await closeWindowTask;
+                            }
+                        }
+                        catch (HttpRequestException)
+                        {
+                            MessageBox.Show(Window,
+                                App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
+                                App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+
+                        if ((packageFiles != null) && !cancellationSource.IsCancellationRequested)
+                        {
+                            // ToDo: apply update packages
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("NoFactorioUpdate", MessageType.Information),
+                        App.Instance.GetLocalizedMessageTitle("NoFactorioUpdate", MessageType.Information),
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
         }
 

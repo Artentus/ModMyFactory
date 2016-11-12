@@ -68,6 +68,9 @@
     <sys:String x:Key="Warning.MoveSteamFactorio.Message">All mods, saves and scenarios will be moved to the location specified in the settings! The creation of a backup is recommended.&#x0a;Do you wish to continue?</sys:String>
     <sys:String x:Key="Warning.MoveSteamFactorio.Title">Warning</sys:String>
     
+    <sys:String x:Key="Information.NoFactorioUpdate.Message">This version of Factorio is up to date.</sys:String>
+    <sys:String x:Key="Information.NoFactorioUpdate.Title">No update available</sys:String>
+    
     <sys:String x:Key="Question.RemoveFactorioVersion.Message">Do you really want to remove this version of Factorio?&#x0a;This will delete all corresponding files on your hard drive.</sys:String>
     <sys:String x:Key="Question.RemoveFactorioVersion.Title">Confirm</sys:String>
 
@@ -329,5 +332,12 @@
     
     <!-- buttons -->
     <sys:String x:Key="ExportButton">Export</sys:String>
+    
+    
+    <!--
+    ____________________ UpdateListWindow ____________________
+    -->
+
+    <sys:String x:Key="UpdateListWindowTitle">Select target version</sys:String>
 
 </ResourceDictionary>
