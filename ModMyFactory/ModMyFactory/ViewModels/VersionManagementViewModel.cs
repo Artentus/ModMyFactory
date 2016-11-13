@@ -660,7 +660,18 @@ namespace ModMyFactory.ViewModels
 
                         if ((packageFiles != null) && !cancellationSource.IsCancellationRequested)
                         {
-                            // ToDo: apply update packages
+                            try
+                            {
+                                // ToDo: apply update packages
+                            }
+                            finally
+                            {
+                                foreach (var file in packageFiles)
+                                {
+                                    if (file.Exists)
+                                        file.Delete();
+                                }
+                            }
                         }
                     }
                 }
