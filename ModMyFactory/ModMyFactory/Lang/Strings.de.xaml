@@ -168,16 +168,21 @@
     <sys:String x:Key="HelpMenuItem">Hilfe</sys:String>
     
     <!-- hotkeys -->
+    <sys:String x:Key="DownloadModsHotkey">F7</sys:String>
+    <sys:String x:Key="AddModFilesHotkey">F8</sys:String>
+    <sys:String x:Key="AddModFolderHotkey">Strg+F8</sys:String>
     <sys:String x:Key="NewModpackHotkey">Strg+N</sys:String>
     <sys:String x:Key="CreateLinkHotkey">Strg+L</sys:String>
-    <sys:String x:Key="ExportModpacksHotkey">F9</sys:String>
-    <sys:String x:Key="ImportModpacksHotkey">F10</sys:String>
+    <sys:String x:Key="ExportModpacksHotkey">Strg+E</sys:String>
+    <sys:String x:Key="ImportModpacksHotkey">Strg+I</sys:String>
     <sys:String x:Key="StartGameHotkey">F5</sys:String>
     <sys:String x:Key="CloseHotkey">Alt+F4</sys:String>
+    <sys:String x:Key="UpdateModsHotkey">Strg+U</sys:String>
     <sys:String x:Key="VersionManagerHotkey">F6</sys:String>
     <sys:String x:Key="SettingsHotkey">F12</sys:String>
-    <sys:String x:Key="AboutHotkey">Strg+F1</sys:String>
     <sys:String x:Key="HelpHotkey">F1</sys:String>
+    <sys:String x:Key="UpdateHotkey">F3</sys:String>
+    <sys:String x:Key="AboutHotkey">Strg+F1</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ModsHeader">Mods</sys:String>

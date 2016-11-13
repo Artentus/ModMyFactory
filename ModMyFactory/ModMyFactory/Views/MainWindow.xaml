@@ -42,6 +42,8 @@
 
         <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
 
+        <sys:Boolean x:Key="False">False</sys:Boolean>
+
         <Style x:Key="ActiveInactiveCheckBoxStyle" TargetType="{x:Type CheckBox}">
             <Style.Setters>
                 <Setter Property="ToolTip" Value="{DynamicResource SetActiveToolTip}"/>
@@ -124,15 +126,20 @@
     </Window.Resources>
 
     <Window.InputBindings>
+        <KeyBinding Key="F7" Command="{Binding DownloadModsCommand}"/>
+        <KeyBinding Key="F8" Command="{Binding AddModsFromFilesCommand}"/>
+        <KeyBinding Modifiers="Control" Key="F8" Command="{Binding AddModFromFolderCommand}"/>
         <KeyBinding Modifiers="Control" Key="N" Command="{Binding CreateModpackCommand}"/>
         <KeyBinding Modifiers="Control" Key="L" Command="{Binding CreateLinkCommand}"/>
-        <KeyBinding Key="F9" Command="{Binding ExportModpacksCommand}"/>
-        <KeyBinding Key="F10" Command="{Binding ImportModpacksCommand}"/>
+        <KeyBinding Modifiers="Control" Key="E" Command="{Binding ExportModpacksCommand}"/>
+        <KeyBinding Modifiers="Control" Key="I" Command="{Binding ImportModpacksCommand}"/>
         <KeyBinding Key="F5" Command="{Binding StartGameCommand}"/>
+        <KeyBinding Modifiers="Control" Key="U" Command="{Binding UpdateModsCommand}"/>
         <KeyBinding Key="F6" Command="{Binding OpenVersionManagerCommand}"/>
         <KeyBinding Key="F12" Command="{Binding OpenSettingsCommand}"/>
-        <KeyBinding Modifiers="Control" Key="F1" Command="{Binding OpenAboutWindowCommand}"/>
         <KeyBinding Key="F1" Command="{Binding BrowseWikiCommand}"/>
+        <KeyBinding Key="F3" Command="{Binding UpdateCommand}" CommandParameter="{StaticResource False}"/>
+        <KeyBinding Modifiers="Control" Key="F1" Command="{Binding OpenAboutWindowCommand}"/>
     </Window.InputBindings>
     
     <Window.CommandBindings>
@@ -149,9 +156,12 @@
         <Menu Grid.Row="0" IsMainMenu="True">
             <MenuItem Header="{DynamicResource FileMenuItem}">
                 <MenuItem Header="{DynamicResource AddModsMenuItem}" Icon="{StaticResource AddIcon}">
-                    <MenuItem Header="{DynamicResource DownloadModsMenuItem}" Icon="{StaticResource DownloadIcon}" Command="{Binding DownloadModsCommand}"/>
-                    <MenuItem Header="{DynamicResource AddModFilesMenuItem}" Icon="{StaticResource AddDocumentIcon}" Command="{Binding AddModsFromFilesCommand}"/>
-                    <MenuItem Header="{DynamicResource AddModFolderMenuItem}" Icon="{StaticResource AddFolderIcon}" Command="{Binding AddModFromFolderCommand}"/>
+                    <MenuItem Header="{DynamicResource DownloadModsMenuItem}" Icon="{StaticResource DownloadIcon}"
+                              InputGestureText="{DynamicResource DownloadModsHotkey}" Command="{Binding DownloadModsCommand}"/>
+                    <MenuItem Header="{DynamicResource AddModFilesMenuItem}" Icon="{StaticResource AddDocumentIcon}"
+                              InputGestureText="{DynamicResource AddModFilesHotkey}" Command="{Binding AddModsFromFilesCommand}"/>
+                    <MenuItem Header="{DynamicResource AddModFolderMenuItem}" Icon="{StaticResource AddFolderIcon}"
+                              InputGestureText="{DynamicResource AddModFolderHotkey}" Command="{Binding AddModFromFolderCommand}"/>
                 </MenuItem>
                 <MenuItem Header="{DynamicResource NewModpackMenuItem}" Icon="{StaticResource NewPackageIcon}"
                           InputGestureText="{DynamicResource NewModpackHotkey}" Command="{Binding CreateModpackCommand}"/>
@@ -188,7 +198,7 @@
                 <Separator/>
 
                 <MenuItem Header="{DynamicResource UpdateModsMenuItem}" Icon="{StaticResource UpdateIcon}"
-                          Command="{Binding UpdateModsCommand}"/>
+                          InputGestureText="{DynamicResource UpdateModsHotkey}" Command="{Binding UpdateModsCommand}"/>
 
                 <Separator/>
                 
@@ -223,15 +233,11 @@
                 </MenuItem.ItemContainerStyle>
             </MenuItem>
             <MenuItem Header="{DynamicResource InfoMenuItem}">
-                <MenuItem.Resources>
-                    <sys:Boolean x:Key="False">False</sys:Boolean>
-                </MenuItem.Resources>
-
                 <MenuItem Header="{DynamicResource HelpMenuItem}" Icon="{StaticResource HelpIcon}"
                           InputGestureText="{DynamicResource HelpHotkey}" Command="{Binding BrowseWikiCommand}"/>
 
                 <MenuItem Header="{DynamicResource CheckUpdateMenuItem}" Icon="{StaticResource UpdateIcon}"
-                          Command="{Binding UpdateCommand}" CommandParameter="{StaticResource False}"/>
+                          InputGestureText="{DynamicResource UpdateHotkey}" Command="{Binding UpdateCommand}" CommandParameter="{StaticResource False}"/>
 
                 <Separator/>
                 
