@@ -54,8 +54,8 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Octokit, Version=0.22.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Octokit.0.22.0\lib\net45\Octokit.dll</HintPath>
+    <Reference Include="Octokit, Version=0.23.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Octokit.0.23.0\lib\net45\Octokit.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ookii.Dialogs.Wpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0c15020868fd6249, processorArchitecture=MSIL">
@@ -90,15 +90,19 @@
     <Compile Include="CommandLine.cs" />
     <Compile Include="Export\ExportTemplate.cs" />
     <Compile Include="Export\ModpackExport.cs" />
+    <Compile Include="FileUpdateAction.cs" />
+    <Compile Include="FileUpdateInfo.cs" />
     <Compile Include="GlobalCredentials.cs" />
     <Compile Include="Helpers\DirectoryInfoExtensions.cs" />
     <Compile Include="Helpers\EnumarableExtensions.cs" />
     <Compile Include="Helpers\FileInfoExtensions.cs" />
     <Compile Include="Helpers\ModHelper.cs" />
     <Compile Include="Helpers\PercievedFileType.cs" />
+    <Compile Include="Helpers\ProcessExtensions.cs" />
     <Compile Include="Helpers\RegistryHelper.cs" />
     <Compile Include="Helpers\SecureStringHelper.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />
+    <Compile Include="Helpers\WindowExtensions.cs" />
     <Compile Include="InstanceStartedEventArgs.cs" />
     <Compile Include="IO\Junction.cs" />
     <Compile Include="IO\JunctionInfo.cs" />
@@ -114,12 +118,12 @@
     <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\ModUpdateInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\UpdateTargetSorter.cs" />
+    <Compile Include="UpdatePackageInfo.cs" />
     <Compile Include="VersionComparer.cs" />
     <Compile Include="ViewModels\ModpackExportViewModel.cs" />
     <Compile Include="ViewModels\ModUpdateViewModel.cs" />
     <Compile Include="ViewModels\OnlineModsViewModel.cs" />
     <Compile Include="ViewModels\UpdateListViewModel.cs" />
-    <Compile Include="ViewModels\UpdateProgressViewModel.cs" />
     <Compile Include="Views\ModpackExportWindow.xaml.cs">
       <DependentUpon>ModpackExportWindow.xaml</DependentUpon>
     </Compile>
@@ -131,9 +135,6 @@
     </Compile>
     <Compile Include="Views\UpdateListWindow.xaml.cs">
       <DependentUpon>UpdateListWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\UpdateProgressWindow.xaml.cs">
-      <DependentUpon>UpdateProgressWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Web\ApiAuthentication.cs" />
     <Compile Include="Web\ModApi\ApiPage.cs" />
@@ -232,6 +233,8 @@
     <Compile Include="Win32\WindowLongIndex.cs" />
     <Compile Include="Win32\WindowStyles.cs" />
     <Compile Include="WindowInfo.cs" />
+    <Compile Include="Zlib\Crc32Checksum.cs" />
+    <Compile Include="Zlib\Crc32ChecksumGenerator.cs" />
     <Resource Include="Lang\Strings.ru.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -261,10 +264,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\UpdateListWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\UpdateProgressWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -428,11 +427,14 @@
   <ItemGroup>
     <Resource Include="Images\Lang\ru.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Zlib\zlib1.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(ProjectDir)Images\Factorio_Icon.ico" "$(TargetDir)Factorio_Icon.ico"
-copy /Y "$(ProjectDir)Images\Factorio_Modpack_Icon.ico" "$(TargetDir)Factorio_Modpack_Icon.ico"</PostBuildEvent>
+copy /Y "$(ProjectDir)Images\Factorio_Modpack_Icon.ico" "$(TargetDir)Factorio_Modpack_Icon.ico"
+copy /Y "$(ProjectDir)Zlib\zlib1.dll" "$(TargetDir)zlib1.dll"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

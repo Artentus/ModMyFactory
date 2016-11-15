@@ -49,6 +49,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -79,6 +80,11 @@
             <TextBlock Grid.Row="4" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource GitHubLabel}"/>
             <TextBlock Grid.Row="4" Grid.Column="1">
                 <Hyperlink Command="{Binding Url5Command}">Octokit</Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="5" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource ZlibLabel}"/>
+            <TextBlock Grid.Row="5" Grid.Column="1">
+                <Hyperlink Command="{Binding Url6Command}">zlib</Hyperlink>
             </TextBlock>
         </Grid>
         

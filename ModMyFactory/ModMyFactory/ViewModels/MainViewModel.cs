@@ -1536,11 +1536,10 @@ namespace ModMyFactory.ViewModels
             {
                 Window.Loaded += async (sender, ea) =>
                 {
-                    if (Program.UpdateCheckOnStartup)
-                        await Update(true);
-
                     if (Program.ImportFileList.Count > 0)
                         await ImportModpacksInner(Program.ImportFileList);
+                    else if (Program.UpdateCheckOnStartup) // Just skip update check if import list is non-zero
+                        await Update(true);
                 };
             }
         }
