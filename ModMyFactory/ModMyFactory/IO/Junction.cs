@@ -89,7 +89,7 @@ namespace ModMyFactory.IO
                 try
                 {
                     int bytesReturned;
-                    Kernel32.DeviceIOControl(reparsePointHandle.DangerousGetHandle(), IOControlCode.FsctlGetReparsePoint,
+                    Kernel32.DeviceIOControl(reparsePointHandle, IOControlCode.FsctlGetReparsePoint,
                         IntPtr.Zero, 0, buffer, ReparseDataBuffer.MaximumSize, out bytesReturned);
 
                     ReparseDataBuffer data = Marshal.PtrToStructure<ReparseDataBuffer>(buffer);
@@ -112,7 +112,7 @@ namespace ModMyFactory.IO
                     Marshal.StructureToPtr(data, buffer, false);
 
                     int bytesReturned;
-                    Kernel32.DeviceIOControl(reparsePointHandle.DangerousGetHandle(), IOControlCode.FsctlSetReparsePoint,
+                    Kernel32.DeviceIOControl(reparsePointHandle, IOControlCode.FsctlSetReparsePoint,
                         buffer, ReparseDataBuffer.HeaderSize + data.ReparseDataLength, IntPtr.Zero, 0, out bytesReturned);
                 }
                 finally

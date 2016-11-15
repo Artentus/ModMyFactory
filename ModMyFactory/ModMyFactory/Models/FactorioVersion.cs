@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
 using ModMyFactory.IO;
+using ModMyFactory.MVVM;
 
 namespace ModMyFactory.Models
 {
     /// <summary>
     /// Represents a version of Factorio.
     /// </summary>
-    class FactorioVersion
+    class FactorioVersion : NotifyPropertyChangedBase
     {
         public const string LatestKey = "latest";
 
@@ -164,11 +166,29 @@ namespace ModMyFactory.Models
             return true;
         }
 
+        Version version;
+
         public bool IsSpecialVersion { get; }
 
         public bool IsFileSystemEditable { get; }
 
-        public Version Version { get; }
+        public Version Version
+        {
+            get { return version; }
+            private set
+            {
+                if (IsSpecialVersion || !IsFileSystemEditable)
+                    throw new InvalidOperationException("The version of this Factorio installation can not be changed.");
+
+                if (value != version)
+                {
+                    version = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Version)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(VersionString)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayName)));
+                }
+            }
+        }
 
         public virtual string VersionString => Version.ToString(3);
 
@@ -239,6 +259,18 @@ namespace ModMyFactory.Models
                 UpdateDirectoryInner(newDirectory);
                 UpdateLinkDirectoryInner(newDirectory);
             }
+        }
+
+        /// <summary>
+        /// Updates the version of this Factorio installation.
+        /// </summary>
+        public void UpdateVersion(Version newVersion)
+        {
+            string newPath = Path.Combine(App.Instance.Settings.GetFactorioDirectory().FullName, newVersion.ToString(3));
+            Directory.MoveTo(newPath);
+            UpdateDirectory(new DirectoryInfo(newPath));
+
+            Version = newVersion;
         }
 
         private void CreateSaveDirectoryLinkInternal(string localSavePath)

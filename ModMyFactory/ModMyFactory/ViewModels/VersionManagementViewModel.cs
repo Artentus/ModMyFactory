@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.Remoting.Channels;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
@@ -558,7 +559,7 @@ namespace ModMyFactory.ViewModels
             return targets;
         }
 
-        private async Task<List<FileInfo>> DownloadUpdatePackages(string username, string token, UpdateTarget target, IProgress<double> progress, CancellationToken cancellationToken)
+        private async Task<List<FileInfo>> DownloadUpdatePackagesAsync(string username, string token, UpdateTarget target, IProgress<double> progress, CancellationToken cancellationToken)
         {
             var packageFiles = new List<FileInfo>();
 
@@ -603,6 +604,53 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        private async Task ApplyUpdatePackagesAsync(FactorioVersion versionToUpdate, List<FileInfo> packageFiles, IProgress<double> progress)
+        {
+            int packageCount = packageFiles.Count;
+            int counter = 0;
+
+            foreach (var packageFile in packageFiles)
+            {
+                progress.Report((double)counter / packageCount);
+                
+                // ToDo: apply package
+
+                counter++;
+            }
+
+            progress.Report(1);
+        }
+
+        private async Task ApplyUpdateAsync(FactorioVersion versionToUpdate, string username, string token, UpdateTarget target,
+            IProgress<double> progress, IProgress<Tuple<bool, string>> stageProgress, CancellationToken cancellationToken)
+        {
+            stageProgress.Report(new Tuple<bool, string>(true, App.Instance.GetLocalizedResourceString("UpdatingFactorioStage1Description")));
+            List<FileInfo> packageFiles = await DownloadUpdatePackagesAsync(username, token, target, progress, cancellationToken);
+
+            try
+            {
+                if ((packageFiles != null) && !cancellationToken.IsCancellationRequested)
+                {
+                    progress.Report(0);
+                    stageProgress.Report(new Tuple<bool, string>(false, App.Instance.GetLocalizedResourceString("UpdatingFactorioStage2Description")));
+
+                    await ApplyUpdatePackagesAsync(versionToUpdate, packageFiles, progress);
+                    versionToUpdate.UpdateVersion(target.TargetVersion);
+                }
+            }
+            finally
+            {
+                if (packageFiles != null)
+                {
+                    foreach (var file in packageFiles)
+                    {
+                        if (file.Exists)
+                            file.Delete();
+                    }
+                }
+            }
+        }
+
         private async Task UpdateSelectedVersion()
         {
             string token;
@@ -620,29 +668,33 @@ namespace ModMyFactory.ViewModels
                     bool? result = updateListWindow.ShowDialog();
                     if (result.HasValue && result.Value)
                     {
-                        
-                        var progressWindow = new ProgressWindow { Owner = Window };
-                        progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
+                        UpdateTarget target = updateListWindow.ViewModel.SelectedTarget;
 
-                        progressWindow.ViewModel.CanCancel = true;
+                        var progressWindow = new ProgressWindow { Owner = Window };
+                        progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("UpdatingFactorioAction");
+
                         var cancellationSource = new CancellationTokenSource();
                         progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
-                        var progress = new Progress<double>(value => progressWindow.ViewModel.Progress = value);
+                        var progress = new Progress<double>(value => progressWindow.ViewModel.Progress = value );
+                        var stageProgress = new Progress<Tuple<bool, string>>(value =>
+                        {
+                            progressWindow.ViewModel.CanCancel = value.Item1;
+                            progressWindow.ViewModel.ProgressDescription = value.Item2;
+                        });
 
-                        List<FileInfo> packageFiles;
                         try
                         {
                             Task closeWindowTask = null;
                             try
                             {
-                                Task<List<FileInfo>> downloadTask = DownloadUpdatePackages(GlobalCredentials.Instance.Username, token,
-                                        updateListWindow.ViewModel.SelectedTarget, progress, cancellationSource.Token);
+                                Task updateTask = ApplyUpdateAsync(SelectedVersion, GlobalCredentials.Instance.Username, token, target,
+                                    progress, stageProgress, cancellationSource.Token);
 
-                                closeWindowTask = downloadTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                                closeWindowTask = updateTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                                 progressWindow.ShowDialog();
 
-                                packageFiles = await downloadTask;
+                                await updateTask;
                             }
                             finally
                             {
@@ -655,23 +707,6 @@ namespace ModMyFactory.ViewModels
                                 App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
                                 App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
                                 MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
-                        }
-
-                        if ((packageFiles != null) && !cancellationSource.IsCancellationRequested)
-                        {
-                            try
-                            {
-                                // ToDo: apply update packages
-                            }
-                            finally
-                            {
-                                foreach (var file in packageFiles)
-                                {
-                                    if (file.Exists)
-                                        file.Delete();
-                                }
-                            }
                         }
                     }
                 }

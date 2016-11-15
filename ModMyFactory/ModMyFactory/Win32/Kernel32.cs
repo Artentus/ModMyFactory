@@ -91,13 +91,13 @@ namespace ModMyFactory.Win32
         [DllImport("kernel32.dll", EntryPoint = "DeviceIoControl",
             CharSet = CharSet.Auto, ExactSpelling = true, SetLastError = true)]
         private static extern bool DeviceIOControlNative(
-            IntPtr deviceHandle, IOControlCode controlCode,
+            SafeFileHandle deviceHandle, IOControlCode controlCode,
             IntPtr inBuffer, int inBufferSize,
             IntPtr outBuffer, int outBufferSize,
             out int bytesReturned, IntPtr overlapped);
 
         private static void DeviceIOControlInternal(
-            IntPtr deviceHandle, IOControlCode controlCode,
+            SafeFileHandle deviceHandle, IOControlCode controlCode,
             IntPtr inBuffer, int inBufferSize,
             IntPtr outBuffer, int outBufferSize,
             out int bytesReturned)
@@ -138,7 +138,7 @@ namespace ModMyFactory.Win32
         /// Out. The size of the data stored in the output buffer, in bytes.
         /// </param>
         public static void DeviceIOControl(
-            IntPtr deviceHandle, IOControlCode controlCode,
+            SafeFileHandle deviceHandle, IOControlCode controlCode,
             IntPtr inBuffer, int inBufferSize,
             IntPtr outBuffer, int outBufferSize,
             out int bytesReturned)
@@ -156,7 +156,7 @@ namespace ModMyFactory.Win32
         /// <param name="controlCode">
         /// The control code for the operation. This value identifies the specific operation to be performed and the type of device on which to perform it.
         /// </param>
-        public static void DeviceIOControl(IntPtr deviceHandle, IOControlCode controlCode)
+        public static void DeviceIOControl(SafeFileHandle deviceHandle, IOControlCode controlCode)
         {
             int bytesReturned;
             DeviceIOControlInternal(deviceHandle, controlCode, IntPtr.Zero, 0, IntPtr.Zero, 0, out bytesReturned);
@@ -185,7 +185,7 @@ namespace ModMyFactory.Win32
             [MarshalAs(UnmanagedType.U4)] uint attributes,
             IntPtr templateFile);
 
-        private static SafeFileHandle CreateFileInternal(string path, uint access, FileShare share, FileMode mode, uint attributes, IntPtr templateFile)
+        private static SafeFileHandle CreateFileInternal(string path, uint access, FileShare share, FileMode mode, uint attributes)
         {
             var securityAttributes = new SecurityAttributes();
             securityAttributes.Length = Marshal.SizeOf(securityAttributes);
@@ -198,7 +198,7 @@ namespace ModMyFactory.Win32
                 securityAttributes.InheritHandle = true;
             }
 
-            SafeFileHandle fileHandle = CreateFileNative(path, access, share, ref securityAttributes, mode, attributes, templateFile);
+            SafeFileHandle fileHandle = CreateFileNative(path, access, share, ref securityAttributes, mode, attributes, IntPtr.Zero);
 
             if (fileHandle.IsInvalid)
             {
@@ -235,78 +235,10 @@ namespace ModMyFactory.Win32
         /// <param name="flags">
         /// The file or device flags.
         /// </param>
-        /// <param name="templateFile">
-        /// A valid handle to a template file with the FileAccess.Read access right. The template file supplies file attributes and extended attributes for the file that is being created.
-        /// When opening an existing file, CreateFile ignores this parameter.
-        /// </param>
-        /// <returns>If the function succeeds, the return value is an open handle to the specified file, device, named pipe, or mail slot.</returns>
-        public static SafeFileHandle CreateFile(string path, FileAccessRights access, FileShare share, FileMode mode, FileAttributes attributes, FileFlags flags, IntPtr templateFile)
-        {
-            return CreateFileInternal(path, (uint)access, share, mode, (uint)attributes | (uint)flags, templateFile);
-        }
-
-        /// <summary>
-        /// Creates or opens a file or I/O device. The most commonly used I/O devices are as follows: file, file stream, directory, physical disk, volume, console buffer, tape drive, communications resource, mailslot, and pipe.
-        /// The function returns a handle that can be used to access the file or device for various types of I/O depending on the file or device and the flags and attributes specified.
-        /// </summary>
-        /// <param name="path">
-        /// The name of the file or device to be created or opened. You may use either forward slashes (/) or backslashes (\) in this name.
-        /// </param>
-        /// <param name="access">
-        /// The requested access to the file or device, which can be summarized as read, write, both or neither.
-        /// </param>
-        /// <param name="share">
-        /// The requested sharing mode of the file or device, which can be read, write, both, delete, all of these, or none.
-        /// Access requests to attributes or extended attributes are not affected by this flag.
-        /// </param>
-        /// <param name="mode">
-        /// An action to take on a file or device that exists or does not exist.
-        /// For devices other than files, this parameter is usually set to FileMode.Open.
-        /// </param>
-        /// <param name="attributes">
-        /// The file or device attributes.
-        /// </param>
-        /// <param name="flags">
-        /// The file or device flags.
-        /// </param>
         /// <returns>If the function succeeds, the return value is an open handle to the specified file, device, named pipe, or mail slot.</returns>
         public static SafeFileHandle CreateFile(string path, FileAccessRights access, FileShare share, FileMode mode, FileAttributes attributes, FileFlags flags)
         {
-            return CreateFileInternal(path, (uint)access, share, mode, (uint)attributes | (uint)flags, IntPtr.Zero);
-        }
-
-        /// <summary>
-        /// Creates or opens a file or I/O device. The most commonly used I/O devices are as follows: file, file stream, directory, physical disk, volume, console buffer, tape drive, communications resource, mailslot, and pipe.
-        /// The function returns a handle that can be used to access the file or device for various types of I/O depending on the file or device and the flags and attributes specified.
-        /// </summary>
-        /// <param name="path">
-        /// The name of the file or device to be created or opened. You may use either forward slashes (/) or backslashes (\) in this name.
-        /// </param>
-        /// <param name="access">
-        /// The requested access to the file or device, which can be summarized as read, write, both or neither.
-        /// </param>
-        /// <param name="share">
-        /// The requested sharing mode of the file or device, which can be read, write, both, delete, all of these, or none.
-        /// Access requests to attributes or extended attributes are not affected by this flag.
-        /// </param>
-        /// <param name="mode">
-        /// An action to take on a file or device that exists or does not exist.
-        /// For devices other than files, this parameter is usually set to FileMode.Open.
-        /// </param>
-        /// <param name="attributes">
-        /// The file or device attributes.
-        /// </param>
-        /// <param name="flags">
-        /// The file or device flags.
-        /// </param>
-        /// <param name="templateFile">
-        /// A valid handle to a template file with the FileAccess.Read access right. The template file supplies file attributes and extended attributes for the file that is being created.
-        /// When opening an existing file, CreateFile ignores this parameter.
-        /// </param>
-        /// <returns>If the function succeeds, the return value is an open handle to the specified file, device, named pipe, or mail slot.</returns>
-        public static SafeFileHandle CreateFile(string path, GenericAccessRights access, FileShare share, FileMode mode, FileAttributes attributes, FileFlags flags, IntPtr templateFile)
-        {
-            return CreateFileInternal(path, (uint)access, share, mode, (uint)attributes | (uint)flags, templateFile);
+            return CreateFileInternal(path, (uint)access, share, mode, (uint)attributes | (uint)flags);
         }
 
         /// <summary>
@@ -336,7 +268,7 @@ namespace ModMyFactory.Win32
         /// <returns>If the function succeeds, the return value is an open handle to the specified file, device, named pipe, or mail slot.</returns>
         public static SafeFileHandle CreateFile(string path, GenericAccessRights access, FileShare share, FileMode mode, FileAttributes attributes, FileFlags flags)
         {
-            return CreateFileInternal(path, (uint)access, share, mode, (uint)attributes | (uint)flags, IntPtr.Zero);
+            return CreateFileInternal(path, (uint)access, share, mode, (uint)attributes | (uint)flags);
         }
 
         #endregion

@@ -111,6 +111,10 @@
     <sys:String x:Key="DeletingFilesDescription">Удаление файлов...</sys:String>
     
     <sys:String x:Key="UpdatingAction">Обновление</sys:String>
+    
+    <sys:String x:Key="UpdatingFactorioAction">Updating Factorio</sys:String>
+    <sys:String x:Key="UpdatingFactorioStage1Description">Downloading update packages</sys:String>
+    <sys:String x:Key="UpdatingFactorioStage2Description">Applying update</sys:String>
 
     
     
@@ -287,6 +291,7 @@
     <sys:String x:Key="DialogsLabel">Окна диалогов:</sys:String>
     <sys:String x:Key="JsonLabel">JSON Framework:</sys:String>
     <sys:String x:Key="GitHubLabel">GitHub API:</sys:String>
+    <sys:String x:Key="ZlibLabel">CRC32 implementation:</sys:String>
     
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Помогали в создании:</sys:String>
