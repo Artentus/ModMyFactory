@@ -112,9 +112,9 @@
     
     <sys:String x:Key="UpdatingAction">Обновление</sys:String>
     
-    <sys:String x:Key="UpdatingFactorioAction">Updating Factorio</sys:String>
-    <sys:String x:Key="UpdatingFactorioStage1Description">Downloading update packages</sys:String>
-    <sys:String x:Key="UpdatingFactorioStage2Description">Applying update</sys:String>
+    <sys:String x:Key="UpdatingFactorioAction">Обновление Factorio</sys:String>
+    <sys:String x:Key="UpdatingFactorioStage1Description">Загрузка пакетов обновления</sys:String>
+    <sys:String x:Key="UpdatingFactorioStage2Description">Установка обновления</sys:String>
 
     
     
