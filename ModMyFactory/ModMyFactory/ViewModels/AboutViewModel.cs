@@ -20,6 +20,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand Url6Command { get; }
 
+        public RelayCommand Url7Command { get; }
+
 
         public RelayCommand Contributor1Command { get; }
 
@@ -36,6 +38,7 @@ namespace ModMyFactory.ViewModels
             Url4Command = new RelayCommand(() => Process.Start("http://www.newtonsoft.com/json"));
             Url5Command = new RelayCommand(() => Process.Start("https://github.com/octokit/octokit.net"));
             Url6Command = new RelayCommand(() => Process.Start("http://www.zlib.net/"));
+            Url7Command = new RelayCommand(() => Process.Start("https://github.com/pleonex/xdelta-sharp"));
 
             Contributor1Command = new RelayCommand(() => Process.Start("https://github.com/plague006"));
             Contributor2Command = new RelayCommand(() => Process.Start("https://github.com/jodli"));
