@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ModMyFactory
+namespace ModMyFactory.FactorioUpdate
 {
     [JsonObject(MemberSerialization.OptOut)]
     sealed class FileUpdateInfo

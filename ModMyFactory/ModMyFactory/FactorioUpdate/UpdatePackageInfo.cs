@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace ModMyFactory
+namespace ModMyFactory.FactorioUpdate
 {
     [JsonObject(MemberSerialization.OptOut)]
     sealed class UpdatePackageInfo

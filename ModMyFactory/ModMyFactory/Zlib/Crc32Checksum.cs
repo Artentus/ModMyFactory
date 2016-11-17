@@ -19,16 +19,17 @@ namespace ModMyFactory.Zlib
             return generator.CurrentChecksum;
         }
 
-        public static uint Generate(Stream data, long length, uint initialChecksum = 0)
+        public static uint Generate(Stream data, long byteCount, uint initialChecksum = 0)
         {
             var generator = new Crc32ChecksumGenerator(initialChecksum);
 
             byte[] buffer = new byte[8192];
-            while (data.Position < length)
+            int count;
+            do
             {
-                int count = data.Read(buffer, 0, (int)Math.Min(buffer.Length, length - data.Position));
-                generator.Update(buffer, 0, count);
-            }
+                count = data.Read(buffer, 0, (int)Math.Min(buffer.Length, byteCount - data.Position));
+                if (count > 0) generator.Update(buffer, 0, count);
+            } while (count > 0);
 
             return generator.CurrentChecksum;
         }
