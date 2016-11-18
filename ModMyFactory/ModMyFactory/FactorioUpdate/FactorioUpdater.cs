@@ -160,17 +160,46 @@ namespace ModMyFactory.FactorioUpdate
 
         private static async Task AddFileAsync(FileUpdateInfo fileUpdate, FactorioVersion versionToUpdate, ZipArchive archive, string packageDirectory)
         {
-            
+            await Task.Run(() =>
+            {
+                var file = new FileInfo(versionToUpdate.ExpandPathVariables(fileUpdate.Path));
+
+                string entryPath = fileUpdate.Path;
+                if (!string.IsNullOrEmpty(packageDirectory)) entryPath = Path.Combine(packageDirectory, entryPath);
+                var entry = archive.GetEntry(entryPath);
+
+                entry.ExtractToFile(file.FullName, true);
+            });
         }
 
         private static async Task DeleteFileAsync(FileUpdateInfo fileUpdate, FactorioVersion versionToUpdate)
         {
-
+            await Task.Run(() =>
+            {
+                var file = new FileInfo(versionToUpdate.ExpandPathVariables(fileUpdate.Path));
+                if (file.Exists) file.Delete();
+            });
         }
 
         private static async Task UpdateFileAsync(FileUpdateInfo fileUpdate, FactorioVersion versionToUpdate, ZipArchive archive, string packageDirectory)
         {
+            await Task.Run(() =>
+            {
+                var file = new FileInfo(versionToUpdate.ExpandPathVariables(fileUpdate.Path));
+                if (!file.Exists) throw new CriticalUpdaterException(UpdaterErrorType.FileNotFound);
 
+                uint oldCrc = file.CalculateCrc();
+                if (oldCrc != fileUpdate.OldCrc) throw new CriticalUpdaterException(UpdaterErrorType.ChecksumMismatch);
+
+                string entryPath = fileUpdate.Path;
+                if (!string.IsNullOrEmpty(packageDirectory)) entryPath = Path.Combine(packageDirectory, entryPath);
+                var entry = archive.GetEntry(entryPath);
+
+                // ToDo: update file
+
+                uint newCrc = file.CalculateCrc();
+                if (newCrc != fileUpdate.NewCrc) throw new CriticalUpdaterException(UpdaterErrorType.ChecksumMismatch);
+            });
         }
 
         private static async Task ApplyUpdatePackageAsync(FactorioVersion versionToUpdate, FileInfo packageFile, IProgress<double> progress)

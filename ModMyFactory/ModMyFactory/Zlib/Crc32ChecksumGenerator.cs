@@ -6,10 +6,10 @@ namespace ModMyFactory.Zlib
 {
     sealed class Crc32ChecksumGenerator
     {
-        [DllImport("zlib32.dll", EntryPoint = "crc32", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("zlib32.dll", EntryPoint = "crc32", CallingConvention = CallingConvention.StdCall)]
         static extern uint Crc32Native32(uint crc, IntPtr data, uint length);
 
-        [DllImport("zlib64.dll", EntryPoint = "crc32", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("zlib64.dll", EntryPoint = "crc32", CallingConvention = CallingConvention.StdCall)]
         static extern uint Crc32Native64(uint crc, IntPtr data, uint length);
 
         private static uint Crc32(uint crc, IntPtr data, uint length)

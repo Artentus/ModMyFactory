@@ -14,6 +14,12 @@ namespace ModMyFactory.Models
     /// </summary>
     class FactorioVersion : NotifyPropertyChangedBase
     {
+        const string Win32BinName = "Win32";
+        const string Win64BinName = "x64";
+
+        private static string BinName => Environment.Is64BitOperatingSystem ? Win64BinName : Win32BinName;
+
+
         public const string LatestKey = "latest";
 
         /// <summary>
@@ -33,7 +39,6 @@ namespace ModMyFactory.Models
         /// </summary>
         public static FactorioVersion Latest => latest ?? (latest = new LatestFactorioVersion());
 
-        DirectoryInfo linkDirectory;
 
         /// <summary>
         /// Loads all installed versions of Factorio.
@@ -105,12 +110,12 @@ namespace ModMyFactory.Models
                             if (TryExtractVersion(stream, out validVersion)) hasValidVersion = true;
                         }
                     }
-                    else if (!hasValidPlatform && entry.FullName.EndsWith("Win32/factorio.exe", StringComparison.InvariantCultureIgnoreCase))
+                    else if (!hasValidPlatform && entry.FullName.EndsWith($"{Win32BinName}/factorio.exe", StringComparison.InvariantCultureIgnoreCase))
                     {
                         hasValidPlatform = true;
                         is64Bit = false;
                     }
-                    else if (!hasValidPlatform && entry.FullName.EndsWith("x64/factorio.exe", StringComparison.InvariantCultureIgnoreCase))
+                    else if (!hasValidPlatform && entry.FullName.EndsWith($"{Win64BinName}/factorio.exe", StringComparison.InvariantCultureIgnoreCase))
                     {
                         hasValidPlatform = true;
                         is64Bit = true;
@@ -148,8 +153,8 @@ namespace ModMyFactory.Models
                 return false;
             }
 
-            DirectoryInfo win32Dir = new DirectoryInfo(Path.Combine(directory.FullName, @"bin\Win32"));
-            DirectoryInfo win64Dir = new DirectoryInfo(Path.Combine(directory.FullName, @"bin\x64"));
+            DirectoryInfo win32Dir = new DirectoryInfo(Path.Combine(directory.FullName, $@"bin\{Win32BinName}"));
+            DirectoryInfo win64Dir = new DirectoryInfo(Path.Combine(directory.FullName, $@"bin\{Win64BinName}"));
             if (win32Dir.Exists)
             {
                 is64Bit = false;
@@ -167,6 +172,8 @@ namespace ModMyFactory.Models
         }
 
         Version version;
+        DirectoryInfo directory;
+        DirectoryInfo linkDirectory;
 
         public bool IsSpecialVersion { get; }
 
@@ -194,15 +201,20 @@ namespace ModMyFactory.Models
 
         public virtual string DisplayName => "Factorio " + VersionString;
 
-        public DirectoryInfo Directory { get; private set; }
+        public DirectoryInfo Directory
+        {
+            get { return directory; }
+            private set
+            {
+                directory = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Directory)));
+
+                ExecutablePath = Path.Combine(Directory.FullName, "bin", BinName, "factorio.exe");
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(ExecutablePath)));
+            }
+        }
 
         public string ExecutablePath { get; private set; }
-
-        private void SetExecutablePath()
-        {
-            string osPlatform = Environment.Is64BitOperatingSystem ? "x64" : "Win32";
-            ExecutablePath = Path.Combine(Directory.FullName, "bin", osPlatform, "factorio.exe");
-        }
 
         private FactorioVersion()
         {
@@ -214,11 +226,10 @@ namespace ModMyFactory.Models
         {
             IsSpecialVersion = false;
             IsFileSystemEditable = isFileSystemEditable;
+
+            Version = version;
             Directory = directory;
             this.linkDirectory = linkDirectory;
-            Version = version;
-
-            SetExecutablePath();
 
             if (!linkDirectory.Exists) linkDirectory.Create();
             CreateLinks();
@@ -233,18 +244,15 @@ namespace ModMyFactory.Models
             Directory = directory;
             linkDirectory = directory;
 
-            SetExecutablePath();
-
             CreateLinks();
         }
 
-        protected virtual void UpdateDirectoryInner(DirectoryInfo newDirectory)
+        protected virtual void UpdateDirectoryInternal(DirectoryInfo newDirectory)
         {
             Directory = newDirectory;
-            SetExecutablePath();
         }
 
-        protected virtual void UpdateLinkDirectoryInner(DirectoryInfo newDirectory)
+        protected virtual void UpdateLinkDirectoryInternal(DirectoryInfo newDirectory)
         {
             linkDirectory = newDirectory;
         }
@@ -256,8 +264,8 @@ namespace ModMyFactory.Models
         {
             if (!IsSpecialVersion)
             {
-                UpdateDirectoryInner(newDirectory);
-                UpdateLinkDirectoryInner(newDirectory);
+                UpdateDirectoryInternal(newDirectory);
+                UpdateLinkDirectoryInternal(newDirectory);
             }
         }
 
@@ -271,6 +279,26 @@ namespace ModMyFactory.Models
             UpdateDirectory(new DirectoryInfo(newPath));
 
             Version = newVersion;
+        }
+
+        /// <summary>
+        /// Expands the 'executable', 'read-data' and 'write-data' variables in the specified path.
+        /// </summary>
+        public string ExpandPathVariables(string path)
+        {
+            const string executableVariable = "__PATH__executable__";
+            const string readDataVariable = "__PATH__read-data__";
+            const string writeDataVariable = "__PATH__write-data__";
+
+            string executablePath = Path.Combine(Directory.FullName, "bin", BinName).Trim(Path.DirectorySeparatorChar);
+            string readDataPath = Path.Combine(Directory.FullName, "data").Trim(Path.DirectorySeparatorChar);
+            string writeDataPath = Directory.FullName.Trim(Path.DirectorySeparatorChar);
+
+            path = path.Replace(executableVariable, executablePath);
+            path = path.Replace(readDataVariable, readDataPath);
+            path = path.Replace(writeDataVariable, writeDataPath);
+
+            return path;
         }
 
         private void CreateSaveDirectoryLinkInternal(string localSavePath)
