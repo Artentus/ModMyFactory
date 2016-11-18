@@ -436,16 +436,18 @@
     <Resource Include="Images\Lang\ru.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Zlib\zlib1.dll" />
+    <None Include="Xdelta\xdelta.dll" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Xdelta\xdelta.dll" />
+    <Content Include="Zlib\zlib32.dll" />
+    <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(ProjectDir)Images\Factorio_Icon.ico" "$(TargetDir)Factorio_Icon.ico"
 copy /Y "$(ProjectDir)Images\Factorio_Modpack_Icon.ico" "$(TargetDir)Factorio_Modpack_Icon.ico"
-copy /Y "$(ProjectDir)Zlib\zlib1.dll" "$(TargetDir)zlib1.dll"</PostBuildEvent>
+copy /Y "$(ProjectDir)Zlib\zlib32.dll" "$(TargetDir)zlib32.dll"
+copy /Y "$(ProjectDir)Zlib\zlib64.dll" "$(TargetDir)zlib64.dll"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

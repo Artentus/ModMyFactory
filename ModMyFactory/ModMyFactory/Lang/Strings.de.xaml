@@ -68,6 +68,9 @@
     <sys:String x:Key="Warning.MoveSteamFactorio.Message">Alle Mods, Spielstände und Szenarios werden in den Pfad, der in den Einstellungen angegeben ist, verschoben! Das Erstellen eines Backups ist empfohlen.&#x0a;Möchten Sie fortfahren?</sys:String>
     <sys:String x:Key="Warning.MoveSteamFactorio.Title">Warnung</sys:String>
     
+    <sys:String x:Key="Error.FactorioUpdaterCritical.Message">Der Updater hat einen kritischen Fehler verursacht.&#x0a;Ihre Factorio-Installation ist vermutlich beschädigt und muss neu installiert werden.</sys:String>
+    <sys:String x:Key="Error.FactorioUpdaterCritical.Title">Kritischer Fehler!</sys:String>
+    
     <sys:String x:Key="Information.NoFactorioUpdate.Message">Diese Version von Factorio ist auf dem neusten Stand.</sys:String>
     <sys:String x:Key="Information.NoFactorioUpdate.Title">Kein Update verfügbar</sys:String>
 

@@ -1,42 +1,35 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace ModMyFactory.Zlib
 {
     static class Crc32Checksum
     {
-        public static uint Generate(byte[] data, int offset, int count, uint initialChecksum = 0)
+        public static uint Generate(byte[] data, int offset, int count)
         {
-            var generator = new Crc32ChecksumGenerator(initialChecksum);
+            var generator = new Crc32ChecksumGenerator();
             generator.Update(data, offset, count);
             return generator.CurrentChecksum;
         }
 
-        public static uint Generate(byte[] data, uint initialChecksum = 0)
+        public static uint Generate(byte[] data)
         {
-            var generator = new Crc32ChecksumGenerator(initialChecksum);
+            var generator = new Crc32ChecksumGenerator();
             generator.Update(data);
             return generator.CurrentChecksum;
         }
 
-        public static uint Generate(Stream data, long byteCount, uint initialChecksum = 0)
+        public static uint Generate(Stream data, long byteCount)
         {
-            var generator = new Crc32ChecksumGenerator(initialChecksum);
-
-            byte[] buffer = new byte[8192];
-            int count;
-            do
-            {
-                count = data.Read(buffer, 0, (int)Math.Min(buffer.Length, byteCount - data.Position));
-                if (count > 0) generator.Update(buffer, 0, count);
-            } while (count > 0);
-
+            var generator = new Crc32ChecksumGenerator();
+            generator.Update(data, byteCount);
             return generator.CurrentChecksum;
         }
 
-        public static uint Generate(Stream data, uint initialChecksum = 0)
+        public static uint Generate(Stream data)
         {
-            return Generate(data, data.Length, initialChecksum);
+            var generator = new Crc32ChecksumGenerator();
+            generator.Update(data);
+            return generator.CurrentChecksum;
         }
     }
 }

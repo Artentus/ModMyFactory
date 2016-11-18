@@ -128,12 +128,11 @@ namespace ModMyFactory.FactorioUpdate
             }
         }
 
-        private static async Task ApplyUpdatePackageAsync(FactorioVersion versionToUpdate, FileInfo packageFile, IProgress<double> progress)
+        private static async Task<UpdatePackageInfo> GetUpdatePackageInfoAsync(ZipArchive archive)
         {
-            using (var archive = ZipFile.OpenRead(packageFile.FullName))
+            return await Task.Run(() =>
             {
-                UpdatePackageInfo packageInfo = null;
-                string packageDir;
+                UpdatePackageInfo result = null;
 
                 foreach (var entry in archive.Entries)
                 {
@@ -144,23 +143,64 @@ namespace ModMyFactory.FactorioUpdate
                             using (var reader = new StreamReader(stream))
                             {
                                 string json = reader.ReadToEnd();
-                                packageInfo = JsonHelper.Deserialize<UpdatePackageInfo>(json);
+                                result = JsonHelper.Deserialize<UpdatePackageInfo>(json);
                             }
                         }
                         int index = entry.FullName.LastIndexOf('/');
-                        packageDir = index > 0 ? entry.FullName.Substring(0, index) : string.Empty;
+                        result.PackageDirectory = index > 0 ? entry.FullName.Substring(0, index) : string.Empty;
 
                         break;
                     }
                 }
 
-                if (packageInfo == null)
-                    throw new CriticalUpdaterException(UpdaterErrorType.PackageInvalid);
+                if (result == null) throw new CriticalUpdaterException(UpdaterErrorType.PackageInvalid);
+                return result;
+            });
+        }
 
+        private static async Task AddFileAsync(FileUpdateInfo fileUpdate, FactorioVersion versionToUpdate, ZipArchive archive, string packageDirectory)
+        {
+            
+        }
+
+        private static async Task DeleteFileAsync(FileUpdateInfo fileUpdate, FactorioVersion versionToUpdate)
+        {
+
+        }
+
+        private static async Task UpdateFileAsync(FileUpdateInfo fileUpdate, FactorioVersion versionToUpdate, ZipArchive archive, string packageDirectory)
+        {
+
+        }
+
+        private static async Task ApplyUpdatePackageAsync(FactorioVersion versionToUpdate, FileInfo packageFile, IProgress<double> progress)
+        {
+            using (var archive = ZipFile.OpenRead(packageFile.FullName))
+            {
+                UpdatePackageInfo packageInfo = await GetUpdatePackageInfoAsync(archive);
+
+                int fileCount = packageInfo.UpdatedFiles.Length;
+                int counter = 0;
                 foreach (var fileUpdate in packageInfo.UpdatedFiles)
                 {
-                    
+                    progress.Report((double)counter / fileCount);
+
+                    switch (fileUpdate.Action)
+                    {
+                        case FileUpdateAction.Added:
+                            await AddFileAsync(fileUpdate, versionToUpdate, archive, packageInfo.PackageDirectory);
+                            break;
+                        case FileUpdateAction.Removed:
+                            await DeleteFileAsync(fileUpdate, versionToUpdate);
+                            break;
+                        case FileUpdateAction.Differs:
+                            await UpdateFileAsync(fileUpdate, versionToUpdate, archive, packageInfo.PackageDirectory);
+                            break;
+                    }
+
+                    counter++;
                 }
+                progress.Report(1);
             }
         }
 

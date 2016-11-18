@@ -97,6 +97,16 @@ namespace ModMyFactory
         /// <returns>The programs exit code.</returns>
         private static int Run(CommandLine commandLine)
         {
+            var f = new FileInfo(@"D:\factorio.exe");
+            uint crc = f.CalculateCrc();
+            MessageBox.Show(crc.ToString());
+
+
+
+            return 0;
+
+
+
             // Do not create crash logs when debugging.
             bool createCrashLog = !commandLine.IsSet('l', "no-logs");
 
