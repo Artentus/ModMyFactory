@@ -15,7 +15,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.Remoting.Channels;
+using ModMyFactory.FactorioUpdate;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
@@ -81,14 +81,8 @@ namespace ModMyFactory.ViewModels
                 AddFromFolderCommand = new RelayCommand(async () => await AddLocalVersion());
                 SelectSteamCommand = new RelayCommand(async () => await SelectSteamVersion(), () => string.IsNullOrEmpty(App.Instance.Settings.SteamVersionPath));
                 OpenFolderCommand = new RelayCommand(OpenFolder, () => SelectedVersion != null);
-                UpdateCommand = new RelayCommand(async () => await UpdateSelectedVersion(), () =>
-                {
-                    return SelectedVersion != null && SelectedVersion.IsFileSystemEditable && (SelectedVersion.Version >= new Version(0, 12));
-                });
-                RemoveCommand = new RelayCommand(async () => await RemoveSelectedVersion(), () =>
-                {
-                    return SelectedVersion != null && SelectedVersion.IsFileSystemEditable;
-                });
+                UpdateCommand = new RelayCommand(async () => await UpdateSelectedVersion(), () => SelectedVersion != null && SelectedVersion.IsFileSystemEditable);
+                RemoveCommand = new RelayCommand(async () => await RemoveSelectedVersion(), () => SelectedVersion != null && SelectedVersion.IsFileSystemEditable);
             }
         }
 
@@ -509,148 +503,6 @@ namespace ModMyFactory.ViewModels
             Process.Start(SelectedVersion.Directory.FullName);
         }
 
-        private UpdateStep GetOptimalStep(IEnumerable<UpdateStep> updateSteps, Version from, Version maxTo)
-        {
-            return updateSteps.Where(step => (step.From == from) && (step.To <= maxTo)).MaxBy(step => step.To, new VersionComparer());
-        }
-
-        private List<UpdateStep> GetStepChain(IEnumerable<UpdateStep> updateSteps, Version from, Version to)
-        {
-            var chain = new List<UpdateStep>();
-
-            UpdateStep currentStep = GetOptimalStep(updateSteps, from, to);
-            chain.Add(currentStep);
-
-            while (currentStep.To < to)
-            {
-                UpdateStep nextStep = GetOptimalStep(updateSteps, currentStep.To, to);
-                chain.Add(nextStep);
-
-                currentStep = nextStep;
-            }
-
-            return chain;
-        }
-
-        private List<UpdateTarget> GetUpdateTargets(List<UpdateStep> updateSteps)
-        {
-            var targets = new List<UpdateTarget>();
-            var groups = updateSteps.GroupBy(step => new Version(step.To.Major, step.To.Minor));
-            foreach (var group in groups)
-            {
-                UpdateStep targetStep = group.MaxBy(step => step.To, new VersionComparer());
-                List<UpdateStep> stepChain = GetStepChain(updateSteps, SelectedVersion.Version, targetStep.To);
-                bool isValid = FactorioVersions.All(version => version.Version != targetStep.To);
-                UpdateTarget target = new UpdateTarget(stepChain, targetStep.To, targetStep.IsStable, isValid);
-                targets.Add(target);
-
-                if (!targetStep.IsStable)
-                {
-                    UpdateStep stableStep = group.FirstOrDefault(step => step.IsStable);
-                    if (stableStep != null)
-                    {
-                        stepChain = GetStepChain(updateSteps, SelectedVersion.Version, stableStep.To);
-                        isValid = FactorioVersions.All(version => version.Version != stableStep.To);
-                        target = new UpdateTarget(stepChain, stableStep.To, true, isValid);
-                        targets.Add(target);
-                    }
-                }
-            }
-            return targets;
-        }
-
-        private async Task<List<FileInfo>> DownloadUpdatePackagesAsync(string username, string token, UpdateTarget target, IProgress<double> progress, CancellationToken cancellationToken)
-        {
-            var packageFiles = new List<FileInfo>();
-
-            try
-            {
-                int stepCount = target.Steps.Count;
-                int counter = 0;
-                foreach (var step in target.Steps)
-                {
-                    if (cancellationToken.IsCancellationRequested) break;
-
-                    var subProgress = new Progress<double>(value => progress.Report((1.0 / stepCount) * counter + (value / stepCount)));
-                    var packageFile = await UpdateWebsite.DownloadUpdateStepAsync(username, token, step, subProgress, cancellationToken);
-                    if (packageFile != null) packageFiles.Add(packageFile);
-
-                    counter++;
-                }
-                progress.Report(1);
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    foreach (var file in packageFiles)
-                    {
-                        if (file.Exists)
-                            file.Delete();
-                    }
-
-                    return null;
-                }
-
-                return packageFiles;
-            }
-            catch (Exception)
-            {
-                foreach (var file in packageFiles)
-                {
-                    if (file.Exists)
-                        file.Delete();
-                }
-
-                throw;
-            }
-        }
-
-        private async Task ApplyUpdatePackagesAsync(FactorioVersion versionToUpdate, List<FileInfo> packageFiles, IProgress<double> progress)
-        {
-            int packageCount = packageFiles.Count;
-            int counter = 0;
-
-            foreach (var packageFile in packageFiles)
-            {
-                progress.Report((double)counter / packageCount);
-                
-                // ToDo: apply package
-
-                counter++;
-            }
-
-            progress.Report(1);
-        }
-
-        private async Task ApplyUpdateAsync(FactorioVersion versionToUpdate, string username, string token, UpdateTarget target,
-            IProgress<double> progress, IProgress<Tuple<bool, string>> stageProgress, CancellationToken cancellationToken)
-        {
-            stageProgress.Report(new Tuple<bool, string>(true, App.Instance.GetLocalizedResourceString("UpdatingFactorioStage1Description")));
-            List<FileInfo> packageFiles = await DownloadUpdatePackagesAsync(username, token, target, progress, cancellationToken);
-
-            try
-            {
-                if ((packageFiles != null) && !cancellationToken.IsCancellationRequested)
-                {
-                    progress.Report(0);
-                    stageProgress.Report(new Tuple<bool, string>(false, App.Instance.GetLocalizedResourceString("UpdatingFactorioStage2Description")));
-
-                    await ApplyUpdatePackagesAsync(versionToUpdate, packageFiles, progress);
-                    versionToUpdate.UpdateVersion(target.TargetVersion);
-                }
-            }
-            finally
-            {
-                if (packageFiles != null)
-                {
-                    foreach (var file in packageFiles)
-                    {
-                        if (file.Exists)
-                            file.Delete();
-                    }
-                }
-            }
-        }
-
         private async Task UpdateSelectedVersion()
         {
             string token;
@@ -661,7 +513,7 @@ namespace ModMyFactory.ViewModels
 
                 if (updateSteps.Count > 0)
                 {
-                    List<UpdateTarget> targets = GetUpdateTargets(updateSteps);
+                    List<UpdateTarget> targets = FactorioUpdater.GetUpdateTargets(SelectedVersion, FactorioVersions, updateSteps);
 
                     var updateListWindow = new UpdateListWindow() { Owner = Window };
                     updateListWindow.ViewModel.UpdateTargets = targets;
@@ -677,10 +529,10 @@ namespace ModMyFactory.ViewModels
                         progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
                         var progress = new Progress<double>(value => progressWindow.ViewModel.Progress = value );
-                        var stageProgress = new Progress<Tuple<bool, string>>(value =>
+                        var stageProgress = new Progress<UpdaterStageInfo>(value =>
                         {
-                            progressWindow.ViewModel.CanCancel = value.Item1;
-                            progressWindow.ViewModel.ProgressDescription = value.Item2;
+                            progressWindow.ViewModel.CanCancel = value.CanCancel;
+                            progressWindow.ViewModel.ProgressDescription = value.Description;
                         });
 
                         try
@@ -688,7 +540,8 @@ namespace ModMyFactory.ViewModels
                             Task closeWindowTask = null;
                             try
                             {
-                                Task updateTask = ApplyUpdateAsync(SelectedVersion, GlobalCredentials.Instance.Username, token, target,
+                                Task updateTask = FactorioUpdater.ApplyUpdateAsync(SelectedVersion,
+                                    GlobalCredentials.Instance.Username, token, target,
                                     progress, stageProgress, cancellationSource.Token);
 
                                 closeWindowTask = updateTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
@@ -707,6 +560,10 @@ namespace ModMyFactory.ViewModels
                                 App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
                                 App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
                                 MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        catch (CriticalUpdaterException)
+                        {
+                            
                         }
                     }
                 }

@@ -50,6 +50,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -85,6 +86,11 @@
             <TextBlock Grid.Row="5" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource ZlibLabel}"/>
             <TextBlock Grid.Row="5" Grid.Column="1">
                 <Hyperlink Command="{Binding Url6Command}">zlib</Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="6" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource XdeltaLabel}"/>
+            <TextBlock Grid.Row="6" Grid.Column="1">
+                <Hyperlink Command="{Binding Url7Command}">Xdelta-sharp</Hyperlink>
             </TextBlock>
         </Grid>
         

@@ -81,6 +81,10 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="xdelta, Version=1.0.6164.32915, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Xdelta\xdelta.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -88,10 +92,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommandLine.cs" />
+    <Compile Include="FactorioUpdate\CriticalUpdaterException.cs" />
     <Compile Include="Export\ExportTemplate.cs" />
     <Compile Include="Export\ModpackExport.cs" />
-    <Compile Include="FileUpdateAction.cs" />
-    <Compile Include="FileUpdateInfo.cs" />
+    <Compile Include="FactorioUpdate\FactorioUpdater.cs" />
+    <Compile Include="FactorioUpdate\FileUpdateAction.cs" />
+    <Compile Include="FactorioUpdate\FileUpdateInfo.cs" />
+    <Compile Include="FactorioUpdate\UpdaterStageInfo.cs" />
     <Compile Include="GlobalCredentials.cs" />
     <Compile Include="Helpers\DirectoryInfoExtensions.cs" />
     <Compile Include="Helpers\EnumarableExtensions.cs" />
@@ -118,7 +125,8 @@
     <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\ModUpdateInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\UpdateTargetSorter.cs" />
-    <Compile Include="UpdatePackageInfo.cs" />
+    <Compile Include="FactorioUpdate\UpdatePackageInfo.cs" />
+    <Compile Include="FactorioUpdate\UpdaterErrorType.cs" />
     <Compile Include="VersionComparer.cs" />
     <Compile Include="ViewModels\ModpackExportViewModel.cs" />
     <Compile Include="ViewModels\ModUpdateViewModel.cs" />
@@ -429,6 +437,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Zlib\zlib1.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Xdelta\xdelta.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

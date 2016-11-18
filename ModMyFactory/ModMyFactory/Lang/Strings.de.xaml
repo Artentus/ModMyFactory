@@ -292,6 +292,7 @@
     <sys:String x:Key="JsonLabel">JSON Framework:</sys:String>
     <sys:String x:Key="GitHubLabel">GitHub API:</sys:String>
     <sys:String x:Key="ZlibLabel">CRC32-Implementierung:</sys:String>
+    <sys:String x:Key="XdeltaLabel">VCDIFF-Implementierung:</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Mitwirkende</sys:String>
