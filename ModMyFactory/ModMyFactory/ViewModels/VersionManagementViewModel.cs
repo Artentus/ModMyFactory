@@ -563,7 +563,10 @@ namespace ModMyFactory.ViewModels
                         }
                         catch (CriticalUpdaterException)
                         {
-                            
+                            MessageBox.Show(Window,
+                                App.Instance.GetLocalizedMessage("FactorioUpdaterCritical", MessageType.Error),
+                                App.Instance.GetLocalizedMessageTitle("FactorioUpdaterCritical", MessageType.Error),
+                                MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
                 }

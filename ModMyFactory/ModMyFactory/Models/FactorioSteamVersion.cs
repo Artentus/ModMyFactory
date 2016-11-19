@@ -58,9 +58,9 @@ namespace ModMyFactory.Models
             : base(false, directory, new DirectoryInfo(SteamAppDataPath), version)
         { }
 
-        protected override void UpdateLinkDirectoryInner(DirectoryInfo newDirectory)
+        protected override void UpdateLinkDirectoryInternal(DirectoryInfo newDirectory)
         {
-            base.UpdateLinkDirectoryInner(new DirectoryInfo(SteamAppDataPath));
+            base.UpdateLinkDirectoryInternal(new DirectoryInfo(SteamAppDataPath));
         }
     }
 }

@@ -68,6 +68,9 @@
     <sys:String x:Key="Warning.MoveSteamFactorio.Message">Все моды, сохранения и сценарии будут перемещены согласно настройкам! Рекомендуется создание бэкапа.&#x0a;Вы хотите продолжить?</sys:String>
     <sys:String x:Key="Warning.MoveSteamFactorio.Title">Предупреждение</sys:String>
     
+    <sys:String x:Key="Error.FactorioUpdaterCritical.Message">The Factorio updater encountered a critical error.&#x0a;Your Factorio installation is most likely corrup and needs to be reinstalled.</sys:String>
+    <sys:String x:Key="Error.FactorioUpdaterCritical.Title">Critical updater error!</sys:String>
+    
     <sys:String x:Key="Information.NoFactorioUpdate.Message">Данная версия Factorio не нуждается в обновлении.</sys:String>
     <sys:String x:Key="Information.NoFactorioUpdate.Title">Обновлений не найдено</sys:String>
     
