@@ -49,34 +49,28 @@ namespace ModMyFactory.Helpers
         /// This method does not create any managed string objects.
         /// </summary>
         /// <param name="secureString">The SecureString object to fill the byte array from.</param>
-        /// <param name="byteArray">The byte array to fill.</param>
-        /// <param name="byteIndex">The index at which the byte array will be filled.</param>
+        /// <param name="bytes">The byte array to fill.</param>
+        /// <param name="offset">The offset at which the byte array will be filled.</param>
         /// <param name="encoding">The encoding used to fill the byte array.</param>
-        public static unsafe void SecureStringToBytes(SecureString secureString, byte[] byteArray, int byteIndex, Encoding encoding)
+        public static unsafe void SecureStringToBytes(SecureString secureString, byte[] bytes, int offset, Encoding encoding)
         {
-            IntPtr bytePointer = IntPtr.Zero;
+            GCHandle handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
             IntPtr bStr = IntPtr.Zero;
-
             try
             {
-                int maxByteCount = encoding.GetMaxByteCount(secureString.Length);
-
-                bytePointer = Marshal.AllocHGlobal(maxByteCount);
                 bStr = Marshal.SecureStringToBSTR(secureString);
+                char* charPointer = (char*)bStr.ToPointer();
 
-                byte* bytes = (byte*)bytePointer.ToPointer();
-                char* chars = (char*)bStr.ToPointer();
-                int length = encoding.GetBytes(chars, secureString.Length, bytes, maxByteCount);
+                int byteCount = encoding.GetByteCount(charPointer, secureString.Length);
+                if ((offset + byteCount) > bytes.Length) throw new IndexOutOfRangeException("The destination array is too small.");
 
-                for (int i = byteIndex; i < (byteIndex + length); i++)
-                {
-                    byteArray[i] = *bytes;
-                    bytes++;
-                }
+                byte* bytePointer = (byte*)handle.AddrOfPinnedObject().ToPointer();
+                bytePointer += offset;
+                encoding.GetBytes(charPointer, secureString.Length, bytePointer, byteCount);
             }
             finally
             {
-                if (bytePointer != IntPtr.Zero) Marshal.FreeHGlobal(bytePointer);
+                handle.Free();
                 if (bStr != IntPtr.Zero) Marshal.ZeroFreeBSTR(bStr);
             }
         }
@@ -86,11 +80,58 @@ namespace ModMyFactory.Helpers
         /// This method does not create any managed string objects.
         /// </summary>
         /// <param name="secureString">The SecureString object to fill the byte array from.</param>
-        /// <param name="byteArray">The byte array to fill.</param>
-        /// <param name="byteIndex">The index at which the byte array will be filled.</param>
-        public static void SecureStringToBytes(SecureString secureString, byte[] byteArray, int byteIndex)
+        /// <param name="bytes">The byte array to fill.</param>
+        /// <param name="offset">The index at which the byte array will be filled.</param>
+        public static void SecureStringToBytes(SecureString secureString, byte[] bytes, int offset)
         {
-            SecureStringToBytes(secureString, byteArray, byteIndex, Encoding.UTF8);
+            SecureStringToBytes(secureString, bytes, offset, Encoding.UTF8);
+        }
+
+        /// <summary>
+        /// Creates a byte array from a SecureString object using the specified encoding.
+        /// This method does not create any managed string objects.
+        /// </summary>
+        /// <param name="secureString">The SecureString object to fill the byte array from.</param>
+        /// <param name="encoding">The encoding used to fill the byte array.</param>
+        public static unsafe byte[] SecureStringToBytes(SecureString secureString, Encoding encoding)
+        {
+            byte[] bytes;
+            IntPtr bStr = IntPtr.Zero;
+            try
+            {
+                bStr = Marshal.SecureStringToBSTR(secureString);
+                char* charPointer = (char*)bStr.ToPointer();
+
+                int byteCount = encoding.GetByteCount(charPointer, secureString.Length);
+                bytes = new byte[byteCount];
+                GCHandle handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+
+                try
+                {
+                    byte* bytePointer = (byte*)handle.AddrOfPinnedObject().ToPointer();
+                    encoding.GetBytes(charPointer, secureString.Length, bytePointer, byteCount);
+                }
+                finally
+                {
+                    handle.Free();
+                }
+            }
+            finally
+            {
+                if (bStr != IntPtr.Zero) Marshal.ZeroFreeBSTR(bStr);
+            }
+
+            return bytes;
+        }
+
+        /// <summary>
+        /// Creates a byte array from a SecureString object.
+        /// This method does not create any managed string objects.
+        /// </summary>
+        /// <param name="secureString">The SecureString object to fill the byte array from.</param>
+        public static void SecureStringToBytes(SecureString secureString)
+        {
+            SecureStringToBytes(secureString, Encoding.UTF8);
         }
 
         /// <summary>
