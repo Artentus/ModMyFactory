@@ -8,49 +8,91 @@ namespace ModMyFactory.Helpers
 {
     static class StringHelper
     {
-        private static int[,] CreateTable(int width, int height)
+        private class StringPair : IEquatable<StringPair>
         {
-            int[,] table = new int[width, height];
-            for (int x = 0; x < width; x++) table[x, 0] = x;
-            for (int y = 0; y < height; y++) table[0, y] = y;
+            readonly int hashCode;
+
+            public string First { get; }
+
+            public string Second { get; }
+
+            public CultureInfo Culture { get; }
+
+            public CompareOptions Options { get; }
+
+            public StringPair(string first, string second, CultureInfo culture, CompareOptions options)
+            {
+                First = first;
+                Second = second;
+                Culture = culture;
+                Options = options;
+
+                hashCode = first.GetHashCode() ^ second.GetHashCode() ^ culture.GetHashCode() ^ options.GetHashCode();
+            }
+
+            public bool Equals(StringPair other)
+            {
+                if (other == null) return false;
+
+                return (this.First == other.First) && (this.Second == other.Second)
+                    && (this.Culture.Equals(other.Culture)) && (this.Options == other.Options);
+            }
+
+            public override bool Equals(object obj) => Equals(obj as StringPair);
+
+            public override int GetHashCode() => hashCode;
+        }
+
+
+        private static int[,] CreateTable(int size)
+        {
+            int[,] table = new int[size, size];
+            for (int i = 0; i < size; i++)
+            {
+                table[i, 0] = i;
+                table[0, i] = i;
+            }
 
             return table;
         }
 
-        private static int GetTableMinimum(int[,] table, int x, int y)
-        {
-            int[] values = new int[3];
-            values[0] = table[x - 1, y - 1];
-            values[1] = table[x, y - 1];
-            values[2] = table[x - 1, y];
+        static int tableSize = -1;
+        static int[,] cachedTable;
 
-            return values.Min();
+        private static int[,] GetTable(int minWidth, int minHeight)
+        {
+            int minSize = Math.Max(minWidth, minHeight);
+            if (tableSize < minSize)
+            {
+                tableSize = minSize * 2;
+                cachedTable = CreateTable(tableSize);
+            }
+
+            return cachedTable;
         }
 
-        /// <summary>
-        /// Calculates the edit distance of two strings.
-        /// </summary>
-        /// <param name="first">The first string.</param>
-        /// <param name="second">The second string.</param>
-        /// <param name="culture">The culture that is used to compare the strings.</param>
-        /// <param name="options">A value that spoecifies how the two string are compared.</param>
-        /// <returns>Returns the minimum edit distance between the two input strings.</returns>
-        public static int GetEditDistance(string first, string second, CultureInfo culture, CompareOptions options)
+        private static int GetTableMinimum(int[,] table, int x, int y)
         {
-            if (first.Length == 0) return second.Length;
-            if (second.Length == 0) return first.Length;
+            int min = Math.Min(table[x - 1, y - 1], table[x, y - 1]);
+            min = Math.Min(min, table[x - 1, y]);
 
-            int[,] table = CreateTable(first.Length + 1, second.Length + 1);
+            return min;
+        }
 
-            for (int x = 1; x <= first.Length; x++)
+
+        private static int CalculateEditDistance(StringPair pair)
+        {
+            int[,] table = GetTable(pair.First.Length + 1, pair.Second.Length + 1);
+
+            for (int x = 1; x <= pair.First.Length; x++)
             {
-                string cx = first.Substring(x - 1, 1);
+                string cx = pair.First[x - 1].ToString();
 
-                for (int y = 1; y <= second.Length; y++)
+                for (int y = 1; y <= pair.Second.Length; y++)
                 {
-                    string cy = second.Substring(y - 1, 1);
+                    string cy = pair.Second[y - 1].ToString();
 
-                    if (culture.CompareInfo.Compare(cx, cy, options) == 0)
+                    if (pair.Culture.CompareInfo.Compare(cx, cy, pair.Options) == 0)
                     {
                         table[x, y] = table[x - 1, y - 1];
                     }
@@ -61,7 +103,33 @@ namespace ModMyFactory.Helpers
                 }
             }
 
-            return table[first.Length, second.Length];
+            return table[pair.First.Length, pair.Second.Length];
+        }
+
+        static readonly Dictionary<StringPair, int> CachedEditDistances = new Dictionary<StringPair, int>();
+
+        /// <summary>
+        /// Calculates the edit distance of two strings.
+        /// </summary>
+        /// <param name="first">The first string.</param>
+        /// <param name="second">The second string.</param>
+        /// <param name="culture">The culture that is used to compare the strings.</param>
+        /// <param name="options">A value that specifies how two string are compared.</param>
+        /// <returns>Returns the minimum edit distance between the two input strings.</returns>
+        public static int GetEditDistance(string first, string second, CultureInfo culture, CompareOptions options)
+        {
+            if (string.IsNullOrEmpty(first) || (first.Length == 0)) return second?.Length ?? 0;
+            if (string.IsNullOrEmpty(second) || (second.Length == 0)) return first.Length;
+
+            var pair = new StringPair(first, second, culture, options);
+            int distance;
+            if (!CachedEditDistances.TryGetValue(pair, out distance))
+            {
+                distance = CalculateEditDistance(pair);
+                CachedEditDistances.Add(pair, distance);
+            }
+
+            return distance;
         }
 
         /// <summary>
