@@ -9,7 +9,7 @@
     
     
     <sys:String x:Key="NewModpackName">Новый модпак</sys:String>
-    <sys:String x:Key="LatestFactorioName">Latest installed version</sys:String>
+    <sys:String x:Key="LatestFactorioName">Последняя установленная версия</sys:String>
     
     
     
