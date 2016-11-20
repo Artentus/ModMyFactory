@@ -29,7 +29,7 @@ namespace ModMyFactory.Models
         {
             public override string VersionString => LatestKey;
 
-            public override string DisplayName => "Latest";
+            public override string DisplayName => App.Instance.GetLocalizedResourceString("LatestFactorioName");
         }
 
         static LatestFactorioVersion latest;

@@ -81,7 +81,7 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="xdelta, Version=1.0.6164.32915, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="xdelta, Version=1.0.6168.31138, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Xdelta\xdelta.dll</HintPath>
     </Reference>

@@ -9,6 +9,7 @@
 
 
     <sys:String x:Key="NewModpackName">Neues Modpack</sys:String>
+    <sys:String x:Key="LatestFactorioName">Neuste installierte Version</sys:String>
 
 
 

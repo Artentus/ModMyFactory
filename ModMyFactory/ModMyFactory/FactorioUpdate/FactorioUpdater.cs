@@ -5,10 +5,12 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.Web;
 using ModMyFactory.Web.UpdateApi;
+using Xdelta;
 
 namespace ModMyFactory.FactorioUpdate
 {
@@ -136,7 +138,7 @@ namespace ModMyFactory.FactorioUpdate
 
                 foreach (var entry in archive.Entries)
                 {
-                    if (entry.Name.Equals("info.json", StringComparison.InvariantCultureIgnoreCase))
+                    if (entry.Name.Equals("info.json", StringComparison.InvariantCultureIgnoreCase) && !entry.FullName.Contains("__PATH__read-data__"))
                     {
                         using (var stream = entry.Open())
                         {
@@ -181,6 +183,22 @@ namespace ModMyFactory.FactorioUpdate
             });
         }
 
+        private static string ResolveArchivePath(string path)
+        {
+            string[] parts = path.Split('/');
+            var dirList = new List<string>(parts.Length);
+
+            foreach (string part in parts)
+            {
+                if (part == "..")
+                    dirList.RemoveAt(dirList.Count - 1);
+                else
+                    dirList.Add(part);
+            }
+
+            return string.Join("/", dirList);
+        }
+
         private static async Task UpdateFileAsync(FileUpdateInfo fileUpdate, FactorioVersion versionToUpdate, ZipArchive archive, string packageDirectory)
         {
             await Task.Run(() =>
@@ -192,10 +210,29 @@ namespace ModMyFactory.FactorioUpdate
                 if (oldCrc != fileUpdate.OldCrc) throw new CriticalUpdaterException(UpdaterErrorType.ChecksumMismatch);
 
                 string entryPath = fileUpdate.Path;
-                if (!string.IsNullOrEmpty(packageDirectory)) entryPath = Path.Combine(packageDirectory, entryPath);
+                if (!string.IsNullOrEmpty(packageDirectory)) entryPath = string.Join("/", packageDirectory, entryPath);
+                entryPath = ResolveArchivePath(entryPath);
                 var entry = archive.GetEntry(entryPath);
 
-                // ToDo: update file
+                using (var output = new MemoryStream())
+                {
+                    using (var input = file.OpenRead())
+                    {
+                        using (var patch = new MemoryStream())
+                        {
+                            using (var source = entry.Open())
+                                source.CopyTo(patch);
+                            patch.Position = 0;
+
+                            var decoder = new Decoder(input, patch, output);
+                            decoder.Run();
+                        }
+                    }
+
+                    output.Position = 0;
+                    using (var destination = file.Open(FileMode.Truncate, FileAccess.Write))
+                        output.CopyTo(destination);
+                }
 
                 uint newCrc = file.CalculateCrc();
                 if (newCrc != fileUpdate.NewCrc) throw new CriticalUpdaterException(UpdaterErrorType.ChecksumMismatch);
