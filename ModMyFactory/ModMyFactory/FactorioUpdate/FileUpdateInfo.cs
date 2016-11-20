@@ -13,13 +13,13 @@ namespace ModMyFactory.FactorioUpdate
         public FileUpdateAction Action { get; }
 
         [JsonProperty("old_crc")]
-        public int OldCrc { get; }
+        public uint OldCrc { get; }
 
         [JsonProperty("crc")]
-        public int NewCrc { get; }
+        public uint NewCrc { get; }
 
         [JsonConstructor]
-        public FileUpdateInfo(string path, FileUpdateAction action, int oldCrc, int newCrc)
+        public FileUpdateInfo(string path, FileUpdateAction action, uint oldCrc, uint newCrc)
         {
             Path = path;
             Action = action;
