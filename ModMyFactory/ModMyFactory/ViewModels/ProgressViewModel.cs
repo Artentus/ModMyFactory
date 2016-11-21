@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Windows.Input;
 using System.Windows.Shell;
 using ModMyFactory.MVVM;
 using ModMyFactory.Views;
@@ -12,6 +13,7 @@ namespace ModMyFactory.ViewModels
         string actionName;
         string progressDescription;
         bool isIndeterminate;
+        bool canCancel;
 
         public event EventHandler CancelRequested;
 
@@ -71,7 +73,19 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        public bool CanCancel { get; set; }
+        public bool CanCancel
+        {
+            get { return canCancel; }
+            set
+            {
+                if (value != canCancel)
+                {
+                    canCancel = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(CanCancel)));
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
+        }
 
         public RelayCommand CancelCommand { get; }
 
