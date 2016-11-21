@@ -156,7 +156,7 @@
     <!-- 'Edit' menu -->
     <sys:String x:Key="EditMenuItem">_Изменить</sys:String>
     <sys:String x:Key="OpenFactorioFolderMenuItem">Открыть папку Factorio</sys:String>
-    <sys:String x:Key="OpenModFolderMenuItem">Открыть папку мода</sys:String>
+    <sys:String x:Key="OpenModFolderMenuItem">Открыть папку модов</sys:String>
     <sys:String x:Key="OpenSavegameFolderMenuItem">Открыть папку сохранений</sys:String>
     <sys:String x:Key="OpenScenarioFolderMenuItem">Открыть папку сценариев</sys:String>
     <sys:String x:Key="UpdateModsMenuItem">Обновить моды</sys:String>
