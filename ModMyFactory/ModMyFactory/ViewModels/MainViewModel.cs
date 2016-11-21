@@ -59,12 +59,26 @@ namespace ModMyFactory.ViewModels
             {
                 if (value != selectedVersion)
                 {
+                    if (selectedVersion != null)
+                        selectedVersion.PropertyChanged -= SelectedVersionPropertyChangedHandler;
+
                     selectedVersion = value;
+                    if (selectedVersion != null)
+                        selectedVersion.PropertyChanged += SelectedVersionPropertyChangedHandler;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedVersion)));
 
-                    App.Instance.Settings.SelectedVersion = selectedVersion.VersionString;
+                    App.Instance.Settings.SelectedVersion = selectedVersion?.VersionString ?? string.Empty;
                     App.Instance.Settings.Save();
                 }
+            }
+        }
+
+        private void SelectedVersionPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(FactorioVersion.VersionString))
+            {
+                App.Instance.Settings.SelectedVersion = selectedVersion.VersionString;
+                App.Instance.Settings.Save();
             }
         }
 

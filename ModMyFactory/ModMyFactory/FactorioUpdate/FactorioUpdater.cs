@@ -160,29 +160,6 @@ namespace ModMyFactory.FactorioUpdate
             });
         }
 
-        private static async Task AddFileAsync(FileUpdateInfo fileUpdate, FactorioVersion versionToUpdate, ZipArchive archive, string packageDirectory)
-        {
-            await Task.Run(() =>
-            {
-                var file = new FileInfo(versionToUpdate.ExpandPathVariables(fileUpdate.Path));
-
-                string entryPath = fileUpdate.Path;
-                if (!string.IsNullOrEmpty(packageDirectory)) entryPath = Path.Combine(packageDirectory, entryPath);
-                var entry = archive.GetEntry(entryPath);
-
-                entry.ExtractToFile(file.FullName, true);
-            });
-        }
-
-        private static async Task DeleteFileAsync(FileUpdateInfo fileUpdate, FactorioVersion versionToUpdate)
-        {
-            await Task.Run(() =>
-            {
-                var file = new FileInfo(versionToUpdate.ExpandPathVariables(fileUpdate.Path));
-                if (file.Exists) file.Delete();
-            });
-        }
-
         private static string ResolveArchivePath(string path)
         {
             string[] parts = path.Split('/');
@@ -197,6 +174,32 @@ namespace ModMyFactory.FactorioUpdate
             }
 
             return string.Join("/", dirList);
+        }
+
+        private static async Task AddFileAsync(FileUpdateInfo fileUpdate, FactorioVersion versionToUpdate, ZipArchive archive, string packageDirectory)
+        {
+            await Task.Run(() =>
+            {
+                var file = new FileInfo(versionToUpdate.ExpandPathVariables(fileUpdate.Path));
+
+                string entryPath = fileUpdate.Path;
+                if (!string.IsNullOrEmpty(packageDirectory)) entryPath = string.Join("/", packageDirectory, entryPath);
+                entryPath = ResolveArchivePath(entryPath);
+                var entry = archive.GetEntry(entryPath);
+
+                var dir = file.Directory;
+                if (!dir.Exists) dir.Create();
+                entry.ExtractToFile(file.FullName, true);
+            });
+        }
+
+        private static async Task DeleteFileAsync(FileUpdateInfo fileUpdate, FactorioVersion versionToUpdate)
+        {
+            await Task.Run(() =>
+            {
+                var file = new FileInfo(versionToUpdate.ExpandPathVariables(fileUpdate.Path));
+                if (file.Exists) file.Delete();
+            });
         }
 
         private static async Task UpdateFileAsync(FileUpdateInfo fileUpdate, FactorioVersion versionToUpdate, ZipArchive archive, string packageDirectory)
