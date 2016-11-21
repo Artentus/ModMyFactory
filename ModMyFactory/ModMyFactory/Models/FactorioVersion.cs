@@ -184,7 +184,7 @@ namespace ModMyFactory.Models
             get { return version; }
             private set
             {
-                if (IsSpecialVersion || !IsFileSystemEditable)
+                if ((IsSpecialVersion || !IsFileSystemEditable) && (version != null))
                     throw new InvalidOperationException("The version of this Factorio installation can not be changed.");
 
                 if (value != version)
