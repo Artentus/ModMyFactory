@@ -439,6 +439,7 @@
     <None Include="Xdelta\xdelta.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\Lang\pt.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>

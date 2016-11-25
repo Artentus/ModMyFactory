@@ -184,9 +184,6 @@ namespace ModMyFactory.Models
             get { return version; }
             private set
             {
-                if ((IsSpecialVersion || !IsFileSystemEditable) && (version != null))
-                    throw new InvalidOperationException("The version of this Factorio installation can not be changed.");
-
                 if (value != version)
                 {
                     version = value;
@@ -274,11 +271,18 @@ namespace ModMyFactory.Models
         /// </summary>
         public void UpdateVersion(Version newVersion)
         {
+            if (IsSpecialVersion || !IsFileSystemEditable)
+                throw new InvalidOperationException("The version of this Factorio installation can not be changed.");
+
+            DeleteLinks();
+
             string newPath = Path.Combine(App.Instance.Settings.GetFactorioDirectory().FullName, newVersion.ToString(3));
             Directory.MoveTo(newPath);
             UpdateDirectory(new DirectoryInfo(newPath));
 
             Version = newVersion;
+
+            CreateLinks();
         }
 
         /// <summary>

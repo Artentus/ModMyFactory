@@ -120,6 +120,7 @@
             <TextBlock Grid.Row="1" Text="{DynamicResource TranslatorsHeader}"/>
             <WrapPanel Grid.Row="2" Margin="-6,2" Orientation="Horizontal">
                 <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator1Command}">Averssem</Hyperlink> (Russian)</TextBlock>
+                <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator2Command}">blackbat24</Hyperlink> (Portuguese)</TextBlock>
             </WrapPanel>
         </Grid>
 
