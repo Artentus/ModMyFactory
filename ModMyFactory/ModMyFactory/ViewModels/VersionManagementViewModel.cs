@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using ModMyFactory.MVVM;
 using ModMyFactory.Web;
 using Ookii.Dialogs.Wpf;
 using System.Diagnostics;
@@ -21,14 +20,18 @@ using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.Views;
 using ModMyFactory.Web.UpdateApi;
+using WPFCore;
+using WPFCore.Commands;
 
 namespace ModMyFactory.ViewModels
 {
-    sealed class VersionManagementViewModel : ViewModelBase<VersionManagementWindow>
+    sealed class VersionManagementViewModel : ViewModelBase
     {
         static VersionManagementViewModel instance;
 
         public static VersionManagementViewModel Instance = instance ?? (instance = new VersionManagementViewModel());
+
+        public VersionManagementWindow Window => (VersionManagementWindow)View;
 
         FactorioVersion selectedVersion;
 
@@ -123,10 +126,11 @@ namespace ModMyFactory.ViewModels
             versions.ForEach(item => item.Downloadable = !VersionAlreadyInstalled(item));
 
             var versionListWindow = new VersionListWindow { Owner = Window };
-            versions.ForEach(item => versionListWindow.ViewModel.FactorioVersions.Add(item));
+            var versionListViewModel = (VersionListViewModel)versionListWindow.ViewModel;
+            versions.ForEach(item => versionListViewModel.FactorioVersions.Add(item));
 
             bool? versionResult = versionListWindow.ShowDialog();
-            selectedVersion = versionListWindow.ViewModel.SelectedVersion;
+            selectedVersion = versionListViewModel.SelectedVersion;
             return versionResult.HasValue && versionResult.Value;
         }
 
@@ -140,10 +144,11 @@ namespace ModMyFactory.ViewModels
                 {
                     var cancellationSource = new CancellationTokenSource();
                     var progressWindow = new ProgressWindow { Owner = Window };
-                    progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
-                    progressWindow.ViewModel.ProgressDescription = string.Format(App.Instance.GetLocalizedResourceString("DownloadingDescription"), selectedVersion.DownloadUrl);
-                    progressWindow.ViewModel.CanCancel = true;
-                    progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+                    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
+                    progressViewModel.ProgressDescription = string.Format(App.Instance.GetLocalizedResourceString("DownloadingDescription"), selectedVersion.DownloadUrl);
+                    progressViewModel.CanCancel = true;
+                    progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
                     FactorioVersion newVersion;
                     try
@@ -156,13 +161,13 @@ namespace ModMyFactory.ViewModels
                             {
                                 if (p > 1)
                                 {
-                                    progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
-                                    progressWindow.ViewModel.IsIndeterminate = true;
-                                    progressWindow.ViewModel.CanCancel = false;
+                                    progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
+                                    progressViewModel.IsIndeterminate = true;
+                                    progressViewModel.CanCancel = false;
                                 }
                                 else
                                 {
-                                    progressWindow.ViewModel.Progress = p;
+                                    progressViewModel.Progress = p;
                                 }
                             }), cancellationSource.Token);
 
@@ -202,9 +207,10 @@ namespace ModMyFactory.ViewModels
                 DirectoryInfo versionDirectory = null;
 
                 var progressWindow = new ProgressWindow() { Owner = Window };
-                progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingFromZipAction");
-                progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("CheckingValidityDescription");
-                progressWindow.ViewModel.IsIndeterminate = true;
+                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingFromZipAction");
+                progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("CheckingValidityDescription");
+                progressViewModel.IsIndeterminate = true;
 
                 bool invalidArchiveFile = false;
                 bool invalidPlatform = false;
@@ -213,7 +219,7 @@ namespace ModMyFactory.ViewModels
                     switch (stage)
                     {
                         case 1:
-                            progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
+                            progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
                             break;
                         case -1:
                             invalidArchiveFile = true;
@@ -426,9 +432,10 @@ namespace ModMyFactory.ViewModels
                     DirectoryInfo destinationDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.ToString(3)));
 
                     var progressWindow = new ProgressWindow() { Owner = Window };
-                    progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingLocalInstallationAction");
-                    progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
-                    progressWindow.ViewModel.IsIndeterminate = true;
+                    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingLocalInstallationAction");
+                    progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
+                    progressViewModel.IsIndeterminate = true;
 
                     Task moveTask = MoveFactorioInstallationAsync(installationDirectory, version, destinationDirectory);
 
@@ -480,9 +487,10 @@ namespace ModMyFactory.ViewModels
                     App.Instance.Settings.Save();
 
                     var progressWindow = new ProgressWindow() { Owner = Window };
-                    progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingSteamVersionAction");
-                    progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
-                    progressWindow.ViewModel.IsIndeterminate = true;
+                    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingSteamVersionAction");
+                    progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
+                    progressViewModel.IsIndeterminate = true;
 
                     var steamAppDataDirectory = new DirectoryInfo(FactorioSteamVersion.SteamAppDataPath);
                     Version factorioVersion = new Version(version.Major, version.Minor);
@@ -516,23 +524,25 @@ namespace ModMyFactory.ViewModels
                     List<UpdateTarget> targets = FactorioUpdater.GetUpdateTargets(SelectedVersion, FactorioVersions, updateSteps);
 
                     var updateListWindow = new UpdateListWindow() { Owner = Window };
-                    updateListWindow.ViewModel.UpdateTargets = targets;
+                    var updateListViewModel = (UpdateListViewModel)updateListWindow.ViewModel;
+                    updateListViewModel.UpdateTargets = targets;
                     bool? result = updateListWindow.ShowDialog();
                     if (result.HasValue && result.Value)
                     {
-                        UpdateTarget target = updateListWindow.ViewModel.SelectedTarget;
+                        UpdateTarget target = updateListViewModel.SelectedTarget;
 
                         var progressWindow = new ProgressWindow { Owner = Window };
-                        progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("UpdatingFactorioAction");
+                        var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                        progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("UpdatingFactorioAction");
 
                         var cancellationSource = new CancellationTokenSource();
-                        progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+                        progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
-                        var progress = new Progress<double>(value => progressWindow.ViewModel.Progress = value );
+                        var progress = new Progress<double>(value => progressViewModel.Progress = value );
                         var stageProgress = new Progress<UpdaterStageInfo>(value =>
                         {
-                            progressWindow.ViewModel.CanCancel = value.CanCancel;
-                            progressWindow.ViewModel.ProgressDescription = value.Description;
+                            progressViewModel.CanCancel = value.CanCancel;
+                            progressViewModel.ProgressDescription = value.Description;
                         });
 
                         try
@@ -588,9 +598,10 @@ namespace ModMyFactory.ViewModels
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 var progressWindow = new ProgressWindow() { Owner = Window };
-                progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("RemovingFactorioVersionAction");
-                progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("DeletingFilesDescription");
-                progressWindow.ViewModel.IsIndeterminate = true;
+                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("RemovingFactorioVersionAction");
+                progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("DeletingFilesDescription");
+                progressViewModel.IsIndeterminate = true;
 
                 Task deleteTask = Task.Run(() =>
                 {

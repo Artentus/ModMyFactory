@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows.Media.Imaging;
-using ModMyFactory.MVVM;
+using WPFCore.Commands;
 
 namespace ModMyFactory.Models
 {

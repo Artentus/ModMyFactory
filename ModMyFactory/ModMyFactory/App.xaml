@@ -5,6 +5,7 @@
              xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
              xmlns:converter="clr-namespace:ModMyFactory.MVVM.Converters"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:core="clr-namespace:WPFCore.Windows;assembly=wpfcore"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>

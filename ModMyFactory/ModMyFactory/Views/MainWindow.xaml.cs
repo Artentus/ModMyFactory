@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using ModMyFactory.ViewModels;
 
 namespace ModMyFactory.Views
 {
@@ -115,7 +116,7 @@ namespace ModMyFactory.Views
                         }
                     }
 
-                    ModpackTemplateList.Instance.Update(ViewModel.Modpacks);
+                    ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
                     ModpackTemplateList.Instance.Save();
                 }
                 else if (e.Data.GetDataPresent(typeof(List<Modpack>)))
@@ -132,7 +133,7 @@ namespace ModMyFactory.Views
                         }
                     }
 
-                    ModpackTemplateList.Instance.Update(ViewModel.Modpacks);
+                    ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
                     ModpackTemplateList.Instance.Save();
                 }
             }

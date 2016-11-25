@@ -1,12 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using ModMyFactory.MVVM;
 using ModMyFactory.Web;
-using ModMyFactory.Views;
+using WPFCore;
 
 namespace ModMyFactory.ViewModels
 {
-    sealed class VersionListViewModel : ViewModelBase<VersionListWindow>
+    sealed class VersionListViewModel : ViewModelBase
     {
         FactorioOnlineVersion selectedVersion;
         bool canAdd;

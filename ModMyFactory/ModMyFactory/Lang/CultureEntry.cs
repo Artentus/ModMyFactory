@@ -2,7 +2,8 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Media.Imaging;
-using ModMyFactory.MVVM;
+using WPFCore;
+using WPFCore.Commands;
 
 namespace ModMyFactory.Lang
 {

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
-using ModMyFactory.MVVM;
 using ModMyFactory.ViewModels;
+using WPFCore;
+using WPFCore.Commands;
 
 namespace ModMyFactory.Models
 {

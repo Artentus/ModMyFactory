@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
-using ModMyFactory.MVVM;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using WPFCore;
 
 namespace ModMyFactory.Web.ModApi
 {

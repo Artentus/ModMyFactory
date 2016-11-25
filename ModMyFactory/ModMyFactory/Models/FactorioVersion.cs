@@ -5,7 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
 using ModMyFactory.IO;
-using ModMyFactory.MVVM;
+using WPFCore;
 
 namespace ModMyFactory.Models
 {

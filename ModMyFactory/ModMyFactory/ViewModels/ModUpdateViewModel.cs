@@ -2,13 +2,12 @@
 using System.ComponentModel;
 using System.Windows.Data;
 using ModMyFactory.Models;
-using ModMyFactory.MVVM;
 using ModMyFactory.MVVM.Sorters;
-using ModMyFactory.Views;
+using WPFCore;
 
 namespace ModMyFactory.ViewModels
 {
-    class ModUpdateViewModel : ViewModelBase<ModUpdateWindow>
+    class ModUpdateViewModel : ViewModelBase
     {
         ListCollectionView modsView;
         List<ModUpdateInfo> modsToUpdate;

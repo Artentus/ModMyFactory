@@ -1,13 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
-using ModMyFactory.MVVM;
+using System.Windows;
 using Ookii.Dialogs.Wpf;
-using ModMyFactory.Views;
+using WPFCore;
+using WPFCore.Commands;
 
 namespace ModMyFactory.ViewModels
 {
-    sealed class SettingsViewModel : ViewModelBase<SettingsWindow>
+    sealed class SettingsViewModel : ViewModelBase
     {
         static SettingsViewModel instance;
 
@@ -247,7 +248,7 @@ namespace ModMyFactory.ViewModels
         private void SelectFactorioDirectory()
         {
             var dialog = new VistaFolderBrowserDialog();
-            bool? result = dialog.ShowDialog(Window);
+            bool? result = dialog.ShowDialog((Window)View);
             if (result != null && result.Value)
                 FactorioDirectory = dialog.SelectedPath;
         }
@@ -255,7 +256,7 @@ namespace ModMyFactory.ViewModels
         private void SelectModDirectory()
         {
             var dialog = new VistaFolderBrowserDialog();
-            bool? result = dialog.ShowDialog(Window);
+            bool? result = dialog.ShowDialog((Window)View);
             if (result != null && result.Value)
                 ModDirectory = dialog.SelectedPath;
         }

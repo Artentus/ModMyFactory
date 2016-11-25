@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
-using ModMyFactory.MVVM;
-using ModMyFactory.Views;
+using WPFCore;
+using WPFCore.Commands;
 
 namespace ModMyFactory.ViewModels
 {
-    sealed class AboutViewModel : ViewModelBase<AboutWindow>
+    sealed class AboutViewModel : ViewModelBase
     {
         public string VersionString => "v" + App.Instance.AssemblyVersion.ToString(3);
 

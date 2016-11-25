@@ -6,9 +6,10 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
-using ModMyFactory.MVVM;
 using ModMyFactory.Helpers;
 using ModMyFactory.ViewModels;
+using WPFCore;
+using WPFCore.Commands;
 
 namespace ModMyFactory.Models
 {

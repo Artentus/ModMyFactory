@@ -81,6 +81,10 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="wpfcore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Artentus.WPFCore.1.0.0\lib\net452\wpfcore.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="xdelta, Version=1.0.6168.31138, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Xdelta\xdelta.dll</HintPath>
@@ -122,6 +126,7 @@
     <Compile Include="Models\UpdateTarget.cs" />
     <Compile Include="ModManager.cs" />
     <Compile Include="Export\ModpackExportTemplate.cs" />
+    <Compile Include="MVVM\LayoutRoundingWindow.cs" />
     <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\ModUpdateInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\UpdateTargetSorter.cs" />
@@ -169,8 +174,6 @@
     <Compile Include="Models\ModReference.cs" />
     <Compile Include="MVVM\Sorters\ModReferenceSorter.cs" />
     <Compile Include="MVVM\Sorters\ModSorter.cs" />
-    <Compile Include="MVVM\IViewModelBase.cs" />
-    <Compile Include="MVVM\ViewModelBoundWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ViewModels\ProgressViewModel.cs" />
     <Compile Include="Views\ProgressWindow.xaml.cs">
@@ -180,7 +183,6 @@
     <Compile Include="MVVM\DragDropReadyListBoxItem.cs" />
     <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="MVVM\MenuItemProperties.cs" />
-    <Compile Include="MVVM\ViewModelBase.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Models\UpdateSearchResult.cs" />
     <Compile Include="ViewModels\VersionManagementViewModel.cs" />
@@ -196,7 +198,6 @@
     <Compile Include="Models\Modpack.cs" />
     <Compile Include="ModTemplateList.cs" />
     <Compile Include="MVVM\Converters\MultiplyConverter.cs" />
-    <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\SettingsWindow.xaml.cs">
@@ -314,7 +315,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MVVM\NotifyPropertyChangedBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

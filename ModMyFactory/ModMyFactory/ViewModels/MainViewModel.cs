@@ -17,21 +17,24 @@ using System.Windows.Data;
 using ModMyFactory.Export;
 using ModMyFactory.Helpers;
 using ModMyFactory.Lang;
-using ModMyFactory.MVVM;
 using Ookii.Dialogs.Wpf;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.Views;
 using ModMyFactory.Web;
 using ModMyFactory.Web.ModApi;
+using WPFCore;
+using WPFCore.Commands;
 
 namespace ModMyFactory.ViewModels
 {
-    sealed class MainViewModel : ViewModelBase<MainWindow>
+    sealed class MainViewModel : ViewModelBase
     {
         static MainViewModel instance;
 
         public static MainViewModel Instance => instance ?? (instance = new MainViewModel());
+
+        public MainWindow Window => (MainWindow)View;
 
         FactorioVersion selectedVersion;
         string modsFilter;
@@ -531,7 +534,8 @@ namespace ModMyFactory.ViewModels
                 if (modInfos != null)
                 {
                     var modsWindow = new OnlineModsWindow() { Owner = Window };
-                    modsWindow.ViewModel.Mods = modInfos;
+                    var modsViewModel = (OnlineModsViewModel)modsWindow.ViewModel;
+                    modsViewModel.Mods = modInfos;
 
                     modsWindow.ShowDialog();
                 }
@@ -616,16 +620,17 @@ namespace ModMyFactory.ViewModels
             if (result.HasValue && result.Value)
             {
                 var progressWindow = new ProgressWindow() { Owner = Window };
-                progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModsAction");
+                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModsAction");
 
                 var cancellationSource = new CancellationTokenSource();
-                progressWindow.ViewModel.CanCancel = true;
-                progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+                progressViewModel.CanCancel = true;
+                progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
                 var progress = new Progress<Tuple<double, string>>(info =>
                 {
-                    progressWindow.ViewModel.Progress = info.Item1;
-                    progressWindow.ViewModel.ProgressDescription = info.Item2;
+                    progressViewModel.Progress = info.Item1;
+                    progressViewModel.ProgressDescription = info.Item2;
                 });
 
                 Task processModsTask = AddModsFromFilesInner(dialog.FileNames, progress, cancellationSource.Token, progressWindow);
@@ -690,9 +695,10 @@ namespace ModMyFactory.ViewModels
                 }
 
                 var progressWindow = new ProgressWindow() { Owner = Window };
-                progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModAction");
-                progressWindow.ViewModel.ProgressDescription = directory.Name;
-                progressWindow.ViewModel.IsIndeterminate = true;
+                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModAction");
+                progressViewModel.ProgressDescription = directory.Name;
+                progressViewModel.IsIndeterminate = true;
 
                 moveDirectoryTask = moveDirectoryTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                 progressWindow.ShowDialog();
@@ -731,6 +737,7 @@ namespace ModMyFactory.ViewModels
         private void CreateLink()
         {
             var propertiesWindow = new LinkPropertiesWindow() { Owner = Window };
+            var propertiesViewModel = (LinkPropertiesViewModel)propertiesWindow.ViewModel;
             bool? result = propertiesWindow.ShowDialog();
             if (result.HasValue && result.Value)
             {
@@ -743,8 +750,8 @@ namespace ModMyFactory.ViewModels
                 {
                     string applicationPath = Path.GetFullPath(Assembly.GetExecutingAssembly().Location);
                     string iconPath = Path.Combine(App.Instance.ApplicationDirectoryPath, "Factorio_Icon.ico");
-                    string versionString = propertiesWindow.ViewModel.SelectedVersion.VersionString;
-                    string modpackName = propertiesWindow.ViewModel.SelectedModpack?.Name;
+                    string versionString = propertiesViewModel.SelectedVersion.VersionString;
+                    string modpackName = propertiesViewModel.SelectedModpack?.Name;
 
                     string arguments = $"--factorio-version=\"{versionString}\"";
                     if (!string.IsNullOrEmpty(modpackName)) arguments += $" --modpack=\"{modpackName}\"";
@@ -756,6 +763,7 @@ namespace ModMyFactory.ViewModels
         private void ExportModpacks()
         {
             var exportWindow = new ModpackExportWindow() { Owner = Window };
+            var exportViewModel = (ModpackExportViewModel)exportWindow.ViewModel;
             bool? result = exportWindow.ShowDialog();
             if (result.HasValue && result.Value)
             {
@@ -768,7 +776,7 @@ namespace ModMyFactory.ViewModels
                 {
                     ExportTemplate template = ModpackExport.CreateTemplate(
                         exportWindow.ModpackListBox.SelectedItems.Cast<Modpack>(),
-                        exportWindow.ViewModel.IncludeVersionInfo);
+                        exportViewModel.IncludeVersionInfo);
                     ModpackExport.ExportTemplate(template, dialog.FileName);
                 }
             }
@@ -915,17 +923,18 @@ namespace ModMyFactory.ViewModels
             if (GlobalCredentials.Instance.LogIn(Window, out token))
             {
                 var progressWindow = new ProgressWindow() { Owner = Window };
-                progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
+                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
 
                 var progress = new Progress<Tuple<double, string>>(info =>
                 {
-                    progressWindow.ViewModel.Progress = info.Item1;
-                    progressWindow.ViewModel.ProgressDescription = string.Format(App.Instance.GetLocalizedResourceString("DownloadingDescription"), info.Item2);
+                    progressViewModel.Progress = info.Item1;
+                    progressViewModel.ProgressDescription = string.Format(App.Instance.GetLocalizedResourceString("DownloadingDescription"), info.Item2);
                 });
 
                 var cancellationSource = new CancellationTokenSource();
-                progressWindow.ViewModel.CanCancel = true;
-                progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+                progressViewModel.CanCancel = true;
+                progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
                 Task updateTask = DownloadModsAsyncInner(modReleases, token, progress, cancellationSource.Token);
                 Task closeWindowTask = updateTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
@@ -941,17 +950,18 @@ namespace ModMyFactory.ViewModels
             ExportTemplate template = ModpackExport.ImportTemplate(modpackFile);
 
             var progressWindow = new ProgressWindow() { Owner = Window };
-            progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
+            var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+            progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
 
             var progress = new Progress<Tuple<double, string>>(info =>
             {
-                progressWindow.ViewModel.Progress = info.Item1;
-                progressWindow.ViewModel.ProgressDescription = info.Item2;
+                progressViewModel.Progress = info.Item1;
+                progressViewModel.ProgressDescription = info.Item2;
             });
 
             var cancellationSource = new CancellationTokenSource();
-            progressWindow.ViewModel.CanCancel = true;
-            progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+            progressViewModel.CanCancel = true;
+            progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
             Tuple<List<ModRelease>, List<Tuple<Mod, ModExportTemplate>>> toDownloadResult;
             try
@@ -1181,7 +1191,7 @@ namespace ModMyFactory.ViewModels
             }
             else if (extractedMod != null)
             {
-                DirectoryInfo modDirectory = await Task.Run<DirectoryInfo>(() =>
+                DirectoryInfo modDirectory = await Task.Run(() =>
                 {
                     DirectoryInfo modsDirectory = App.Instance.Settings.GetModDirectory(modUpdate.NewestRelease.FactorioVersion);
                     ZipFile.ExtractToDirectory(modFile.FullName, modsDirectory.FullName);
@@ -1251,17 +1261,18 @@ namespace ModMyFactory.ViewModels
         private async Task UpdateMods()
         {
             var progressWindow = new ProgressWindow() { Owner = Window };
-            progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("SearchingForUpdatesAction");
+            var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+            progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("SearchingForUpdatesAction");
 
             var progress = new Progress<Tuple<double, string>>(info =>
             {
-                progressWindow.ViewModel.Progress = info.Item1;
-                progressWindow.ViewModel.ProgressDescription = info.Item2;
+                progressViewModel.Progress = info.Item1;
+                progressViewModel.ProgressDescription = info.Item2;
             });
 
             var cancellationSource = new CancellationTokenSource();
-            progressWindow.ViewModel.CanCancel = true;
-            progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+            progressViewModel.CanCancel = true;
+            progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
             List<ModUpdateInfo> modUpdates;
             try
@@ -1295,7 +1306,8 @@ namespace ModMyFactory.ViewModels
                 if (modUpdates.Count > 0)
                 {
                     var updateWindow = new ModUpdateWindow() { Owner = Window };
-                    updateWindow.ViewModel.ModsToUpdate = modUpdates;
+                    var updateViewModel = (ModUpdateViewModel)updateWindow.ViewModel;
+                    updateViewModel.ModsToUpdate = modUpdates;
                     bool? result = updateWindow.ShowDialog();
 
                     if (result.HasValue && result.Value)
@@ -1304,17 +1316,18 @@ namespace ModMyFactory.ViewModels
                         if (GlobalCredentials.Instance.LogIn(Window, out token))
                         {
                             progressWindow = new ProgressWindow() { Owner = Window };
-                            progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("UpdatingModsAction");
+                            progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                            progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("UpdatingModsAction");
 
                             progress = new Progress<Tuple<double, string>>(info =>
                             {
-                                progressWindow.ViewModel.Progress = info.Item1;
-                                progressWindow.ViewModel.ProgressDescription = info.Item2;
+                                progressViewModel.Progress = info.Item1;
+                                progressViewModel.ProgressDescription = info.Item2;
                             });
 
                             cancellationSource = new CancellationTokenSource();
-                            progressWindow.ViewModel.CanCancel = true;
-                            progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+                            progressViewModel.CanCancel = true;
+                            progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
                             Task updateTask = UpdateModsAsyncInner(modUpdates, token, progress, cancellationSource.Token);
 
@@ -1377,7 +1390,8 @@ namespace ModMyFactory.ViewModels
             Settings settings = App.Instance.Settings;
 
             var settingsWindow = new SettingsWindow() { Owner = Window };
-            settingsWindow.ViewModel.Reset();
+            var settingsViewModel = (SettingsViewModel)settingsWindow.ViewModel;
+            settingsViewModel.Reset();
             settingsWindow.SaveCredentialsBox.IsChecked = settings.SaveCredentials;
 
             bool? result = settingsWindow.ShowDialog();
@@ -1386,43 +1400,43 @@ namespace ModMyFactory.ViewModels
                 DirectoryInfo oldFactorioDirectory = settings.GetFactorioDirectory();
                 DirectoryInfo oldModDirectory = settings.GetModDirectory();
 
-                if (settingsWindow.ViewModel.ManagerModeIsPerFactorioVersion)
+                if (settingsViewModel.ManagerModeIsPerFactorioVersion)
                 {
                     settings.ManagerMode = ManagerMode.PerFactorioVersion;
                 }
-                else if (settingsWindow.ViewModel.ManagerModeIsGlobal)
+                else if (settingsViewModel.ManagerModeIsGlobal)
                 {
                     settings.ManagerMode = ManagerMode.Global;
                 }
-                if (settingsWindow.ViewModel.FactorioDirectoryIsAppData)
+                if (settingsViewModel.FactorioDirectoryIsAppData)
                 {
                     settings.FactorioDirectoryOption = DirectoryOption.AppData;
                     settings.FactorioDirectory = string.Empty;
                 }
-                else if (settingsWindow.ViewModel.FactorioDirectoryIsAppDirectory)
+                else if (settingsViewModel.FactorioDirectoryIsAppDirectory)
                 {
                     settings.FactorioDirectoryOption = DirectoryOption.ApplicationDirectory;
                     settings.FactorioDirectory = string.Empty;
                 }
-                else if (settingsWindow.ViewModel.FactorioDirectoryIsCustom)
+                else if (settingsViewModel.FactorioDirectoryIsCustom)
                 {
                     settings.FactorioDirectoryOption = DirectoryOption.Custom;
-                    settings.FactorioDirectory = settingsWindow.ViewModel.FactorioDirectory;
+                    settings.FactorioDirectory = settingsViewModel.FactorioDirectory;
                 }
-                if (settingsWindow.ViewModel.ModDirectoryIsAppData)
+                if (settingsViewModel.ModDirectoryIsAppData)
                 {
                     settings.ModDirectoryOption = DirectoryOption.AppData;
                     settings.ModDirectory = string.Empty;
                 }
-                else if (settingsWindow.ViewModel.ModDirectoryIsAppDirectory)
+                else if (settingsViewModel.ModDirectoryIsAppDirectory)
                 {
                     settings.ModDirectoryOption = DirectoryOption.ApplicationDirectory;
                     settings.ModDirectory = string.Empty;
                 }
-                else if (settingsWindow.ViewModel.ModDirectoryIsCustom)
+                else if (settingsViewModel.ModDirectoryIsCustom)
                 {
                     settings.ModDirectoryOption = DirectoryOption.Custom;
-                    settings.ModDirectory = settingsWindow.ViewModel.ModDirectory;
+                    settings.ModDirectory = settingsViewModel.ModDirectory;
                 }
                 settings.Save();
 
@@ -1430,9 +1444,10 @@ namespace ModMyFactory.ViewModels
                 DirectoryInfo newModDirectory = settings.GetModDirectory();
 
                 var progressWindow = new ProgressWindow() { Owner = Window };
-                progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("MovingDirectoriesAction");
-                progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
-                progressWindow.ViewModel.IsIndeterminate = true;
+                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("MovingDirectoriesAction");
+                progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
+                progressViewModel.IsIndeterminate = true;
 
                 Task moveDirectoriesTask = MoveDirectories(oldFactorioDirectory, oldModDirectory, newFactorioDirectory, newModDirectory);
 

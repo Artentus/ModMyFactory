@@ -1,4 +1,4 @@
-﻿<mvvm:ViewModelBoundWindow x:Class="ModMyFactory.Views.AboutWindow" x:ClassModifier="internal" x:TypeArguments="vm:AboutViewModel"
+﻿<mvvm:LayoutRoundingWindow x:Class="ModMyFactory.Views.AboutWindow" x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -126,4 +126,4 @@
 
         <Button Grid.Row="7" Grid.Column="2" Margin="2" HorizontalAlignment="Right" Content="{DynamicResource CloseButton}" IsDefault="True" IsCancel="True"/>
     </Grid>
-</mvvm:ViewModelBoundWindow>
+</mvvm:LayoutRoundingWindow>

@@ -1,14 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
-using ModMyFactory.MVVM;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
-using ModMyFactory.Views;
+using WPFCore;
 
 namespace ModMyFactory.ViewModels
 {
-    sealed class LinkPropertiesViewModel : ViewModelBase<LinkPropertiesWindow>
+    sealed class LinkPropertiesViewModel : ViewModelBase
     {
         FactorioVersion selectedVersion;
         Modpack selectedModpack;

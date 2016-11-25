@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using ModMyFactory.MVVM;
+using WPFCore;
 
 namespace ModMyFactory.Web
 {

@@ -13,19 +13,22 @@ using System.Windows;
 using System.Windows.Data;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
-using ModMyFactory.MVVM;
 using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.Views;
 using ModMyFactory.Web;
 using ModMyFactory.Web.ModApi;
+using WPFCore;
+using WPFCore.Commands;
 
 namespace ModMyFactory.ViewModels
 {
-    sealed class OnlineModsViewModel : ViewModelBase<OnlineModsWindow>
+    sealed class OnlineModsViewModel : ViewModelBase
     {
         static OnlineModsViewModel instance;
 
         public static OnlineModsViewModel Instance => instance ?? (instance = new OnlineModsViewModel());
+
+        public OnlineModsWindow Window => (OnlineModsWindow)View;
 
         ListCollectionView modsView;
         List<ModInfo> mods;
@@ -219,14 +222,15 @@ namespace ModMyFactory.ViewModels
             if (GlobalCredentials.Instance.LogIn(Window, out token))
             {
                 var progressWindow = new ProgressWindow { Owner = Window };
-                progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
-                progressWindow.ViewModel.ProgressDescription = string.Format(App.Instance.GetLocalizedResourceString("DownloadingDescription"), selectedRelease.FileName);
+                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
+                progressViewModel.ProgressDescription = string.Format(App.Instance.GetLocalizedResourceString("DownloadingDescription"), selectedRelease.FileName);
 
-                progressWindow.ViewModel.CanCancel = true;
+                progressViewModel.CanCancel = true;
                 var cancellationSource = new CancellationTokenSource();
-                progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+                progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
-                var progress = new Progress<double>(p => progressWindow.ViewModel.Progress = p);
+                var progress = new Progress<double>(p => progressViewModel.Progress = p);
 
                 Mod newMod;
                 try
@@ -295,22 +299,23 @@ namespace ModMyFactory.ViewModels
 
                 var cancellationSource = new CancellationTokenSource();
                 var progressWindow = new ProgressWindow { Owner = Window };
-                progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("UpdatingAction");
-                progressWindow.ViewModel.ProgressDescription = string.Format(App.Instance.GetLocalizedResourceString("DownloadingDescription"), newestRelease.FileName);
-                progressWindow.ViewModel.CanCancel = true;
-                progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("UpdatingAction");
+                progressViewModel.ProgressDescription = string.Format(App.Instance.GetLocalizedResourceString("DownloadingDescription"), newestRelease.FileName);
+                progressViewModel.CanCancel = true;
+                progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
                 IProgress<double> progress = new Progress<double>(p =>
                 {
                     if (p > 1)
                     {
-                        progressWindow.ViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
-                        progressWindow.ViewModel.IsIndeterminate = true;
-                        progressWindow.ViewModel.CanCancel = false;
+                        progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
+                        progressViewModel.IsIndeterminate = true;
+                        progressViewModel.CanCancel = false;
                     }
                     else
                     {
-                        progressWindow.ViewModel.Progress = p;
+                        progressViewModel.Progress = p;
                     }
                 });
 
