@@ -374,10 +374,11 @@ namespace ModMyFactory.ViewModels
                         string name = modFolder.Name.Split('_')[0];
                         if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
                         {
-                            modFolder.MoveToAsync(Path.Combine(globalModPath, modFolder.Name)).Wait();
+                            string newPath = Path.Combine(globalModPath, modFolder.Name);
+                            modFolder.MoveToAsync(newPath).Wait();
                             
                             MainViewModel.Instance.Window.Dispatcher.Invoke(
-                                () => Mods.Add(new ExtractedMod(name, factorioVersion, modFolder,
+                                () => Mods.Add(new ExtractedMod(name, factorioVersion, new DirectoryInfo(newPath), 
                                     Mods, MainViewModel.Instance.Modpacks,
                                     MainViewModel.Instance.Window)));
                         }
