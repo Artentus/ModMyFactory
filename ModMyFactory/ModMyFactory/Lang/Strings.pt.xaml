@@ -339,7 +339,7 @@
     <sys:String x:Key="ModpackExportWindowTitle">Seleccione os modpacks para exportar</sys:String>
     
     <!-- options -->
-    <sys:String x:Key="IncludeVersionInfoOption">Incluir infromação da versão</sys:String>
+    <sys:String x:Key="IncludeVersionInfoOption">Incluir informação da versão</sys:String>
     
     <!-- tooltips -->
     <sys:String x:Key="IncludeVersionsToolTip">Esta opção salva as versões dos mods exportados para o ficheiro.&#x0a;Ao importar este ficheiro o ModMyFactory vai fazer download das versões específicas dos mods.</sys:String>
