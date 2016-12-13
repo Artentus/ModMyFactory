@@ -25,9 +25,9 @@
     <sys:String x:Key="Information.32Bit.Title">Detectado Windows 32 bit</sys:String>
     
     <sys:String x:Key="Information.ModExistsPerVersion.Message">O mod '{0}' para Factorio {1} já existe!</sys:String>
-    <sys:String x:Key="Information.ModExistsPerVersion.Title">Mod skipped</sys:String>
+    <sys:String x:Key="Information.ModExistsPerVersion.Title">Mod ignorado</sys:String>
     
-    <sys:String x:Key="Information.ModExists.Message">The mod '{0}' already exists!</sys:String>
+    <sys:String x:Key="Information.ModExists.Message">O mod '{0}' já existe!</sys:String>
     <sys:String x:Key="Information.ModExists.Title">Mod ignorado</sys:String>
     
     <sys:String x:Key="Error.InvalidModArchive.Message">O arquivo ZIP '{0}' não contém um mod válido.</sys:String>
@@ -37,10 +37,10 @@
     <sys:String x:Key="Error.InvalidModFolder.Title">Erro ao adicionar mod!</sys:String>
 
     <sys:String x:Key="Information.NoModUpdates.Message">Todos os seus mods estão actualizados.</sys:String>
-    <sys:String x:Key="Information.NoModUpdates.Title">Nenhum update encontrado</sys:String>
+    <sys:String x:Key="Information.NoModUpdates.Title">Nenhuma actualização encontrada</sys:String>
     
     <sys:String x:Key="Warning.HasConflicts.Message">Ocorreram os conflitos apresentados ao tentar importar o modpack do ficheiro:</sys:String>
-    <sys:String x:Key="Warning.HasConflicts.Title">Ficheiro Modpack causa conflito.</sys:String>
+    <sys:String x:Key="Warning.HasConflicts.Title">Ficheiro modpack causa conflito.</sys:String>
     
     <sys:String x:Key="Question.Update.Message">Está a usar uma versão antiga do ModMyFactory (está a utilizar a versão {0}, a versão mais recente é {1}).&#x0a;Quer actualizar para a nova versão?</sys:String>
     <sys:String x:Key="Question.Update.Title">Actualização disponível</sys:String>
@@ -55,7 +55,7 @@
     <sys:String x:Key="Error.InvalidFactorioArchive.Title">Arquivo inválido!</sys:String>
 
     <sys:String x:Key="Question.DeleteFactorioArchive.Message">Quer apagar o ficheiro de origem?</sys:String>
-    <sys:String x:Key="Question.DeleteFactorioArchive.Title">Apagar Fiheiro?</sys:String>
+    <sys:String x:Key="Question.DeleteFactorioArchive.Title">Apagar ficheiro?</sys:String>
 
     <sys:String x:Key="Error.InvalidFactorioFolder.Message">Esta pasta não contém uma instalação válida do Factorio.</sys:String>
     <sys:String x:Key="Error.InvalidFactorioFolder.Title">Pasta inválida!</sys:String>
@@ -73,13 +73,14 @@
     <sys:String x:Key="Error.FactorioUpdaterCritical.Title">Erro crítico no actualizador!</sys:String>
     
     <sys:String x:Key="Information.NoFactorioUpdate.Message">Esta versão do Factorio está actualizada.</sys:String>
-    <sys:String x:Key="Information.NoFactorioUpdate.Title">Nenhum update disponível</sys:String>
+    <sys:String x:Key="Information.NoFactorioUpdate.Title">Nenhuma actualização disponível</sys:String>
     
     <sys:String x:Key="Question.RemoveFactorioVersion.Message">Quer mesmo apagar esta versão do Factorio?&#x0a;Esta acção vai apagar do seu disco rígido todos os ficheiros correspondentes.</sys:String>
     <sys:String x:Key="Question.RemoveFactorioVersion.Title">Confirmação</sys:String>
 
     
-    <!-- file type descriptions -->Arquivos-ZIP-Archives</sys:String>
+    <!-- file type descriptions -->
+    <sys:String x:Key="ZipDescription">Arquivos ZIP</sys:String>
     <sys:String x:Key="LnkDescription">Atalhos</sys:String>
     <sys:String x:Key="FmpDescription">Modpacks do Factorio</sys:String>
     
@@ -169,7 +170,7 @@
     <sys:String x:Key="InfoMenuItem">_Informações</sys:String>
     <sys:String x:Key="FactorioComMenuItem">Factorio.com</sys:String>
     <sys:String x:Key="FactorioModsComMenuItem">Factoriomods.com</sys:String>
-    <sys:String x:Key="ForumThreadMenuItem">ModMyFactory- Tópico no fórum</sys:String>
+    <sys:String x:Key="ForumThreadMenuItem">ModMyFactory - Tópico no fórum</sys:String>
     <sys:String x:Key="CheckUpdateMenuItem">Procurar actualizações</sys:String>
     <sys:String x:Key="AboutMenuItem">Acerca de ModMyFactory</sys:String>
     <sys:String x:Key="HelpMenuItem">Ajuda</sys:String>
@@ -212,7 +213,7 @@
     <sys:String x:Key="VersionManagementWindowTitle">Controlador de versões</sys:String>
 
     <!-- buttons -->
-    <sys:String x:Key="AddZipButton">Adicionar a partir de arquvio ZIP</sys:String>
+    <sys:String x:Key="AddZipButton">Adicionar a partir de arquivo ZIP</sys:String>
     <sys:String x:Key="AddFolderButton">Adicionar a partir de uma pasta</sys:String>
     <TextBlock x:Key="SelectSteamButton" TextAlignment="Center">Seleccionar&#x0a;versão Steam</TextBlock>
     <sys:String x:Key="OpenFolderButton">Abrir pasta</sys:String>
@@ -234,8 +235,8 @@
 
     <!-- group headers -->
     <sys:String x:Key="ManagerModeGroupHeader">Controlador de versões</sys:String>
-    <sys:String x:Key="FactorioDirectoryGroupHeader">Loxalização do Factorio</sys:String>
-    <sys:String x:Key="ModDirectoryGroupHeader">Loxalização dos Mods</sys:String>
+    <sys:String x:Key="FactorioDirectoryGroupHeader">Localização do Factorio</sys:String>
+    <sys:String x:Key="ModDirectoryGroupHeader">Localização dos Mods</sys:String>
     <sys:String x:Key="CredentialsGroupHeader">Detalhes de login</sys:String>
 
     
@@ -243,7 +244,7 @@
     <sys:String x:Key="PerFactorioVersionGroupItem">para cada versão do Factorio</sys:String>
     <sys:String x:Key="GlobalGroupItem">Global</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
-    <sys:String x:Key="AppDirectoryGroupItem">Pasta da applicação</sys:String>
+    <sys:String x:Key="AppDirectoryGroupItem">Pasta da aplicação</sys:String>
     <sys:String x:Key="SelectGroupItem">Seleccionar:</sys:String>
 
     <!-- buttons -->
@@ -339,7 +340,7 @@
     <sys:String x:Key="ModpackExportWindowTitle">Seleccione os modpacks para exportar</sys:String>
     
     <!-- options -->
-    <sys:String x:Key="IncludeVersionInfoOption">Incluir infromação da versão</sys:String>
+    <sys:String x:Key="IncludeVersionInfoOption">Incluir informação da versão</sys:String>
     
     <!-- tooltips -->
     <sys:String x:Key="IncludeVersionsToolTip">Esta opção salva as versões dos mods exportados para o ficheiro.&#x0a;Ao importar este ficheiro o ModMyFactory vai fazer download das versões específicas dos mods.</sys:String>
