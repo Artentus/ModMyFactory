@@ -213,8 +213,8 @@
     <sys:String x:Key="VersionManagementWindowTitle">Controlador de versões</sys:String>
 
     <!-- buttons -->
-    <sys:String x:Key="AddZipButton">Adicionar a partir de arquivo ZIP</sys:String>
-    <sys:String x:Key="AddFolderButton">Adicionar a partir de uma pasta</sys:String>
+    <TextBlock x:Key="AddZipButton" TextAlignment="Center">Adicionar a partir&#x0a;de arquivo ZIP</TextBlock>
+    <TextBlock x:Key="AddFolderButton" TextAlignment="Center">Adicionar a partir&#x0a;de uma pasta</TextBlock>
     <TextBlock x:Key="SelectSteamButton" TextAlignment="Center">Seleccionar&#x0a;versão Steam</TextBlock>
     <sys:String x:Key="OpenFolderButton">Abrir pasta</sys:String>
     <sys:String x:Key="RemoveButton">Remover</sys:String>
