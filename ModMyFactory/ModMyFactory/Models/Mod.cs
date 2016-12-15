@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using ModMyFactory.Helpers;
 using ModMyFactory.ViewModels;
@@ -346,5 +347,10 @@ namespace ModMyFactory.Models
 
             DeleteCommand = new RelayCommand(() => Delete(parentCollection, modpackCollection, messageOwner));
         }
+
+        /// <summary>
+        /// Moves this mod to a specified directory.
+        /// </summary>
+        public abstract Task MoveTo(DirectoryInfo destinationDirectory);
     }
 }

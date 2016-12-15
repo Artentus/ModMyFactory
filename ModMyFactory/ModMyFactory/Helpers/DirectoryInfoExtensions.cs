@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ModMyFactory.Helpers
@@ -41,6 +42,23 @@ namespace ModMyFactory.Helpers
             string firstPath = first.FullName.TrimEnd('\\');
             string secondPath = second.FullName.TrimEnd('\\');
             return string.Equals(firstPath, secondPath, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        /// <summary>
+        /// Checks if this directory is empty.
+        /// </summary>
+        /// <returns>Returns true if the directory is empty, otherwise false.</returns>
+        public static bool IsEmpty(this DirectoryInfo directory)
+        {
+            return !directory.EnumerateFileSystemInfos().Any();
+        }
+
+        /// <summary>
+        /// Deletes this directory if it is empty.
+        /// </summary>
+        public static void DeleteIfEmpty(this DirectoryInfo directory)
+        {
+            if (directory.IsEmpty()) directory.Delete();
         }
     }
 }

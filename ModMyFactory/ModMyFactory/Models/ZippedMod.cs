@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Threading.Tasks;
 using System.Windows;
+using ModMyFactory.Helpers;
 
 namespace ModMyFactory.Models
 {
@@ -66,6 +68,11 @@ namespace ModMyFactory.Models
             File.Delete();
             File = newFile;
             SetInfo(File);
+        }
+
+        public override async Task MoveTo(DirectoryInfo destinationDirectory)
+        {
+            await File.MoveToAsync(Path.Combine(destinationDirectory.FullName, File.Name));
         }
     }
 }

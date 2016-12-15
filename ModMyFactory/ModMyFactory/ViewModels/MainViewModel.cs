@@ -1369,21 +1369,47 @@ namespace ModMyFactory.ViewModels
             bool moveFactorioDirectory = !newFactorioDirectory.DirectoryEquals(oldFactorioDirectory);
             if (oldFactorioDirectory.Exists && moveFactorioDirectory)
             {
+                if (!newFactorioDirectory.Exists) newFactorioDirectory.Create();
+
+                DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
                 foreach (var version in FactorioVersions)
                 {
                     version.DeleteLinks();
 
-                    DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
-                    var versionDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.VersionString));
-                    version.UpdateDirectory(versionDirectory);
+                    if (version.IsFileSystemEditable)
+                    {
+                        var versionDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.VersionString));
+                        await version.Directory.MoveToAsync(versionDirectory.FullName);
+                        version.UpdateDirectory(versionDirectory);
+                    }
                 }
-                await oldFactorioDirectory.MoveToAsync(newFactorioDirectory.FullName);
+                
+                oldFactorioDirectory.DeleteIfEmpty();
             }
 
             bool moveModDirectory = !newModDirectory.DirectoryEquals(oldModDirectory);
             if (oldModDirectory.Exists && moveModDirectory)
             {
-                await oldModDirectory.MoveToAsync(newModDirectory.FullName);
+                if (!newModDirectory.Exists) newModDirectory.Create();
+
+                foreach (var mod in Mods)
+                {
+                    var dir = new DirectoryInfo(Path.Combine(newModDirectory.FullName, mod.FactorioVersion.ToString(2)));
+                    if (!dir.Exists) dir.Create();
+                    await mod.MoveTo(dir);
+                }
+                ModManager.SaveTemplates();
+
+                foreach (var version in FactorioVersions)
+                {
+                    if (!version.IsSpecialVersion)
+                    {
+                        var dir = new DirectoryInfo(Path.Combine(oldModDirectory.FullName, version.Version.ToString(2)));
+                        if (dir.Exists) dir.Delete(true);
+                    }
+                }
+                
+                oldModDirectory.DeleteIfEmpty();
             }
 
             foreach (var version in FactorioVersions)

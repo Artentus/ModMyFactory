@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using ModMyFactory.Zlib;
 
 namespace ModMyFactory.Helpers
@@ -22,6 +23,11 @@ namespace ModMyFactory.Helpers
             {
                 return Crc32Checksum.Generate(stream);
             }
+        }
+
+        public static async Task MoveToAsync(this FileInfo file, string destination)
+        {
+            await Task.Run(() => file.MoveTo(destination));
         }
     }
 }
