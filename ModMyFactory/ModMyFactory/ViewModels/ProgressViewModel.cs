@@ -2,13 +2,16 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows.Shell;
-using ModMyFactory.MVVM;
 using ModMyFactory.Views;
+using WPFCore;
+using WPFCore.Commands;
 
 namespace ModMyFactory.ViewModels
 {
-    sealed class ProgressViewModel : ViewModelBase<ProgressWindow>
+    sealed class ProgressViewModel : ViewModelBase
     {
+        public ProgressWindow Window => (ProgressWindow)View;
+
         double progress;
         string actionName;
         string progressDescription;

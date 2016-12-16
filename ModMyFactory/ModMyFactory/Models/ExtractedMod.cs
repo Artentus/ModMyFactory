@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using ModMyFactory.Helpers;
 
 namespace ModMyFactory.Models
 {
@@ -56,6 +58,13 @@ namespace ModMyFactory.Models
             Directory.Delete(true);
             Directory = newDirectory;
             SetInfo(newDirectory);
+        }
+
+        public override async Task MoveTo(DirectoryInfo destinationDirectory)
+        {
+            var newDirectory = new DirectoryInfo(Path.Combine(destinationDirectory.FullName, Directory.Name));
+            await Directory.MoveToAsync(newDirectory.FullName);
+            Directory = newDirectory;
         }
     }
 }

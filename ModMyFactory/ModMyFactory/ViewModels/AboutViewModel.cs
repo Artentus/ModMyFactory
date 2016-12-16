@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
-using ModMyFactory.MVVM;
-using ModMyFactory.Views;
+using WPFCore;
+using WPFCore.Commands;
 
 namespace ModMyFactory.ViewModels
 {
-    sealed class AboutViewModel : ViewModelBase<AboutWindow>
+    sealed class AboutViewModel : ViewModelBase
     {
         public string VersionString => "v" + App.Instance.AssemblyVersion.ToString(3);
 
@@ -30,6 +30,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand Translator1Command { get; }
 
+        public RelayCommand Translator2Command { get; }
+
         public AboutViewModel()
         {
             Url1Command = new RelayCommand(() => Process.Start("http://www.iconarchive.com/show/flag-icons-by-famfamfam.html"));
@@ -44,6 +46,7 @@ namespace ModMyFactory.ViewModels
             Contributor2Command = new RelayCommand(() => Process.Start("https://github.com/jodli"));
 
             Translator1Command = new RelayCommand(() => Process.Start("https://github.com/Averssem"));
+            Translator2Command = new RelayCommand(() => Process.Start("https://www.reddit.com/user/blackbat24"));
         }
     }
 }

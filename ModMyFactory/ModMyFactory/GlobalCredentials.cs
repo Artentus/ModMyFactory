@@ -7,10 +7,10 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using ModMyFactory.Helpers;
-using ModMyFactory.MVVM;
 using ModMyFactory.Views;
 using ModMyFactory.Web;
 using Newtonsoft.Json;
+using WPFCore;
 
 namespace ModMyFactory
 {

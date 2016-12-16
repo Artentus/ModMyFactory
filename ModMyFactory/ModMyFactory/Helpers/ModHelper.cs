@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using ModMyFactory.ViewModels;
 using ModMyFactory.Views;
 using ModMyFactory.Web;
 using ModMyFactory.Web.ModApi;
@@ -14,16 +15,17 @@ namespace ModMyFactory.Helpers
         public static async Task<List<ModInfo>> FetchMods(Window progressOwner)
         {
             var progressWindow = new ProgressWindow() { Owner = progressOwner };
-            progressWindow.ViewModel.ActionName = App.Instance.GetLocalizedResourceString("FetchingModsAction");
-            progressWindow.ViewModel.CanCancel = true;
+            var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+            progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("FetchingModsAction");
+            progressViewModel.CanCancel = true;
 
             var progress = new Progress<Tuple<double, string>>(value =>
             {
-                progressWindow.ViewModel.Progress = value.Item1;
-                progressWindow.ViewModel.ProgressDescription = value.Item2;
+                progressViewModel.Progress = value.Item1;
+                progressViewModel.ProgressDescription = value.Item2;
             });
             var cancellationSource = new CancellationTokenSource();
-            progressWindow.ViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+            progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
             Task<List<ModInfo>> fetchModsTask = ModWebsite.GetModsAsync(progress, cancellationSource.Token);
 

@@ -247,6 +247,8 @@ namespace ModMyFactory.FactorioUpdate
             using (var archive = ZipFile.OpenRead(packageFile.FullName))
             {
                 UpdatePackageInfo packageInfo = await GetUpdatePackageInfoAsync(archive);
+                if (!string.Equals(packageInfo.Type, "update", StringComparison.InvariantCultureIgnoreCase))
+                    throw new CriticalUpdaterException(UpdaterErrorType.PackageInvalid);
 
                 int fileCount = packageInfo.UpdatedFiles.Length;
                 int counter = 0;

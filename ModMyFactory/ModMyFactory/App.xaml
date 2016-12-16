@@ -5,16 +5,18 @@
              xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
              xmlns:converter="clr-namespace:ModMyFactory.MVVM.Converters"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:core="clr-namespace:WPFCore.Windows;assembly=wpfcore"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
-            <!-- Only for design time IntelliSense. -->
+            <!-- For design time IntelliSense. -->
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Lang/Strings.en.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <ResourceDictionary x:Key="Strings.de" Source="Lang/Strings.de.xaml"/>
             <ResourceDictionary x:Key="Strings.ru" Source="Lang/Strings.ru.xaml"/>
+            <ResourceDictionary x:Key="Strings.pt" Source="Lang/Strings.pt.xaml"/>
 
             <Color x:Key="BackgroundColor">White</Color>
             <Color x:Key="BorderColor">LightGray</Color>

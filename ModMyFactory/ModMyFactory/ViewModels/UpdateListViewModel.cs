@@ -2,13 +2,12 @@
 using System.ComponentModel;
 using System.Windows.Data;
 using ModMyFactory.Models;
-using ModMyFactory.MVVM;
 using ModMyFactory.MVVM.Sorters;
-using ModMyFactory.Views;
+using WPFCore;
 
 namespace ModMyFactory.ViewModels
 {
-    sealed class UpdateListViewModel : ViewModelBase<UpdateListWindow>
+    sealed class UpdateListViewModel : ViewModelBase
     {
         ListCollectionView updateTargetsView;
         List<UpdateTarget> updateTargets;

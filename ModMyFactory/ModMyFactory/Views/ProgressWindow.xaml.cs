@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Shell;
 using ModMyFactory.Helpers;
+using ModMyFactory.ViewModels;
 using ModMyFactory.Win32;
 
 namespace ModMyFactory.Views
@@ -22,10 +23,11 @@ namespace ModMyFactory.Views
             windowLong = (IntPtr)(windowLong.ToInt64() & (long)~WindowStyles.SystemMenu);
             User32.SetWindowLong(handle, WindowLongIndex.Style, windowLong);
 
+            var viewModel = (ProgressViewModel)ViewModel;
             TaskbarItemInfo = new TaskbarItemInfo
             {
-                ProgressState = ViewModel.IsIndeterminate ? TaskbarItemProgressState.Indeterminate : TaskbarItemProgressState.Normal,
-                ProgressValue = ViewModel.Progress,
+                ProgressState = viewModel.IsIndeterminate ? TaskbarItemProgressState.Indeterminate : TaskbarItemProgressState.Normal,
+                ProgressValue = viewModel.Progress,
             };
         }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
-using ModMyFactory.MVVM;
 using ModMyFactory.Web.ModApi;
+using WPFCore;
 
 namespace ModMyFactory.Models
 {

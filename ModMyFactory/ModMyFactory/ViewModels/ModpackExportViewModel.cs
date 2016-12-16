@@ -4,13 +4,13 @@ using System.ComponentModel;
 using System.Windows.Data;
 using System.Windows.Input;
 using ModMyFactory.Models;
-using ModMyFactory.MVVM;
 using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.Views;
+using WPFCore;
 
 namespace ModMyFactory.ViewModels
 {
-    sealed class ModpackExportViewModel : ViewModelBase<ModpackExportWindow>
+    sealed class ModpackExportViewModel : ViewModelBase
     {
         bool includeVersionInfo;
 
@@ -18,7 +18,7 @@ namespace ModMyFactory.ViewModels
 
         public ObservableCollection<Modpack> Modpacks { get; }
 
-        public bool CanExport => (Window?.ModpackListBox.SelectedItems?.Count ?? 0) > 0;
+        public bool CanExport => ((View as ModpackExportWindow)?.ModpackListBox.SelectedItems?.Count ?? 0) > 0;
 
         public bool IncludeVersionInfo
         {

@@ -1,4 +1,4 @@
-﻿<mvvm:ViewModelBoundWindow x:Class="ModMyFactory.Views.SettingsWindow" x:ClassModifier="internal" x:TypeArguments="vm:SettingsViewModel"
+﻿<mvvm:LayoutRoundingWindow x:Class="ModMyFactory.Views.SettingsWindow" x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -112,4 +112,4 @@
             <Button Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
         </StackPanel>
     </Grid>
-</mvvm:ViewModelBoundWindow>
+</mvvm:LayoutRoundingWindow>

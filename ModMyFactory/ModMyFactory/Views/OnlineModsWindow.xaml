@@ -1,12 +1,12 @@
-﻿<mvvm:ViewModelBoundWindow x:Class="ModMyFactory.Views.OnlineModsWindow" x:ClassModifier="internal" x:TypeArguments="vm:OnlineModsViewModel"
+﻿<mvvm:LayoutRoundingWindow x:Class="ModMyFactory.Views.OnlineModsWindow" x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ModMyFactory.Views"
-        xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
         xmlns:vm="clr-namespace:ModMyFactory.ViewModels"
         xmlns:modApi="clr-namespace:ModMyFactory.Web.ModApi"
+        xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
         mc:Ignorable="d"
         Title="{DynamicResource OnlineModsWindowTitle}" Height="600" Width="800"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
@@ -158,4 +158,4 @@
             <Button IsDefault="True" IsCancel="True" Content="{DynamicResource CloseButton}"/>
         </StackPanel>
     </Grid>
-</mvvm:ViewModelBoundWindow>
+</mvvm:LayoutRoundingWindow>

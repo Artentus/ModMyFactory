@@ -5,9 +5,10 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Data;
-using ModMyFactory.MVVM;
 using ModMyFactory.ViewModels;
 using ModMyFactory.MVVM.Sorters;
+using WPFCore;
+using WPFCore.Commands;
 
 namespace ModMyFactory.Models
 {

@@ -5,6 +5,10 @@
 ModMyFactory is a Factorio mod manager with lots of extra features.
 These include:
 
+#### Access to mods.factorio.com
+Download mods from the official mod portal.
+Update your mods manually or automatically.
+
 #### Modpacks
 Create custom modpacks that can contain as many mods _and_ modpacks as you wish.  
 Modpacks are resolved recursively, so feel free to go as deep as you like.
@@ -26,7 +30,7 @@ Available locations are AppData, the ModMyFactory installation directory and com
 
 #### Localization
 ModMyFactory has full support of localization.  
-Currently available languages are: English, German, Russian (hopefully more to come).
+Currently available languages are: English, German, Russian, Portuguese (hopefully more to come).
 
 ### System requirements
 ModMyFactory has the following system requirements:
