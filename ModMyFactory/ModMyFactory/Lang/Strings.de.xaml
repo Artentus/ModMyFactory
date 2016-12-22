@@ -320,6 +320,9 @@
 
     <!-- headers -->
     <sys:String x:Key="ReleasesHeader">Veröffentlichte Versionen</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="DeleteButton">Löschen</sys:String>
 
 
     <!--

@@ -246,9 +246,9 @@ namespace ModMyFactory.Models
             }
         }
 
-        private void Delete(ICollection<Modpack> parentCollection, Window messageOwner)
+        private void Delete(ICollection<Modpack> parentCollection)
         {
-            if (MessageBox.Show(messageOwner, "Do you really want to delete this modpack?", "Confirm",
+            if (MessageBox.Show("Do you really want to delete this modpack?", "Confirm",
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 foreach (var modpack in parentCollection)
@@ -267,8 +267,7 @@ namespace ModMyFactory.Models
         /// </summary>
         /// <param name="name">The name of the modpack.</param>
         /// <param name="parentCollection">The collection containing this modpack.</param>
-        /// <param name="messageOwner">The window that ownes the deletion message box.</param>
-        public Modpack(string name, ICollection<Modpack> parentCollection, Window messageOwner)
+        public Modpack(string name, ICollection<Modpack> parentCollection)
         {
             this.name = name;
             active = false;
@@ -279,7 +278,7 @@ namespace ModMyFactory.Models
             ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
             ModsView.CustomSort = new ModReferenceSorter();
 
-            DeleteCommand = new RelayCommand(() => Delete(parentCollection, messageOwner));
+            DeleteCommand = new RelayCommand(() => Delete(parentCollection));
             FinishRenameCommand = new RelayCommand(() => Editing = false, () => Editing);
         }
 

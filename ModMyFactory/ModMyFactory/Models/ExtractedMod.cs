@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using ModMyFactory.Helpers;
 
 namespace ModMyFactory.Models
@@ -36,9 +35,8 @@ namespace ModMyFactory.Models
         /// <param name="directory">The mods directory.</param>
         /// <param name="parentCollection">The collection containing this mod.</param>
         /// <param name="modpackCollection">The collection containing all modpacks.</param>
-        /// <param name="messageOwner">The window that ownes the deletion message box.</param>
-        public ExtractedMod(string name, Version version, Version factorioVersion, DirectoryInfo directory, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
-            : base(name, version, factorioVersion, parentCollection, modpackCollection, messageOwner)
+        public ExtractedMod(string name, Version version, Version factorioVersion, DirectoryInfo directory, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
+            : base(name, version, factorioVersion, parentCollection, modpackCollection)
         {
             Directory = directory;
 

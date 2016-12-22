@@ -320,6 +320,9 @@
     
     <!-- headers -->
     <sys:String x:Key="ReleasesHeader">Lançamentos</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="DeleteButton">Delete</sys:String>
 
 
     <!--

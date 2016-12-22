@@ -145,8 +145,8 @@ namespace ModMyFactory
                     var modpacks = new List<Modpack>();
 
                     ModManager.BeginUpdateTemplates();
-                    Mod.LoadMods(mods, modpacks, null);
-                    ModpackTemplateList.Instance.PopulateModpackList(mods, modpacks, null, null);
+                    Mod.LoadMods(mods, modpacks);
+                    ModpackTemplateList.Instance.PopulateModpackList(mods, modpacks, null);
 
                     mods.ForEach(mod => mod.Active = false);
 

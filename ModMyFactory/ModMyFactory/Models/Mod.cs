@@ -25,7 +25,7 @@ namespace ModMyFactory.Models
         /// <param name="parentCollection">The collection to contain the mods.</param>
         /// <param name="modpackCollection">The collection containing all modpacks.</param>
         /// <param name="messageOwner">The window that ownes the deletion message box.</param>
-        public static void LoadMods(ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
+        public static void LoadMods(ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
         {
             var modDirectory = App.Instance.Settings.GetModDirectory();
             if (modDirectory.Exists)
@@ -44,7 +44,7 @@ namespace ModMyFactory.Models
                             {
                                 if (factorioVersion == factorioDirVersion)
                                 {
-                                    var mod = new ZippedMod(name, version, factorioVersion, file, parentCollection, modpackCollection, messageOwner);
+                                    var mod = new ZippedMod(name, version, factorioVersion, file, parentCollection, modpackCollection);
                                     parentCollection.Add(mod);
                                 }
                                 else
@@ -63,7 +63,7 @@ namespace ModMyFactory.Models
                             {
                                 if (factorioVersion == factorioDirVersion)
                                 {
-                                    var mod = new ExtractedMod(name, version, factorioVersion, subDirectory, parentCollection, modpackCollection, messageOwner);
+                                    var mod = new ExtractedMod(name, version, factorioVersion, subDirectory, parentCollection, modpackCollection);
                                     parentCollection.Add(mod);
                                 }
                                 else
@@ -322,9 +322,9 @@ namespace ModMyFactory.Models
         /// </summary>
         protected abstract void DeleteFilesystemObjects();
 
-        private void Delete(ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
+        private void Delete(ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
         {
-            if (MessageBox.Show(messageOwner, "Do you really want to delete this mod?", "Confirm",
+            if (MessageBox.Show("Do you really want to delete this mod?", "Confirm",
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 foreach (var modpack in modpackCollection)
@@ -385,15 +385,14 @@ namespace ModMyFactory.Models
         /// <param name="factorioVersion">The version of Factorio this mod is compatible with.</param>
         /// <param name="parentCollection">The collection containing this mod.</param>
         /// <param name="modpackCollection">The collection containing all modpacks.</param>
-        /// <param name="messageOwner">The window that ownes the deletion message box.</param>
-        protected Mod(string name, Version version, Version factorioVersion, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
+        protected Mod(string name, Version version, Version factorioVersion, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
         {
             Name = name;
             Version = version;
             FactorioVersion = factorioVersion;
             active = ModManager.GetActive(Name, FactorioVersion);
 
-            DeleteCommand = new RelayCommand(() => Delete(parentCollection, modpackCollection, messageOwner));
+            DeleteCommand = new RelayCommand(() => Delete(parentCollection, modpackCollection));
         }
 
         /// <summary>

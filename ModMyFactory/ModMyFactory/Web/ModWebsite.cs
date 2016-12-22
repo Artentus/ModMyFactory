@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.Web.ModApi;
@@ -120,9 +119,8 @@ namespace ModMyFactory.Web
         /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
         /// <param name="parentCollection">The collection to contain the mods.</param>
         /// <param name="modpackCollection">The collection containing all modpacks.</param>
-        /// <param name="messageOwner">The window that ownes the deletion message box.</param>
         public static async Task<Mod> DownloadReleaseAsync(ModRelease release, string username, string token, IProgress<double> progress, CancellationToken cancellationToken,
-            ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
+            ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
         {
             DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory(release.FactorioVersion);
             if (!modDirectory.Exists) modDirectory.Create();
@@ -140,7 +138,7 @@ namespace ModMyFactory.Web
                 {
                     if (factorioVersion == release.FactorioVersion)
                     {
-                        return new ZippedMod(name, version, factorioVersion, modFile, parentCollection, modpackCollection, messageOwner);
+                        return new ZippedMod(name, version, factorioVersion, modFile, parentCollection, modpackCollection);
                     }
                 }
 

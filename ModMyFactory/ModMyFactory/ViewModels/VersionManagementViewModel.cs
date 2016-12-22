@@ -370,9 +370,7 @@ namespace ModMyFactory.ViewModels
                                 modFile.MoveTo(Path.Combine(globalModPath, modFile.Name));
 
                                 MainViewModel.Instance.Window.Dispatcher.Invoke(
-                                    () => Mods.Add(new ZippedMod(name, version, factorioVersion, modFile,
-                                        Mods, MainViewModel.Instance.Modpacks,
-                                        MainViewModel.Instance.Window)));
+                                    () => Mods.Add(new ZippedMod(name, version, factorioVersion, modFile, Mods, MainViewModel.Instance.Modpacks)));
                             }
                         }
                     }
@@ -393,9 +391,7 @@ namespace ModMyFactory.ViewModels
                                 modFolder.MoveToAsync(newPath).Wait();
 
                                 MainViewModel.Instance.Window.Dispatcher.Invoke(
-                                    () => Mods.Add(new ExtractedMod(name, version, factorioVersion, new DirectoryInfo(newPath),
-                                        Mods, MainViewModel.Instance.Modpacks,
-                                        MainViewModel.Instance.Window)));
+                                    () => Mods.Add(new ExtractedMod(name, version, factorioVersion, new DirectoryInfo(newPath), Mods, MainViewModel.Instance.Modpacks)));
                             }
                         }
                     }
