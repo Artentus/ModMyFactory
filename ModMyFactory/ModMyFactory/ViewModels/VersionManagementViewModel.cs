@@ -242,8 +242,9 @@ namespace ModMyFactory.ViewModels
                             DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
                             ZipFile.ExtractToDirectory(archiveFile.FullName, factorioDirectory.FullName);
 
-                            versionDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, "Factorio_" + version.ToString(3)));
-                            versionDirectory.MoveTo(Path.Combine(factorioDirectory.FullName, version.ToString(3)));
+                            string versionString = version.ToString(3);
+                            versionDirectory = factorioDirectory.EnumerateDirectories($"Factorio_{versionString}*").First();
+                            versionDirectory.MoveTo(Path.Combine(factorioDirectory.FullName, versionString));
                         }
                         else
                         {
