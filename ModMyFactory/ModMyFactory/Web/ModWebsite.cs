@@ -133,9 +133,18 @@ namespace ModMyFactory.Web
             await WebHelper.DownloadFileAsync(downloadUrl, null, modFile, progress, cancellationToken);
             if (!cancellationToken.IsCancellationRequested)
             {
-                string name = modFile.NameWithoutExtension();
-                name = name.Substring(0, name.LastIndexOf('_'));
-                return new ZippedMod(name, release.FactorioVersion, modFile, parentCollection, modpackCollection, messageOwner);
+                Version factorioVersion;
+                string name;
+                Version version;
+                if (Mod.ArchiveFileValid(modFile, out factorioVersion, out name, out version))
+                {
+                    if (factorioVersion == release.FactorioVersion)
+                    {
+                        return new ZippedMod(name, version, factorioVersion, modFile, parentCollection, modpackCollection, messageOwner);
+                    }
+                }
+
+                throw new InvalidOperationException("The server sent an invalid mod file.");
             }
 
             return null;

@@ -32,45 +32,90 @@ namespace ModMyFactory.Models
             {
                 foreach (var directory in modDirectory.EnumerateDirectories())
                 {
-                    Version version;
-                    if (Version.TryParse(directory.Name, out version))
+                    Version factorioDirVersion;
+                    if (Version.TryParse(directory.Name, out factorioDirVersion))
                     {
                         foreach (var file in directory.EnumerateFiles("*.zip"))
                         {
-                            string name = file.NameWithoutExtension();
-                            name = name.Substring(0, name.LastIndexOf('_'));
-                            var mod = new ZippedMod(name, version, file, parentCollection, modpackCollection, messageOwner);
-                            parentCollection.Add(mod);
+                            Version factorioVersion;
+                            string name;
+                            Version version;
+                            if (ArchiveFileValid(file, out factorioVersion, out name, out version))
+                            {
+                                if (factorioVersion == factorioDirVersion)
+                                {
+                                    var mod = new ZippedMod(name, version, factorioVersion, file, parentCollection, modpackCollection, messageOwner);
+                                    parentCollection.Add(mod);
+                                }
+                                else
+                                {
+                                    throw new InvalidOperationException($"The mod {name}_{version}.zip is targeting Factorio version {factorioVersion} but resides in directory {factorioDirVersion}.");
+                                }
+                            }
                         }
 
                         foreach (var subDirectory in directory.EnumerateDirectories())
                         {
-                            string name = subDirectory.Name;
-                            name = name.Substring(0, name.LastIndexOf('_'));
-                            var mod = new ExtractedMod(name, version, subDirectory, parentCollection, modpackCollection, messageOwner);
-                            parentCollection.Add(mod);
+                            Version factorioVersion;
+                            string name;
+                            Version version;
+                            if (DirectoryValid(subDirectory, out factorioVersion, out name, out version))
+                            {
+                                if (factorioVersion == factorioDirVersion)
+                                {
+                                    var mod = new ExtractedMod(name, version, factorioVersion, subDirectory, parentCollection, modpackCollection, messageOwner);
+                                    parentCollection.Add(mod);
+                                }
+                                else
+                                {
+                                    throw new InvalidOperationException($"The mod {name}_{version} is targeting Factorio version {factorioVersion} but resides in directory {factorioDirVersion}.");
+                                }
+                            }
                         }
                     }
                 }
             }
         }
 
-        private static bool TryParseInfoFile(Stream stream, out Version version, out string name)
+        private static bool TryParseModName(string fileName, out string name, out Version version)
         {
-            version = null;
             name = null;
+            version = null;
+
+            int index = fileName.LastIndexOf('_');
+            if ((index < 1) || (index >= fileName.Length - 1)) return false;
+
+            name = fileName.Substring(0, index);
+            string versionString = fileName.Substring(index + 1);
+            return Version.TryParse(versionString, out version);
+        }
+
+        private static bool TryParseInfoFile(Stream stream, out Version factorioVersion, out string name, out Version version)
+        {
+            factorioVersion = null;
+            name = null;
+            version = null;
 
             using (var reader = new StreamReader(stream))
             {
-                // Factorio version
                 string content = reader.ReadToEnd();
-                MatchCollection matches = Regex.Matches(content, "\"factorio_version\" *: *\"(?<version>[0-9]+\\.[0-9]+(\\.[0-9]+)?)\"",
+
+                // Factorio version
+                MatchCollection matches = Regex.Matches(content, "\"factorio_version\" *: *\"(?<factorio_version>[0-9]+\\.[0-9]+(\\.[0-9]+)?)\"",
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                if (matches.Count != 1) return false;
+
+                string factorioVersionString = matches[0].Groups["factorio_version"].Value;
+                factorioVersion = Version.Parse(factorioVersionString);
+                factorioVersion = new Version(factorioVersion.Major, factorioVersion.Minor);
+
+                // Version
+                matches = Regex.Matches(content, "\"version\" *: *\"(?<version>[0-9]+(\\.[0-9]+){0,3})\"",
                     RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
                 if (matches.Count != 1) return false;
 
                 string versionString = matches[0].Groups["version"].Value;
                 version = Version.Parse(versionString);
-                version = new Version(version.Major, version.Minor);
 
                 // Name
                 matches = Regex.Matches(content, "\"name\" *: *\"(?<name>.*)\"",
@@ -87,13 +132,19 @@ namespace ModMyFactory.Models
         /// Checks if an archive file contains a valid mod.
         /// </summary>
         /// <param name="archiveFile">The archive file to check.</param>
-        /// <param name="validVersion">Out. The version of the mod contained in the archive file.</param>
+        /// <param name="validFactorioVersion">Out. The version of Factorio the mod contained in the archive file is targeting.</param>
         /// <param name="validName">Out. The name of the mod contained in the archive file.</param>
+        /// <param name="validVersion">Out. The version of the mod contained in the archive file.</param>
         /// <returns>Returns true if the specified archive file contains a valid mod, otherwise false.</returns>
-        public static bool ArchiveFileValid(FileInfo archiveFile, out Version validVersion, out string validName)
+        public static bool ArchiveFileValid(FileInfo archiveFile, out Version validFactorioVersion, out string validName, out Version validVersion)
         {
-            validVersion = null;
+            validFactorioVersion = null;
             validName = null;
+            validVersion = null;
+
+            string fileName;
+            Version fileVersion;
+            if (!TryParseModName(archiveFile.NameWithoutExtension(), out fileName, out fileVersion)) return false;
 
             using (ZipArchive archive = ZipFile.OpenRead(archiveFile.FullName))
             {
@@ -103,7 +154,8 @@ namespace ModMyFactory.Models
                     {
                         using (Stream stream = entry.Open())
                         {
-                            if (TryParseInfoFile(stream, out validVersion, out validName)) return true;
+                            if (TryParseInfoFile(stream, out validFactorioVersion, out validName, out validVersion))
+                                return (validName == fileName) && (validVersion == fileVersion);
                         }
                     }
                 }
@@ -116,20 +168,27 @@ namespace ModMyFactory.Models
         /// Checks if a directory contains a valid mod.
         /// </summary>
         /// <param name="directory">The directory to check.</param>
-        /// <param name="validVersion">Out. The version of the mod contained in the directory.</param>
+        /// <param name="validFactorioVersion">Out. The version of Factorio the mod contained in the archive file is targeting.</param>
         /// <param name="validName">Out. The name of the mod contained in the directory.</param>
+        /// <param name="validVersion">Out. The version of the mod contained in the archive file.</param>
         /// <returns>Returns true if the specified directory contains a valid mod, otherwise false.</returns>
-        public static bool DirectoryValid(DirectoryInfo directory, out Version validVersion, out string validName)
+        public static bool DirectoryValid(DirectoryInfo directory, out Version validFactorioVersion, out string validName, out Version validVersion)
         {
-            validVersion = null;
+            validFactorioVersion = null;
             validName = null;
+            validVersion = null;
+
+            string fileName;
+            Version fileVersion;
+            if (!TryParseModName(directory.Name, out fileName, out fileVersion)) return false;
 
             var file = directory.EnumerateFiles("info.json").FirstOrDefault();
             if (file != null)
             {
                 using (Stream stream = file.OpenRead())
                 {
-                    if (TryParseInfoFile(stream, out validVersion, out validName)) return true;
+                    if (TryParseInfoFile(stream, out validFactorioVersion, out validName, out validVersion))
+                        return (validName == fileName) && (validVersion == fileVersion);
                 }
             }
 
@@ -200,7 +259,7 @@ namespace ModMyFactory.Models
         public Version Version
         {
             get { return version; }
-            private set
+            protected set
             {
                 if (value != version)
                 {
@@ -315,19 +374,6 @@ namespace ModMyFactory.Models
                 {
                     Author = matches[0].Groups["author"].Value;
                 }
-
-                // Version
-                matches = Regex.Matches(content, "\"version\" *: *\"(?<version>[0-9]+(\\.[0-9]+){0,3})\"",
-                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                if (matches.Count > 0)
-                {
-                    string versionString = matches[0].Groups["version"].Value;
-                    Version = Version.Parse(versionString);
-                }
-                else
-                {
-                    Version = new Version(1, 0);
-                }
             }
         }
 
@@ -335,13 +381,15 @@ namespace ModMyFactory.Models
         /// Creates a mod.
         /// </summary>
         /// <param name="name">The mods name.</param>
+        /// <param name="version">The mods version.</param>
         /// <param name="factorioVersion">The version of Factorio this mod is compatible with.</param>
         /// <param name="parentCollection">The collection containing this mod.</param>
         /// <param name="modpackCollection">The collection containing all modpacks.</param>
         /// <param name="messageOwner">The window that ownes the deletion message box.</param>
-        protected Mod(string name, Version factorioVersion, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
+        protected Mod(string name, Version version, Version factorioVersion, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
         {
             Name = name;
+            Version = version;
             FactorioVersion = factorioVersion;
             active = ModManager.GetActive(Name, FactorioVersion);
 

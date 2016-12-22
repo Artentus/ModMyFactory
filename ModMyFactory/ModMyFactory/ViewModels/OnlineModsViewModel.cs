@@ -349,11 +349,11 @@ namespace ModMyFactory.ViewModels
                             FileInfo newModFile = await (Task<FileInfo>)downloadTask;
                             if (zippedMod.FactorioVersion == newestRelease.FactorioVersion)
                             {
-                                zippedMod.Update(newModFile);
+                                zippedMod.Update(newModFile, newestRelease.Version);
                             }
                             else
                             {
-                                var newMod = new ZippedMod(zippedMod.Name, newestRelease.FactorioVersion, newModFile,
+                                var newMod = new ZippedMod(zippedMod.Name, newestRelease.Version, newestRelease.FactorioVersion, newModFile,
                                     InstalledMods, MainViewModel.Instance.Modpacks, MainViewModel.Instance.Window);
                                 InstalledMods.Add(newMod);
                                 foreach (var modpack in MainViewModel.Instance.Modpacks)
@@ -374,11 +374,11 @@ namespace ModMyFactory.ViewModels
                             DirectoryInfo newModDirectory = await (Task<DirectoryInfo>)downloadTask;
                             if (extractedMod.FactorioVersion == newestRelease.FactorioVersion)
                             {
-                                extractedMod.Update(newModDirectory);
+                                extractedMod.Update(newModDirectory, newestRelease.Version);
                             }
                             else
                             {
-                                var newMod = new ExtractedMod(extractedMod.Name, newestRelease.FactorioVersion, newModDirectory,
+                                var newMod = new ExtractedMod(extractedMod.Name, newestRelease.Version, newestRelease.FactorioVersion, newModDirectory,
                                     InstalledMods, MainViewModel.Instance.Modpacks, MainViewModel.Instance.Window);
                                 InstalledMods.Add(newMod);
                                 foreach (var modpack in MainViewModel.Instance.Modpacks)

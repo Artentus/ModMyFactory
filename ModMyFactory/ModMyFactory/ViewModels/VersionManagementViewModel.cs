@@ -292,7 +292,7 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private async Task MoveContentsToPreserveAsync(DirectoryInfo sourceDirectory, Version factorioVersion)
+        private async Task MoveContentsToPreserveAsync(DirectoryInfo sourceDirectory)
         {
             await Task.Run(() =>
             {
@@ -352,35 +352,50 @@ namespace ModMyFactory.ViewModels
                 var localModDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "mods"));
                 if (localModDirectory.Exists)
                 {
-                    string globalModPath = App.Instance.Settings.GetModDirectory(factorioVersion).FullName;
-                    if (!Directory.Exists(globalModPath)) Directory.CreateDirectory(globalModPath);
+                    
 
                     foreach (var modFile in localModDirectory.GetFiles("*.zip"))
                     {
-                        string name = modFile.NameWithoutExtension().Split('_')[0];
-                        if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
+                        Version factorioVersion;
+                        string name;
+                        Version version;
+                        if (Mod.ArchiveFileValid(modFile, out factorioVersion, out name, out version))
                         {
-                            modFile.MoveTo(Path.Combine(globalModPath, modFile.Name));
-                            
-                            MainViewModel.Instance.Window.Dispatcher.Invoke(
-                                () => Mods.Add(new ZippedMod(name, factorioVersion, modFile,
-                                    Mods, MainViewModel.Instance.Modpacks,
-                                    MainViewModel.Instance.Window)));
+                            string globalModPath = App.Instance.Settings.GetModDirectory(factorioVersion).FullName;
+                            if (!Directory.Exists(globalModPath)) Directory.CreateDirectory(globalModPath);
+
+                            if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
+                            {
+                                modFile.MoveTo(Path.Combine(globalModPath, modFile.Name));
+
+                                MainViewModel.Instance.Window.Dispatcher.Invoke(
+                                    () => Mods.Add(new ZippedMod(name, version, factorioVersion, modFile,
+                                        Mods, MainViewModel.Instance.Modpacks,
+                                        MainViewModel.Instance.Window)));
+                            }
                         }
                     }
 
                     foreach (var modFolder in localModDirectory.GetDirectories())
                     {
-                        string name = modFolder.Name.Split('_')[0];
-                        if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
+                        Version factorioVersion;
+                        string name;
+                        Version version;
+                        if (Mod.DirectoryValid(modFolder, out factorioVersion, out name, out version))
                         {
-                            string newPath = Path.Combine(globalModPath, modFolder.Name);
-                            modFolder.MoveToAsync(newPath).Wait();
-                            
-                            MainViewModel.Instance.Window.Dispatcher.Invoke(
-                                () => Mods.Add(new ExtractedMod(name, factorioVersion, new DirectoryInfo(newPath), 
-                                    Mods, MainViewModel.Instance.Modpacks,
-                                    MainViewModel.Instance.Window)));
+                            string globalModPath = App.Instance.Settings.GetModDirectory(factorioVersion).FullName;
+                            if (!Directory.Exists(globalModPath)) Directory.CreateDirectory(globalModPath);
+
+                            if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
+                            {
+                                string newPath = Path.Combine(globalModPath, modFolder.Name);
+                                modFolder.MoveToAsync(newPath).Wait();
+
+                                MainViewModel.Instance.Window.Dispatcher.Invoke(
+                                    () => Mods.Add(new ExtractedMod(name, version, factorioVersion, new DirectoryInfo(newPath),
+                                        Mods, MainViewModel.Instance.Modpacks,
+                                        MainViewModel.Instance.Window)));
+                            }
                         }
                     }
 
@@ -389,10 +404,9 @@ namespace ModMyFactory.ViewModels
             });
         }
 
-        private async Task MoveFactorioInstallationAsync(DirectoryInfo installationDirectory, Version version, DirectoryInfo destinationDirectory)
+        private async Task MoveFactorioInstallationAsync(DirectoryInfo installationDirectory, DirectoryInfo destinationDirectory)
         {
-            Version factorioVersion = new Version(version.Major, version.Minor);
-            await MoveContentsToPreserveAsync(installationDirectory, factorioVersion);
+            await MoveContentsToPreserveAsync(installationDirectory);
             await installationDirectory.MoveToAsync(destinationDirectory.FullName);
         }
 
@@ -438,7 +452,7 @@ namespace ModMyFactory.ViewModels
                     progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
                     progressViewModel.IsIndeterminate = true;
 
-                    Task moveTask = MoveFactorioInstallationAsync(installationDirectory, version, destinationDirectory);
+                    Task moveTask = MoveFactorioInstallationAsync(installationDirectory, destinationDirectory);
 
                     Task closeWindowTask = moveTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                     progressWindow.ShowDialog();
@@ -494,8 +508,7 @@ namespace ModMyFactory.ViewModels
                     progressViewModel.IsIndeterminate = true;
 
                     var steamAppDataDirectory = new DirectoryInfo(FactorioSteamVersion.SteamAppDataPath);
-                    Version factorioVersion = new Version(version.Major, version.Minor);
-                    Task moveTask = MoveContentsToPreserveAsync(steamAppDataDirectory, factorioVersion);
+                    Task moveTask = MoveContentsToPreserveAsync(steamAppDataDirectory);
 
                     Task closeWindowTask = moveTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                     progressWindow.ShowDialog();
