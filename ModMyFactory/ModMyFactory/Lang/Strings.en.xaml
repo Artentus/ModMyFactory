@@ -77,6 +77,12 @@
     
     <sys:String x:Key="Question.RemoveFactorioVersion.Message">Do you really want to remove this version of Factorio?&#x0a;This will delete all corresponding files on your hard drive.</sys:String>
     <sys:String x:Key="Question.RemoveFactorioVersion.Title">Confirm</sys:String>
+    
+    <sys:String x:Key="Question.DeleteMod.Message">Do you really want to delete this mod?</sys:String>
+    <sys:String x:Key="Question.DeleteMod.Title">Confirm</sys:String>
+    
+    <sys:String x:Key="Question.DeleteModpack.Message">Do you really want to delete this modpack?</sys:String>
+    <sys:String x:Key="Question.DeleteModpack.Title">Confirm</sys:String>
 
     
     <!-- file type descriptions -->

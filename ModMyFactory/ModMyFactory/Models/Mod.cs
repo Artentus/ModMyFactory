@@ -324,8 +324,10 @@ namespace ModMyFactory.Models
 
         private void Delete(ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
         {
-            if (MessageBox.Show("Do you really want to delete this mod?", "Confirm",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show(
+                App.Instance.GetLocalizedMessage("DeleteMod", MessageType.Question),
+                App.Instance.GetLocalizedMessageTitle("DeleteMod", MessageType.Question),
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 foreach (var modpack in modpackCollection)
                 {

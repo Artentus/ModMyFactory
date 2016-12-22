@@ -77,6 +77,12 @@
 
     <sys:String x:Key="Question.RemoveFactorioVersion.Message">Möchten Sie diese Factorio-Version wirklich entfernen?&#x0a;Dies wird alle zugehörigen Dateien von Ihrer Festplatte löschen.</sys:String>
     <sys:String x:Key="Question.RemoveFactorioVersion.Title">Bestätigen</sys:String>
+    
+    <sys:String x:Key="Question.DeleteMod.Message">Möchten Sie diese Mod wirklich löschen?</sys:String>
+    <sys:String x:Key="Question.DeleteMod.Title">Bestätigen</sys:String>
+    
+    <sys:String x:Key="Question.DeleteModpack.Message">Möchten Sie dieses Modpack wirklich entfernen?</sys:String>
+    <sys:String x:Key="Question.DeleteModpack.Title">Bestätigen</sys:String>
 
 
     <!-- file type descriptions -->
