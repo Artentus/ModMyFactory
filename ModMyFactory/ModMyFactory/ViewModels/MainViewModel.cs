@@ -172,11 +172,16 @@ namespace ModMyFactory.ViewModels
 
                     if (allModsSelected.HasValue)
                     {
+                        ModManager.BeginUpdateTemplates();
+
                         foreach (var mod in Mods)
                         {
                             if (mod.Active != allModsSelected.Value)
                                 mod.Active = allModsSelected.Value;
                         }
+
+                        ModManager.EndUpdateTemplates();
+                        ModManager.SaveTemplates();
                     }
 
                     allModsSelectedChanging = false;
@@ -197,11 +202,16 @@ namespace ModMyFactory.ViewModels
 
                     if (allModpacksSelected.HasValue)
                     {
+                        ModManager.BeginUpdateTemplates();
+
                         foreach (var modpack in Modpacks)
                         {
                             if (modpack.Active != allModpacksSelected.Value)
                                 modpack.Active = allModpacksSelected.Value;
                         }
+
+                        ModManager.EndUpdateTemplates();
+                        ModManager.SaveTemplates();
                     }
 
                     allModpacksSelectedChanging = false;
