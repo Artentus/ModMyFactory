@@ -214,6 +214,7 @@ namespace ModMyFactory.ViewModels
 
                 bool invalidArchiveFile = false;
                 bool invalidPlatform = false;
+                bool versionInstalled = false;
                 IProgress<int> progress = new Progress<int>(stage =>
                 {
                     switch (stage)
@@ -227,6 +228,9 @@ namespace ModMyFactory.ViewModels
                         case -2:
                             invalidPlatform = true;
                             break;
+                        case -3:
+                            versionInstalled = true;
+                            break;
                     }
                 });
 
@@ -237,14 +241,21 @@ namespace ModMyFactory.ViewModels
                     {
                         if (is64Bit == Environment.Is64BitOperatingSystem)
                         {
-                            progress.Report(1);
+                            if (FactorioVersions.Any(factorioVersion => factorioVersion.Version == version))
+                            {
+                                progress.Report(1);
 
-                            DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
-                            ZipFile.ExtractToDirectory(archiveFile.FullName, factorioDirectory.FullName);
+                                DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
+                                ZipFile.ExtractToDirectory(archiveFile.FullName, factorioDirectory.FullName);
 
-                            string versionString = version.ToString(3);
-                            versionDirectory = factorioDirectory.EnumerateDirectories($"Factorio_{versionString}*").First();
-                            versionDirectory.MoveTo(Path.Combine(factorioDirectory.FullName, versionString));
+                                string versionString = version.ToString(3);
+                                versionDirectory = factorioDirectory.EnumerateDirectories($"Factorio_{versionString}*").First();
+                                versionDirectory.MoveTo(Path.Combine(factorioDirectory.FullName, versionString));
+                            }
+                            else
+                            {
+                                progress.Report(-3);
+                            }
                         }
                         else
                         {
@@ -276,6 +287,13 @@ namespace ModMyFactory.ViewModels
                     MessageBox.Show(Window,
                         App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
                         App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else if (versionInstalled)
+                {
+                    MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("FactorioVersionInstalled", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("FactorioVersionInstalled", MessageType.Error),
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else
@@ -433,11 +451,19 @@ namespace ModMyFactory.ViewModels
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
+                if (FactorioVersions.Any(factorioVersion => factorioVersion.Version == version))
+                {
+                    MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("FactorioVersionInstalled", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("FactorioVersionInstalled", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
 
                 if (MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("MoveFactorioFolder", MessageType.Warning),
-                        App.Instance.GetLocalizedMessageTitle("MoveFactorioFolder", MessageType.Warning),
-                        MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                    App.Instance.GetLocalizedMessage("MoveFactorioFolder", MessageType.Warning),
+                    App.Instance.GetLocalizedMessageTitle("MoveFactorioFolder", MessageType.Warning),
+                    MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
                     if (!factorioDirectory.Exists) factorioDirectory.Create();
