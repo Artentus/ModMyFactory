@@ -218,7 +218,7 @@ namespace ModMyFactory.ViewModels
             RefreshCommand = new RelayCommand(async () => await RefreshModList());
         }
 
-        private void UpdateSelectedReleases()
+        public void UpdateSelectedReleases()
         {
             foreach (var release in SelectedReleases)
             {

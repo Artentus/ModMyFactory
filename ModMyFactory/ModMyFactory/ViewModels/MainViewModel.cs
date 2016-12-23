@@ -528,6 +528,8 @@ namespace ModMyFactory.ViewModels
             if (OnlineModsViewModel.Instance.Mods != null)
             {
                 var modsWindow = new OnlineModsWindow() { Owner = Window };
+                var modsViewModel = (OnlineModsViewModel)modsWindow.ViewModel;
+                if (modsViewModel.SelectedMod != null) modsViewModel.UpdateSelectedReleases();
                 modsWindow.ShowDialog();
             }
             else
