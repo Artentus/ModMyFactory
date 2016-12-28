@@ -63,8 +63,8 @@
     <sys:String x:Key="Error.IncompatiblePlatform.Message">Данная версия Factorio не совместима с вашей операционной системой.&#x0a;Убедитесь, что вы используете 32-разрядную версию игры на 32-разрядной версии Windows, а 64-разрядную версию игры на 64-разрядной версии Windows.</sys:String>
     <sys:String x:Key="Error.IncompatiblePlatform.Title">Несовместимая операционная система!</sys:String>
     
-    <sys:String x:Key="Error.FactorioVersionInstalled.Message">This version of Factorio is already installed.</sys:String>
-    <sys:String x:Key="Error.FactorioVersionInstalled.Title">Version already installed!</sys:String>
+    <sys:String x:Key="Error.FactorioVersionInstalled.Message">Эта версия Factorio уже установлена.</sys:String>
+    <sys:String x:Key="Error.FactorioVersionInstalled.Title">Эта версия уже установлена!</sys:String>
 
     <sys:String x:Key="Warning.MoveFactorioFolder.Message">Выбранная установка Factorio будет перемещена согласно настройкам! Рекомендуется создание бэкапа.&#x0a;Вы хотите продолжить?</sys:String>
     <sys:String x:Key="Warning.MoveFactorioFolder.Title">Предупреждение</sys:String>
@@ -81,11 +81,11 @@
     <sys:String x:Key="Question.RemoveFactorioVersion.Message">Вы действительно хотите удалить данную версию Factorio?&#x0a;Это удалит все соответствующие файлы с вашего жёсткого диска.</sys:String>
     <sys:String x:Key="Question.RemoveFactorioVersion.Title">Подтверждение</sys:String>
     
-    <sys:String x:Key="Question.DeleteMod.Message">Do you really want to delete this mod?</sys:String>
-    <sys:String x:Key="Question.DeleteMod.Title">Confirm</sys:String>
+    <sys:String x:Key="Question.DeleteMod.Message">Вы действительно хотите удалить этот мод?</sys:String>
+    <sys:String x:Key="Question.DeleteMod.Title">Подтвердите</sys:String>
     
-    <sys:String x:Key="Question.DeleteModpack.Message">Do you really want to delete this modpack?</sys:String>
-    <sys:String x:Key="Question.DeleteModpack.Title">Confirm</sys:String>
+    <sys:String x:Key="Question.DeleteModpack.Message">Вы действительно хотите удалить этот модпак?</sys:String>
+    <sys:String x:Key="Question.DeleteModpack.Title">Подтвердите</sys:String>
 
     
     <!-- file type descriptions -->
@@ -165,7 +165,7 @@
     <!-- 'Edit' menu -->
     <sys:String x:Key="EditMenuItem">_Изменить</sys:String>
     <sys:String x:Key="OpenFactorioFolderMenuItem">Открыть папку Factorio</sys:String>
-    <sys:String x:Key="OpenModFolderMenuItem">Открыть папку мода</sys:String>
+    <sys:String x:Key="OpenModFolderMenuItem">Открыть папку модов</sys:String>
     <sys:String x:Key="OpenSavegameFolderMenuItem">Открыть папку сохранений</sys:String>
     <sys:String x:Key="OpenScenarioFolderMenuItem">Открыть папку сценариев</sys:String>
     <sys:String x:Key="UpdateModsMenuItem">Обновить моды</sys:String>
@@ -331,7 +331,7 @@
     <sys:String x:Key="ReleasesHeader">Релизы</sys:String>
     
     <!-- buttons -->
-    <sys:String x:Key="DeleteButton">Delete</sys:String>
+    <sys:String x:Key="DeleteButton">Удалить</sys:String>
 
 
     <!--
