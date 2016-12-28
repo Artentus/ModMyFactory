@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using ModMyFactory.Helpers;
 
 namespace ModMyFactory.Models
@@ -31,13 +30,13 @@ namespace ModMyFactory.Models
         /// Creates a mod.
         /// </summary>
         /// <param name="name">The mods name.</param>
+        /// <param name="version">The mods version.</param>
         /// <param name="factorioVersion">The version of Factorio this mod is compatible with.</param>
         /// <param name="directory">The mods directory.</param>
         /// <param name="parentCollection">The collection containing this mod.</param>
         /// <param name="modpackCollection">The collection containing all modpacks.</param>
-        /// <param name="messageOwner">The window that ownes the deletion message box.</param>
-        public ExtractedMod(string name, Version factorioVersion, DirectoryInfo directory, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
-            : base(name, factorioVersion, parentCollection, modpackCollection, messageOwner)
+        public ExtractedMod(string name, Version version, Version factorioVersion, DirectoryInfo directory, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
+            : base(name, version, factorioVersion, parentCollection, modpackCollection)
         {
             Directory = directory;
 
@@ -53,10 +52,12 @@ namespace ModMyFactory.Models
         /// Updates this mod.
         /// </summary>
         /// <param name="newDirectory">The updated mod directory.</param>
-        public void Update(DirectoryInfo newDirectory)
+        /// <param name="newVersion">The updated mod version.</param>
+        public void Update(DirectoryInfo newDirectory, Version newVersion)
         {
             Directory.Delete(true);
             Directory = newDirectory;
+            Version = newVersion;
             SetInfo(newDirectory);
         }
 

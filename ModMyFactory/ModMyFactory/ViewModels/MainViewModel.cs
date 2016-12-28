@@ -172,11 +172,16 @@ namespace ModMyFactory.ViewModels
 
                     if (allModsSelected.HasValue)
                     {
+                        ModManager.BeginUpdateTemplates();
+
                         foreach (var mod in Mods)
                         {
                             if (mod.Active != allModsSelected.Value)
                                 mod.Active = allModsSelected.Value;
                         }
+
+                        ModManager.EndUpdateTemplates();
+                        ModManager.SaveTemplates();
                     }
 
                     allModsSelectedChanging = false;
@@ -197,11 +202,16 @@ namespace ModMyFactory.ViewModels
 
                     if (allModpacksSelected.HasValue)
                     {
+                        ModManager.BeginUpdateTemplates();
+
                         foreach (var modpack in Modpacks)
                         {
                             if (modpack.Active != allModpacksSelected.Value)
                                 modpack.Active = allModpacksSelected.Value;
                         }
+
+                        ModManager.EndUpdateTemplates();
+                        ModManager.SaveTemplates();
                     }
 
                     allModpacksSelectedChanging = false;
@@ -440,8 +450,8 @@ namespace ModMyFactory.ViewModels
                 Modpacks.CollectionChanged += ModpacksChangedHandler;
                 SetAllModpacksSelected();
 
-                Mod.LoadMods(Mods, Modpacks, Application.Current.MainWindow);
-                ModpackTemplateList.Instance.PopulateModpackList(Mods, Modpacks, ModpacksView, Application.Current.MainWindow);
+                Mod.LoadMods(Mods, Modpacks);
+                ModpackTemplateList.Instance.PopulateModpackList(Mods, Modpacks, ModpacksView);
                 Modpacks.CollectionChanged += (sender, e) =>
                 {
                     ModpackTemplateList.Instance.Update(Modpacks);
@@ -518,6 +528,8 @@ namespace ModMyFactory.ViewModels
             if (OnlineModsViewModel.Instance.Mods != null)
             {
                 var modsWindow = new OnlineModsWindow() { Owner = Window };
+                var modsViewModel = (OnlineModsViewModel)modsWindow.ViewModel;
+                if (modsViewModel.SelectedMod != null) modsViewModel.UpdateSelectedReleases();
                 modsWindow.ShowDialog();
             }
             else
@@ -551,7 +563,8 @@ namespace ModMyFactory.ViewModels
         {
             Version factorioVersion;
             string name;
-            if (Mod.ArchiveFileValid(archiveFile, out factorioVersion, out name))
+            Version version;
+            if (Mod.ArchiveFileValid(archiveFile, out factorioVersion, out name, out version))
             {
                 if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
                 {
@@ -564,7 +577,7 @@ namespace ModMyFactory.ViewModels
                         archiveFile.MoveTo(modFilePath);
                     });
 
-                    var mod = new ZippedMod(name, factorioVersion, archiveFile, Mods, Modpacks, Window);
+                    var mod = new ZippedMod(name, version, factorioVersion, archiveFile, Mods, Modpacks);
                     Mods.Add(mod);
                 }
                 else
@@ -658,9 +671,11 @@ namespace ModMyFactory.ViewModels
                 var directory = new DirectoryInfo(dialog.SelectedPath);
 
                 Task moveDirectoryTask;
+
                 Version factorioVersion;
                 string name;
-                if (Mod.DirectoryValid(directory, out factorioVersion, out name))
+                Version version;
+                if (Mod.DirectoryValid(directory, out factorioVersion, out name, out version))
                 {
                     if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
                     {
@@ -709,7 +724,7 @@ namespace ModMyFactory.ViewModels
                 progressWindow.ShowDialog();
                 await moveDirectoryTask;
 
-                Mods.Add(new ExtractedMod(name, factorioVersion, directory, Mods, Modpacks, Window));
+                Mods.Add(new ExtractedMod(name, version, factorioVersion, directory, Mods, Modpacks));
             }
         }
 
@@ -731,7 +746,7 @@ namespace ModMyFactory.ViewModels
                 newName = $"{name} {counter}";
             }
 
-            Modpack modpack = new Modpack(newName, Modpacks, Window);
+            Modpack modpack = new Modpack(newName, Modpacks);
             modpack.ParentView = ModpacksView;
             Modpacks.Add(modpack);
 
@@ -886,7 +901,7 @@ namespace ModMyFactory.ViewModels
 
         private async Task DownloadModAsyncInner(ModRelease modRelease, string token, IProgress<double> progress, CancellationToken cancellationToken)
         {
-            Mod mod = await ModWebsite.DownloadReleaseAsync(modRelease, GlobalCredentials.Instance.Username, token, progress, cancellationToken, Mods, Modpacks, Window);
+            Mod mod = await ModWebsite.DownloadReleaseAsync(modRelease, GlobalCredentials.Instance.Username, token, progress, cancellationToken, Mods, Modpacks);
             if (!cancellationToken.IsCancellationRequested && (mod != null)) Mods.Add(mod);
         }
 
@@ -1027,7 +1042,7 @@ namespace ModMyFactory.ViewModels
 
                 if (existingModpack == null)
                 {
-                    Modpack modpack = new Modpack(modpackTemplate.Name, Modpacks, Window);
+                    Modpack modpack = new Modpack(modpackTemplate.Name, Modpacks);
                     modpack.ParentView = ModpacksView;
 
                     foreach (var modTemplate in modpackTemplate.Mods)
@@ -1172,11 +1187,11 @@ namespace ModMyFactory.ViewModels
             {
                 if (zippedMod.FactorioVersion == modUpdate.NewestRelease.FactorioVersion)
                 {
-                    zippedMod.Update(modFile);
+                    zippedMod.Update(modFile, modUpdate.NewestRelease.Version);
                 }
                 else
                 {
-                    var newMod = new ZippedMod(zippedMod.Name, modUpdate.NewestRelease.FactorioVersion, modFile, Mods, Modpacks, Window);
+                    var newMod = new ZippedMod(zippedMod.Name, modUpdate.NewestRelease.Version, modUpdate.NewestRelease.FactorioVersion, modFile, Mods, Modpacks);
                     Mods.Add(newMod);
                     foreach (var modpack in Modpacks)
                     {
@@ -1207,11 +1222,11 @@ namespace ModMyFactory.ViewModels
 
                 if (extractedMod.FactorioVersion == modUpdate.NewestRelease.FactorioVersion)
                 {
-                    extractedMod.Update(modDirectory);
+                    extractedMod.Update(modDirectory, modUpdate.NewestRelease.Version);
                 }
                 else
                 {
-                    var newMod = new ExtractedMod(extractedMod.Name, modUpdate.NewestRelease.FactorioVersion, modDirectory, Mods, Modpacks, Window);
+                    var newMod = new ExtractedMod(extractedMod.Name, modUpdate.NewestRelease.Version, modUpdate.NewestRelease.FactorioVersion, modDirectory, Mods, Modpacks);
                     Mods.Add(newMod);
                     foreach (var modpack in Modpacks)
                     {

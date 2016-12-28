@@ -62,6 +62,9 @@
     
     <sys:String x:Key="Error.IncompatiblePlatform.Message">This version of Factorio is not compatible with your platform.&#x0a;Make sure to use 32 bit Factorio on 32 bit Windows and 64 bit Factorio on 64 bit Windows.</sys:String>
     <sys:String x:Key="Error.IncompatiblePlatform.Title">Incompatible platform!</sys:String>
+    
+    <sys:String x:Key="Error.FactorioVersionInstalled.Message">This version of Factorio is already installed.</sys:String>
+    <sys:String x:Key="Error.FactorioVersionInstalled.Title">Version already installed!</sys:String>
 
     <sys:String x:Key="Warning.MoveFactorioFolder.Message">The selected installation of Factorio will be moved to the location specified in the settings! The creation of a backup is recommended.&#x0a;Do you wish to continue?</sys:String>
     <sys:String x:Key="Warning.MoveFactorioFolder.Title">Warning</sys:String>
@@ -77,6 +80,12 @@
     
     <sys:String x:Key="Question.RemoveFactorioVersion.Message">Do you really want to remove this version of Factorio?&#x0a;This will delete all corresponding files on your hard drive.</sys:String>
     <sys:String x:Key="Question.RemoveFactorioVersion.Title">Confirm</sys:String>
+    
+    <sys:String x:Key="Question.DeleteMod.Message">Do you really want to delete this mod?</sys:String>
+    <sys:String x:Key="Question.DeleteMod.Title">Confirm</sys:String>
+    
+    <sys:String x:Key="Question.DeleteModpack.Message">Do you really want to delete this modpack?</sys:String>
+    <sys:String x:Key="Question.DeleteModpack.Title">Confirm</sys:String>
 
     
     <!-- file type descriptions -->
@@ -320,6 +329,9 @@
     
     <!-- headers -->
     <sys:String x:Key="ReleasesHeader">Releases</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="DeleteButton">Delete</sys:String>
 
 
     <!--

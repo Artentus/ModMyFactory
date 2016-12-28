@@ -151,6 +151,7 @@
             <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" FlowDirection="RightToLeft">
                 <Button Margin="0,4" Content="{DynamicResource DownloadButton}" Command="{Binding DownloadCommand}"/>
                 <Button Margin="4" Content="{DynamicResource UpdateButton}" Command="{Binding UpdateCommand}"/>
+                <Button Margin="0,4" Content="{DynamicResource DeleteButton}" Command="{Binding DeleteCommand}"/>
             </StackPanel>
         </Grid>
 

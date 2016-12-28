@@ -91,30 +91,40 @@ namespace ModMyFactory
         }
 
         /// <summary>
-        /// Runs the program.
+        /// Creates the app as specified by the command line.
         /// </summary>
         /// <param name="commandLine">The programs command line.</param>
-        /// <returns>The programs exit code.</returns>
-        private static int Run(CommandLine commandLine)
+        private static App CreateApp(CommandLine commandLine)
         {
             // Do not create crash logs when debugging.
             bool createCrashLog = !commandLine.IsSet('l', "no-logs");
 
             // Custom AppData path for debugging purposes only.
-            App app = null;
             string appDataPath;
-            if (commandLine.TryGetArgument('a', "appdata-path", out appDataPath))
-                app = new App(createCrashLog, appDataPath);
+            bool hasCustomAppDataPath = commandLine.TryGetArgument('a', "appdata-path", out appDataPath);
+
+
+            if (hasCustomAppDataPath)
+                return new App(createCrashLog, appDataPath);
             else
-                app = new App(createCrashLog);
+                return new App(createCrashLog);
+        }
 
-            // Prevent update search on startup
-            UpdateCheckOnStartup = !commandLine.IsSet('u', "no-update");
-
-            // Direct game start logic.
+        /// <summary>
+        /// Starts Factorio if the command line specifies to do so.
+        /// </summary>
+        /// <param name="commandLine">The programs command line.</param>
+        /// <param name="createApp">Specifies whether an app should be created.</param>
+        /// <returns>Returns true if the game was started, otherwise false.</returns>
+        private static bool StartGameIfSpecified(CommandLine commandLine, bool createApp)
+        {
             string versionString;
             if (commandLine.TryGetArgument('f', "factorio-version", out versionString))
             {
+                // Variable not used but sets 'Application.Current'.
+                App app = null;
+                if (createApp) app = CreateApp(commandLine);
+
                 var versions = FactorioVersion.GetInstalledVersions();
                 FactorioVersion steamVersion;
                 if (FactorioSteamVersion.TryLoad(out steamVersion)) versions.Add(steamVersion);
@@ -135,8 +145,8 @@ namespace ModMyFactory
                     var modpacks = new List<Modpack>();
 
                     ModManager.BeginUpdateTemplates();
-                    Mod.LoadMods(mods, modpacks, null);
-                    ModpackTemplateList.Instance.PopulateModpackList(mods, modpacks, null, null);
+                    Mod.LoadMods(mods, modpacks);
+                    ModpackTemplateList.Instance.PopulateModpackList(mods, modpacks, null);
 
                     mods.ForEach(mod => mod.Active = false);
 
@@ -168,8 +178,23 @@ namespace ModMyFactory
                         "Error starting game!", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                return 0;
+                return true;
             }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Runs the program.
+        /// </summary>
+        /// <param name="commandLine">The programs command line.</param>
+        /// <param name="app">The app to run.</param>
+        /// <returns>The programs exit code.</returns>
+        private static int Run(CommandLine commandLine, App app)
+        {
+            // Prevent update search on startup
+            UpdateCheckOnStartup = !commandLine.IsSet('u', "no-update");
+
 
             var fileList = new List<FileInfo>();
             foreach (string argument in commandLine.Arguments)
@@ -181,6 +206,7 @@ namespace ModMyFactory
                 }
             }
             ImportFileList = fileList;
+
 
             app.InitializeComponent();
             return app.Run();
@@ -326,6 +352,8 @@ namespace ModMyFactory
                         if (!hasHandle)
                         {
                             // App already running.
+                            if (StartGameIfSpecified(commandLine, true)) return 0;
+
                             SendNewInstanceStartedMessage(args);
                             return 0;
                         }
@@ -335,11 +363,17 @@ namespace ModMyFactory
                         hasHandle = true;
                     }
 
+
                     // App not running.
+                    App app = CreateApp(commandLine);
+
+                    if (StartGameIfSpecified(commandLine, false)) return 0;
+
+
                     var cancellationSource = new CancellationTokenSource();
                     Task listenTask = ListenForNewInstanceStarted(cancellationSource.Token);
 
-                    int result = Program.Run(commandLine);
+                    int result = Program.Run(commandLine, app);
 
                     cancellationSource.Cancel();
                     listenTask.Wait();

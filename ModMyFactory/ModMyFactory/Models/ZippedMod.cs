@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
-using System.Windows;
 using ModMyFactory.Helpers;
 
 namespace ModMyFactory.Models
@@ -41,13 +40,13 @@ namespace ModMyFactory.Models
         /// Creates a mod.
         /// </summary>
         /// <param name="name">The mods name.</param>
+        /// <param name="version">The mods version.</param>
         /// <param name="factorioVersion">The version of Factorio this mod is compatible with.</param>
         /// <param name="file">The mods file.</param>
         /// <param name="parentCollection">The collection containing this mod.</param>
         /// <param name="modpackCollection">The collection containing all modpacks.</param>
-        /// <param name="messageOwner">The window that ownes the deletion message box.</param>
-        public ZippedMod(string name, Version factorioVersion, FileInfo file, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, Window messageOwner)
-            : base(name, factorioVersion, parentCollection, modpackCollection, messageOwner)
+        public ZippedMod(string name, Version version, Version factorioVersion, FileInfo file, ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
+            : base(name, version, factorioVersion, parentCollection, modpackCollection)
         {
             File = file;
 
@@ -63,10 +62,12 @@ namespace ModMyFactory.Models
         /// Updates this mod.
         /// </summary>
         /// <param name="newFile">The updated mod file.</param>
-        public void Update(FileInfo newFile)
+        /// <param name="newVersion">The updated mod version.</param>
+        public void Update(FileInfo newFile, Version newVersion)
         {
             File.Delete();
             File = newFile;
+            Version = newVersion;
             SetInfo(File);
         }
 
