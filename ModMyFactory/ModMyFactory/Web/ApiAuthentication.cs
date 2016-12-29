@@ -1,4 +1,5 @@
-﻿using System.Security;
+﻿using System.Net;
+using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 using ModMyFactory.Helpers;
@@ -32,11 +33,17 @@ namespace ModMyFactory.Web
             try
             {
                 string document = WebHelper.GetDocument(loginPage, null, content);
-                MatchCollection matches = Regex.Matches(document, pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                MatchCollection matches = Regex.Matches(document, pattern,
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
                 if (matches.Count != 1) return false;
 
                 token = matches[0].Value;
                 return true;
+            }
+            catch (WebException ex)
+            {
+                if (ex.Status == WebExceptionStatus.ProtocolError) return false;
+                else throw;
             }
             finally
             {
