@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Windows;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using ModMyFactory.Models;
@@ -98,11 +97,11 @@ namespace ModMyFactory
             return Modpacks.First(template => template.Name == name);
         }
 
-        public void PopulateModpackList(ICollection<Mod> modList, ICollection<Modpack> modpackList, IEditableCollectionView modpackView, Window messageOwner)
+        public void PopulateModpackList(ICollection<Mod> modList, ICollection<Modpack> modpackList, IEditableCollectionView modpackView)
         {
             foreach (var template in Modpacks)
             {
-                var modpack = new Modpack(template.Name, modpackList, messageOwner);
+                var modpack = new Modpack(template.Name, modpackList);
                 if (modpackView != null) modpack.ParentView = modpackView;
 
                 foreach (ModpackTemplateMod modTemplate in template.Mods)

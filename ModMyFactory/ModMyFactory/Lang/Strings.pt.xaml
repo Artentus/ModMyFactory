@@ -62,6 +62,9 @@
     
     <sys:String x:Key="Error.IncompatiblePlatform.Message">Esta versão do Factorio não é compatível com o seu sistema operativo.&#x0a;Certifique-se que utiliza Factorio 32 bit em Windows 32 bit e Factorio 64 bit em Windows 64 bit.</sys:String>
     <sys:String x:Key="Error.IncompatiblePlatform.Title">Sistema operativo incompatível!</sys:String>
+    
+    <sys:String x:Key="Error.FactorioVersionInstalled.Message">Esta versão do Factorio já está instalada.</sys:String>
+    <sys:String x:Key="Error.FactorioVersionInstalled.Title">Versão já instalada!</sys:String>
 
     <sys:String x:Key="Warning.MoveFactorioFolder.Message">A instalação do Factorio seleccionada vai ser movida para a localização especificada nas configurações! Aconselha-se a criação de uma cópia de segurança.&#x0a;Deseja continuar?</sys:String>
     <sys:String x:Key="Warning.MoveFactorioFolder.Title">Atenção</sys:String>
@@ -77,6 +80,12 @@
     
     <sys:String x:Key="Question.RemoveFactorioVersion.Message">Quer mesmo apagar esta versão do Factorio?&#x0a;Esta acção vai apagar do seu disco rígido todos os ficheiros correspondentes.</sys:String>
     <sys:String x:Key="Question.RemoveFactorioVersion.Title">Confirmação</sys:String>
+    
+    <sys:String x:Key="Question.DeleteMod.Message">Quer mesmo apagar este mod?</sys:String>
+    <sys:String x:Key="Question.DeleteMod.Title">Confirmação</sys:String>
+    
+    <sys:String x:Key="Question.DeleteModpack.Message">Quer mesmo apagar este modpack?</sys:String>
+    <sys:String x:Key="Question.DeleteModpack.Title">Confirmação</sys:String>
 
     
     <!-- file type descriptions -->
@@ -213,8 +222,8 @@
     <sys:String x:Key="VersionManagementWindowTitle">Controlador de versões</sys:String>
 
     <!-- buttons -->
-    <sys:String x:Key="AddZipButton">Adicionar a partir de arquivo ZIP</sys:String>
-    <sys:String x:Key="AddFolderButton">Adicionar a partir de uma pasta</sys:String>
+    <TextBlock x:Key="AddZipButton" TextAlignment="Center">Adicionar a partir&#x0a;de arquivo ZIP</TextBlock>
+    <TextBlock x:Key="AddFolderButton" TextAlignment="Center">Adicionar a partir&#x0a;de uma pasta</TextBlock>
     <TextBlock x:Key="SelectSteamButton" TextAlignment="Center">Seleccionar&#x0a;versão Steam</TextBlock>
     <sys:String x:Key="OpenFolderButton">Abrir pasta</sys:String>
     <sys:String x:Key="RemoveButton">Remover</sys:String>
@@ -320,6 +329,9 @@
     
     <!-- headers -->
     <sys:String x:Key="ReleasesHeader">Lançamentos</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="DeleteButton">Apagar</sys:String>
 
 
     <!--
