@@ -241,13 +241,19 @@
     -->
 
     <sys:String x:Key="SettingsWindowTitle">Настройки</sys:String>
+    
+    <!-- tab headers -->
+    <sys:String x:Key="GeneralTabHeader">General</sys:String>
+    <sys:String x:Key="LocationsTabHeader">Locations</sys:String>
 
     <!-- group headers -->
     <sys:String x:Key="ManagerModeGroupHeader">Режим работы менеджера</sys:String>
+    <sys:String x:Key="CredentialsGroupHeader">Данные для авторизации</sys:String>
+    
     <sys:String x:Key="FactorioDirectoryGroupHeader">Расположение Factorio</sys:String>
     <sys:String x:Key="ModDirectoryGroupHeader">Расположение модов</sys:String>
-    <sys:String x:Key="CredentialsGroupHeader">Данные для авторизации</sys:String>
-
+    <sys:String x:Key="SavegameDirectoryGroupHeader">Savegame location</sys:String>
+    <sys:String x:Key="ScenarioDirectoryGroupHeader">Scenario location</sys:String>
     
     <!-- group items -->
     <sys:String x:Key="PerFactorioVersionGroupItem">Для каждой версии Factorio</sys:String>

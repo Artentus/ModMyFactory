@@ -242,12 +242,18 @@
 
     <sys:String x:Key="SettingsWindowTitle">Einstellungen</sys:String>
 
+    <!-- tab headers -->
+    <sys:String x:Key="GeneralTabHeader">Allgemein</sys:String>
+    <sys:String x:Key="LocationsTabHeader">Speicherorte</sys:String>
+    
     <!-- group headers -->
     <sys:String x:Key="ManagerModeGroupHeader">Managermodus</sys:String>
-    <sys:String x:Key="FactorioDirectoryGroupHeader">Factorio Speicherort</sys:String>
-    <sys:String x:Key="ModDirectoryGroupHeader">Mod Speicherort</sys:String>
     <sys:String x:Key="CredentialsGroupHeader">Anmeldedaten</sys:String>
-
+    
+    <sys:String x:Key="FactorioDirectoryGroupHeader">Speicherort für Factorio</sys:String>
+    <sys:String x:Key="ModDirectoryGroupHeader">Speicherort für Mods</sys:String>
+    <sys:String x:Key="SavegameDirectoryGroupHeader">Speicherort für Spielstände</sys:String>
+    <sys:String x:Key="ScenarioDirectoryGroupHeader">Speicherort für Szenarios</sys:String>
 
     <!-- group items -->
     <sys:String x:Key="PerFactorioVersionGroupItem">Pro Factorio-Version</sys:String>

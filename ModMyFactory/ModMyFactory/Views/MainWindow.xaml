@@ -387,7 +387,7 @@
                 <Rectangle Grid.Row="1" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
             </Grid>
             <mvvm:DragDropReadyListBox x:Name="ModsListBox" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding ModsView}"
-                                       IsSynchronizedWithCurrentItem="False" SelectionMode="Extended"
+                                       IsSynchronizedWithCurrentItem="False" SelectionMode="Extended" ScrollViewer.VerticalScrollBarVisibility="Visible"
                                        PreviewMouseDown="ModsListBoxPreviewMouseDownHandler" PreviewMouseMove="ModsListBoxPreviewMouseMoveHandler"
                                        PreviewMouseUp="ModsListBoxPreviewMouseUpHandler">
                 <mvvm:DragDropReadyListBox.ItemContainerStyle>

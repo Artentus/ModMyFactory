@@ -315,24 +315,25 @@ namespace ModMyFactory.ViewModels
         {
             await Task.Run(() =>
             {
+                // Savegames
                 var localSaveDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "saves"));
                 if (localSaveDirectory.Exists)
                 {
-                    if (!Directory.Exists(App.Instance.GlobalSavePath))
-                        Directory.CreateDirectory(App.Instance.GlobalSavePath);
+                    DirectoryInfo globalSaveDirectory = App.Instance.Settings.GetSavegameDirectory();
+                    if (!globalSaveDirectory.Exists) globalSaveDirectory.Create();
 
                     foreach (var saveFile in localSaveDirectory.GetFiles())
                     {
                         if (!saveFile.Name.StartsWith("_autosave"))
                         {
-                            string newPath = Path.Combine(App.Instance.GlobalSavePath, saveFile.Name);
+                            string newPath = Path.Combine(globalSaveDirectory.FullName, saveFile.Name);
                             if (File.Exists(newPath))
                             {
                                 int count = 1;
                                 do
                                 {
                                     string newName = $"{saveFile.NameWithoutExtension()}_{count}{saveFile.Extension}";
-                                    newPath = Path.Combine(App.Instance.GlobalSavePath, newName);
+                                    newPath = Path.Combine(globalSaveDirectory.FullName, newName);
                                     count++;
                                 } while (File.Exists(newPath));
                             }
@@ -343,22 +344,24 @@ namespace ModMyFactory.ViewModels
                     localSaveDirectory.Delete(true);
                 }
 
+
+                // Scenarios
                 var localScenarioDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "scenarios"));
                 if (localScenarioDirectory.Exists)
                 {
-                    if (!Directory.Exists(App.Instance.GlobalScenarioPath))
-                        Directory.CreateDirectory(App.Instance.GlobalScenarioPath);
+                    DirectoryInfo globalScenarioDirectory = App.Instance.Settings.GetScenarioDirectory();
+                    if (!globalScenarioDirectory.Exists) globalScenarioDirectory.Create();
 
                     foreach (var scenarioFile in localScenarioDirectory.GetFiles())
                     {
-                        string newPath = Path.Combine(App.Instance.GlobalScenarioPath, scenarioFile.Name);
+                        string newPath = Path.Combine(globalScenarioDirectory.FullName, scenarioFile.Name);
                         if (File.Exists(newPath))
                         {
                             int count = 1;
                             do
                             {
                                 string newName = $"{scenarioFile.NameWithoutExtension()}_{count}{scenarioFile.Extension}";
-                                newPath = Path.Combine(App.Instance.GlobalSavePath, newName);
+                                newPath = Path.Combine(globalScenarioDirectory.FullName, newName);
                                 count++;
                             } while (File.Exists(newPath));
                         }
@@ -368,11 +371,11 @@ namespace ModMyFactory.ViewModels
                     localScenarioDirectory.Delete(true);
                 }
 
+
+                // Mods
                 var localModDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "mods"));
                 if (localModDirectory.Exists)
                 {
-                    
-
                     foreach (var modFile in localModDirectory.GetFiles("*.zip"))
                     {
                         Version factorioVersion;

@@ -1,6 +1,4 @@
-﻿using System.Text;
-using System.Windows;
-using ModMyFactory.Helpers;
+﻿using System.Windows;
 
 namespace ModMyFactory.Views
 {
@@ -11,17 +9,22 @@ namespace ModMyFactory.Views
             InitializeComponent();
         }
 
+        private void LoadedHandler(object sender, RoutedEventArgs e)
+        {
+            TabControl.SelectedIndex = 0;
+        }
+
         private void OKButtonClickHandler(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
         }
 
-        void SaveCredentialsBoxCheckedHandler(object sender, RoutedEventArgs e)
+        private void SaveCredentialsBoxCheckedHandler(object sender, RoutedEventArgs e)
         {
             UsernameBox.Text = GlobalCredentials.Instance.Username;
         }
 
-        void SaveCredentialsBoxUncheckedHandler(object sender, RoutedEventArgs e)
+        private void SaveCredentialsBoxUncheckedHandler(object sender, RoutedEventArgs e)
         {
             UsernameBox.Text = null;
             PasswordBox.Password = null;
