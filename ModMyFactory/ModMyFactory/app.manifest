@@ -39,17 +39,17 @@
     </application>
   </compatibility>
 
-  <!-- Gibt an, dass die Anwendung mit DPI-Werten kompatibel ist und von Windows nicht automatisch auf höhere
-       DPI-Werte skaliert wird. WPF-Anwendungen (Windows Presentation Foundation) sind automatisch mit DPI-Werten kompatibel und müssen sich nicht  
-       anmelden. Für Windows Forms-Anwendungen für .NET Framework 4.6, die sich für diese Einstellung anmelden, muss 
-       auch die Einstellung "'EnableWindowsFormsHighDpiAutoResizing" in der "app.config" auf "true" festgelegt werden. -->
-  <!--
+  
   <application xmlns="urn:schemas-microsoft-com:asm.v3">
     <windowsSettings>
+      <!-- The combination of below two tags have the following effect: 
+           1) Per-Monitor for >= Windows 10 Anniversary Update
+           2) System < Windows 10 Anniversary Update -->
+      <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitor</dpiAwareness>
       <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true</dpiAware>
     </windowsSettings>
   </application>
-  -->
+  
 
   <!-- Designs für allgemeine Windows-Steuerelemente und -Dialogfelder (Windows XP und höher) aktivieren -->
   <dependency>
