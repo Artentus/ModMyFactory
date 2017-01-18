@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -25,9 +26,10 @@ namespace ModMyFactory.Views
 
             if (e.ChangedButton != MouseButton.Left)
                 return;
-
+            
             ListBoxItem item = null;
-            for (int i = 0; i < ((IList)listBox.ItemsSource).Count; i++)
+            int itemCount = ((ICollection)((ListCollectionView)listBox.ItemsSource).SourceCollection).Count;
+            for (int i = 0; i < itemCount; i++)
             {
                 item = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromIndex(i);
                 if (VisualTreeHelper.GetDescendantBounds(item).Contains(e.GetPosition(item)))

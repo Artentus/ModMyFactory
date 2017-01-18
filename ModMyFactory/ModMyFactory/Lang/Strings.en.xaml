@@ -234,6 +234,12 @@
     -->
 
     <sys:String x:Key="VersionListWindowTitle">Select version</sys:String>
+    
+    <!-- checkboxes -->
+    <sys:String x:Key="ShowExperimentalCheckBox">Show experimental versions</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="ExperimentalToolTip">Experimental</sys:String>
 
 
     <!--

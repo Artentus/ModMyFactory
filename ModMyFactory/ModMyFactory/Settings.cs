@@ -39,6 +39,7 @@ namespace ModMyFactory
 
                 SaveCredentials = false,
                 WarningShown = false,
+                ShowExperimentalDownloads = false,
             };
             return defaultSettings;
         }
@@ -95,6 +96,8 @@ namespace ModMyFactory
         public bool SaveCredentials;
 
         public bool WarningShown;
+
+        public bool ShowExperimentalDownloads;
 
         [JsonConstructor]
         private Settings()

@@ -444,6 +444,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Lang\pt.png" />
+    <Resource Include="Images\Experimental.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>
