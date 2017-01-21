@@ -84,8 +84,14 @@
     <sys:String x:Key="Question.DeleteMod.Message">Do you really want to delete this mod?</sys:String>
     <sys:String x:Key="Question.DeleteMod.Title">Confirm</sys:String>
     
+    <sys:String x:Key="Question.DeleteMods.Message">Do you really want to delete all selected mods?</sys:String>
+    <sys:String x:Key="Question.DeleteMods.Title">Confirm</sys:String>
+    
     <sys:String x:Key="Question.DeleteModpack.Message">Do you really want to delete this modpack?</sys:String>
     <sys:String x:Key="Question.DeleteModpack.Title">Confirm</sys:String>
+    
+    <sys:String x:Key="Question.DeleteModpacks.Message">Do you really want to delete all selected modpacks?</sys:String>
+    <sys:String x:Key="Question.DeleteModpacks.Title">Confirm</sys:String>
 
     
     <!-- file type descriptions -->
@@ -184,6 +190,12 @@
     <sys:String x:Key="AboutMenuItem">About ModMyFactory</sys:String>
     <sys:String x:Key="HelpMenuItem">Help</sys:String>
     
+    <!-- context menu -->
+    <sys:String x:Key="DeleteSelectedMenuItem">Delete selected</sys:String>
+    <sys:String x:Key="ActivateSelectedMenuItem">Activate selected</sys:String>
+    <sys:String x:Key="DeactivateSelectedMenuItem">Deactivate selected</sys:String>
+    <sys:String x:Key="SelectActiveMenuItem">Select all active</sys:String>
+    
     <!-- hotkeys -->
     <sys:String x:Key="DownloadModsHotkey">F7</sys:String>
     <sys:String x:Key="AddModFilesHotkey">F8</sys:String>
@@ -200,6 +212,7 @@
     <sys:String x:Key="HelpHotkey">F1</sys:String>
     <sys:String x:Key="UpdateHotkey">F3</sys:String>
     <sys:String x:Key="AboutHotkey">Ctrl+F1</sys:String>
+    <sys:String x:Key="DeleteHotkey">Del</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ModsHeader">Mods</sys:String>

@@ -23,12 +23,14 @@
         <BitmapImage x:Key="AddFolderIcon" UriSource="../Images/AddFolder.png"/>
         <BitmapImage x:Key="CloseIcon" UriSource="../Images/Close.png"/>
         <BitmapImage x:Key="ConfigureIcon" UriSource="../Images/Configure.png"/>
+        <BitmapImage x:Key="DeleteIcon" UriSource="../Images/Delete.png"/>
         <BitmapImage x:Key="DownloadIcon" UriSource="../Images/Download.png"/>
         <BitmapImage x:Key="ExportPackageIcon" UriSource="../Images/ExportPackage.png"/>
         <BitmapImage x:Key="HelpIcon" UriSource="../Images/Help.png"/>
         <BitmapImage x:Key="ImportPackageIcon" UriSource="../Images/ImportPackage.png"/>
         <BitmapImage x:Key="InformationIcon" UriSource="../Images/Information.png"/>
         <BitmapImage x:Key="LinkIcon" UriSource="../Images/Link.png"/>
+        <BitmapImage x:Key="MenuIcon" UriSource="../Images/Menu.png"/>
         <BitmapImage x:Key="NewPackageIcon" UriSource="../Images/NewPackage.png"/>
         <BitmapImage x:Key="OpenFolderIcon" UriSource="../Images/OpenFolder.png"/>
         <BitmapImage x:Key="RenameActiveIcon" UriSource="../Images/RenameActive.png"/>
@@ -43,6 +45,7 @@
         <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
 
         <sys:Boolean x:Key="False">False</sys:Boolean>
+        <sys:Boolean x:Key="True">True</sys:Boolean>
 
         <Style x:Key="ActiveInactiveCheckBoxStyle" TargetType="{x:Type CheckBox}">
             <Style.Setters>
@@ -123,6 +126,16 @@
                 </Setter>
             </Style.Setters>
         </Style>
+
+        <Style x:Key="MenuToggleButtonStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Trigger.Setters>
+                        <Setter Property="Background" Value="{StaticResource SelectionBrush}"/>
+                    </Trigger.Setters>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <Window.InputBindings>
@@ -140,6 +153,7 @@
         <KeyBinding Key="F1" Command="{Binding BrowseWikiCommand}"/>
         <KeyBinding Key="F3" Command="{Binding UpdateCommand}" CommandParameter="{StaticResource False}"/>
         <KeyBinding Modifiers="Control" Key="F1" Command="{Binding OpenAboutWindowCommand}"/>
+        <KeyBinding Key="Delete" Command="{Binding DeleteSelectedModsAndModpacksCommand}"/>
     </Window.InputBindings>
     
     <Window.CommandBindings>
@@ -253,20 +267,8 @@
         </Menu>
 
         <ToolBar Grid.Row="1" Margin="0,4,0,0">
-            <ToggleButton x:Name="ToggleButton" ToolTip="{DynamicResource AddModsMenuItem}"
-                          IsEnabled="{Binding IsOpen, ElementName=ToggledPopup, Converter={StaticResource InverseBooleanConverter}}">
-                <ToggleButton.Style>
-                    <Style TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}">
-                        <Style.Triggers>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Trigger.Setters>
-                                    <Setter Property="Background" Value="{StaticResource SelectionBrush}"/>
-                                </Trigger.Setters>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </ToggleButton.Style>
-                
+            <ToggleButton x:Name="AddModsToggleButton" ToolTip="{DynamicResource AddModsMenuItem}" Style="{StaticResource MenuToggleButtonStyle}"
+                          IsEnabled="{Binding IsOpen, ElementName=AddModsToggledPopup, Converter={StaticResource InverseBooleanConverter}}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20"/>
@@ -277,9 +279,9 @@
 
                     <Path Grid.Column="1" Margin="2" VerticalAlignment="Center" Fill="Black" Data="M 0 0 L 3 3 L 6 0 Z"/>
 
-                    <Popup x:Name="ToggledPopup" StaysOpen="False" Placement="Bottom" PlacementTarget="{Binding ElementName=ToggleButton}"
+                    <Popup x:Name="AddModsToggledPopup" StaysOpen="False" Placement="Bottom" PlacementTarget="{Binding ElementName=AddModsToggleButton}"
                            PopupAnimation="Fade" AllowsTransparency="True" Focusable="False"
-                           IsOpen="{Binding IsChecked, ElementName=ToggleButton, Mode=TwoWay}">
+                           IsOpen="{Binding IsChecked, ElementName=AddModsToggleButton, Mode=TwoWay}">
                         <Border Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
                             <Menu IsMainMenu="False">
                                 <MenuItem Header="{DynamicResource DownloadModsMenuItem}" Icon="{StaticResource DownloadIcon}" Command="{Binding DownloadModsCommand}"/>
@@ -375,16 +377,41 @@
             <Grid Grid.Row="0" Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="4"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <CheckBox Grid.Row="0" Grid.Column="0" Margin="2" Content="{DynamicResource ModsHeader}" Style="{StaticResource AllActiveInactiveCheckBoxStyle}"
-                          IsChecked="{Binding AllModsSelected}"/>
-                <Rectangle Grid.Row="1" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
+                <CheckBox Grid.Row="1" Grid.Column="0" Margin="2" Content="{DynamicResource ModsHeader}" Style="{StaticResource AllActiveInactiveCheckBoxStyle}" IsChecked="{Binding AllModsActive}"/>
+                <Rectangle Grid.Row="2" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
+
+                <ToggleButton x:Name="ModsToggleButton" Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" VerticalAlignment="Bottom" Style="{StaticResource MenuToggleButtonStyle}"
+                              IsEnabled="{Binding IsOpen, ElementName=ModsToggledPopup, Converter={StaticResource InverseBooleanConverter}}">
+                    <Grid>
+                        <Image Grid.Column="0" Margin="1" Width="18" Height="18" Stretch="None" Source="{StaticResource MenuIcon}"/>
+
+                        <Popup x:Name="ModsToggledPopup" StaysOpen="False" Placement="Left" PlacementTarget="{Binding ElementName=ModsToggleButton}"
+                               VerticalOffset="{Binding ActualHeight, ElementName=ModsToggleButton}" HorizontalOffset="{Binding ActualWidth, ElementName=ModsToggleButton}"
+                               PopupAnimation="Fade" AllowsTransparency="True" Focusable="False"
+                               IsOpen="{Binding IsChecked, ElementName=ModsToggleButton, Mode=TwoWay}">
+                            <Border Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
+                                <Menu IsMainMenu="False">
+                                    <MenuItem Header="{DynamicResource ActivateSelectedMenuItem}" Command="{Binding ActivateSelectedModsCommand}"/>
+                                    <MenuItem Header="{DynamicResource DeactivateSelectedMenuItem}" Command="{Binding DeactivateSelectedModsCommand}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{DynamicResource DeleteSelectedMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
+                                              Command="{Binding DeleteSelectedModsCommand}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{DynamicResource SelectActiveMenuItem}" Command="{Binding SelectActiveModsCommand}"/>
+                                </Menu>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </ToggleButton>
             </Grid>
             <mvvm:DragDropReadyListBox x:Name="ModsListBox" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding ModsView}"
                                        IsSynchronizedWithCurrentItem="False" SelectionMode="Extended" ScrollViewer.VerticalScrollBarVisibility="Visible"
@@ -395,6 +422,7 @@
                         <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
                         <Setter Property="ToolTipService.InitialShowDelay" Value="800"/>
                         <Setter Property="ToolTipService.ShowDuration" Value="15000"/>
+                        <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
                     </Style>
                 </mvvm:DragDropReadyListBox.ItemContainerStyle>
                 
@@ -452,10 +480,23 @@
 
                             <CheckBox Grid.Column="0" Margin="4" Style="{StaticResource ActiveInactiveCheckBoxStyle}" IsChecked="{Binding Active, Mode=TwoWay}"/>
                             <TextBlock Grid.Column="1" Margin="2,0" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Title}"/>
-                            <Button Grid.Column="2" Width="16" Height="16" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}" Command="{Binding DeleteCommand}"/>
+                            <Button Grid.Column="2" Width="16" Height="16" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
+                                    CommandParameter="{StaticResource True}" Command="{Binding DeleteCommand}"/>
                         </Grid>
                     </DataTemplate>
                 </mvvm:DragDropReadyListBox.ItemTemplate>
+                
+                <mvvm:DragDropReadyListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="{DynamicResource ActivateSelectedMenuItem}" Command="{Binding ActivateSelectedModsCommand}"/>
+                        <MenuItem Header="{DynamicResource DeactivateSelectedMenuItem}" Command="{Binding DeactivateSelectedModsCommand}"/>
+                        <Separator/>
+                        <MenuItem Header="{DynamicResource DeleteSelectedMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
+                                  Command="{Binding DeleteSelectedModsCommand}"/>
+                        <Separator/>
+                        <MenuItem Header="{DynamicResource SelectActiveMenuItem}" Command="{Binding SelectActiveModsCommand}"/>
+                    </ContextMenu>
+                </mvvm:DragDropReadyListBox.ContextMenu>
             </mvvm:DragDropReadyListBox>
             <DockPanel Grid.Row="2" Grid.Column="0" Margin="0,4,0,0">
                 <Border DockPanel.Dock="Left" Background="{StaticResource SelectionBrush}">
@@ -470,16 +511,41 @@
             <Grid Grid.Row="0" Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="4"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <CheckBox Grid.Row="0" Grid.Column="0" Margin="2" Content="{DynamicResource ModpacksHeader}" Style="{StaticResource AllActiveInactiveCheckBoxStyle}"
-                          IsChecked="{Binding AllModpacksSelected}"/>
-                <Rectangle Grid.Row="1" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
+                <CheckBox Grid.Row="1" Grid.Column="0" Margin="2" Content="{DynamicResource ModpacksHeader}" Style="{StaticResource AllActiveInactiveCheckBoxStyle}" IsChecked="{Binding AllModpacksActive}"/>
+                <Rectangle Grid.Row="2" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
+
+                <ToggleButton x:Name="ModpacksToggleButton" Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" VerticalAlignment="Bottom" Style="{StaticResource MenuToggleButtonStyle}"
+                              IsEnabled="{Binding IsOpen, ElementName=ModpacksToggledPopup, Converter={StaticResource InverseBooleanConverter}}">
+                    <Grid>
+                        <Image Grid.Column="0" Margin="1" Width="18" Height="18" Stretch="None" Source="{StaticResource MenuIcon}"/>
+
+                        <Popup x:Name="ModpacksToggledPopup" StaysOpen="False" Placement="Left" PlacementTarget="{Binding ElementName=ModpacksToggleButton}"
+                               VerticalOffset="{Binding ActualHeight, ElementName=ModsToggleButton}" HorizontalOffset="{Binding ActualWidth, ElementName=ModsToggleButton}"
+                               PopupAnimation="Fade" AllowsTransparency="True" Focusable="False"
+                               IsOpen="{Binding IsChecked, ElementName=ModpacksToggleButton, Mode=TwoWay}">
+                            <Border Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
+                                <Menu IsMainMenu="False">
+                                    <MenuItem Header="{DynamicResource ActivateSelectedMenuItem}" Command="{Binding ActivateSelectedModpacksCommand}"/>
+                                    <MenuItem Header="{DynamicResource DeactivateSelectedMenuItem}" Command="{Binding DeactivateSelectedModpacksCommand}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{DynamicResource DeleteSelectedMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
+                                              Command="{Binding DeleteSelectedModpacksCommand}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{DynamicResource SelectActiveMenuItem}" Command="{Binding SelectActiveModpacksCommand}"/>
+                                </Menu>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </ToggleButton>
             </Grid>
             <mvvm:DragDropReadyListBox x:Name="ModpacksListBox" Grid.Row="1" Grid.Column="2" ItemsSource="{Binding ModpacksView}"
                                        IsSynchronizedWithCurrentItem="False" SelectionMode="Extended" AllowDrop="True" ScrollViewer.VerticalScrollBarVisibility="Visible"
@@ -545,6 +611,12 @@
                     </ControlTemplate>
                 </mvvm:DragDropReadyListBox.Resources>
 
+                <mvvm:DragDropReadyListBox.ItemContainerStyle>
+                    <Style TargetType="mvvm:DragDropReadyListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                        <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
+                    </Style>
+                </mvvm:DragDropReadyListBox.ItemContainerStyle>
+
                 <mvvm:DragDropReadyListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type model:Modpack}">
                         <Expander>
@@ -569,7 +641,8 @@
                                             <KeyBinding Key="Return" Command="{Binding FinishRenameCommand}"/>
                                         </TextBox.InputBindings>
                                     </TextBox>
-                                    <Button Grid.Column="3" Width="16" Height="16" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}" Command="{Binding DeleteCommand}"/>
+                                    <Button Grid.Column="3" Width="16" Height="16" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
+                                            CommandParameter="{StaticResource True}" Command="{Binding DeleteCommand}"/>
                                 </Grid>
                             </Expander.Header>
 
@@ -585,6 +658,18 @@
                         </Expander>
                     </DataTemplate>
                 </mvvm:DragDropReadyListBox.ItemTemplate>
+                
+                <mvvm:DragDropReadyListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="{DynamicResource ActivateSelectedMenuItem}" Command="{Binding ActivateSelectedModpacksCommand}"/>
+                        <MenuItem Header="{DynamicResource DeactivateSelectedMenuItem}" Command="{Binding DeactivateSelectedModpacksCommand}"/>
+                        <Separator/>
+                        <MenuItem Header="{DynamicResource DeleteSelectedMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
+                                  Command="{Binding DeleteSelectedModpacksCommand}"/>
+                        <Separator/>
+                        <MenuItem Header="{DynamicResource SelectActiveMenuItem}" Command="{Binding SelectActiveModpacksCommand}"/>
+                    </ContextMenu>
+                </mvvm:DragDropReadyListBox.ContextMenu>
             </mvvm:DragDropReadyListBox>
             <DockPanel Grid.Row="2" Grid.Column="2" Margin="0,4,0,0">
                 <Border DockPanel.Dock="Left" Background="{StaticResource SelectionBrush}">

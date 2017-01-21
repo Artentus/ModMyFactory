@@ -84,8 +84,14 @@
     <sys:String x:Key="Question.DeleteMod.Message">Möchten Sie diese Mod wirklich löschen?</sys:String>
     <sys:String x:Key="Question.DeleteMod.Title">Bestätigen</sys:String>
     
+    <sys:String x:Key="Question.DeleteMods.Message">Möchten Sie wirklich alle ausgewählten Mods löschen?</sys:String>
+    <sys:String x:Key="Question.DeleteMods.Title">Bestätigen</sys:String>
+    
     <sys:String x:Key="Question.DeleteModpack.Message">Möchten Sie dieses Modpack wirklich entfernen?</sys:String>
     <sys:String x:Key="Question.DeleteModpack.Title">Bestätigen</sys:String>
+    
+    <sys:String x:Key="Question.DeleteModpacks.Message">Möchten Sie wirklich alle ausgewählten Modpacks entfernen?</sys:String>
+    <sys:String x:Key="Question.DeleteModpacks.Title">Bestätigen</sys:String>
 
 
     <!-- file type descriptions -->
@@ -184,6 +190,12 @@
     <sys:String x:Key="AboutMenuItem">Über ModMyFactory</sys:String>
     <sys:String x:Key="HelpMenuItem">Hilfe</sys:String>
     
+    <!-- context menu -->
+    <sys:String x:Key="DeleteSelectedMenuItem">Ausgewählte löschen</sys:String>
+    <sys:String x:Key="ActivateSelectedMenuItem">Ausgewählte aktivieren</sys:String>
+    <sys:String x:Key="DeactivateSelectedMenuItem">Ausgewählte deaktivieren</sys:String>
+    <sys:String x:Key="SelectActiveMenuItem">Alle aktiven auswählen</sys:String>
+    
     <!-- hotkeys -->
     <sys:String x:Key="DownloadModsHotkey">F7</sys:String>
     <sys:String x:Key="AddModFilesHotkey">F8</sys:String>
@@ -200,6 +212,7 @@
     <sys:String x:Key="HelpHotkey">F1</sys:String>
     <sys:String x:Key="UpdateHotkey">F3</sys:String>
     <sys:String x:Key="AboutHotkey">Strg+F1</sys:String>
+    <sys:String x:Key="DeleteHotkey">Entf</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ModsHeader">Mods</sys:String>

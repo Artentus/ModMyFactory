@@ -41,8 +41,8 @@ namespace ModMyFactory.ViewModels
         string modpacksFilter;
         GridLength modGridLength;
         GridLength modpackGridLength;
-        bool? allModsSelected;
-        bool? allModpacksSelected;
+        bool? allModsActive;
+        bool? allModpacksActive;
         bool allModsSelectedChanging;
         bool allModpacksSelectedChanging;
         bool updating;
@@ -160,24 +160,24 @@ namespace ModMyFactory.ViewModels
 
         }
 
-        public bool? AllModsSelected
+        public bool? AllModsActive
         {
-            get { return allModsSelected; }
+            get { return allModsActive; }
             set
             {
-                if (value != allModsSelected)
+                if (value != allModsActive)
                 {
-                    allModsSelected = value;
+                    allModsActive = value;
                     allModsSelectedChanging = true;
 
-                    if (allModsSelected.HasValue)
+                    if (allModsActive.HasValue)
                     {
                         ModManager.BeginUpdateTemplates();
 
                         foreach (var mod in Mods)
                         {
-                            if (mod.Active != allModsSelected.Value)
-                                mod.Active = allModsSelected.Value;
+                            if (mod.Active != allModsActive.Value)
+                                mod.Active = allModsActive.Value;
                         }
 
                         ModManager.EndUpdateTemplates();
@@ -185,29 +185,29 @@ namespace ModMyFactory.ViewModels
                     }
 
                     allModsSelectedChanging = false;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModsSelected)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModsActive)));
                 }
             }
         }
 
-        public bool? AllModpacksSelected
+        public bool? AllModpacksActive
         {
-            get { return allModpacksSelected; }
+            get { return allModpacksActive; }
             set
             {
-                if (value != allModpacksSelected)
+                if (value != allModpacksActive)
                 {
-                    allModpacksSelected = value;
+                    allModpacksActive = value;
                     allModpacksSelectedChanging = true;
 
-                    if (allModpacksSelected.HasValue)
+                    if (allModpacksActive.HasValue)
                     {
                         ModManager.BeginUpdateTemplates();
 
                         foreach (var modpack in Modpacks)
                         {
-                            if (modpack.Active != allModpacksSelected.Value)
-                                modpack.Active = allModpacksSelected.Value;
+                            if (modpack.Active != allModpacksActive.Value)
+                                modpack.Active = allModpacksActive.Value;
                         }
 
                         ModManager.EndUpdateTemplates();
@@ -215,7 +215,7 @@ namespace ModMyFactory.ViewModels
                     }
 
                     allModpacksSelectedChanging = false;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModpacksSelected)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModpacksActive)));
                 }
             }
         }
@@ -262,6 +262,24 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand BrowseWikiCommand { get; }
 
+        public RelayCommand ActivateSelectedModsCommand { get; }
+
+        public RelayCommand DeactivateSelectedModsCommand { get; }
+
+        public RelayCommand DeleteSelectedModsCommand { get; }
+
+        public RelayCommand SelectActiveModsCommand { get; }
+
+        public RelayCommand ActivateSelectedModpacksCommand { get; }
+
+        public RelayCommand DeactivateSelectedModpacksCommand { get; }
+
+        public RelayCommand DeleteSelectedModpacksCommand { get; }
+
+        public RelayCommand SelectActiveModpacksCommand { get; }
+
+        public RelayCommand DeleteSelectedModsAndModpacksCommand { get; }
+
         private bool ModFilter(object item)
         {
             Mod mod = item as Mod;
@@ -282,7 +300,7 @@ namespace ModMyFactory.ViewModels
             return StringHelper.FilterIsContained(modpacksFilter, modpack.Name);
         }
 
-        private void SetAllModsSelected()
+        private void SetAllModsActive()
         {
             if (Mods.Count == 0 || allModsSelectedChanging)
                 return;
@@ -297,10 +315,10 @@ namespace ModMyFactory.ViewModels
                 }
             }
 
-            if (newValue != allModsSelected)
+            if (newValue != allModsActive)
             {
-                allModsSelected = newValue;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModsSelected)));
+                allModsActive = newValue;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModsActive)));
             }
         }
 
@@ -308,7 +326,7 @@ namespace ModMyFactory.ViewModels
         {
             if (e.PropertyName == nameof(Mod.Active))
             {
-                SetAllModsSelected();
+                SetAllModsActive();
             }
         }
 
@@ -319,24 +337,24 @@ namespace ModMyFactory.ViewModels
                 case NotifyCollectionChangedAction.Add:
                     foreach (Mod mod in e.NewItems)
                         mod.PropertyChanged += ModPropertyChanged;
-                    SetAllModsSelected();
+                    SetAllModsActive();
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     foreach (Mod mod in e.OldItems)
                         mod.PropertyChanged -= ModPropertyChanged;
-                    SetAllModsSelected();
+                    SetAllModsActive();
                     break;
                 case NotifyCollectionChangedAction.Reset:
                     foreach (Mod mod in e.NewItems)
                         mod.PropertyChanged += ModPropertyChanged;
                     foreach (Mod mod in e.OldItems)
                         mod.PropertyChanged -= ModPropertyChanged;
-                    SetAllModsSelected();
+                    SetAllModsActive();
                     break;
             }
         }
 
-        private void SetAllModpacksSelected()
+        private void SetAllModpacksActive()
         {
             if (Modpacks.Count == 0 || allModpacksSelectedChanging)
                 return;
@@ -351,10 +369,10 @@ namespace ModMyFactory.ViewModels
                 }
             }
 
-            if (newValue != allModpacksSelected)
+            if (newValue != allModpacksActive)
             {
-                allModpacksSelected = newValue;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModpacksSelected)));
+                allModpacksActive = newValue;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModpacksActive)));
             }
         }
 
@@ -362,7 +380,7 @@ namespace ModMyFactory.ViewModels
         {
             if (e.PropertyName == nameof(Modpack.Active))
             {
-                SetAllModpacksSelected();
+                SetAllModpacksActive();
             }
         }
 
@@ -373,19 +391,19 @@ namespace ModMyFactory.ViewModels
                 case NotifyCollectionChangedAction.Add:
                     foreach (Modpack modpack in e.NewItems)
                         modpack.PropertyChanged += ModpackPropertyChanged;
-                    SetAllModpacksSelected();
+                    SetAllModpacksActive();
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     foreach (Modpack modpack in e.OldItems)
                         modpack.PropertyChanged -= ModpackPropertyChanged;
-                    SetAllModpacksSelected();
+                    SetAllModpacksActive();
                     break;
                 case NotifyCollectionChangedAction.Reset:
                     foreach (Modpack modpack in e.NewItems)
                         modpack.PropertyChanged += ModpackPropertyChanged;
                     foreach (Modpack modpack in e.OldItems)
                         modpack.PropertyChanged -= ModpackPropertyChanged;
-                    SetAllModpacksSelected();
+                    SetAllModpacksActive();
                     break;
             }
         }
@@ -441,14 +459,14 @@ namespace ModMyFactory.ViewModels
                 ModsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(Mod.FactorioVersion)));
                 ModsView.Filter = ModFilter;
                 Mods.CollectionChanged += ModsChangedHandler;
-                SetAllModsSelected();
+                SetAllModsActive();
 
                 Modpacks = new ObservableCollection<Modpack>();
                 ModpacksView = (ListCollectionView)(new CollectionViewSource() { Source = Modpacks }).View;
                 ModpacksView.CustomSort = new ModpackSorter();
                 ModpacksView.Filter = ModpackFilter;
                 Modpacks.CollectionChanged += ModpacksChangedHandler;
-                SetAllModpacksSelected();
+                SetAllModpacksActive();
 
                 Mod.LoadMods(Mods, Modpacks);
                 ModpackTemplateList.Instance.PopulateModpackList(Mods, Modpacks, ModpacksView);
@@ -514,6 +532,19 @@ namespace ModMyFactory.ViewModels
                 UpdateCommand = new RelayCommand<bool>(async silent => await Update(silent), () => !updating);
                 OpenAboutWindowCommand = new RelayCommand(OpenAboutWindow);
                 BrowseWikiCommand = new RelayCommand(() => Process.Start("https://github.com/Artentus/ModMyFactory/wiki"));
+
+                // context menu
+                ActivateSelectedModsCommand = new RelayCommand(ActivateSelectedMods, () => Mods.Any(mod => mod.IsSelected));
+                DeactivateSelectedModsCommand = new RelayCommand(DeactivateSelectedMods, () => Mods.Any(mod => mod.IsSelected));
+                DeleteSelectedModsCommand = new RelayCommand(DeleteSelectedMods, () => Mods.Any(mod => mod.IsSelected));
+                SelectActiveModsCommand = new RelayCommand(SelectActiveMods);
+
+                ActivateSelectedModpacksCommand = new RelayCommand(ActivateSelectedModpacks, () => Modpacks.Any(modpack => modpack.IsSelected));
+                DeactivateSelectedModpacksCommand = new RelayCommand(DeactivateSelectedModpacks, () => Modpacks.Any(modpack => modpack.IsSelected));
+                DeleteSelectedModpacksCommand = new RelayCommand(DeleteSelectedModpacks, () => Modpacks.Any(modpack => modpack.IsSelected));
+                SelectActiveModpacksCommand = new RelayCommand(SelectActiveModpacks);
+
+                DeleteSelectedModsAndModpacksCommand = new RelayCommand(DeleteSelectedModsAndModpacks, () => Mods.Any(mod => mod.IsSelected) || Modpacks.Any(modpack => modpack.IsSelected));
 
 
                 // New ModMyFactory instance started.
@@ -1595,6 +1626,120 @@ namespace ModMyFactory.ViewModels
             var aboutWindow = new AboutWindow() { Owner = Window };
             aboutWindow.ShowDialog();
         }
+
+        #region ContextMenus
+
+        private void SetSelectedModsActiveState(bool state)
+        {
+            ModManager.BeginUpdateTemplates();
+
+            foreach (Mod mod in Mods)
+            {
+                if (mod.IsSelected)
+                    mod.Active = state;
+            }
+
+            ModManager.EndUpdateTemplates(true);
+            ModManager.SaveTemplates();
+        }
+
+        private void ActivateSelectedMods()
+        {
+            SetSelectedModsActiveState(true);
+        }
+
+        private void DeactivateSelectedMods()
+        {
+            SetSelectedModsActiveState(false);
+        }
+
+        private void DeleteSelectedMods()
+        {
+            var deletionList = new List<Mod>();
+            foreach (Mod mod in Mods)
+            {
+                if (mod.IsSelected)
+                    deletionList.Add(mod);
+            }
+
+            if (deletionList.Count > 0 && MessageBox.Show(Window,
+                App.Instance.GetLocalizedMessage("DeleteMods", MessageType.Question),
+                App.Instance.GetLocalizedMessageTitle("DeleteMods", MessageType.Question),
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                foreach (Mod mod in deletionList)
+                    mod.Delete(false);
+            }
+        }
+
+        private void SelectActiveMods()
+        {
+            foreach (Mod mod in Mods)
+            {
+                if (mod.Active)
+                    mod.IsSelected = true;
+            }
+        }
+
+        private void SetSelectedModpacksActiveState(bool state)
+        {
+            ModManager.BeginUpdateTemplates();
+
+            foreach (Modpack modpack in Modpacks)
+            {
+                if (modpack.IsSelected)
+                    modpack.Active = state;
+            }
+
+            ModManager.EndUpdateTemplates(true);
+            ModManager.SaveTemplates();
+        }
+
+        private void ActivateSelectedModpacks()
+        {
+            SetSelectedModpacksActiveState(true);
+        }
+
+        private void DeactivateSelectedModpacks()
+        {
+            SetSelectedModpacksActiveState(false);
+        }
+
+        private void DeleteSelectedModpacks()
+        {
+            var deletionList = new List<Modpack>();
+            foreach (Modpack modpack in Modpacks)
+            {
+                if (modpack.IsSelected)
+                    deletionList.Add(modpack);
+            }
+
+            if (deletionList.Count > 0 && MessageBox.Show(Window,
+                App.Instance.GetLocalizedMessage("DeleteModpacks", MessageType.Question),
+                App.Instance.GetLocalizedMessageTitle("DeleteModpacks", MessageType.Question),
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                foreach (Modpack modpack in deletionList)
+                    modpack.Delete(false);
+            }
+        }
+
+        private void SelectActiveModpacks()
+        {
+            foreach (Modpack modpack in Modpacks)
+            {
+                if (modpack.Active ?? false)
+                    modpack.IsSelected = true;
+            }
+        }
+
+        private void DeleteSelectedModsAndModpacks()
+        {
+            DeleteSelectedMods();
+            DeleteSelectedModpacks();
+        }
+
+        #endregion
 
         private async void NewInstanceStartedHandler(object sender, InstanceStartedEventArgs e)
         {

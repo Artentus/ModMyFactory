@@ -430,7 +430,7 @@ namespace ModMyFactory.ViewModels
         private void DeleteSelectedModRelease()
         {
             Mod mod = InstalledMods.Find(SelectedMod.Name, SelectedRelease.Version);
-            mod?.DeleteCommand.Execute();
+            mod?.Delete(true);
             UpdateSelectedReleases();
         }
 
