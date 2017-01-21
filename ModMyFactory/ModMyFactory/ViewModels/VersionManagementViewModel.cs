@@ -241,7 +241,7 @@ namespace ModMyFactory.ViewModels
                     {
                         if (is64Bit == Environment.Is64BitOperatingSystem)
                         {
-                            if (FactorioVersions.Any(factorioVersion => factorioVersion.Version == version))
+                            if (FactorioVersions.All(factorioVersion => factorioVersion.Version != version))
                             {
                                 progress.Report(1);
 
