@@ -14,32 +14,10 @@ namespace ModMyFactory.ViewModels
 
         public static SettingsViewModel Instance => instance ?? (instance = new SettingsViewModel());
 
+        #region ManagerMode
+
         bool managerModeIsPerFactorioVersion;
         bool managerModeIsGlobal;
-
-        bool factorioDirectoryIsAppData;
-        bool factorioDirectoryIsAppDirectory;
-        bool factorioDirectoryIsCustom;
-        string factorioDirectory;
-
-        bool modDirectoryIsAppData;
-        bool modDirectoryIsAppDirectory;
-        bool modDirectoryIsCustom;
-        string modDirectory;
-
-        bool savegameDirectoryIsAppData;
-        bool savegameDirectoryIsAppDirectory;
-        bool savegameDirectoryIsCustom;
-        string savegameDirectory;
-
-        bool scenarioDirectoryIsAppData;
-        bool scenarioDirectoryIsAppDirectory;
-        bool scenarioDirectoryIsCustom;
-        string scenarioDirectory;
-
-        bool settingsValid;
-
-        #region ManagerMode
 
         public bool ManagerModeIsPerFactorioVersion
         {
@@ -71,7 +49,31 @@ namespace ModMyFactory.ViewModels
 
         #endregion
 
+        #region Misc
+
+        bool updateSearchOnStartup;
+
+        public bool UpdateSearchOnStartup
+        {
+            get { return updateSearchOnStartup; }
+            set
+            {
+                if (value != updateSearchOnStartup)
+                {
+                    updateSearchOnStartup = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(UpdateSearchOnStartup)));
+                }
+            }
+        }
+
+        #endregion
+
         #region FactorioDirectory
+
+        bool factorioDirectoryIsAppData;
+        bool factorioDirectoryIsAppDirectory;
+        bool factorioDirectoryIsCustom;
+        string factorioDirectory;
 
         public bool FactorioDirectoryIsAppData
         {
@@ -146,6 +148,11 @@ namespace ModMyFactory.ViewModels
 
         #region ModDirectory
 
+        bool modDirectoryIsAppData;
+        bool modDirectoryIsAppDirectory;
+        bool modDirectoryIsCustom;
+        string modDirectory;
+
         public bool ModDirectoryIsAppData
         {
             get { return modDirectoryIsAppData; }
@@ -218,6 +225,11 @@ namespace ModMyFactory.ViewModels
         #endregion
 
         #region SavegameDirectory
+
+        bool savegameDirectoryIsAppData;
+        bool savegameDirectoryIsAppDirectory;
+        bool savegameDirectoryIsCustom;
+        string savegameDirectory;
 
         public bool SavegameDirectoryIsAppData
         {
@@ -292,6 +304,11 @@ namespace ModMyFactory.ViewModels
 
         #region ScenarioDirectory
 
+        bool scenarioDirectoryIsAppData;
+        bool scenarioDirectoryIsAppDirectory;
+        bool scenarioDirectoryIsCustom;
+        string scenarioDirectory;
+
         public bool ScenarioDirectoryIsAppData
         {
             get { return scenarioDirectoryIsAppData; }
@@ -363,6 +380,8 @@ namespace ModMyFactory.ViewModels
 
         #endregion
 
+        bool settingsValid;
+
         public bool SettingsValid
         {
             get { return settingsValid; }
@@ -407,6 +426,8 @@ namespace ModMyFactory.ViewModels
                     ManagerModeIsGlobal = true;
                     break;
             }
+
+            UpdateSearchOnStartup = settings.UpdateSearchOnStartup;
 
             FactorioDirectoryIsAppData = false;
             FactorioDirectoryIsAppDirectory = false;

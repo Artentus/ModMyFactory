@@ -1505,6 +1505,9 @@ namespace ModMyFactory.ViewModels
             // Manager mode
             settings.ManagerMode = settingsViewModel.ManagerMode;
 
+            // Update search
+            settings.UpdateSearchOnStartup = settingsViewModel.UpdateSearchOnStartup;
+
             // Factorio location
             settings.FactorioDirectoryOption = settingsViewModel.FactorioDirectoryOption;
             settings.FactorioDirectory = (settings.FactorioDirectoryOption == DirectoryOption.Custom)
@@ -1774,7 +1777,7 @@ namespace ModMyFactory.ViewModels
                 {
                     if (Program.ImportFileList.Count > 0)
                         await ImportModpacksInner(Program.ImportFileList);
-                    else if (Program.UpdateCheckOnStartup) // Just skip update check if import list is non-zero
+                    else if (Program.UpdateCheckOnStartup && App.Instance.Settings.UpdateSearchOnStartup) // Just skip update check if import list is non-zero
                         await Update(true);
                 };
             }

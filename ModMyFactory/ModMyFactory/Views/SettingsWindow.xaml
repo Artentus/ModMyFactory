@@ -30,10 +30,11 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <GroupBox Grid.Row="0" Header="{DynamicResource ManagerModeGroupHeader}">
+                        <GroupBox Grid.Row="0" Margin="0,0,0,2" Header="{DynamicResource ManagerModeGroupHeader}">
                             <Grid Margin="4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -45,7 +46,17 @@
                             </Grid>
                         </GroupBox>
 
-                        <GroupBox Grid.Row="1" Margin="0,4,0,0" Header="{DynamicResource CredentialsGroupHeader}">
+                        <GroupBox Grid.Row="1" Margin="0,2" Header="{DynamicResource MiscGroupHeader}">
+                            <Grid Margin="4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <CheckBox Grid.Row="0" Margin="2" IsChecked="{Binding UpdateSearchOnStartup}" Content="{DynamicResource UpdateSearchGroupItem}"/>
+                            </Grid>
+                        </GroupBox>
+
+                        <GroupBox Grid.Row="2" Margin="0,2,0,0" Header="{DynamicResource CredentialsGroupHeader}">
                             <Grid Margin="4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -80,7 +91,7 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <GroupBox Grid.Row="0" Header="{DynamicResource FactorioDirectoryGroupHeader}">
+                        <GroupBox Grid.Row="0" Margin="0,0,0,2" Header="{DynamicResource FactorioDirectoryGroupHeader}">
                             <Grid Margin="4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -102,7 +113,7 @@
                             </Grid>
                         </GroupBox>
 
-                        <GroupBox Grid.Row="1" Margin="0,4" Header="{DynamicResource ModDirectoryGroupHeader}">
+                        <GroupBox Grid.Row="1" Margin="0,2" Header="{DynamicResource ModDirectoryGroupHeader}">
                             <Grid Margin="4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -124,7 +135,7 @@
                             </Grid>
                         </GroupBox>
 
-                        <GroupBox Grid.Row="2" Header="{DynamicResource SavegameDirectoryGroupHeader}">
+                        <GroupBox Grid.Row="2" Margin="0,2" Header="{DynamicResource SavegameDirectoryGroupHeader}">
                             <Grid Margin="4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -146,7 +157,7 @@
                             </Grid>
                         </GroupBox>
 
-                        <GroupBox Grid.Row="3" Margin="0,4,0,0" Header="{DynamicResource ScenarioDirectoryGroupHeader}">
+                        <GroupBox Grid.Row="3" Margin="0,2,0,0" Header="{DynamicResource ScenarioDirectoryGroupHeader}">
                             <Grid Margin="4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>

@@ -216,6 +216,7 @@
 
     <!-- headers -->
     <sys:String x:Key="ModsHeader">Mods</sys:String>
+    <sys:String x:Key="MiscGroupHeader">Miscellaneous</sys:String>
     <sys:String x:Key="ModpacksHeader">Modpacks</sys:String>
     
     <!-- tooltips -->
@@ -276,6 +277,7 @@
     
     <!-- group items -->
     <sys:String x:Key="PerFactorioVersionGroupItem">para cada versão do Factorio</sys:String>
+    <sys:String x:Key="UpdateSearchGroupItem">Search for updates on startup</sys:String>
     <sys:String x:Key="GlobalGroupItem">Global</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Pasta da aplicação</sys:String>

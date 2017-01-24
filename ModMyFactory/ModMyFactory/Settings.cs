@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using Newtonsoft.Json;
@@ -40,6 +41,7 @@ namespace ModMyFactory
                 SaveCredentials = false,
                 WarningShown = false,
                 ShowExperimentalDownloads = false,
+                UpdateSearchOnStartup = true,
             };
             return defaultSettings;
         }
@@ -79,6 +81,7 @@ namespace ModMyFactory
 
         public string ScenarioDirectory;
 
+        [DefaultValue("en")]
         public string SelectedLanguage;
 
         public WindowInfo MainWindowInfo;
@@ -98,6 +101,9 @@ namespace ModMyFactory
         public bool WarningShown;
 
         public bool ShowExperimentalDownloads;
+
+        [DefaultValue(true)]
+        public bool UpdateSearchOnStartup;
 
         [JsonConstructor]
         private Settings()

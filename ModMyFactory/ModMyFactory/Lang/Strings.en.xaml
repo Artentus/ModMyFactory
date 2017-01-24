@@ -267,6 +267,7 @@
 
     <!-- group headers -->
     <sys:String x:Key="ManagerModeGroupHeader">Manager mode</sys:String>
+    <sys:String x:Key="MiscGroupHeader">Miscellaneous</sys:String>
     <sys:String x:Key="CredentialsGroupHeader">Login credentials</sys:String>
     
     <sys:String x:Key="FactorioDirectoryGroupHeader">Factorio location</sys:String>
@@ -276,6 +277,7 @@
     
     <!-- group items -->
     <sys:String x:Key="PerFactorioVersionGroupItem">Per Factorio version</sys:String>
+    <sys:String x:Key="UpdateSearchGroupItem">Search for updates on startup</sys:String>
     <sys:String x:Key="GlobalGroupItem">Global</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Application directory</sys:String>
