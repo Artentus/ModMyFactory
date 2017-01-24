@@ -102,26 +102,26 @@ namespace ModMyFactory.Models
                 // Factorio version
                 MatchCollection matches = Regex.Matches(content, "\"factorio_version\" *: *\"(?<factorio_version>[0-9]+\\.[0-9]+(\\.[0-9]+)?)\"",
                     RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                if (matches.Count != 1) return false;
+                if (matches.Count == 0) return false;
 
-                string factorioVersionString = matches[0].Groups["factorio_version"].Value;
+                string factorioVersionString = matches[matches.Count - 1].Groups["factorio_version"].Value;
                 factorioVersion = Version.Parse(factorioVersionString);
                 factorioVersion = new Version(factorioVersion.Major, factorioVersion.Minor);
 
                 // Version
                 matches = Regex.Matches(content, "\"version\" *: *\"(?<version>[0-9]+(\\.[0-9]+){0,3})\"",
                     RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                if (matches.Count != 1) return false;
+                if (matches.Count == 0) return false;
 
-                string versionString = matches[0].Groups["version"].Value;
+                string versionString = matches[matches.Count - 1].Groups["version"].Value;
                 version = Version.Parse(versionString);
 
                 // Name
                 matches = Regex.Matches(content, "\"name\" *: *\"(?<name>.*)\"",
                     RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                if (matches.Count != 1) return false;
+                if (matches.Count == 0) return false;
 
-                name = matches[0].Groups["name"].Value;
+                name = matches[matches.Count - 1].Groups["name"].Value;
 
                 return true;
             }
