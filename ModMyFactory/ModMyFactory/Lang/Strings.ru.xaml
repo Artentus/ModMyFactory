@@ -66,9 +66,6 @@
     <sys:String x:Key="Error.FactorioVersionInstalled.Message">Эта версия Factorio уже установлена.</sys:String>
     <sys:String x:Key="Error.FactorioVersionInstalled.Title">Эта версия уже установлена!</sys:String>
 
-    <sys:String x:Key="Warning.MoveFactorioFolder.Message">Выбранная установка Factorio будет перемещена согласно настройкам! Рекомендуется создание бэкапа.&#x0a;Вы хотите продолжить?</sys:String>
-    <sys:String x:Key="Warning.MoveFactorioFolder.Title">Предупреждение</sys:String>
-    
     <sys:String x:Key="Warning.MoveSteamFactorio.Message">Все моды, сохранения и сценарии будут перемещены согласно настройкам! Рекомендуется создание бэкапа.&#x0a;Вы хотите продолжить?</sys:String>
     <sys:String x:Key="Warning.MoveSteamFactorio.Title">Предупреждение</sys:String>
     
@@ -102,6 +99,7 @@
     
     <!-- progress dialogs -->
     <sys:String x:Key="MovingFilesDescription">Перемещение файлов...</sys:String>
+    <sys:String x:Key="CopyingFilesDescription">Copying files...</sys:String>
     <sys:String x:Key="ExtractingDescription">Извлечение...</sys:String>
     
     <sys:String x:Key="FetchingModsAction">Поиск модов</sys:String>
@@ -393,5 +391,19 @@
     -->
 
     <sys:String x:Key="UpdateListWindowTitle">Выберите необходимую версию</sys:String>
+    
+    
+    <!--
+    ____________________ CopyOrMoveMessageWindow ____________________
+    -->
+    
+    <sys:String x:Key="CopyOrMoveMessageWindowTitle">Copy or move?</sys:String>
+    
+    <!-- messages -->
+    <sys:String x:Key="CopyOrMoveMessage">Do you want to copy or move this Factorio installation?&#x0a;Moving will destroy the old installation.</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="CopyButton">Copy</sys:String>
+    <sys:String x:Key="MoveButton">Move</sys:String>
 
 </ResourceDictionary>

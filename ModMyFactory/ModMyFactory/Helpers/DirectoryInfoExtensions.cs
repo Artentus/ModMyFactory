@@ -34,6 +34,31 @@ namespace ModMyFactory.Helpers
             await MoveDirectoryRecursiveInnerAsync(source, destinationDirectory);
         }
 
+        private static async Task CopyDirectoryRecursiveInnerAsync(DirectoryInfo source, DirectoryInfo destination)
+        {
+            if (!destination.Exists) destination.Create();
+
+            await Task.Run(() =>
+            {
+                foreach (var file in source.GetFiles())
+                    file.CopyTo(Path.Combine(destination.FullName, file.Name));
+            });
+
+            foreach (var directory in source.GetDirectories())
+                await CopyDirectoryRecursiveInnerAsync(directory, new DirectoryInfo(Path.Combine(destination.FullName, directory.Name)));
+        }
+
+        /// <summary>
+        /// Copies this directory to a new path.
+        /// </summary>
+        /// <param name="source">The source directory.</param>
+        /// <param name="destination">The destination path to copy the directory to. This path can point to a different volume.</param>
+        public static async Task CopyToAsync(this DirectoryInfo source, string destination)
+        {
+            var destinationDirectory = new DirectoryInfo(destination);
+            await CopyDirectoryRecursiveInnerAsync(source, destinationDirectory);
+        }
+
         /// <summary>
         /// Checks if two DirectoryInfo objects point to the same directory.
         /// </summary>
