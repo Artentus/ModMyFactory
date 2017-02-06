@@ -40,8 +40,7 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <StartupObject>
-    </StartupObject>
+    <StartupObject>ModMyFactory.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>
@@ -122,6 +121,7 @@
     <Compile Include="ManagerMode.cs" />
     <Compile Include="MessageType.cs" />
     <Compile Include="ModCollection.cs" />
+    <Compile Include="Models\CopyOrMoveType.cs" />
     <Compile Include="Models\FactorioSteamVersion.cs" />
     <Compile Include="Models\ModUpdateInfo.cs" />
     <Compile Include="Export\ModExportTemplate.cs" />
@@ -136,6 +136,7 @@
     <Compile Include="FactorioUpdate\UpdatePackageInfo.cs" />
     <Compile Include="FactorioUpdate\UpdaterErrorType.cs" />
     <Compile Include="VersionComparer.cs" />
+    <Compile Include="ViewModels\CopyOrMoveViewModel.cs" />
     <Compile Include="ViewModels\ModpackExportViewModel.cs" />
     <Compile Include="ViewModels\ModUpdateViewModel.cs" />
     <Compile Include="ViewModels\OnlineModsViewModel.cs" />

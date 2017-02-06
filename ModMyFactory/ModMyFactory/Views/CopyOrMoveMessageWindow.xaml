@@ -1,15 +1,21 @@
-﻿<Window x:Class="ModMyFactory.Views.CopyOrMoveMessageWindow"
+﻿<mvvm:LayoutRoundingWindow x:Class="ModMyFactory.Views.CopyOrMoveMessageWindow" x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ModMyFactory.Views"
         xmlns:converters="clr-namespace:ModMyFactory.MVVM.Converters"
+        xmlns:vm="clr-namespace:ModMyFactory.ViewModels"
+        xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
         mc:Ignorable="d"
         Title="{DynamicResource CopyOrMoveMessageWindowTitle}" Width="400" SizeToContent="Height"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Icon="..\Images\MMF_Icon.ico">
+    
+    <Window.DataContext>
+        <vm:CopyOrMoveViewModel/>
+    </Window.DataContext>
 
     <Window.Resources>
         <converters:SystemIconConverter x:Key="IconConverter"/>
@@ -28,9 +34,7 @@
 
         <Image Grid.Row="0" Grid.Column="0" VerticalAlignment="Top" Margin="20,20,20,0" Source="{Binding Converter={StaticResource IconConverter}, ConverterParameter=Information}"/>
 
-        <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,20,10,20" TextWrapping="Wrap">
-            <StaticResource ResourceKey="CopyOrMoveMessage"/>
-        </TextBlock>
+        <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,20,10,20" TextWrapping="Wrap" Text="{Binding Message}"/>
 
         <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Background="#FFF0F0F0">
             <StackPanel Margin="6" Orientation="Horizontal" FlowDirection="RightToLeft">
@@ -40,4 +44,4 @@
             </StackPanel>
         </Border>
     </Grid>
-</Window>
+</mvvm:LayoutRoundingWindow>

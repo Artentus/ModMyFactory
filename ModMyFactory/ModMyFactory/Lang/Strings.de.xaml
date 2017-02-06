@@ -400,7 +400,9 @@
     <sys:String x:Key="CopyOrMoveMessageWindowTitle">Kopieren oder verschieben?</sys:String>
     
     <!-- messages -->
-    <sys:String x:Key="CopyOrMoveMessage">Möchten Sie diese Factorio-Installation kopieren oder verschieben?&#x0a;Wenn Sie sie verschieben, wird das die vorhandene Installation zerstören.</sys:String>
+    <sys:String x:Key="CopyOrMoveFactorioMessage">Möchten Sie diese Factorio-Installation kopieren oder verschieben?&#x0a;Wenn Sie sie verschieben, wird das die vorhandene Installation zerstören.</sys:String>
+    <sys:String x:Key="CopyOrMoveModsMessage">Möchten Sie die ausgewählten Mods verschieben oder kopieren?</sys:String>
+    <sys:String x:Key="CopyOrMoveModMessage">Möchten Sie die ausgewählte Mod verschieben oder kopieren?</sys:String>
     
     <!-- buttons -->
     <sys:String x:Key="CopyButton">Kopieren</sys:String>

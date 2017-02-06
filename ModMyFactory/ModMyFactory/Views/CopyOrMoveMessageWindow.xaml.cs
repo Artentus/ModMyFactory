@@ -2,7 +2,7 @@
 
 namespace ModMyFactory.Views
 {
-    public partial class CopyOrMoveMessageWindow : Window
+    partial class CopyOrMoveMessageWindow
     {
         public CopyOrMoveMessageWindow()
         {

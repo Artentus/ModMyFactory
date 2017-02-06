@@ -590,7 +590,7 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private async Task AddModFromFile(FileInfo archiveFile, Window messageOwner)
+        private async Task AddModFromFile(FileInfo archiveFile, bool move, Window messageOwner)
         {
             Version factorioVersion;
             string name;
@@ -605,7 +605,10 @@ namespace ModMyFactory.ViewModels
                         if (!versionDirectory.Exists) versionDirectory.Create();
 
                         var modFilePath = Path.Combine(versionDirectory.FullName, archiveFile.Name);
-                        archiveFile.MoveTo(modFilePath);
+                        if (move)
+                            archiveFile.MoveTo(modFilePath);
+                        else
+                            archiveFile.CopyTo(modFilePath);
                     });
 
                     var mod = new ZippedMod(name, version, factorioVersion, archiveFile, Mods, Modpacks);
@@ -639,7 +642,7 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private async Task AddModsFromFilesInner(string[] fileNames, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken, Window messageOwner)
+        private async Task AddModsFromFilesInner(string[] fileNames, bool move, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken, Window messageOwner)
         {
             int fileCount = fileNames.Length;
             int counter = 0;
@@ -651,7 +654,7 @@ namespace ModMyFactory.ViewModels
                 progress.Report(new Tuple<double, string>((double)counter / fileCount, Path.GetFileName(fileName)));
 
                 var archiveFile = new FileInfo(fileName);
-                await AddModFromFile(archiveFile, messageOwner);
+                await AddModFromFile(archiveFile, move, messageOwner);
 
                 counter++;
             }
@@ -665,30 +668,35 @@ namespace ModMyFactory.ViewModels
             dialog.Multiselect = true;
             dialog.Filter = App.Instance.GetLocalizedResourceString("ZipDescription") + @" (*.zip)|*.zip";
             bool? result = dialog.ShowDialog(Window);
-
             if (result.HasValue && result.Value)
             {
-                var progressWindow = new ProgressWindow() { Owner = Window };
-                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModsAction");
-
-                var cancellationSource = new CancellationTokenSource();
-                progressViewModel.CanCancel = true;
-                progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
-
-                var progress = new Progress<Tuple<double, string>>(info =>
+                var copyOrMoveWindow = new CopyOrMoveMessageWindow() { Owner = Window };
+                ((CopyOrMoveViewModel)copyOrMoveWindow.ViewModel).CopyOrMoveType = CopyOrMoveType.Mods;
+                result = copyOrMoveWindow.ShowDialog();
+                if (result.HasValue && result.Value)
                 {
-                    progressViewModel.Progress = info.Item1;
-                    progressViewModel.ProgressDescription = info.Item2;
-                });
+                    var progressWindow = new ProgressWindow() { Owner = Window };
+                    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModsAction");
 
-                Task processModsTask = AddModsFromFilesInner(dialog.FileNames, progress, cancellationSource.Token, progressWindow);
+                    var cancellationSource = new CancellationTokenSource();
+                    progressViewModel.CanCancel = true;
+                    progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
-                Task closeWindowTask = processModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-                progressWindow.ShowDialog();
+                    var progress = new Progress<Tuple<double, string>>(info =>
+                    {
+                        progressViewModel.Progress = info.Item1;
+                        progressViewModel.ProgressDescription = info.Item2;
+                    });
 
-                await processModsTask;
-                await closeWindowTask;
+                    Task processModsTask = AddModsFromFilesInner(dialog.FileNames, copyOrMoveWindow.Move, progress, cancellationSource.Token, progressWindow);
+
+                    Task closeWindowTask = processModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                    progressWindow.ShowDialog();
+
+                    await processModsTask;
+                    await closeWindowTask;
+                }
             }
         }
 
@@ -696,66 +704,71 @@ namespace ModMyFactory.ViewModels
         {
             var dialog = new VistaFolderBrowserDialog();
             bool? result = dialog.ShowDialog(Window);
-
             if (result.HasValue && result.Value)
             {
-                var directory = new DirectoryInfo(dialog.SelectedPath);
-
-                Task moveDirectoryTask;
-
-                Version factorioVersion;
-                string name;
-                Version version;
-                if (Mod.DirectoryValid(directory, out factorioVersion, out name, out version))
+                var copyOrMoveWindow = new CopyOrMoveMessageWindow() { Owner = Window };
+                ((CopyOrMoveViewModel)copyOrMoveWindow.ViewModel).CopyOrMoveType = CopyOrMoveType.Mod;
+                result = copyOrMoveWindow.ShowDialog();
+                if (result.HasValue && result.Value)
                 {
-                    if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
-                    {
-                        var versionDirectory = App.Instance.Settings.GetModDirectory(factorioVersion);
-                        if (!versionDirectory.Exists) versionDirectory.Create();
+                    var directory = new DirectoryInfo(dialog.SelectedPath);
 
-                        var modDirectoryPath = Path.Combine(versionDirectory.FullName, directory.Name);
-                        moveDirectoryTask = directory.MoveToAsync(modDirectoryPath);
+                    Task moveDirectoryTask;
+
+                    Version factorioVersion;
+                    string name;
+                    Version version;
+                    if (Mod.DirectoryValid(directory, out factorioVersion, out name, out version))
+                    {
+                        if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
+                        {
+                            var versionDirectory = App.Instance.Settings.GetModDirectory(factorioVersion);
+                            if (!versionDirectory.Exists) versionDirectory.Create();
+
+                            var modDirectoryPath = Path.Combine(versionDirectory.FullName, directory.Name);
+                            moveDirectoryTask = copyOrMoveWindow.Move ? directory.MoveToAsync(modDirectoryPath) : directory.CopyToAsync(modDirectoryPath);
+                        }
+                        else
+                        {
+                            switch (App.Instance.Settings.ManagerMode)
+                            {
+                                case ManagerMode.PerFactorioVersion:
+                                    MessageBox.Show(Window,
+                                        string.Format(App.Instance.GetLocalizedMessage("ModExistsPerVersion", MessageType.Information), name, factorioVersion),
+                                        App.Instance.GetLocalizedMessageTitle("ModExistsPerVersion", MessageType.Information),
+                                        MessageBoxButton.OK, MessageBoxImage.Information);
+                                    break;
+                                case ManagerMode.Global:
+                                    MessageBox.Show(Window,
+                                        string.Format(App.Instance.GetLocalizedMessage("ModExists", MessageType.Information), name),
+                                        App.Instance.GetLocalizedMessageTitle("ModExists", MessageType.Information),
+                                        MessageBoxButton.OK, MessageBoxImage.Information);
+                                    break;
+                            }
+                            return;
+                        }
                     }
                     else
                     {
-                        switch (App.Instance.Settings.ManagerMode)
-                        {
-                            case ManagerMode.PerFactorioVersion:
-                                MessageBox.Show(Window,
-                                    string.Format(App.Instance.GetLocalizedMessage("ModExistsPerVersion", MessageType.Information), name, factorioVersion),
-                                    App.Instance.GetLocalizedMessageTitle("ModExistsPerVersion", MessageType.Information),
-                                    MessageBoxButton.OK, MessageBoxImage.Information);
-                                break;
-                            case ManagerMode.Global:
-                                MessageBox.Show(Window,
-                                    string.Format(App.Instance.GetLocalizedMessage("ModExists", MessageType.Information), name),
-                                    App.Instance.GetLocalizedMessageTitle("ModExists", MessageType.Information),
-                                    MessageBoxButton.OK, MessageBoxImage.Information);
-                                break;
-                        }
+                        MessageBox.Show(Window,
+                            App.Instance.GetLocalizedMessage("InvalidModFolder", MessageType.Error),
+                            App.Instance.GetLocalizedMessageTitle("InvalidModFolder", MessageType.Error),
+                            MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
+
+                    var progressWindow = new ProgressWindow() { Owner = Window };
+                    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModAction");
+                    progressViewModel.ProgressDescription = directory.Name;
+                    progressViewModel.IsIndeterminate = true;
+
+                    moveDirectoryTask = moveDirectoryTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                    progressWindow.ShowDialog();
+                    await moveDirectoryTask;
+
+                    Mods.Add(new ExtractedMod(name, version, factorioVersion, directory, Mods, Modpacks));
                 }
-                else
-                {
-                    MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("InvalidModFolder", MessageType.Error),
-                        App.Instance.GetLocalizedMessageTitle("InvalidModFolder", MessageType.Error),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                var progressWindow = new ProgressWindow() { Owner = Window };
-                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModAction");
-                progressViewModel.ProgressDescription = directory.Name;
-                progressViewModel.IsIndeterminate = true;
-
-                moveDirectoryTask = moveDirectoryTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-                progressWindow.ShowDialog();
-                await moveDirectoryTask;
-
-                Mods.Add(new ExtractedMod(name, version, factorioVersion, directory, Mods, Modpacks));
             }
         }
 

@@ -504,6 +504,7 @@ namespace ModMyFactory.ViewModels
 
 
                 var copyOrMoveWindow = new CopyOrMoveMessageWindow() { Owner = Window };
+                ((CopyOrMoveViewModel)copyOrMoveWindow.ViewModel).CopyOrMoveType = CopyOrMoveType.Factorio;
                 result = copyOrMoveWindow.ShowDialog();
                 if (result.HasValue && result.Value)
                 {
