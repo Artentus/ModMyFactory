@@ -28,7 +28,6 @@ namespace ModMyFactory
         /// </summary>
         internal static bool IsInDesignMode => !(Application.Current is App);
 
-        ResourceDictionary enDictionary;
         UpdateSearchResult searchResult;
 
         /// <summary>
@@ -50,16 +49,6 @@ namespace ModMyFactory
         /// The application directory.
         /// </summary>
         internal string ApplicationDirectoryPath { get; }
-
-        /// <summary>
-        /// The global location for savegames.
-        /// </summary>
-        internal string GlobalSavePath => Path.Combine(AppDataPath, "saves");
-
-        /// <summary>
-        /// The global location for scenarios.
-        /// </summary>
-        internal string GlobalScenarioPath => Path.Combine(AppDataPath, "scenarios");
 
         public App(bool createCrashLog, string appDataPath)
         {

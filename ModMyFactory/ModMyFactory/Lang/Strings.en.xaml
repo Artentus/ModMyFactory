@@ -66,9 +66,6 @@
     <sys:String x:Key="Error.FactorioVersionInstalled.Message">This version of Factorio is already installed.</sys:String>
     <sys:String x:Key="Error.FactorioVersionInstalled.Title">Version already installed!</sys:String>
 
-    <sys:String x:Key="Warning.MoveFactorioFolder.Message">The selected installation of Factorio will be moved to the location specified in the settings! The creation of a backup is recommended.&#x0a;Do you wish to continue?</sys:String>
-    <sys:String x:Key="Warning.MoveFactorioFolder.Title">Warning</sys:String>
-    
     <sys:String x:Key="Warning.MoveSteamFactorio.Message">All mods, saves and scenarios will be moved to the location specified in the settings! The creation of a backup is recommended.&#x0a;Do you wish to continue?</sys:String>
     <sys:String x:Key="Warning.MoveSteamFactorio.Title">Warning</sys:String>
     
@@ -84,8 +81,14 @@
     <sys:String x:Key="Question.DeleteMod.Message">Do you really want to delete this mod?</sys:String>
     <sys:String x:Key="Question.DeleteMod.Title">Confirm</sys:String>
     
+    <sys:String x:Key="Question.DeleteMods.Message">Do you really want to delete all selected mods?</sys:String>
+    <sys:String x:Key="Question.DeleteMods.Title">Confirm</sys:String>
+    
     <sys:String x:Key="Question.DeleteModpack.Message">Do you really want to delete this modpack?</sys:String>
     <sys:String x:Key="Question.DeleteModpack.Title">Confirm</sys:String>
+    
+    <sys:String x:Key="Question.DeleteModpacks.Message">Do you really want to delete all selected modpacks?</sys:String>
+    <sys:String x:Key="Question.DeleteModpacks.Title">Confirm</sys:String>
 
     
     <!-- file type descriptions -->
@@ -96,6 +99,7 @@
     
     <!-- progress dialogs -->
     <sys:String x:Key="MovingFilesDescription">Moving files...</sys:String>
+    <sys:String x:Key="CopyingFilesDescription">Copying files...</sys:String>
     <sys:String x:Key="ExtractingDescription">Extracting...</sys:String>
     
     <sys:String x:Key="FetchingModsAction">Fetching mods</sys:String>
@@ -184,6 +188,12 @@
     <sys:String x:Key="AboutMenuItem">About ModMyFactory</sys:String>
     <sys:String x:Key="HelpMenuItem">Help</sys:String>
     
+    <!-- context menu -->
+    <sys:String x:Key="DeleteSelectedMenuItem">Delete selected</sys:String>
+    <sys:String x:Key="ActivateSelectedMenuItem">Activate selected</sys:String>
+    <sys:String x:Key="DeactivateSelectedMenuItem">Deactivate selected</sys:String>
+    <sys:String x:Key="SelectActiveMenuItem">Select all active</sys:String>
+    
     <!-- hotkeys -->
     <sys:String x:Key="DownloadModsHotkey">F7</sys:String>
     <sys:String x:Key="AddModFilesHotkey">F8</sys:String>
@@ -200,6 +210,7 @@
     <sys:String x:Key="HelpHotkey">F1</sys:String>
     <sys:String x:Key="UpdateHotkey">F3</sys:String>
     <sys:String x:Key="AboutHotkey">Ctrl+F1</sys:String>
+    <sys:String x:Key="DeleteHotkey">Del</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ModsHeader">Mods</sys:String>
@@ -234,6 +245,12 @@
     -->
 
     <sys:String x:Key="VersionListWindowTitle">Select version</sys:String>
+    
+    <!-- checkboxes -->
+    <sys:String x:Key="ShowExperimentalCheckBox">Show experimental versions</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="ExperimentalToolTip">Experimental</sys:String>
 
 
     <!--
@@ -241,16 +258,24 @@
     -->
 
     <sys:String x:Key="SettingsWindowTitle">Settings</sys:String>
+    
+    <!-- tab headers -->
+    <sys:String x:Key="GeneralTabHeader">General</sys:String>
+    <sys:String x:Key="LocationsTabHeader">Locations</sys:String>
 
     <!-- group headers -->
     <sys:String x:Key="ManagerModeGroupHeader">Manager mode</sys:String>
+    <sys:String x:Key="MiscGroupHeader">Miscellaneous</sys:String>
+    <sys:String x:Key="CredentialsGroupHeader">Login credentials</sys:String>
+    
     <sys:String x:Key="FactorioDirectoryGroupHeader">Factorio location</sys:String>
     <sys:String x:Key="ModDirectoryGroupHeader">Mod location</sys:String>
-    <sys:String x:Key="CredentialsGroupHeader">Login credentials</sys:String>
-
+    <sys:String x:Key="SavegameDirectoryGroupHeader">Savegame location</sys:String>
+    <sys:String x:Key="ScenarioDirectoryGroupHeader">Scenario location</sys:String>
     
     <!-- group items -->
     <sys:String x:Key="PerFactorioVersionGroupItem">Per Factorio version</sys:String>
+    <sys:String x:Key="UpdateSearchGroupItem">Search for updates on startup</sys:String>
     <sys:String x:Key="GlobalGroupItem">Global</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Application directory</sys:String>
@@ -366,5 +391,21 @@
     -->
 
     <sys:String x:Key="UpdateListWindowTitle">Select target version</sys:String>
+    
+    
+    <!--
+    ____________________ CopyOrMoveMessageWindow ____________________
+    -->
+    
+    <sys:String x:Key="CopyOrMoveMessageWindowTitle">Copy or move?</sys:String>
+    
+    <!-- messages -->
+    <sys:String x:Key="CopyOrMoveFactorioMessage">Do you want to copy or move this Factorio installation?&#x0a;Moving will destroy the old installation.</sys:String>
+    <sys:String x:Key="CopyOrMoveModsMessage">Do you want to copy or move all selected mods?</sys:String>
+    <sys:String x:Key="CopyOrMoveModMessage">Do you want to copy or move the selected mod?</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="CopyButton">Copy</sys:String>
+    <sys:String x:Key="MoveButton">Move</sys:String>
 
 </ResourceDictionary>

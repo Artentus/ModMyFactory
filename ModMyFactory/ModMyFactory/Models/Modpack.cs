@@ -21,6 +21,7 @@ namespace ModMyFactory.Models
         bool editing;
         bool? active;
         bool activeChanging;
+        bool isSelected;
 
         /// <summary>
         /// The name of the modpack.
@@ -65,6 +66,22 @@ namespace ModMyFactory.Models
                     }
                     activeChanging = false;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether this modpack is selected in the list.
+        /// </summary>
+        public bool IsSelected
+        {
+            get { return isSelected; }
+            set
+            {
+                if (value != isSelected)
+                {
+                    isSelected = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsSelected)));
                 }
             }
         }
@@ -116,7 +133,7 @@ namespace ModMyFactory.Models
         /// <summary>
         /// A command that deletes this modpack from the list.
         /// </summary>
-        public RelayCommand DeleteCommand { get; }
+        public RelayCommand<bool?> DeleteCommand { get; }
 
         /// <summary>
         /// A command that finishes renaming this modpack.
@@ -246,9 +263,9 @@ namespace ModMyFactory.Models
             }
         }
 
-        private void Delete(ICollection<Modpack> parentCollection)
+        private void Delete(ICollection<Modpack> parentCollection, bool showPrompt)
         {
-            if (MessageBox.Show(
+            if (!showPrompt || MessageBox.Show(
                 App.Instance.GetLocalizedMessage("DeleteModpack", MessageType.Question),
                 App.Instance.GetLocalizedMessageTitle("DeleteModpack", MessageType.Question),
                 MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -262,6 +279,15 @@ namespace ModMyFactory.Models
                 }
                 parentCollection.Remove(this);
             }
+        }
+
+        /// <summary>
+        /// Deletes this modpack from the list.
+        /// </summary>
+        /// <param name="showPrompt">Indicates whether a confirmation prompt is shown to the user.</param>
+        public void Delete(bool showPrompt)
+        {
+            DeleteCommand.Execute(showPrompt);
         }
 
         /// <summary>
@@ -280,7 +306,7 @@ namespace ModMyFactory.Models
             ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
             ModsView.CustomSort = new ModReferenceSorter();
 
-            DeleteCommand = new RelayCommand(() => Delete(parentCollection));
+            DeleteCommand = new RelayCommand<bool?>(showPrompt => Delete(parentCollection, showPrompt ?? true));
             FinishRenameCommand = new RelayCommand(() => Editing = false, () => Editing);
         }
 

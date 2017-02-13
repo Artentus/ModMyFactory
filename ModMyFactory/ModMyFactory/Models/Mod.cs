@@ -24,7 +24,6 @@ namespace ModMyFactory.Models
         /// </summary>
         /// <param name="parentCollection">The collection to contain the mods.</param>
         /// <param name="modpackCollection">The collection containing all modpacks.</param>
-        /// <param name="messageOwner">The window that ownes the deletion message box.</param>
         public static void LoadMods(ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
         {
             var modDirectory = App.Instance.Settings.GetModDirectory();
@@ -103,26 +102,26 @@ namespace ModMyFactory.Models
                 // Factorio version
                 MatchCollection matches = Regex.Matches(content, "\"factorio_version\" *: *\"(?<factorio_version>[0-9]+\\.[0-9]+(\\.[0-9]+)?)\"",
                     RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                if (matches.Count != 1) return false;
+                if (matches.Count == 0) return false;
 
-                string factorioVersionString = matches[0].Groups["factorio_version"].Value;
+                string factorioVersionString = matches[matches.Count - 1].Groups["factorio_version"].Value;
                 factorioVersion = Version.Parse(factorioVersionString);
                 factorioVersion = new Version(factorioVersion.Major, factorioVersion.Minor);
 
                 // Version
                 matches = Regex.Matches(content, "\"version\" *: *\"(?<version>[0-9]+(\\.[0-9]+){0,3})\"",
                     RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                if (matches.Count != 1) return false;
+                if (matches.Count == 0) return false;
 
-                string versionString = matches[0].Groups["version"].Value;
+                string versionString = matches[matches.Count - 1].Groups["version"].Value;
                 version = Version.Parse(versionString);
 
                 // Name
                 matches = Regex.Matches(content, "\"name\" *: *\"(?<name>.*)\"",
                     RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                if (matches.Count != 1) return false;
+                if (matches.Count == 0) return false;
 
-                name = matches[0].Groups["name"].Value;
+                name = matches[matches.Count - 1].Groups["name"].Value;
 
                 return true;
             }
@@ -200,6 +199,7 @@ namespace ModMyFactory.Models
         string author;
         Version version;
         bool active;
+        bool isSelected;
 
         /// <summary>
         /// The title of the mod.
@@ -313,21 +313,37 @@ namespace ModMyFactory.Models
         }
 
         /// <summary>
+        /// Indicates whether this mod is selected in the list.
+        /// </summary>
+        public bool IsSelected
+        {
+            get { return isSelected; }
+            set
+            {
+                if (value != isSelected)
+                {
+                    isSelected = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsSelected)));
+                }
+            }
+        }
+
+        /// <summary>
         /// A command that deletes this mod from the list and the filesystem.
         /// </summary>
-        public RelayCommand DeleteCommand { get; }
+        public RelayCommand<bool?> DeleteCommand { get; }
 
         /// <summary>
         /// Deletes this mod at file system level.
         /// </summary>
         protected abstract void DeleteFilesystemObjects();
 
-        private void Delete(ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
+        private void Delete(ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, bool showPrompt)
         {
-            if (MessageBox.Show(
+            if (!showPrompt || (MessageBox.Show(
                 App.Instance.GetLocalizedMessage("DeleteMod", MessageType.Question),
                 App.Instance.GetLocalizedMessageTitle("DeleteMod", MessageType.Question),
-                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes))
             {
                 foreach (var modpack in modpackCollection)
                 {
@@ -343,6 +359,15 @@ namespace ModMyFactory.Models
                 ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
                 ModpackTemplateList.Instance.Save();
             }
+        }
+
+        /// <summary>
+        /// Deletes this mod from the list and the filesystem.
+        /// </summary>
+        /// <param name="showPrompt">Indicates whether a confirmation prompt is shown to the user.</param>
+        public void Delete(bool showPrompt)
+        {
+            DeleteCommand.Execute(showPrompt);
         }
 
         /// <summary>
@@ -394,7 +419,7 @@ namespace ModMyFactory.Models
             FactorioVersion = factorioVersion;
             active = ModManager.GetActive(Name, FactorioVersion);
 
-            DeleteCommand = new RelayCommand(() => Delete(parentCollection, modpackCollection));
+            DeleteCommand = new RelayCommand<bool?>(showPrompt => Delete(parentCollection, modpackCollection, showPrompt ?? true));
         }
 
         /// <summary>

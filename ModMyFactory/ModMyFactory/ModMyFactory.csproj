@@ -43,7 +43,8 @@
     <StartupObject>ModMyFactory.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Images\MMF_Icon.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
@@ -120,12 +121,14 @@
     <Compile Include="ManagerMode.cs" />
     <Compile Include="MessageType.cs" />
     <Compile Include="ModCollection.cs" />
+    <Compile Include="Models\CopyOrMoveType.cs" />
     <Compile Include="Models\FactorioSteamVersion.cs" />
     <Compile Include="Models\ModUpdateInfo.cs" />
     <Compile Include="Export\ModExportTemplate.cs" />
     <Compile Include="Models\UpdateTarget.cs" />
     <Compile Include="ModManager.cs" />
     <Compile Include="Export\ModpackExportTemplate.cs" />
+    <Compile Include="MVVM\Converters\SystemIconConverter.cs" />
     <Compile Include="MVVM\LayoutRoundingWindow.cs" />
     <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\ModUpdateInfoSorter.cs" />
@@ -133,10 +136,14 @@
     <Compile Include="FactorioUpdate\UpdatePackageInfo.cs" />
     <Compile Include="FactorioUpdate\UpdaterErrorType.cs" />
     <Compile Include="VersionComparer.cs" />
+    <Compile Include="ViewModels\CopyOrMoveViewModel.cs" />
     <Compile Include="ViewModels\ModpackExportViewModel.cs" />
     <Compile Include="ViewModels\ModUpdateViewModel.cs" />
     <Compile Include="ViewModels\OnlineModsViewModel.cs" />
     <Compile Include="ViewModels\UpdateListViewModel.cs" />
+    <Compile Include="Views\CopyOrMoveMessageWindow.xaml.cs">
+      <DependentUpon>CopyOrMoveMessageWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ModpackExportWindow.xaml.cs">
       <DependentUpon>ModpackExportWindow.xaml</DependentUpon>
     </Compile>
@@ -253,6 +260,10 @@
       <SubType>Designer</SubType>
     </Resource>
     <Page Include="Views\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CopyOrMoveMessageWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -444,6 +455,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Lang\pt.png" />
+    <Resource Include="Images\Experimental.png" />
+    <Resource Include="Images\Menu.png" />
+    <Resource Include="Images\Delete.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>

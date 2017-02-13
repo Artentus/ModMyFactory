@@ -128,21 +128,30 @@ namespace ModMyFactory.Web
             var downloadUrl = new Uri($"{BaseUrl}{release.DownloadUrl}?username={username}&token={token}");
             var modFile = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
 
-            await WebHelper.DownloadFileAsync(downloadUrl, null, modFile, progress, cancellationToken);
-            if (!cancellationToken.IsCancellationRequested)
+            try
             {
-                Version factorioVersion;
-                string name;
-                Version version;
-                if (Mod.ArchiveFileValid(modFile, out factorioVersion, out name, out version))
+                await WebHelper.DownloadFileAsync(downloadUrl, null, modFile, progress, cancellationToken);
+                if (!cancellationToken.IsCancellationRequested)
                 {
-                    if (factorioVersion == release.FactorioVersion)
+                    Version factorioVersion;
+                    string name;
+                    Version version;
+                    if (Mod.ArchiveFileValid(modFile, out factorioVersion, out name, out version))
                     {
-                        return new ZippedMod(name, version, factorioVersion, modFile, parentCollection, modpackCollection);
+                        if (factorioVersion == release.FactorioVersion)
+                        {
+                            return new ZippedMod(name, version, factorioVersion, modFile, parentCollection, modpackCollection);
+                        }
                     }
-                }
 
-                throw new InvalidOperationException("The server sent an invalid mod file.");
+                    throw new InvalidOperationException("The server sent an invalid mod file.");
+                }
+            }
+            catch (Exception)
+            {
+                if (modFile.Exists) modFile.Delete();
+
+                throw;
             }
 
             return null;

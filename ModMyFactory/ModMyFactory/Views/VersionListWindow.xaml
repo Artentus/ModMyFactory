@@ -16,10 +16,16 @@
     <Window.DataContext>
         <vm:VersionListViewModel/>
     </Window.DataContext>
+    
+    <Window.Resources>
+        <BitmapImage x:Key="ExperimentalIcon" UriSource="../Images/Experimental.png"/>
+        <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
+    </Window.Resources>
 
     <Grid Margin="4">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
@@ -30,7 +36,7 @@
         </Grid.ColumnDefinitions>
 
         <ListBox Grid.Row="0" Grid.Column="0" Margin="2" Grid.ColumnSpan="3" IsSynchronizedWithCurrentItem="False"
-                 ItemsSource="{Binding FactorioVersions}" SelectedItem="{Binding SelectedVersion, Mode=TwoWay}"
+                 ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion, Mode=TwoWay}"
                  PreviewMouseDown="VersionListBoxPreviewMouseDownHandler">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
@@ -46,20 +52,37 @@
             
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type web:FactorioOnlineVersion}">
-                    <Grid>
+                    <Grid Margin="2">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0" Margin="4,2" IsHitTestVisible="False" Text="{Binding Version}"/>
-                        <TextBlock Grid.Column="1" Margin="4,2" IsHitTestVisible="False" Text="{Binding VersionModifier}"/>
+                        <TextBlock Grid.Column="1" Margin="4,2" IsHitTestVisible="False" Text="{Binding VersionModifier, StringFormat=({0})}"/>
+                        <Image Grid.Column="2" Width="16" Height="16" Margin="4,0" Source="{StaticResource ExperimentalIcon}"
+                               Visibility="{Binding IsExperimental, Converter={StaticResource VisibilityConverter}}"
+                               ToolTip="{DynamicResource ExperimentalToolTip}">
+                            <Image.Style>
+                                <Style TargetType="{x:Type Image}" BasedOn="{StaticResource {x:Type Image}}">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Opacity" Value="0.5"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Button Grid.Row="1" Grid.Column="1" Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
-        <Button Grid.Row="1" Grid.Column="2" Margin="2" IsDefault="True" IsEnabled="{Binding CanAdd}" Content="{DynamicResource DownloadButton}" Click="DownloadButtonClickHandler"/>
+
+        <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="2" Content="{DynamicResource ShowExperimentalCheckBox}" IsChecked="{Binding ShowExperimentalVersions}"/>
+
+        <Button Grid.Row="2" Grid.Column="1" Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
+        <Button Grid.Row="2" Grid.Column="2" Margin="2" IsDefault="True" IsEnabled="{Binding CanAdd}" Content="{DynamicResource DownloadButton}" Click="DownloadButtonClickHandler"/>
     </Grid>
 </mvvm:LayoutRoundingWindow>

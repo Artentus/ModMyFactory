@@ -41,8 +41,8 @@ namespace ModMyFactory.ViewModels
         string modpacksFilter;
         GridLength modGridLength;
         GridLength modpackGridLength;
-        bool? allModsSelected;
-        bool? allModpacksSelected;
+        bool? allModsActive;
+        bool? allModpacksActive;
         bool allModsSelectedChanging;
         bool allModpacksSelectedChanging;
         bool updating;
@@ -160,24 +160,24 @@ namespace ModMyFactory.ViewModels
 
         }
 
-        public bool? AllModsSelected
+        public bool? AllModsActive
         {
-            get { return allModsSelected; }
+            get { return allModsActive; }
             set
             {
-                if (value != allModsSelected)
+                if (value != allModsActive)
                 {
-                    allModsSelected = value;
+                    allModsActive = value;
                     allModsSelectedChanging = true;
 
-                    if (allModsSelected.HasValue)
+                    if (allModsActive.HasValue)
                     {
                         ModManager.BeginUpdateTemplates();
 
                         foreach (var mod in Mods)
                         {
-                            if (mod.Active != allModsSelected.Value)
-                                mod.Active = allModsSelected.Value;
+                            if (mod.Active != allModsActive.Value)
+                                mod.Active = allModsActive.Value;
                         }
 
                         ModManager.EndUpdateTemplates();
@@ -185,29 +185,29 @@ namespace ModMyFactory.ViewModels
                     }
 
                     allModsSelectedChanging = false;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModsSelected)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModsActive)));
                 }
             }
         }
 
-        public bool? AllModpacksSelected
+        public bool? AllModpacksActive
         {
-            get { return allModpacksSelected; }
+            get { return allModpacksActive; }
             set
             {
-                if (value != allModpacksSelected)
+                if (value != allModpacksActive)
                 {
-                    allModpacksSelected = value;
+                    allModpacksActive = value;
                     allModpacksSelectedChanging = true;
 
-                    if (allModpacksSelected.HasValue)
+                    if (allModpacksActive.HasValue)
                     {
                         ModManager.BeginUpdateTemplates();
 
                         foreach (var modpack in Modpacks)
                         {
-                            if (modpack.Active != allModpacksSelected.Value)
-                                modpack.Active = allModpacksSelected.Value;
+                            if (modpack.Active != allModpacksActive.Value)
+                                modpack.Active = allModpacksActive.Value;
                         }
 
                         ModManager.EndUpdateTemplates();
@@ -215,7 +215,7 @@ namespace ModMyFactory.ViewModels
                     }
 
                     allModpacksSelectedChanging = false;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModpacksSelected)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModpacksActive)));
                 }
             }
         }
@@ -262,6 +262,24 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand BrowseWikiCommand { get; }
 
+        public RelayCommand ActivateSelectedModsCommand { get; }
+
+        public RelayCommand DeactivateSelectedModsCommand { get; }
+
+        public RelayCommand DeleteSelectedModsCommand { get; }
+
+        public RelayCommand SelectActiveModsCommand { get; }
+
+        public RelayCommand ActivateSelectedModpacksCommand { get; }
+
+        public RelayCommand DeactivateSelectedModpacksCommand { get; }
+
+        public RelayCommand DeleteSelectedModpacksCommand { get; }
+
+        public RelayCommand SelectActiveModpacksCommand { get; }
+
+        public RelayCommand DeleteSelectedModsAndModpacksCommand { get; }
+
         private bool ModFilter(object item)
         {
             Mod mod = item as Mod;
@@ -282,7 +300,7 @@ namespace ModMyFactory.ViewModels
             return StringHelper.FilterIsContained(modpacksFilter, modpack.Name);
         }
 
-        private void SetAllModsSelected()
+        private void SetAllModsActive()
         {
             if (Mods.Count == 0 || allModsSelectedChanging)
                 return;
@@ -297,10 +315,10 @@ namespace ModMyFactory.ViewModels
                 }
             }
 
-            if (newValue != allModsSelected)
+            if (newValue != allModsActive)
             {
-                allModsSelected = newValue;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModsSelected)));
+                allModsActive = newValue;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModsActive)));
             }
         }
 
@@ -308,7 +326,7 @@ namespace ModMyFactory.ViewModels
         {
             if (e.PropertyName == nameof(Mod.Active))
             {
-                SetAllModsSelected();
+                SetAllModsActive();
             }
         }
 
@@ -319,24 +337,24 @@ namespace ModMyFactory.ViewModels
                 case NotifyCollectionChangedAction.Add:
                     foreach (Mod mod in e.NewItems)
                         mod.PropertyChanged += ModPropertyChanged;
-                    SetAllModsSelected();
+                    SetAllModsActive();
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     foreach (Mod mod in e.OldItems)
                         mod.PropertyChanged -= ModPropertyChanged;
-                    SetAllModsSelected();
+                    SetAllModsActive();
                     break;
                 case NotifyCollectionChangedAction.Reset:
                     foreach (Mod mod in e.NewItems)
                         mod.PropertyChanged += ModPropertyChanged;
                     foreach (Mod mod in e.OldItems)
                         mod.PropertyChanged -= ModPropertyChanged;
-                    SetAllModsSelected();
+                    SetAllModsActive();
                     break;
             }
         }
 
-        private void SetAllModpacksSelected()
+        private void SetAllModpacksActive()
         {
             if (Modpacks.Count == 0 || allModpacksSelectedChanging)
                 return;
@@ -351,10 +369,10 @@ namespace ModMyFactory.ViewModels
                 }
             }
 
-            if (newValue != allModpacksSelected)
+            if (newValue != allModpacksActive)
             {
-                allModpacksSelected = newValue;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModpacksSelected)));
+                allModpacksActive = newValue;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModpacksActive)));
             }
         }
 
@@ -362,7 +380,7 @@ namespace ModMyFactory.ViewModels
         {
             if (e.PropertyName == nameof(Modpack.Active))
             {
-                SetAllModpacksSelected();
+                SetAllModpacksActive();
             }
         }
 
@@ -373,19 +391,19 @@ namespace ModMyFactory.ViewModels
                 case NotifyCollectionChangedAction.Add:
                     foreach (Modpack modpack in e.NewItems)
                         modpack.PropertyChanged += ModpackPropertyChanged;
-                    SetAllModpacksSelected();
+                    SetAllModpacksActive();
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     foreach (Modpack modpack in e.OldItems)
                         modpack.PropertyChanged -= ModpackPropertyChanged;
-                    SetAllModpacksSelected();
+                    SetAllModpacksActive();
                     break;
                 case NotifyCollectionChangedAction.Reset:
                     foreach (Modpack modpack in e.NewItems)
                         modpack.PropertyChanged += ModpackPropertyChanged;
                     foreach (Modpack modpack in e.OldItems)
                         modpack.PropertyChanged -= ModpackPropertyChanged;
-                    SetAllModpacksSelected();
+                    SetAllModpacksActive();
                     break;
             }
         }
@@ -441,14 +459,14 @@ namespace ModMyFactory.ViewModels
                 ModsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(Mod.FactorioVersion)));
                 ModsView.Filter = ModFilter;
                 Mods.CollectionChanged += ModsChangedHandler;
-                SetAllModsSelected();
+                SetAllModsActive();
 
                 Modpacks = new ObservableCollection<Modpack>();
                 ModpacksView = (ListCollectionView)(new CollectionViewSource() { Source = Modpacks }).View;
                 ModpacksView.CustomSort = new ModpackSorter();
                 ModpacksView.Filter = ModpackFilter;
                 Modpacks.CollectionChanged += ModpacksChangedHandler;
-                SetAllModpacksSelected();
+                SetAllModpacksActive();
 
                 Mod.LoadMods(Mods, Modpacks);
                 ModpackTemplateList.Instance.PopulateModpackList(Mods, Modpacks, ModpacksView);
@@ -515,6 +533,19 @@ namespace ModMyFactory.ViewModels
                 OpenAboutWindowCommand = new RelayCommand(OpenAboutWindow);
                 BrowseWikiCommand = new RelayCommand(() => Process.Start("https://github.com/Artentus/ModMyFactory/wiki"));
 
+                // context menu
+                ActivateSelectedModsCommand = new RelayCommand(ActivateSelectedMods, () => Mods.Any(mod => mod.IsSelected));
+                DeactivateSelectedModsCommand = new RelayCommand(DeactivateSelectedMods, () => Mods.Any(mod => mod.IsSelected));
+                DeleteSelectedModsCommand = new RelayCommand(DeleteSelectedMods, () => Mods.Any(mod => mod.IsSelected));
+                SelectActiveModsCommand = new RelayCommand(SelectActiveMods);
+
+                ActivateSelectedModpacksCommand = new RelayCommand(ActivateSelectedModpacks, () => Modpacks.Any(modpack => modpack.IsSelected));
+                DeactivateSelectedModpacksCommand = new RelayCommand(DeactivateSelectedModpacks, () => Modpacks.Any(modpack => modpack.IsSelected));
+                DeleteSelectedModpacksCommand = new RelayCommand(DeleteSelectedModpacks, () => Modpacks.Any(modpack => modpack.IsSelected));
+                SelectActiveModpacksCommand = new RelayCommand(SelectActiveModpacks);
+
+                DeleteSelectedModsAndModpacksCommand = new RelayCommand(DeleteSelectedModsAndModpacks, () => Mods.Any(mod => mod.IsSelected) || Modpacks.Any(modpack => modpack.IsSelected));
+
 
                 // New ModMyFactory instance started.
                 Program.NewInstanceStarted += NewInstanceStartedHandler;
@@ -559,7 +590,7 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private async Task AddModFromFile(FileInfo archiveFile, Window messageOwner)
+        private async Task AddModFromFile(FileInfo archiveFile, bool move, Window messageOwner)
         {
             Version factorioVersion;
             string name;
@@ -574,7 +605,10 @@ namespace ModMyFactory.ViewModels
                         if (!versionDirectory.Exists) versionDirectory.Create();
 
                         var modFilePath = Path.Combine(versionDirectory.FullName, archiveFile.Name);
-                        archiveFile.MoveTo(modFilePath);
+                        if (move)
+                            archiveFile.MoveTo(modFilePath);
+                        else
+                            archiveFile.CopyTo(modFilePath);
                     });
 
                     var mod = new ZippedMod(name, version, factorioVersion, archiveFile, Mods, Modpacks);
@@ -608,7 +642,7 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private async Task AddModsFromFilesInner(string[] fileNames, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken, Window messageOwner)
+        private async Task AddModsFromFilesInner(string[] fileNames, bool move, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken, Window messageOwner)
         {
             int fileCount = fileNames.Length;
             int counter = 0;
@@ -620,7 +654,7 @@ namespace ModMyFactory.ViewModels
                 progress.Report(new Tuple<double, string>((double)counter / fileCount, Path.GetFileName(fileName)));
 
                 var archiveFile = new FileInfo(fileName);
-                await AddModFromFile(archiveFile, messageOwner);
+                await AddModFromFile(archiveFile, move, messageOwner);
 
                 counter++;
             }
@@ -634,30 +668,35 @@ namespace ModMyFactory.ViewModels
             dialog.Multiselect = true;
             dialog.Filter = App.Instance.GetLocalizedResourceString("ZipDescription") + @" (*.zip)|*.zip";
             bool? result = dialog.ShowDialog(Window);
-
             if (result.HasValue && result.Value)
             {
-                var progressWindow = new ProgressWindow() { Owner = Window };
-                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModsAction");
-
-                var cancellationSource = new CancellationTokenSource();
-                progressViewModel.CanCancel = true;
-                progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
-
-                var progress = new Progress<Tuple<double, string>>(info =>
+                var copyOrMoveWindow = new CopyOrMoveMessageWindow() { Owner = Window };
+                ((CopyOrMoveViewModel)copyOrMoveWindow.ViewModel).CopyOrMoveType = CopyOrMoveType.Mods;
+                result = copyOrMoveWindow.ShowDialog();
+                if (result.HasValue && result.Value)
                 {
-                    progressViewModel.Progress = info.Item1;
-                    progressViewModel.ProgressDescription = info.Item2;
-                });
+                    var progressWindow = new ProgressWindow() { Owner = Window };
+                    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModsAction");
 
-                Task processModsTask = AddModsFromFilesInner(dialog.FileNames, progress, cancellationSource.Token, progressWindow);
+                    var cancellationSource = new CancellationTokenSource();
+                    progressViewModel.CanCancel = true;
+                    progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
-                Task closeWindowTask = processModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-                progressWindow.ShowDialog();
+                    var progress = new Progress<Tuple<double, string>>(info =>
+                    {
+                        progressViewModel.Progress = info.Item1;
+                        progressViewModel.ProgressDescription = info.Item2;
+                    });
 
-                await processModsTask;
-                await closeWindowTask;
+                    Task processModsTask = AddModsFromFilesInner(dialog.FileNames, copyOrMoveWindow.Move, progress, cancellationSource.Token, progressWindow);
+
+                    Task closeWindowTask = processModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                    progressWindow.ShowDialog();
+
+                    await processModsTask;
+                    await closeWindowTask;
+                }
             }
         }
 
@@ -665,66 +704,71 @@ namespace ModMyFactory.ViewModels
         {
             var dialog = new VistaFolderBrowserDialog();
             bool? result = dialog.ShowDialog(Window);
-
             if (result.HasValue && result.Value)
             {
-                var directory = new DirectoryInfo(dialog.SelectedPath);
-
-                Task moveDirectoryTask;
-
-                Version factorioVersion;
-                string name;
-                Version version;
-                if (Mod.DirectoryValid(directory, out factorioVersion, out name, out version))
+                var copyOrMoveWindow = new CopyOrMoveMessageWindow() { Owner = Window };
+                ((CopyOrMoveViewModel)copyOrMoveWindow.ViewModel).CopyOrMoveType = CopyOrMoveType.Mod;
+                result = copyOrMoveWindow.ShowDialog();
+                if (result.HasValue && result.Value)
                 {
-                    if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
-                    {
-                        var versionDirectory = App.Instance.Settings.GetModDirectory(factorioVersion);
-                        if (!versionDirectory.Exists) versionDirectory.Create();
+                    var directory = new DirectoryInfo(dialog.SelectedPath);
 
-                        var modDirectoryPath = Path.Combine(versionDirectory.FullName, directory.Name);
-                        moveDirectoryTask = directory.MoveToAsync(modDirectoryPath);
+                    Task moveDirectoryTask;
+
+                    Version factorioVersion;
+                    string name;
+                    Version version;
+                    if (Mod.DirectoryValid(directory, out factorioVersion, out name, out version))
+                    {
+                        if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
+                        {
+                            var versionDirectory = App.Instance.Settings.GetModDirectory(factorioVersion);
+                            if (!versionDirectory.Exists) versionDirectory.Create();
+
+                            var modDirectoryPath = Path.Combine(versionDirectory.FullName, directory.Name);
+                            moveDirectoryTask = copyOrMoveWindow.Move ? directory.MoveToAsync(modDirectoryPath) : directory.CopyToAsync(modDirectoryPath);
+                        }
+                        else
+                        {
+                            switch (App.Instance.Settings.ManagerMode)
+                            {
+                                case ManagerMode.PerFactorioVersion:
+                                    MessageBox.Show(Window,
+                                        string.Format(App.Instance.GetLocalizedMessage("ModExistsPerVersion", MessageType.Information), name, factorioVersion),
+                                        App.Instance.GetLocalizedMessageTitle("ModExistsPerVersion", MessageType.Information),
+                                        MessageBoxButton.OK, MessageBoxImage.Information);
+                                    break;
+                                case ManagerMode.Global:
+                                    MessageBox.Show(Window,
+                                        string.Format(App.Instance.GetLocalizedMessage("ModExists", MessageType.Information), name),
+                                        App.Instance.GetLocalizedMessageTitle("ModExists", MessageType.Information),
+                                        MessageBoxButton.OK, MessageBoxImage.Information);
+                                    break;
+                            }
+                            return;
+                        }
                     }
                     else
                     {
-                        switch (App.Instance.Settings.ManagerMode)
-                        {
-                            case ManagerMode.PerFactorioVersion:
-                                MessageBox.Show(Window,
-                                    string.Format(App.Instance.GetLocalizedMessage("ModExistsPerVersion", MessageType.Information), name, factorioVersion),
-                                    App.Instance.GetLocalizedMessageTitle("ModExistsPerVersion", MessageType.Information),
-                                    MessageBoxButton.OK, MessageBoxImage.Information);
-                                break;
-                            case ManagerMode.Global:
-                                MessageBox.Show(Window,
-                                    string.Format(App.Instance.GetLocalizedMessage("ModExists", MessageType.Information), name),
-                                    App.Instance.GetLocalizedMessageTitle("ModExists", MessageType.Information),
-                                    MessageBoxButton.OK, MessageBoxImage.Information);
-                                break;
-                        }
+                        MessageBox.Show(Window,
+                            App.Instance.GetLocalizedMessage("InvalidModFolder", MessageType.Error),
+                            App.Instance.GetLocalizedMessageTitle("InvalidModFolder", MessageType.Error),
+                            MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
+
+                    var progressWindow = new ProgressWindow() { Owner = Window };
+                    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModAction");
+                    progressViewModel.ProgressDescription = directory.Name;
+                    progressViewModel.IsIndeterminate = true;
+
+                    moveDirectoryTask = moveDirectoryTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                    progressWindow.ShowDialog();
+                    await moveDirectoryTask;
+
+                    Mods.Add(new ExtractedMod(name, version, factorioVersion, directory, Mods, Modpacks));
                 }
-                else
-                {
-                    MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("InvalidModFolder", MessageType.Error),
-                        App.Instance.GetLocalizedMessageTitle("InvalidModFolder", MessageType.Error),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                var progressWindow = new ProgressWindow() { Owner = Window };
-                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModAction");
-                progressViewModel.ProgressDescription = directory.Name;
-                progressViewModel.IsIndeterminate = true;
-
-                moveDirectoryTask = moveDirectoryTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-                progressWindow.ShowDialog();
-                await moveDirectoryTask;
-
-                Mods.Add(new ExtractedMod(name, version, factorioVersion, directory, Mods, Modpacks));
             }
         }
 
@@ -1379,8 +1423,10 @@ namespace ModMyFactory.ViewModels
 
         #region Settings
 
-        private async Task MoveDirectories(DirectoryInfo oldFactorioDirectory, DirectoryInfo oldModDirectory, DirectoryInfo newFactorioDirectory, DirectoryInfo newModDirectory)
+        private async Task MoveDirectoriesInternal(DirectoryInfo oldFactorioDirectory, DirectoryInfo oldModDirectory, DirectoryInfo oldSavegameDirectory, DirectoryInfo oldScenarioDirectory,
+            DirectoryInfo newFactorioDirectory, DirectoryInfo newModDirectory, DirectoryInfo newSavegameDirectory, DirectoryInfo newScenarioDirectory)
         {
+            // Factorio directory
             bool moveFactorioDirectory = !newFactorioDirectory.DirectoryEquals(oldFactorioDirectory);
             if (oldFactorioDirectory.Exists && moveFactorioDirectory)
             {
@@ -1402,6 +1448,8 @@ namespace ModMyFactory.ViewModels
                 oldFactorioDirectory.DeleteIfEmpty();
             }
 
+
+            // Mod directory
             bool moveModDirectory = !newModDirectory.DirectoryEquals(oldModDirectory);
             if (oldModDirectory.Exists && moveModDirectory)
             {
@@ -1427,8 +1475,94 @@ namespace ModMyFactory.ViewModels
                 oldModDirectory.DeleteIfEmpty();
             }
 
+
+            // Savegame directory
+            if (oldSavegameDirectory.Exists && !newSavegameDirectory.DirectoryEquals(oldSavegameDirectory))
+                await oldSavegameDirectory.MoveToAsync(newSavegameDirectory.FullName);
+
+
+            // Scenario directory
+            if (oldScenarioDirectory.Exists && !newScenarioDirectory.DirectoryEquals(oldScenarioDirectory))
+                await oldScenarioDirectory.MoveToAsync(newScenarioDirectory.FullName);
+
+
             foreach (var version in FactorioVersions)
                 version.CreateLinks();
+        }
+
+        private async Task MoveDirectories(DirectoryInfo oldFactorioDirectory, DirectoryInfo oldModDirectory, DirectoryInfo oldSavegameDirectory, DirectoryInfo oldScenarioDirectory,
+            DirectoryInfo newFactorioDirectory, DirectoryInfo newModDirectory, DirectoryInfo newSavegameDirectory, DirectoryInfo newScenarioDirectory)
+        {
+            var progressWindow = new ProgressWindow() { Owner = Window };
+            var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+            progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("MovingDirectoriesAction");
+            progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
+            progressViewModel.IsIndeterminate = true;
+
+            Task moveDirectoriesTask = MoveDirectoriesInternal(oldFactorioDirectory, oldModDirectory, oldSavegameDirectory, oldScenarioDirectory, newFactorioDirectory, newModDirectory, newSavegameDirectory, newScenarioDirectory);
+
+            Task closeWindowTask = moveDirectoriesTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+            progressWindow.ShowDialog();
+
+            await moveDirectoriesTask;
+            await closeWindowTask;
+        }
+
+        private async Task ApplySettings(Settings settings, SettingsViewModel settingsViewModel, SettingsWindow settingsWindow)
+        {
+            DirectoryInfo oldFactorioDirectory = settings.GetFactorioDirectory();
+            DirectoryInfo oldModDirectory = settings.GetModDirectory();
+            DirectoryInfo oldSavegameDirectory = settings.GetSavegameDirectory();
+            DirectoryInfo oldScenarioDirectory = settings.GetScenarioDirectory();
+
+            // Manager mode
+            settings.ManagerMode = settingsViewModel.ManagerMode;
+
+            // Update search
+            settings.UpdateSearchOnStartup = settingsViewModel.UpdateSearchOnStartup;
+
+            // Factorio location
+            settings.FactorioDirectoryOption = settingsViewModel.FactorioDirectoryOption;
+            settings.FactorioDirectory = (settings.FactorioDirectoryOption == DirectoryOption.Custom)
+                ? settingsViewModel.FactorioDirectory : string.Empty;
+
+            // Mod location
+            settings.ModDirectoryOption = settingsViewModel.ModDirectoryOption;
+            settings.ModDirectory = (settings.ModDirectoryOption == DirectoryOption.Custom)
+                ? settingsViewModel.ModDirectory : string.Empty;
+
+            // Savegame location
+            settings.SavegameDirectoryOption = settingsViewModel.SavegameDirectoryOption;
+            settings.SavegameDirectory = (settings.SavegameDirectoryOption == DirectoryOption.Custom)
+                ? settingsViewModel.SavegameDirectory : string.Empty;
+
+            // Scenario location
+            settings.ScenarioDirectoryOption = settingsViewModel.ScenarioDirectoryOption;
+            settings.ScenarioDirectory = (settings.ScenarioDirectoryOption == DirectoryOption.Custom)
+                ? settingsViewModel.ScenarioDirectory : string.Empty;
+
+            // Login credentials
+            settings.SaveCredentials = settingsWindow.SaveCredentialsBox.IsChecked ?? false;
+            if (settings.SaveCredentials)
+            {
+                GlobalCredentials.Instance.Username = settingsWindow.UsernameBox.Text;
+                if (!string.IsNullOrEmpty(settingsWindow.PasswordBox.Password))
+                    GlobalCredentials.Instance.Password = settingsWindow.PasswordBox.SecurePassword;
+                GlobalCredentials.Instance.Save();
+            }
+            else
+            {
+                GlobalCredentials.Instance.DeleteSave();
+            }
+
+            settings.Save();
+
+            DirectoryInfo newFactorioDirectory = settings.GetFactorioDirectory();
+            DirectoryInfo newModDirectory = settings.GetModDirectory();
+            DirectoryInfo newSavegameDirectory = settings.GetSavegameDirectory();
+            DirectoryInfo newScenarioDirectory = settings.GetScenarioDirectory();
+
+            await MoveDirectories(oldFactorioDirectory, oldModDirectory, oldSavegameDirectory, oldScenarioDirectory, newFactorioDirectory, newModDirectory, newSavegameDirectory, newScenarioDirectory);
         }
 
         private async Task OpenSettings()
@@ -1443,78 +1577,7 @@ namespace ModMyFactory.ViewModels
             bool? result = settingsWindow.ShowDialog();
             if (result != null && result.Value)
             {
-                DirectoryInfo oldFactorioDirectory = settings.GetFactorioDirectory();
-                DirectoryInfo oldModDirectory = settings.GetModDirectory();
-
-                if (settingsViewModel.ManagerModeIsPerFactorioVersion)
-                {
-                    settings.ManagerMode = ManagerMode.PerFactorioVersion;
-                }
-                else if (settingsViewModel.ManagerModeIsGlobal)
-                {
-                    settings.ManagerMode = ManagerMode.Global;
-                }
-                if (settingsViewModel.FactorioDirectoryIsAppData)
-                {
-                    settings.FactorioDirectoryOption = DirectoryOption.AppData;
-                    settings.FactorioDirectory = string.Empty;
-                }
-                else if (settingsViewModel.FactorioDirectoryIsAppDirectory)
-                {
-                    settings.FactorioDirectoryOption = DirectoryOption.ApplicationDirectory;
-                    settings.FactorioDirectory = string.Empty;
-                }
-                else if (settingsViewModel.FactorioDirectoryIsCustom)
-                {
-                    settings.FactorioDirectoryOption = DirectoryOption.Custom;
-                    settings.FactorioDirectory = settingsViewModel.FactorioDirectory;
-                }
-                if (settingsViewModel.ModDirectoryIsAppData)
-                {
-                    settings.ModDirectoryOption = DirectoryOption.AppData;
-                    settings.ModDirectory = string.Empty;
-                }
-                else if (settingsViewModel.ModDirectoryIsAppDirectory)
-                {
-                    settings.ModDirectoryOption = DirectoryOption.ApplicationDirectory;
-                    settings.ModDirectory = string.Empty;
-                }
-                else if (settingsViewModel.ModDirectoryIsCustom)
-                {
-                    settings.ModDirectoryOption = DirectoryOption.Custom;
-                    settings.ModDirectory = settingsViewModel.ModDirectory;
-                }
-                settings.Save();
-
-                DirectoryInfo newFactorioDirectory = settings.GetFactorioDirectory();
-                DirectoryInfo newModDirectory = settings.GetModDirectory();
-
-                var progressWindow = new ProgressWindow() { Owner = Window };
-                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("MovingDirectoriesAction");
-                progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
-                progressViewModel.IsIndeterminate = true;
-
-                Task moveDirectoriesTask = MoveDirectories(oldFactorioDirectory, oldModDirectory, newFactorioDirectory, newModDirectory);
-
-                Task closeWindowTask = moveDirectoriesTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-                progressWindow.ShowDialog();
-
-                await moveDirectoriesTask;
-                await closeWindowTask;
-
-                settings.SaveCredentials = settingsWindow.SaveCredentialsBox.IsChecked ?? false;
-                if (settings.SaveCredentials)
-                {
-                    GlobalCredentials.Instance.Username = settingsWindow.UsernameBox.Text;
-                    if (!string.IsNullOrEmpty(settingsWindow.PasswordBox.Password))
-                        GlobalCredentials.Instance.Password = settingsWindow.PasswordBox.SecurePassword;
-                    GlobalCredentials.Instance.Save();
-                }
-                else
-                {
-                    GlobalCredentials.Instance.DeleteSave();
-                }
+                await ApplySettings(settings, settingsViewModel, settingsWindow);
             }
         }
 
@@ -1580,6 +1643,120 @@ namespace ModMyFactory.ViewModels
             aboutWindow.ShowDialog();
         }
 
+        #region ContextMenus
+
+        private void SetSelectedModsActiveState(bool state)
+        {
+            ModManager.BeginUpdateTemplates();
+
+            foreach (Mod mod in Mods)
+            {
+                if (mod.IsSelected)
+                    mod.Active = state;
+            }
+
+            ModManager.EndUpdateTemplates(true);
+            ModManager.SaveTemplates();
+        }
+
+        private void ActivateSelectedMods()
+        {
+            SetSelectedModsActiveState(true);
+        }
+
+        private void DeactivateSelectedMods()
+        {
+            SetSelectedModsActiveState(false);
+        }
+
+        private void DeleteSelectedMods()
+        {
+            var deletionList = new List<Mod>();
+            foreach (Mod mod in Mods)
+            {
+                if (mod.IsSelected)
+                    deletionList.Add(mod);
+            }
+
+            if (deletionList.Count > 0 && MessageBox.Show(Window,
+                App.Instance.GetLocalizedMessage("DeleteMods", MessageType.Question),
+                App.Instance.GetLocalizedMessageTitle("DeleteMods", MessageType.Question),
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                foreach (Mod mod in deletionList)
+                    mod.Delete(false);
+            }
+        }
+
+        private void SelectActiveMods()
+        {
+            foreach (Mod mod in Mods)
+            {
+                if (mod.Active)
+                    mod.IsSelected = true;
+            }
+        }
+
+        private void SetSelectedModpacksActiveState(bool state)
+        {
+            ModManager.BeginUpdateTemplates();
+
+            foreach (Modpack modpack in Modpacks)
+            {
+                if (modpack.IsSelected)
+                    modpack.Active = state;
+            }
+
+            ModManager.EndUpdateTemplates(true);
+            ModManager.SaveTemplates();
+        }
+
+        private void ActivateSelectedModpacks()
+        {
+            SetSelectedModpacksActiveState(true);
+        }
+
+        private void DeactivateSelectedModpacks()
+        {
+            SetSelectedModpacksActiveState(false);
+        }
+
+        private void DeleteSelectedModpacks()
+        {
+            var deletionList = new List<Modpack>();
+            foreach (Modpack modpack in Modpacks)
+            {
+                if (modpack.IsSelected)
+                    deletionList.Add(modpack);
+            }
+
+            if (deletionList.Count > 0 && MessageBox.Show(Window,
+                App.Instance.GetLocalizedMessage("DeleteModpacks", MessageType.Question),
+                App.Instance.GetLocalizedMessageTitle("DeleteModpacks", MessageType.Question),
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                foreach (Modpack modpack in deletionList)
+                    modpack.Delete(false);
+            }
+        }
+
+        private void SelectActiveModpacks()
+        {
+            foreach (Modpack modpack in Modpacks)
+            {
+                if (modpack.Active ?? false)
+                    modpack.IsSelected = true;
+            }
+        }
+
+        private void DeleteSelectedModsAndModpacks()
+        {
+            DeleteSelectedMods();
+            DeleteSelectedModpacks();
+        }
+
+        #endregion
+
         private async void NewInstanceStartedHandler(object sender, InstanceStartedEventArgs e)
         {
             await Window.Dispatcher.InvokeAsync(async () => await OnNewInstanceStarted(e.CommandLine));
@@ -1613,7 +1790,7 @@ namespace ModMyFactory.ViewModels
                 {
                     if (Program.ImportFileList.Count > 0)
                         await ImportModpacksInner(Program.ImportFileList);
-                    else if (Program.UpdateCheckOnStartup) // Just skip update check if import list is non-zero
+                    else if (Program.UpdateCheckOnStartup && App.Instance.Settings.UpdateSearchOnStartup) // Just skip update check if import list is non-zero
                         await Update(true);
                 };
             }

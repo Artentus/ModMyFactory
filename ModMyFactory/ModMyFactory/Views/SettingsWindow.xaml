@@ -11,103 +11,179 @@
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon="..\Images\MMF_Icon.ico"
-        DataContext="{x:Static vm:SettingsViewModel.Instance}">
+        DataContext="{x:Static vm:SettingsViewModel.Instance}"
+        Loaded="LoadedHandler">
 
     <Grid Margin="4">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <GroupBox Grid.Row="0" Margin="0,0,0,4" Header="{DynamicResource ManagerModeGroupHeader}">
-            <Grid Margin="4">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+        <TabControl x:Name="TabControl" Margin="2" Grid.IsSharedSizeScope="True">
+            <TabItem Header="{DynamicResource GeneralTabHeader}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition SharedSizeGroup="TabContent"/>
+                    </Grid.RowDefinitions>
+                    <Grid Margin="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                <RadioButton Grid.Row="0" Margin="2"
-                             IsChecked="{Binding ManagerModeIsPerFactorioVersion}" Content="{DynamicResource PerFactorioVersionGroupItem}"/>
-                <RadioButton Grid.Row="1" Margin="2"
-                             IsChecked="{Binding ManagerModeIsGlobal}" Content="{DynamicResource GlobalGroupItem}"/>
-            </Grid>
-        </GroupBox>
+                        <GroupBox Grid.Row="0" Margin="0,0,0,2" Header="{DynamicResource ManagerModeGroupHeader}">
+                            <Grid Margin="4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-        <GroupBox Grid.Row="1" Header="{DynamicResource FactorioDirectoryGroupHeader}">
-            <Grid Margin="4">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                
-                <RadioButton Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="2"
-                             IsChecked="{Binding FactorioDirectoryIsAppData}" Content="{DynamicResource AppDataGroupItem}"/>
-                <RadioButton Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="2"
-                             IsChecked="{Binding FactorioDirectoryIsAppDirectory}" Content="{DynamicResource AppDirectoryGroupItem}"/>
-                <RadioButton Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2"
-                             IsChecked="{Binding FactorioDirectoryIsCustom}" Content="{DynamicResource SelectGroupItem}"/>
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="2" Padding="2" IsEnabled="{Binding FactorioDirectoryIsCustom}" MaxLines="1" Text="{Binding FactorioDirectory}"/>
-                <Button Grid.Row="3" Grid.Column="1" Margin="2" IsEnabled="{Binding FactorioDirectoryIsCustom}"
-                        Command="{Binding SelectFactorioDirectoryCommand}" Content="{DynamicResource BrowseButton}"/>
-            </Grid>
-        </GroupBox>
+                                <RadioButton Grid.Row="0" Margin="2" IsChecked="{Binding ManagerModeIsPerFactorioVersion}" Content="{DynamicResource PerFactorioVersionGroupItem}"/>
+                                <RadioButton Grid.Row="1" Margin="2" IsChecked="{Binding ManagerModeIsGlobal}" Content="{DynamicResource GlobalGroupItem}"/>
+                            </Grid>
+                        </GroupBox>
 
-        <GroupBox Grid.Row="2" Margin="0,4" Header="{DynamicResource ModDirectoryGroupHeader}">
-            <Grid Margin="4">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+                        <GroupBox Grid.Row="1" Margin="0,2" Header="{DynamicResource MiscGroupHeader}">
+                            <Grid Margin="4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+                                <CheckBox Grid.Row="0" Margin="2" IsChecked="{Binding UpdateSearchOnStartup}" Content="{DynamicResource UpdateSearchGroupItem}"/>
+                            </Grid>
+                        </GroupBox>
 
-                <RadioButton Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="2"
-                             IsChecked="{Binding ModDirectoryIsAppData}" Content="{DynamicResource AppDataGroupItem}"/>
-                <RadioButton Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="2"
-                             IsChecked="{Binding ModDirectoryIsAppDirectory}" Content="{DynamicResource AppDirectoryGroupItem}"/>
-                <RadioButton Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2"
-                             IsChecked="{Binding ModDirectoryIsCustom}" Content="{DynamicResource SelectGroupItem}"/>
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="2" Padding="2" IsEnabled="{Binding ModDirectoryIsCustom}" MaxLines="1" Text="{Binding ModDirectory}"/>
-                <Button Grid.Row="3" Grid.Column="1" Margin="2" IsEnabled="{Binding ModDirectoryIsCustom}"
-                        Command="{Binding SelectModDirectoryCommand}" Content="{DynamicResource BrowseButton}"/>
-            </Grid>
-        </GroupBox>
+                        <GroupBox Grid.Row="2" Margin="0,2,0,0" Header="{DynamicResource CredentialsGroupHeader}">
+                            <Grid Margin="4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-        <GroupBox Grid.Row="3" Margin="0,4" Header="{DynamicResource CredentialsGroupHeader}">
-            <Grid Margin="4">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+                                <CheckBox x:Name="SaveCredentialsBox" Grid.Row="0" Grid.Column="0" Margin="2,0,2,6" Content="{DynamicResource SaveCredentialsHeader}" Checked="SaveCredentialsBoxCheckedHandler" Unchecked="SaveCredentialsBoxUncheckedHandler"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Margin="10,0" Text="{DynamicResource UsernameHeader}" IsEnabled="{Binding IsChecked, ElementName=SaveCredentialsBox}"/>
+                                <TextBox x:Name="UsernameBox" Grid.Row="2" Grid.Column="0" Margin="10,2" Padding="2" MaxLines="1" IsEnabled="{Binding IsChecked, ElementName=SaveCredentialsBox}"/>
+                                <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,0" Text="{DynamicResource PasswordHeader}" IsEnabled="{Binding IsChecked, ElementName=SaveCredentialsBox}"/>
+                                <PasswordBox x:Name="PasswordBox" Grid.Row="4" Grid.Column="0" Margin="10,2" Padding="2" IsEnabled="{Binding IsChecked, ElementName=SaveCredentialsBox}"/>
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            
+            <TabItem Header="{DynamicResource LocationsTabHeader}" IsSelected="True">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition SharedSizeGroup="TabContent"/>
+                    </Grid.RowDefinitions>
+                    <Grid Margin="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                <CheckBox x:Name="SaveCredentialsBox" Grid.Row="0" Grid.Column="0" Margin="2,0,2,6" Content="{DynamicResource SaveCredentialsHeader}"
-                          Checked="SaveCredentialsBoxCheckedHandler" Unchecked="SaveCredentialsBoxUncheckedHandler"/>
-                <TextBlock Grid.Row="1" Grid.Column="0" Margin="10,0" Text="{DynamicResource UsernameHeader}" IsEnabled="{Binding IsChecked, ElementName=SaveCredentialsBox}"/>
-                <TextBox x:Name="UsernameBox" Grid.Row="2" Grid.Column="0" Margin="10,2" Padding="2" MaxLines="1" IsEnabled="{Binding IsChecked, ElementName=SaveCredentialsBox}"/>
-                <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,0" Text="{DynamicResource PasswordHeader}" IsEnabled="{Binding IsChecked, ElementName=SaveCredentialsBox}"/>
-                <PasswordBox x:Name="PasswordBox" Grid.Row="4" Grid.Column="0" Margin="10,2" Padding="2" IsEnabled="{Binding IsChecked, ElementName=SaveCredentialsBox}"/>
-            </Grid>
-        </GroupBox>
+                        <GroupBox Grid.Row="0" Margin="0,0,0,2" Header="{DynamicResource FactorioDirectoryGroupHeader}">
+                            <Grid Margin="4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="4" Orientation="Horizontal" FlowDirection="RightToLeft">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <RadioButton Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding FactorioDirectoryIsAppData}" Content="{DynamicResource AppDataGroupItem}"/>
+                                <RadioButton Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding FactorioDirectoryIsAppDirectory}" Content="{DynamicResource AppDirectoryGroupItem}"/>
+                                <RadioButton Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding FactorioDirectoryIsCustom}" Content="{DynamicResource SelectGroupItem}"/>
+                                <TextBox Grid.Row="3" Grid.Column="0" Margin="2" Padding="2" IsEnabled="{Binding FactorioDirectoryIsCustom}" MaxLines="1" Text="{Binding FactorioDirectory}"/>
+                                <Button Grid.Row="3" Grid.Column="1" Margin="2" IsEnabled="{Binding FactorioDirectoryIsCustom}" Command="{Binding SelectFactorioDirectoryCommand}" Content="{DynamicResource BrowseButton}"/>
+                            </Grid>
+                        </GroupBox>
+
+                        <GroupBox Grid.Row="1" Margin="0,2" Header="{DynamicResource ModDirectoryGroupHeader}">
+                            <Grid Margin="4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <RadioButton Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding ModDirectoryIsAppData}" Content="{DynamicResource AppDataGroupItem}"/>
+                                <RadioButton Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding ModDirectoryIsAppDirectory}" Content="{DynamicResource AppDirectoryGroupItem}"/>
+                                <RadioButton Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding ModDirectoryIsCustom}" Content="{DynamicResource SelectGroupItem}"/>
+                                <TextBox Grid.Row="3" Grid.Column="0" Margin="2" Padding="2" IsEnabled="{Binding ModDirectoryIsCustom}" MaxLines="1" Text="{Binding ModDirectory}"/>
+                                <Button Grid.Row="3" Grid.Column="1" Margin="2" IsEnabled="{Binding ModDirectoryIsCustom}" Command="{Binding SelectModDirectoryCommand}" Content="{DynamicResource BrowseButton}"/>
+                            </Grid>
+                        </GroupBox>
+
+                        <GroupBox Grid.Row="2" Margin="0,2" Header="{DynamicResource SavegameDirectoryGroupHeader}">
+                            <Grid Margin="4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <RadioButton Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding SavegameDirectoryIsAppData}" Content="{DynamicResource AppDataGroupItem}"/>
+                                <RadioButton Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding SavegameDirectoryIsAppDirectory}" Content="{DynamicResource AppDirectoryGroupItem}"/>
+                                <RadioButton Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding SavegameDirectoryIsCustom}" Content="{DynamicResource SelectGroupItem}"/>
+                                <TextBox Grid.Row="3" Grid.Column="0" Margin="2" Padding="2" IsEnabled="{Binding SavegameDirectoryIsCustom}" MaxLines="1" Text="{Binding SavegameDirectory}"/>
+                                <Button Grid.Row="3" Grid.Column="1" Margin="2" IsEnabled="{Binding SavegameDirectoryIsCustom}" Command="{Binding SelectSavegameDirectoryCommand}" Content="{DynamicResource BrowseButton}"/>
+                            </Grid>
+                        </GroupBox>
+
+                        <GroupBox Grid.Row="3" Margin="0,2,0,0" Header="{DynamicResource ScenarioDirectoryGroupHeader}">
+                            <Grid Margin="4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <RadioButton Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding ScenarioDirectoryIsAppData}" Content="{DynamicResource AppDataGroupItem}"/>
+                                <RadioButton Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding ScenarioDirectoryIsAppDirectory}" Content="{DynamicResource AppDirectoryGroupItem}"/>
+                                <RadioButton Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" IsChecked="{Binding ScenarioDirectoryIsCustom}" Content="{DynamicResource SelectGroupItem}"/>
+                                <TextBox Grid.Row="3" Grid.Column="0" Margin="2" Padding="2" IsEnabled="{Binding ScenarioDirectoryIsCustom}" MaxLines="1" Text="{Binding ScenarioDirectory}"/>
+                                <Button Grid.Row="3" Grid.Column="1" Margin="2" IsEnabled="{Binding ScenarioDirectoryIsCustom}" Command="{Binding SelectScenarioDirectoryCommand}" Content="{DynamicResource BrowseButton}"/>
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft">
             <Button Margin="2" IsDefault="True" Click="OKButtonClickHandler" IsEnabled="{Binding SettingsValid}" Content="{DynamicResource OkButton}"/>
             <Button Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
         </StackPanel>
