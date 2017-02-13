@@ -36,7 +36,7 @@
     <sys:String x:Key="Error.InvalidModFolder.Message">Выбранная папка не содержит модов.</sys:String>
     <sys:String x:Key="Error.InvalidModFolder.Title">Ошибка добавления мода!</sys:String>
 
-    <sys:String x:Key="Information.NoModUpdates.Message">Все ваши моды не нуждаются в обновлении.</sys:String>
+    <sys:String x:Key="Information.NoModUpdates.Message">Ни один мод не нуждается в обновлении.</sys:String>
     <sys:String x:Key="Information.NoModUpdates.Title">Обновлений не найдено</sys:String>
     
     <sys:String x:Key="Warning.HasConflicts.Message">При добавлении файлов модпака возникли следующие конфликты:</sys:String>
@@ -81,14 +81,14 @@
     <sys:String x:Key="Question.DeleteMod.Message">Вы действительно хотите удалить этот мод?</sys:String>
     <sys:String x:Key="Question.DeleteMod.Title">Подтвердите</sys:String>
     
-    <sys:String x:Key="Question.DeleteMods.Message">Do you really want to delete all selected mods?</sys:String>
-    <sys:String x:Key="Question.DeleteMods.Title">Confirm</sys:String>
+    <sys:String x:Key="Question.DeleteMods.Message">Вы действительно хотите удалить все выбранные моды?</sys:String>
+    <sys:String x:Key="Question.DeleteMods.Title">Подтвердите</sys:String>
     
     <sys:String x:Key="Question.DeleteModpack.Message">Вы действительно хотите удалить этот модпак?</sys:String>
     <sys:String x:Key="Question.DeleteModpack.Title">Подтвердите</sys:String>
     
-    <sys:String x:Key="Question.DeleteModpacks.Message">Do you really want to delete all selected modpacks?</sys:String>
-    <sys:String x:Key="Question.DeleteModpacks.Title">Confirm</sys:String>
+    <sys:String x:Key="Question.DeleteModpacks.Message">Вы действительно хотите удалить все выбранные модпаки?</sys:String>
+    <sys:String x:Key="Question.DeleteModpacks.Title">Подтвердите</sys:String>
 
     
     <!-- file type descriptions -->
@@ -99,7 +99,7 @@
     
     <!-- progress dialogs -->
     <sys:String x:Key="MovingFilesDescription">Перемещение файлов...</sys:String>
-    <sys:String x:Key="CopyingFilesDescription">Copying files...</sys:String>
+    <sys:String x:Key="CopyingFilesDescription">Копирование файлов...</sys:String>
     <sys:String x:Key="ExtractingDescription">Извлечение...</sys:String>
     
     <sys:String x:Key="FetchingModsAction">Поиск модов</sys:String>
@@ -189,10 +189,10 @@
     <sys:String x:Key="HelpMenuItem">Помощь</sys:String>
     
     <!-- context menu -->
-    <sys:String x:Key="DeleteSelectedMenuItem">Delete selected</sys:String>
-    <sys:String x:Key="ActivateSelectedMenuItem">Activate selected</sys:String>
-    <sys:String x:Key="DeactivateSelectedMenuItem">Deactivate selected</sys:String>
-    <sys:String x:Key="SelectActiveMenuItem">Select all active</sys:String>
+    <sys:String x:Key="DeleteSelectedMenuItem">Удалить выбранное</sys:String>
+    <sys:String x:Key="ActivateSelectedMenuItem">Активировать выбранное</sys:String>
+    <sys:String x:Key="DeactivateSelectedMenuItem">Деактивировать выбранное</sys:String>
+    <sys:String x:Key="SelectActiveMenuItem">Выбрать все активные</sys:String>
     
     <!-- hotkeys -->
     <sys:String x:Key="DownloadModsHotkey">F7</sys:String>
@@ -247,10 +247,10 @@
     <sys:String x:Key="VersionListWindowTitle">Выбрать версию</sys:String>
     
     <!-- checkboxes -->
-    <sys:String x:Key="ShowExperimentalCheckBox">Show experimental versions</sys:String>
+    <sys:String x:Key="ShowExperimentalCheckBox">Показывать экспериментальные версии</sys:String>
     
     <!-- tooltips -->
-    <sys:String x:Key="ExperimentalToolTip">Experimental</sys:String>
+    <sys:String x:Key="ExperimentalToolTip">Экспериментальные</sys:String>
 
 
     <!--
@@ -260,22 +260,22 @@
     <sys:String x:Key="SettingsWindowTitle">Настройки</sys:String>
     
     <!-- tab headers -->
-    <sys:String x:Key="GeneralTabHeader">General</sys:String>
-    <sys:String x:Key="LocationsTabHeader">Locations</sys:String>
+    <sys:String x:Key="GeneralTabHeader">Основное</sys:String>
+    <sys:String x:Key="LocationsTabHeader">Расположения</sys:String>
 
     <!-- group headers -->
     <sys:String x:Key="ManagerModeGroupHeader">Режим работы менеджера</sys:String>
-    <sys:String x:Key="MiscGroupHeader">Miscellaneous</sys:String>
+    <sys:String x:Key="MiscGroupHeader">Дополнительно</sys:String>
     <sys:String x:Key="CredentialsGroupHeader">Данные для авторизации</sys:String>
     
     <sys:String x:Key="FactorioDirectoryGroupHeader">Расположение Factorio</sys:String>
     <sys:String x:Key="ModDirectoryGroupHeader">Расположение модов</sys:String>
-    <sys:String x:Key="SavegameDirectoryGroupHeader">Savegame location</sys:String>
-    <sys:String x:Key="ScenarioDirectoryGroupHeader">Scenario location</sys:String>
+    <sys:String x:Key="SavegameDirectoryGroupHeader">Расположение сохранений</sys:String>
+    <sys:String x:Key="ScenarioDirectoryGroupHeader">Расположение сценариев</sys:String>
     
     <!-- group items -->
     <sys:String x:Key="PerFactorioVersionGroupItem">Для каждой версии Factorio</sys:String>
-    <sys:String x:Key="UpdateSearchGroupItem">Search for updates on startup</sys:String>
+    <sys:String x:Key="UpdateSearchGroupItem">Искать обновления при запуске</sys:String>
     <sys:String x:Key="GlobalGroupItem">Глобально</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Директория программы</sys:String>
@@ -397,15 +397,15 @@
     ____________________ CopyOrMoveMessageWindow ____________________
     -->
     
-    <sys:String x:Key="CopyOrMoveMessageWindowTitle">Copy or move?</sys:String>
+    <sys:String x:Key="CopyOrMoveMessageWindowTitle">Скопировать или переместить?</sys:String>
     
     <!-- messages -->
-    <sys:String x:Key="CopyOrMoveFactorioMessage">Do you want to copy or move this Factorio installation?&#x0a;Moving will destroy the old installation.</sys:String>
-    <sys:String x:Key="CopyOrMoveModsMessage">Do you want to copy or move all selected mods?</sys:String>
-    <sys:String x:Key="CopyOrMoveModMessage">Do you want to copy or move the selected mod?</sys:String>
+    <sys:String x:Key="CopyOrMoveFactorioMessage">Вы хотите скопировать или переместить эту версию Factorio?&#x0a;Перемещение удалит предыдущее расположение.</sys:String>
+    <sys:String x:Key="CopyOrMoveModsMessage">Вы хотите скопировать или переместить выбранные моды?</sys:String>
+    <sys:String x:Key="CopyOrMoveModMessage">Вы хотите скопировать или переместить выбранный мод?</sys:String>
     
     <!-- buttons -->
-    <sys:String x:Key="CopyButton">Copy</sys:String>
-    <sys:String x:Key="MoveButton">Move</sys:String>
+    <sys:String x:Key="CopyButton">Скопировать</sys:String>
+    <sys:String x:Key="MoveButton">Переместить</sys:String>
 
 </ResourceDictionary>
