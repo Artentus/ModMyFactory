@@ -97,6 +97,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommandLine.cs" />
+    <Compile Include="ExtendedVersion.cs" />
     <Compile Include="FactorioUpdate\CriticalUpdaterException.cs" />
     <Compile Include="Export\ExportTemplate.cs" />
     <Compile Include="Export\ModpackExport.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="Helpers\DirectoryInfoExtensions.cs" />
     <Compile Include="Helpers\EnumarableExtensions.cs" />
     <Compile Include="Helpers\FileInfoExtensions.cs" />
+    <Compile Include="Helpers\GitHubClientExtensions.cs" />
     <Compile Include="Helpers\ModHelper.cs" />
     <Compile Include="Helpers\PercievedFileType.cs" />
     <Compile Include="Helpers\ProcessExtensions.cs" />

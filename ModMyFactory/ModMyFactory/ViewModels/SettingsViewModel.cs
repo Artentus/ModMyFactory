@@ -52,6 +52,7 @@ namespace ModMyFactory.ViewModels
         #region Misc
 
         bool updateSearchOnStartup;
+        bool includePreReleasesForUpdate;
 
         public bool UpdateSearchOnStartup
         {
@@ -62,6 +63,19 @@ namespace ModMyFactory.ViewModels
                 {
                     updateSearchOnStartup = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(UpdateSearchOnStartup)));
+                }
+            }
+        }
+
+        public bool IncludePreReleasesForUpdate
+        {
+            get { return includePreReleasesForUpdate; }
+            set
+            {
+                if (value != includePreReleasesForUpdate)
+                {
+                    includePreReleasesForUpdate = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IncludePreReleasesForUpdate)));
                 }
             }
         }
@@ -428,6 +442,7 @@ namespace ModMyFactory.ViewModels
             }
 
             UpdateSearchOnStartup = settings.UpdateSearchOnStartup;
+            IncludePreReleasesForUpdate = settings.IncludePreReleasesForUpdate;
 
             FactorioDirectoryIsAppData = false;
             FactorioDirectoryIsAppDirectory = false;

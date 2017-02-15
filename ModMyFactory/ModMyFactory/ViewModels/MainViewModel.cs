@@ -1520,6 +1520,7 @@ namespace ModMyFactory.ViewModels
 
             // Update search
             settings.UpdateSearchOnStartup = settingsViewModel.UpdateSearchOnStartup;
+            settings.IncludePreReleasesForUpdate = settingsViewModel.IncludePreReleasesForUpdate;
 
             // Factorio location
             settings.FactorioDirectoryOption = settingsViewModel.FactorioDirectoryOption;
@@ -1593,7 +1594,7 @@ namespace ModMyFactory.ViewModels
 
                 try
                 {
-                    result = await App.Instance.SearchForUpdateAsync();
+                    result = await App.Instance.SearchForUpdateAsync(App.Instance.Settings.IncludePreReleasesForUpdate);
                 }
                 catch (HttpRequestException)
                 {
@@ -1612,8 +1613,8 @@ namespace ModMyFactory.ViewModels
                 {
                     if (result.UpdateAvailable)
                     {
-                        string currentVersionString = App.Instance.AssemblyVersion.ToString(3);
-                        string newVersionString = result.Version.ToString(3);
+                        string currentVersionString = App.Version.ToString();
+                        string newVersionString = result.Version.ToString();
                         if (MessageBox.Show(Window,
                                 string.Format(App.Instance.GetLocalizedMessage("Update", MessageType.Question), currentVersionString, newVersionString),
                                 App.Instance.GetLocalizedMessageTitle("Update", MessageType.Question),

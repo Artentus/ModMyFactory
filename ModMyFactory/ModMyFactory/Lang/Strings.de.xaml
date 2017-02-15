@@ -276,6 +276,7 @@
     <!-- group items -->
     <sys:String x:Key="PerFactorioVersionGroupItem">Pro Factorio-Version</sys:String>
     <sys:String x:Key="UpdateSearchGroupItem">Bei Start nach Updates suchen</sys:String>
+    <sys:String x:Key="IncludePreReleasesGroupItem">Vorabversionen bei der Updatesuche miteinbeziehen</sys:String>
     <sys:String x:Key="GlobalGroupItem">Global</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Anwendungsverzeichnis</sys:String>

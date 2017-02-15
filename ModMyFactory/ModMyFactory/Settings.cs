@@ -42,6 +42,7 @@ namespace ModMyFactory
                 WarningShown = false,
                 ShowExperimentalDownloads = false,
                 UpdateSearchOnStartup = true,
+                IncludePreReleasesForUpdate = false,
             };
             return defaultSettings;
         }
@@ -104,6 +105,8 @@ namespace ModMyFactory
 
         [DefaultValue(true)]
         public bool UpdateSearchOnStartup;
+
+        public bool IncludePreReleasesForUpdate;
 
         [JsonConstructor]
         private Settings()

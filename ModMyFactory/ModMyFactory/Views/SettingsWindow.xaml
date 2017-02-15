@@ -50,9 +50,11 @@
                             <Grid Margin="4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
                                 <CheckBox Grid.Row="0" Margin="2" IsChecked="{Binding UpdateSearchOnStartup}" Content="{DynamicResource UpdateSearchGroupItem}"/>
+                                <CheckBox Grid.Row="1" Margin="2" IsChecked="{Binding IncludePreReleasesForUpdate}" Content="{DynamicResource IncludePreReleasesGroupItem}"/>
                             </Grid>
                         </GroupBox>
 

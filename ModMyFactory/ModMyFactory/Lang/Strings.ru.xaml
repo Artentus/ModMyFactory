@@ -276,6 +276,7 @@
     <!-- group items -->
     <sys:String x:Key="PerFactorioVersionGroupItem">Для каждой версии Factorio</sys:String>
     <sys:String x:Key="UpdateSearchGroupItem">Искать обновления при запуске</sys:String>
+    <sys:String x:Key="IncludePreReleasesGroupItem">Include prereleases when searching for updates</sys:String>
     <sys:String x:Key="GlobalGroupItem">Глобально</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Директория программы</sys:String>
