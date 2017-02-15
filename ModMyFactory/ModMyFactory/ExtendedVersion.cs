@@ -120,8 +120,6 @@ namespace ModMyFactory
                 return new ExtendedVersion(BaseVersion);
         }
 
-        
-
         public bool Equals(ExtendedVersion other)
         {
             if (object.ReferenceEquals(other, null)) return false;
@@ -154,8 +152,17 @@ namespace ModMyFactory
             if (object.ReferenceEquals(other, null)) return int.MaxValue;
 
             int result = this.BaseVersion.CompareTo(other.BaseVersion);
-            if (result == 0) return this.PreReleaseVersion.CompareTo(other.PreReleaseVersion);
-            return result;
+            if (result == 0)
+            {
+                unchecked
+                {
+                    return ((uint)this.PreReleaseVersion).CompareTo((uint)other.PreReleaseVersion);
+                }
+            }
+            else
+            {
+                return result;
+            }
         }
 
         public int CompareTo(Version other)
@@ -163,8 +170,17 @@ namespace ModMyFactory
             if (object.ReferenceEquals(other, null)) return int.MaxValue;
 
             int result = this.BaseVersion.CompareTo(other);
-            if (result == 0) return this.PreReleaseVersion.CompareTo(-1);
-            return result;
+            if (result == 0)
+            {
+                unchecked
+                {
+                    return ((uint)this.PreReleaseVersion).CompareTo((uint)-1);
+                }
+            }
+            else
+            {
+                return result;
+            }
         }
 
         public int CompareTo(object obj)
