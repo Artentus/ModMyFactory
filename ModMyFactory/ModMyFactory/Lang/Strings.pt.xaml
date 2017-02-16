@@ -189,10 +189,17 @@
     <sys:String x:Key="HelpMenuItem">Ajuda</sys:String>
     
     <!-- context menu -->
-    <sys:String x:Key="DeleteSelectedMenuItem">Delete selected</sys:String>
-    <sys:String x:Key="ActivateSelectedMenuItem">Activate selected</sys:String>
-    <sys:String x:Key="DeactivateSelectedMenuItem">Deactivate selected</sys:String>
-    <sys:String x:Key="SelectActiveMenuItem">Select all active</sys:String>
+    <sys:String x:Key="DeleteSelectedModsMenuItem">Delete selected mods</sys:String>
+    <sys:String x:Key="ActivateSelectedModsMenuItem">Activate selected mods</sys:String>
+    <sys:String x:Key="DeactivateSelectedModsMenuItem">Deactivate selected mods</sys:String>
+    <sys:String x:Key="SelectActiveModsMenuItem">Select all active mods</sys:String>
+    <sys:String x:Key="SelectInactiveModsMenuItem">Select all inactive mods</sys:String>
+    
+    <sys:String x:Key="DeleteSelectedModpacksMenuItem">Delete selected modpacks</sys:String>
+    <sys:String x:Key="ActivateSelectedModpacksMenuItem">Activate selected modpacks</sys:String>
+    <sys:String x:Key="DeactivateSelectedModpacksMenuItem">Deactivate selected modpacks</sys:String>
+    <sys:String x:Key="SelectActiveModpacksMenuItem">Select all active modpacks</sys:String>
+    <sys:String x:Key="SelectInactiveModpacksMenuItem">Select all inactive modpacks</sys:String>
     
     <!-- hotkeys -->
     <sys:String x:Key="DownloadModsHotkey">F7</sys:String>

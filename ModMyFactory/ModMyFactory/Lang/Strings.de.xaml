@@ -189,10 +189,17 @@
     <sys:String x:Key="HelpMenuItem">Hilfe</sys:String>
     
     <!-- context menu -->
-    <sys:String x:Key="DeleteSelectedMenuItem">Ausgewählte löschen</sys:String>
-    <sys:String x:Key="ActivateSelectedMenuItem">Ausgewählte aktivieren</sys:String>
-    <sys:String x:Key="DeactivateSelectedMenuItem">Ausgewählte deaktivieren</sys:String>
-    <sys:String x:Key="SelectActiveMenuItem">Alle aktiven auswählen</sys:String>
+    <sys:String x:Key="DeleteSelectedModsMenuItem">Ausgewählte Mods löschen</sys:String>
+    <sys:String x:Key="ActivateSelectedModsMenuItem">Ausgewählte Mods aktivieren</sys:String>
+    <sys:String x:Key="DeactivateSelectedModsMenuItem">Ausgewählte Mods deaktivieren</sys:String>
+    <sys:String x:Key="SelectActiveModsMenuItem">Alle aktivierten Mods auswählen</sys:String>
+    <sys:String x:Key="SelectInactiveModsMenuItem">Alle deaktivierten Mods auswählen</sys:String>
+    
+    <sys:String x:Key="DeleteSelectedModpacksMenuItem">Ausgewählte Modpacks löschen</sys:String>
+    <sys:String x:Key="ActivateSelectedModpacksMenuItem">Ausgewählte Modpacks aktivieren</sys:String>
+    <sys:String x:Key="DeactivateSelectedModpacksMenuItem">Ausgewählte Modpacks deaktivieren</sys:String>
+    <sys:String x:Key="SelectActiveModpacksMenuItem">Alle aktivierten Modpacks auswählen</sys:String>
+    <sys:String x:Key="SelectInactiveModpacksMenuItem">Alle deaktivierten Modpacks auswählen</sys:String>
     
     <!-- hotkeys -->
     <sys:String x:Key="DownloadModsHotkey">F7</sys:String>

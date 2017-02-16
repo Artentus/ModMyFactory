@@ -400,13 +400,14 @@
                                IsOpen="{Binding IsChecked, ElementName=ModsToggleButton, Mode=TwoWay}">
                             <Border Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
                                 <Menu IsMainMenu="False">
-                                    <MenuItem Header="{DynamicResource ActivateSelectedMenuItem}" Command="{Binding ActivateSelectedModsCommand}"/>
-                                    <MenuItem Header="{DynamicResource DeactivateSelectedMenuItem}" Command="{Binding DeactivateSelectedModsCommand}"/>
+                                    <MenuItem Header="{DynamicResource ActivateSelectedModsMenuItem}" Command="{Binding ActivateSelectedModsCommand}"/>
+                                    <MenuItem Header="{DynamicResource DeactivateSelectedModsMenuItem}" Command="{Binding DeactivateSelectedModsCommand}"/>
                                     <Separator/>
-                                    <MenuItem Header="{DynamicResource DeleteSelectedMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
+                                    <MenuItem Header="{DynamicResource DeleteSelectedModsMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
                                               Command="{Binding DeleteSelectedModsCommand}"/>
                                     <Separator/>
-                                    <MenuItem Header="{DynamicResource SelectActiveMenuItem}" Command="{Binding SelectActiveModsCommand}"/>
+                                    <MenuItem Header="{DynamicResource SelectActiveModsMenuItem}" Command="{Binding SelectActiveModsCommand}"/>
+                                    <MenuItem Header="{DynamicResource SelectInactiveModsMenuItem}" Command="{Binding SelectInactiveModsCommand}"/>
                                 </Menu>
                             </Border>
                         </Popup>
@@ -488,13 +489,14 @@
                 
                 <mvvm:DragDropReadyListBox.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="{DynamicResource ActivateSelectedMenuItem}" Command="{Binding ActivateSelectedModsCommand}"/>
-                        <MenuItem Header="{DynamicResource DeactivateSelectedMenuItem}" Command="{Binding DeactivateSelectedModsCommand}"/>
+                        <MenuItem Header="{DynamicResource ActivateSelectedModsMenuItem}" Command="{Binding ActivateSelectedModsCommand}"/>
+                        <MenuItem Header="{DynamicResource DeactivateSelectedModsMenuItem}" Command="{Binding DeactivateSelectedModsCommand}"/>
                         <Separator/>
-                        <MenuItem Header="{DynamicResource DeleteSelectedMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
+                        <MenuItem Header="{DynamicResource DeleteSelectedModsMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
                                   Command="{Binding DeleteSelectedModsCommand}"/>
                         <Separator/>
-                        <MenuItem Header="{DynamicResource SelectActiveMenuItem}" Command="{Binding SelectActiveModsCommand}"/>
+                        <MenuItem Header="{DynamicResource SelectActiveModsMenuItem}" Command="{Binding SelectActiveModsCommand}"/>
+                        <MenuItem Header="{DynamicResource SelectInactiveModsMenuItem}" Command="{Binding SelectInactiveModsCommand}"/>
                     </ContextMenu>
                 </mvvm:DragDropReadyListBox.ContextMenu>
             </mvvm:DragDropReadyListBox>
@@ -534,13 +536,14 @@
                                IsOpen="{Binding IsChecked, ElementName=ModpacksToggleButton, Mode=TwoWay}">
                             <Border Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
                                 <Menu IsMainMenu="False">
-                                    <MenuItem Header="{DynamicResource ActivateSelectedMenuItem}" Command="{Binding ActivateSelectedModpacksCommand}"/>
-                                    <MenuItem Header="{DynamicResource DeactivateSelectedMenuItem}" Command="{Binding DeactivateSelectedModpacksCommand}"/>
+                                    <MenuItem Header="{DynamicResource ActivateSelectedModpacksMenuItem}" Command="{Binding ActivateSelectedModpacksCommand}"/>
+                                    <MenuItem Header="{DynamicResource DeactivateSelectedModpacksMenuItem}" Command="{Binding DeactivateSelectedModpacksCommand}"/>
                                     <Separator/>
-                                    <MenuItem Header="{DynamicResource DeleteSelectedMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
+                                    <MenuItem Header="{DynamicResource DeleteSelectedModpacksMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
                                               Command="{Binding DeleteSelectedModpacksCommand}"/>
                                     <Separator/>
-                                    <MenuItem Header="{DynamicResource SelectActiveMenuItem}" Command="{Binding SelectActiveModpacksCommand}"/>
+                                    <MenuItem Header="{DynamicResource SelectActiveModpacksMenuItem}" Command="{Binding SelectActiveModpacksCommand}"/>
+                                    <MenuItem Header="{DynamicResource SelectInactiveModpacksMenuItem}" Command="{Binding SelectInactiveModpacksCommand}"/>
                                 </Menu>
                             </Border>
                         </Popup>
@@ -661,13 +664,14 @@
                 
                 <mvvm:DragDropReadyListBox.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="{DynamicResource ActivateSelectedMenuItem}" Command="{Binding ActivateSelectedModpacksCommand}"/>
-                        <MenuItem Header="{DynamicResource DeactivateSelectedMenuItem}" Command="{Binding DeactivateSelectedModpacksCommand}"/>
+                        <MenuItem Header="{DynamicResource ActivateSelectedModpacksMenuItem}" Command="{Binding ActivateSelectedModpacksCommand}"/>
+                        <MenuItem Header="{DynamicResource DeactivateSelectedModpacksMenuItem}" Command="{Binding DeactivateSelectedModpacksCommand}"/>
                         <Separator/>
-                        <MenuItem Header="{DynamicResource DeleteSelectedMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
+                        <MenuItem Header="{DynamicResource DeleteSelectedModpacksMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
                                   Command="{Binding DeleteSelectedModpacksCommand}"/>
                         <Separator/>
-                        <MenuItem Header="{DynamicResource SelectActiveMenuItem}" Command="{Binding SelectActiveModpacksCommand}"/>
+                        <MenuItem Header="{DynamicResource SelectActiveModpacksMenuItem}" Command="{Binding SelectActiveModpacksCommand}"/>
+                        <MenuItem Header="{DynamicResource SelectInactiveModpacksMenuItem}" Command="{Binding SelectInactiveModpacksCommand}"/>
                     </ContextMenu>
                 </mvvm:DragDropReadyListBox.ContextMenu>
             </mvvm:DragDropReadyListBox>

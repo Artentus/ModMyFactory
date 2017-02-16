@@ -270,6 +270,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand SelectActiveModsCommand { get; }
 
+        public RelayCommand SelectInactiveModsCommand { get; }
+
         public RelayCommand ActivateSelectedModpacksCommand { get; }
 
         public RelayCommand DeactivateSelectedModpacksCommand { get; }
@@ -277,6 +279,8 @@ namespace ModMyFactory.ViewModels
         public RelayCommand DeleteSelectedModpacksCommand { get; }
 
         public RelayCommand SelectActiveModpacksCommand { get; }
+
+        public RelayCommand SelectInactiveModpacksCommand { get; }
 
         public RelayCommand DeleteSelectedModsAndModpacksCommand { get; }
 
@@ -538,11 +542,13 @@ namespace ModMyFactory.ViewModels
                 DeactivateSelectedModsCommand = new RelayCommand(DeactivateSelectedMods, () => Mods.Any(mod => mod.IsSelected));
                 DeleteSelectedModsCommand = new RelayCommand(DeleteSelectedMods, () => Mods.Any(mod => mod.IsSelected));
                 SelectActiveModsCommand = new RelayCommand(SelectActiveMods);
+                SelectInactiveModsCommand = new RelayCommand(SelectInactiveMods);
 
                 ActivateSelectedModpacksCommand = new RelayCommand(ActivateSelectedModpacks, () => Modpacks.Any(modpack => modpack.IsSelected));
                 DeactivateSelectedModpacksCommand = new RelayCommand(DeactivateSelectedModpacks, () => Modpacks.Any(modpack => modpack.IsSelected));
                 DeleteSelectedModpacksCommand = new RelayCommand(DeleteSelectedModpacks, () => Modpacks.Any(modpack => modpack.IsSelected));
                 SelectActiveModpacksCommand = new RelayCommand(SelectActiveModpacks);
+                SelectInactiveModpacksCommand = new RelayCommand(SelectInactiveModpacks);
 
                 DeleteSelectedModsAndModpacksCommand = new RelayCommand(DeleteSelectedModsAndModpacks, () => Mods.Any(mod => mod.IsSelected) || Modpacks.Any(modpack => modpack.IsSelected));
 
@@ -1698,6 +1704,15 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        private void SelectInactiveMods()
+        {
+            foreach (Mod mod in Mods)
+            {
+                if (!mod.Active)
+                    mod.IsSelected = true;
+            }
+        }
+
         private void SetSelectedModpacksActiveState(bool state)
         {
             ModManager.BeginUpdateTemplates();
@@ -1746,6 +1761,15 @@ namespace ModMyFactory.ViewModels
             foreach (Modpack modpack in Modpacks)
             {
                 if (modpack.Active ?? false)
+                    modpack.IsSelected = true;
+            }
+        }
+
+        private void SelectInactiveModpacks()
+        {
+            foreach (Modpack modpack in Modpacks)
+            {
+                if (!(modpack.Active ?? false))
                     modpack.IsSelected = true;
             }
         }
