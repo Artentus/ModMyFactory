@@ -1552,10 +1552,12 @@ namespace ModMyFactory.ViewModels
             settings.SaveCredentials = settingsWindow.SaveCredentialsBox.IsChecked ?? false;
             if (settings.SaveCredentials)
             {
-                GlobalCredentials.Instance.Username = settingsWindow.UsernameBox.Text;
-                if (!string.IsNullOrEmpty(settingsWindow.PasswordBox.Password))
+                if (settingsWindow.PasswordBox.SecurePassword.Length > 0)
+                {
+                    GlobalCredentials.Instance.Username = settingsWindow.UsernameBox.Text;
                     GlobalCredentials.Instance.Password = settingsWindow.PasswordBox.SecurePassword;
-                GlobalCredentials.Instance.Save();
+                    GlobalCredentials.Instance.Save();
+                }
             }
             else
             {
