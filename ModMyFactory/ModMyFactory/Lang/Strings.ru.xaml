@@ -39,6 +39,9 @@
     <sys:String x:Key="Information.NoModUpdates.Message">Ни один мод не нуждается в обновлении.</sys:String>
     <sys:String x:Key="Information.NoModUpdates.Title">Обновлений не найдено</sys:String>
     
+    <sys:String x:Key="Question.MoveDirectories.Message">Do you want to move all contents of the old locations to the new ones?</sys:String>
+    <sys:String x:Key="Question.MoveDirectories.Title">Move location contents?</sys:String>
+    
     <sys:String x:Key="Warning.HasConflicts.Message">При добавлении файлов модпака возникли следующие конфликты:</sys:String>
     <sys:String x:Key="Warning.HasConflicts.Title">Файл модпака создаёт конфликт</sys:String>
     

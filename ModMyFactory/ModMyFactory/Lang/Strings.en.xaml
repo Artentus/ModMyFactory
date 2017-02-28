@@ -39,6 +39,9 @@
     <sys:String x:Key="Information.NoModUpdates.Message">All your mods are up to date.</sys:String>
     <sys:String x:Key="Information.NoModUpdates.Title">No updates found</sys:String>
     
+    <sys:String x:Key="Question.MoveDirectories.Message">Do you want to move all contents of the old locations to the new ones?</sys:String>
+    <sys:String x:Key="Question.MoveDirectories.Title">Move location contents?</sys:String>
+    
     <sys:String x:Key="Warning.HasConflicts.Message">The following conflicts occured while importing this modpack file:</sys:String>
     <sys:String x:Key="Warning.HasConflicts.Title">Modpack file causes conflicts</sys:String>
     

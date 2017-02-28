@@ -38,6 +38,9 @@
 
     <sys:String x:Key="Information.NoModUpdates.Message">Alle Ihre Mods sind auf dem neusten Stand.</sys:String>
     <sys:String x:Key="Information.NoModUpdates.Title">Keine Updates gefunden</sys:String>
+    
+    <sys:String x:Key="Question.MoveDirectories.Message">Möchten Sie die Inhalte der alten Speicherorte in die neuen verschieben?</sys:String>
+    <sys:String x:Key="Question.MoveDirectories.Title">Inhalte verschieben?</sys:String>
 
     <sys:String x:Key="Warning.HasConflicts.Message">Folgende Konflikte traten beim Importieren der Modpack-Datei auf:</sys:String>
     <sys:String x:Key="Warning.HasConflicts.Title">Modpack-Datei verursacht Konflikte</sys:String>

@@ -234,10 +234,16 @@ namespace ModMyFactory.ViewModels
                     SetAllModsActive();
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    foreach (Mod mod in e.NewItems)
+                    if (e.NewItems != null)
+                    {
+                        foreach (Mod mod in e.NewItems)
                         mod.PropertyChanged += ModPropertyChanged;
-                    foreach (Mod mod in e.OldItems)
+                    }
+                    if (e.OldItems != null)
+                    {
+                        foreach (Mod mod in e.OldItems)
                         mod.PropertyChanged -= ModPropertyChanged;
+                    }
                     SetAllModsActive();
                     break;
             }
@@ -390,10 +396,15 @@ namespace ModMyFactory.ViewModels
                     SetAllModpacksActive();
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    foreach (Modpack modpack in e.NewItems)
+                    if (e.NewItems != null)
+                    {
+                        foreach (Modpack modpack in e.NewItems)
                         modpack.PropertyChanged += ModpackPropertyChanged;
-                    foreach (Modpack modpack in e.OldItems)
+                    }
+                    if (e.OldItems != null)
+                    { foreach (Modpack modpack in e.OldItems)
                         modpack.PropertyChanged -= ModpackPropertyChanged;
+                    }
                     SetAllModpacksActive();
                     break;
             }
@@ -553,9 +564,8 @@ namespace ModMyFactory.ViewModels
             FactorioVersion steamVersion;
             if (FactorioSteamVersion.TryLoad(out steamVersion)) factorioVersions.Add(steamVersion);
 
-            FactorioVersions = factorioVersions;
-
             string versionString = App.Instance.Settings.SelectedVersion;
+            FactorioVersions = factorioVersions;
             SelectedFactorioVersion = string.IsNullOrEmpty(versionString) ? null : FactorioVersions.FirstOrDefault(item => item.VersionString == versionString);
         }
 
@@ -570,6 +580,8 @@ namespace ModMyFactory.ViewModels
 
         private void LoadModsAndModpacks()
         {
+            modpacksLoading = true;
+
             if (Mods == null)
             {
                 Mods = new ModCollection();
@@ -589,9 +601,10 @@ namespace ModMyFactory.ViewModels
                 Modpacks.Clear();
             }
 
-            modpacksLoading = true;
+            
             Mod.LoadMods(Mods, Modpacks);
             ModpackTemplateList.Instance.PopulateModpackList(Mods, Modpacks, ModpacksView);
+
             modpacksLoading = false;
         }
 
@@ -614,7 +627,7 @@ namespace ModMyFactory.ViewModels
                 }
                 App.Instance.Settings.WarningShown = true;
 
-
+                ModManager.LoadTemplates();
                 LoadFactorioVersions();
                 LoadModsAndModpacks();
                 
@@ -1606,17 +1619,25 @@ namespace ModMyFactory.ViewModels
                     if (!dir.Exists) dir.Create();
                     await mod.MoveTo(dir);
                 }
-                ModManager.SaveTemplates();
-
                 foreach (var version in FactorioVersions)
                 {
                     if (!version.IsSpecialVersion)
                     {
                         var dir = new DirectoryInfo(Path.Combine(oldModDirectory.FullName, version.Version.ToString(2)));
-                        if (dir.Exists) dir.Delete(true);
+                        if (dir.Exists)
+                        {
+                            var modListFile = new FileInfo(Path.Combine(dir.FullName, "mod-list.json"));
+                            var newDir = new DirectoryInfo(Path.Combine(newModDirectory.FullName, version.Version.ToString(2)));
+                            if (!newDir.Exists) newDir.Create();
+                            if (modListFile.Exists) await modListFile.MoveToAsync(Path.Combine(newDir.FullName, "mod-list.json"));
+
+                            dir.DeleteIfEmpty();
+                        }
                     }
                 }
-                
+
+                ModManager.LoadTemplates();
+
                 oldModDirectory.DeleteIfEmpty();
             }
 
@@ -1710,7 +1731,19 @@ namespace ModMyFactory.ViewModels
             DirectoryInfo newSavegameDirectory = settings.GetSavegameDirectory();
             DirectoryInfo newScenarioDirectory = settings.GetScenarioDirectory();
 
-            await MoveDirectories(oldFactorioDirectory, oldModDirectory, oldSavegameDirectory, oldScenarioDirectory, newFactorioDirectory, newModDirectory, newSavegameDirectory, newScenarioDirectory);
+
+            if (MessageBox.Show(Window,
+                App.Instance.GetLocalizedMessage("MoveDirectories", MessageType.Question),
+                App.Instance.GetLocalizedMessageTitle("MoveDirectories", MessageType.Question),
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                await MoveDirectories(oldFactorioDirectory, oldModDirectory, oldSavegameDirectory, oldScenarioDirectory, newFactorioDirectory, newModDirectory, newSavegameDirectory, newScenarioDirectory);
+            }
+
+
+            // Reload everything
+            LoadFactorioVersions();
+            LoadModsAndModpacks();
         }
 
         private async Task OpenSettings()

@@ -11,6 +11,11 @@ namespace ModMyFactory
         static ModManager()
         {
             TemplateLists = new List<ModTemplateList>();
+        }
+
+        public static void LoadTemplates()
+        {
+            TemplateLists.Clear();
 
             var modDirectory = App.Instance.Settings.GetModDirectory();
             if (modDirectory.Exists)
