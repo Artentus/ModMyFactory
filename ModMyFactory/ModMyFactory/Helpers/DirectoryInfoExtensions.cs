@@ -7,20 +7,29 @@ namespace ModMyFactory.Helpers
 {
     static class DirectoryInfoExtensions
     {
-        private static async Task MoveDirectoryRecursiveInnerAsync(DirectoryInfo source, DirectoryInfo destination)
+        private static void MoveDirectoryRecursiveInternal(DirectoryInfo source, string destination, bool onSameVolume)
         {
-            if (!destination.Exists) destination.Create();
+            if (!Directory.Exists(destination)) Directory.CreateDirectory(destination);
 
-            await Task.Run(() =>
-            {
-                foreach (var file in source.GetFiles())
-                    file.MoveTo(Path.Combine(destination.FullName, file.Name));
-            });
+            foreach (var file in source.EnumerateFiles())
+                file.MoveTo(Path.Combine(destination, file.Name));
 
-            foreach (var directory in source.GetDirectories())
-                await MoveDirectoryRecursiveInnerAsync(directory, new DirectoryInfo(Path.Combine(destination.FullName, directory.Name)));
+            foreach (var directory in source.EnumerateDirectories())
+                MoveDirectoryInternal(directory, Path.Combine(destination, directory.Name), onSameVolume);
 
             source.Delete(false);
+        }
+
+        private static void MoveDirectoryInternal(DirectoryInfo source, string destination, bool onSameVolume)
+        {
+            if (onSameVolume && !Directory.Exists(destination))
+            {
+                source.MoveTo(destination);
+            }
+            else
+            {
+                MoveDirectoryRecursiveInternal(source, destination, onSameVolume);
+            }
         }
 
         /// <summary>
@@ -30,22 +39,20 @@ namespace ModMyFactory.Helpers
         /// <param name="destination">The destination path to move the directory to. This path can point to a different volume.</param>
         public static async Task MoveToAsync(this DirectoryInfo source, string destination)
         {
-            var destinationDirectory = new DirectoryInfo(destination);
-            await MoveDirectoryRecursiveInnerAsync(source, destinationDirectory);
+            destination = Path.GetFullPath(destination);
+            bool onSameVolume = string.Equals(source.Root.Name, Path.GetPathRoot(destination), StringComparison.InvariantCultureIgnoreCase);
+            await Task.Run(() => MoveDirectoryInternal(source, destination, onSameVolume));
         }
 
-        private static async Task CopyDirectoryRecursiveInnerAsync(DirectoryInfo source, DirectoryInfo destination)
+        private static void CopyDirectoryRecursiveInternal(DirectoryInfo source, string destination)
         {
-            if (!destination.Exists) destination.Create();
+            if (!Directory.Exists(destination)) Directory.CreateDirectory(destination);
 
-            await Task.Run(() =>
-            {
-                foreach (var file in source.GetFiles())
-                    file.CopyTo(Path.Combine(destination.FullName, file.Name));
-            });
+            foreach (var file in source.GetFiles())
+                file.CopyTo(Path.Combine(destination, file.Name));
 
             foreach (var directory in source.GetDirectories())
-                await CopyDirectoryRecursiveInnerAsync(directory, new DirectoryInfo(Path.Combine(destination.FullName, directory.Name)));
+                CopyDirectoryRecursiveInternal(directory, Path.Combine(destination, directory.Name));
         }
 
         /// <summary>
@@ -55,8 +62,8 @@ namespace ModMyFactory.Helpers
         /// <param name="destination">The destination path to copy the directory to. This path can point to a different volume.</param>
         public static async Task CopyToAsync(this DirectoryInfo source, string destination)
         {
-            var destinationDirectory = new DirectoryInfo(destination);
-            await CopyDirectoryRecursiveInnerAsync(source, destinationDirectory);
+            destination = Path.GetFullPath(destination);
+            await Task.Run(() => CopyDirectoryRecursiveInternal(source, destination));
         }
 
         /// <summary>
