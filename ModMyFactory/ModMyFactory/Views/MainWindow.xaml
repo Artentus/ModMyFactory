@@ -507,7 +507,7 @@
                 <TextBox DockPanel.Dock="Right" Padding="2" MaxLines="1" Text="{Binding ModFilterPattern, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
-            <GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Background="{StaticResource BackgroundBrush}"/>
+            <GridSplitter Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" Background="{StaticResource BackgroundBrush}"/>
 
             <!-- Modpacks -->
             <Grid Grid.Row="0" Grid.Column="2">

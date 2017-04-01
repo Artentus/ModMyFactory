@@ -363,13 +363,18 @@
     <sys:String x:Key="ViewsToolTip">Visualizações</sys:String>
     <sys:String x:Key="DownloadsToolTip">Downloads</sys:String>
     <sys:String x:Key="InstalledToolTip">Instalações</sys:String>
-    <sys:String x:Key="RefreshToolTip">Actualizar lista</sys:String>
+    
+    <!-- labels -->
+    <sys:String x:Key="LicenseLabel">License:</sys:String>
+    <sys:String x:Key="HomepageLabel">Homepage:</sys:String>
+    <sys:String x:Key="GitHubUrlLabel">GitHub:</sys:String>
     
     <!-- headers -->
     <sys:String x:Key="ReleasesHeader">Lançamentos</sys:String>
     
     <!-- buttons -->
     <sys:String x:Key="DeleteButton">Apagar</sys:String>
+    <sys:String x:Key="RefreshButton">Refresh</sys:String>
 
 
     <!--

@@ -14,7 +14,7 @@ namespace ModMyFactory.Web.ModApi
         public Version Version { get; set; }
 
         [JsonProperty("factorio_version")]
-        [JsonConverter(typeof(VersionConverter))]
+        [JsonConverter(typeof(TwoPartVersionConverter))]
         public Version FactorioVersion { get; set; }
 
         [JsonProperty("download_url")]
