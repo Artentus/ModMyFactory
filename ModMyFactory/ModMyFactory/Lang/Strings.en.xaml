@@ -287,6 +287,8 @@
     <sys:String x:Key="PerFactorioVersionGroupItem">Per Factorio version</sys:String>
     <sys:String x:Key="UpdateSearchGroupItem">Search for updates on startup</sys:String>
     <sys:String x:Key="IncludePreReleasesGroupItem">Include prereleases when searching for updates</sys:String>
+    <sys:String x:Key="UpdateZippedGroupItem">Always keep mod updates zipped</sys:String>
+    <sys:String x:Key="KeepOldModVersionsGroupItem">Keep old mod versions when updating</sys:String>
     <sys:String x:Key="GlobalGroupItem">Global</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Application directory</sys:String>

@@ -129,6 +129,7 @@
     <Compile Include="Models\UpdateTarget.cs" />
     <Compile Include="ModManager.cs" />
     <Compile Include="Export\ModpackExportTemplate.cs" />
+    <Compile Include="ModpackCollection.cs" />
     <Compile Include="MVVM\Converters\SystemIconConverter.cs" />
     <Compile Include="MVVM\LayoutRoundingWindow.cs" />
     <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />

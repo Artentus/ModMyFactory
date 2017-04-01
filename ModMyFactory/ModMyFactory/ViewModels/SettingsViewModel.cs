@@ -53,6 +53,8 @@ namespace ModMyFactory.ViewModels
 
         bool updateSearchOnStartup;
         bool includePreReleasesForUpdate;
+        bool alwaysUpdateZipped;
+        bool keepOldModVersions;
 
         public bool UpdateSearchOnStartup
         {
@@ -76,6 +78,32 @@ namespace ModMyFactory.ViewModels
                 {
                     includePreReleasesForUpdate = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(IncludePreReleasesForUpdate)));
+                }
+            }
+        }
+
+        public bool AlwaysUpdateZipped
+        {
+            get { return alwaysUpdateZipped; }
+            set
+            {
+                if (value != alwaysUpdateZipped)
+                {
+                    alwaysUpdateZipped = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AlwaysUpdateZipped)));
+                }
+            }
+        }
+
+        public bool KeepOldModVersions
+        {
+            get { return keepOldModVersions; }
+            set
+            {
+                if (value != keepOldModVersions)
+                {
+                    keepOldModVersions = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(KeepOldModVersions)));
                 }
             }
         }
@@ -443,6 +471,9 @@ namespace ModMyFactory.ViewModels
 
             UpdateSearchOnStartup = settings.UpdateSearchOnStartup;
             IncludePreReleasesForUpdate = settings.IncludePreReleasesForUpdate;
+
+            AlwaysUpdateZipped = settings.AlwaysUpdateZipped;
+            KeepOldModVersions = settings.KeepOldModVersions;
 
             FactorioDirectoryIsAppData = false;
             FactorioDirectoryIsAppDirectory = false;

@@ -41,8 +41,12 @@ namespace ModMyFactory
                 SaveCredentials = false,
                 WarningShown = false,
                 ShowExperimentalDownloads = false,
+
                 UpdateSearchOnStartup = true,
                 IncludePreReleasesForUpdate = false,
+
+                AlwaysUpdateZipped = false,
+                KeepOldModVersions = true,
             };
             return defaultSettings;
         }
@@ -107,6 +111,11 @@ namespace ModMyFactory
         public bool UpdateSearchOnStartup;
 
         public bool IncludePreReleasesForUpdate;
+
+        public bool AlwaysUpdateZipped;
+
+        [DefaultValue(true)]
+        public bool KeepOldModVersions;
 
         [JsonConstructor]
         private Settings()

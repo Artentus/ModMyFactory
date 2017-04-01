@@ -15,7 +15,7 @@ namespace ModMyFactory.Models
         /// <summary>
         /// The mods file.
         /// </summary>
-        public FileInfo File { get; private set; }
+        public FileInfo File { get; }
 
         private void SetInfo(FileInfo archiveFile)
         {
@@ -56,19 +56,6 @@ namespace ModMyFactory.Models
         protected override void DeleteFilesystemObjects()
         {
             File.Delete();
-        }
-
-        /// <summary>
-        /// Updates this mod.
-        /// </summary>
-        /// <param name="newFile">The updated mod file.</param>
-        /// <param name="newVersion">The updated mod version.</param>
-        public void Update(FileInfo newFile, Version newVersion)
-        {
-            File.Delete();
-            File = newFile;
-            Version = newVersion;
-            SetInfo(File);
         }
 
         public override async Task MoveTo(DirectoryInfo destinationDirectory)

@@ -73,6 +73,8 @@ namespace ModMyFactory.ViewModels
 
         public ModCollection InstalledMods { get; }
 
+        public ModpackCollection InstalledModpacks { get; }
+
         public string Filter
         {
             get { return filter; }
@@ -207,6 +209,7 @@ namespace ModMyFactory.ViewModels
         private OnlineModsViewModel()
         {
             InstalledMods = MainViewModel.Instance.Mods;
+            InstalledModpacks = MainViewModel.Instance.Modpacks;
 
             SelectedReleases = new ObservableCollection<ModRelease>();
             asyncFetchExtendedInfoIndex = -1;
@@ -293,15 +296,45 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        private async Task UpdateModAsyncInner(Mod oldMod, ModRelease newestRelease, string token, IProgress<double> progress, CancellationToken cancellationToken)
+        {
+            FileInfo modFile = await ModWebsite.UpdateReleaseAsync(newestRelease, GlobalCredentials.Instance.Username, token, progress, cancellationToken);
+            Mod newMod;
+
+            if (App.Instance.Settings.AlwaysUpdateZipped || (oldMod is ZippedMod))
+            {
+                newMod = new ZippedMod(oldMod.Name, newestRelease.Version, newestRelease.FactorioVersion, modFile, InstalledMods, InstalledModpacks);
+            }
+            else
+            {
+                DirectoryInfo modDirectory = await Task.Run(() =>
+                {
+                    progress.Report(2);
+                    DirectoryInfo modsDirectory = App.Instance.Settings.GetModDirectory(newestRelease.FactorioVersion);
+                    ZipFile.ExtractToDirectory(modFile.FullName, modsDirectory.FullName);
+                    modFile.Delete();
+
+                    return new DirectoryInfo(Path.Combine(modsDirectory.FullName, modFile.NameWithoutExtension()));
+                });
+
+                newMod = new ExtractedMod(oldMod.Name, newestRelease.Version, newestRelease.FactorioVersion, modDirectory, InstalledMods, InstalledModpacks);
+            }
+
+            InstalledMods.Add(newMod);
+            InstalledModpacks.ExchangeMods(oldMod, newMod);
+            oldMod.Delete(false);
+
+            ModpackTemplateList.Instance.Update(InstalledModpacks);
+            ModpackTemplateList.Instance.Save();
+        }
+
         private async Task UpdateSelectedModRelease()
         {
             string token;
             if (GlobalCredentials.Instance.LogIn(Window, out token))
             {
                 ModRelease newestRelease = GetNewestRelease(ExtendedInfo, SelectedRelease);
-                Mod mod = InstalledMods.FindByFactorioVersion(SelectedMod.Name, newestRelease.FactorioVersion);
-                var zippedMod = mod as ZippedMod;
-                var extractedMod = mod as ExtractedMod;
+                Mod oldMod = InstalledMods.FindByFactorioVersion(SelectedMod.Name, newestRelease.FactorioVersion);
 
                 var cancellationSource = new CancellationTokenSource();
                 var progressWindow = new ProgressWindow { Owner = Window };
@@ -330,79 +363,12 @@ namespace ModMyFactory.ViewModels
                     Task closeWindowTask = null;
                     try
                     {
-                        Task downloadTask = ModWebsite.UpdateReleaseAsync(newestRelease, GlobalCredentials.Instance.Username, token, progress, cancellationSource.Token);
+                        Task updateTask = UpdateModAsyncInner(oldMod, newestRelease, token, progress, cancellationSource.Token);
 
-                        if (extractedMod != null)
-                        {
-                            downloadTask = downloadTask.ContinueWith(t =>
-                            {
-                                progress.Report(2);
-
-                                FileInfo modFile = ((Task<FileInfo>)t).Result;
-                                DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory(newestRelease.FactorioVersion);
-                                ZipFile.ExtractToDirectory(modFile.FullName, modDirectory.FullName);
-                                modFile.Delete();
-
-                                return new DirectoryInfo(Path.Combine(modDirectory.FullName, modFile.NameWithoutExtension()));
-                            }, TaskContinuationOptions.NotOnFaulted | TaskContinuationOptions.NotOnCanceled);
-                        }
-
-                        closeWindowTask = downloadTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                        closeWindowTask = updateTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                         progressWindow.ShowDialog();
 
-                        if (zippedMod != null)
-                        {
-                            FileInfo newModFile = await (Task<FileInfo>)downloadTask;
-                            if (zippedMod.FactorioVersion == newestRelease.FactorioVersion)
-                            {
-                                zippedMod.Update(newModFile, newestRelease.Version);
-                            }
-                            else
-                            {
-                                var newMod = new ZippedMod(zippedMod.Name, newestRelease.Version, newestRelease.FactorioVersion, newModFile,
-                                    InstalledMods, MainViewModel.Instance.Modpacks);
-                                InstalledMods.Add(newMod);
-                                foreach (var modpack in MainViewModel.Instance.Modpacks)
-                                {
-                                    ModReference reference;
-                                    if (modpack.Contains(zippedMod, out reference))
-                                    {
-                                        modpack.Mods.Remove(reference);
-                                        modpack.Mods.Add(new ModReference(newMod, modpack));
-                                    }
-                                }
-                                zippedMod.File.Delete();
-                                InstalledMods.Remove(extractedMod);
-                            }
-                        }
-                        if (extractedMod != null)
-                        {
-                            DirectoryInfo newModDirectory = await (Task<DirectoryInfo>)downloadTask;
-                            if (extractedMod.FactorioVersion == newestRelease.FactorioVersion)
-                            {
-                                extractedMod.Update(newModDirectory, newestRelease.Version);
-                            }
-                            else
-                            {
-                                var newMod = new ExtractedMod(extractedMod.Name, newestRelease.Version, newestRelease.FactorioVersion, newModDirectory,
-                                    InstalledMods, MainViewModel.Instance.Modpacks);
-                                InstalledMods.Add(newMod);
-                                foreach (var modpack in MainViewModel.Instance.Modpacks)
-                                {
-                                    ModReference reference;
-                                    if (modpack.Contains(extractedMod, out reference))
-                                    {
-                                        modpack.Mods.Remove(reference);
-                                        modpack.Mods.Add(new ModReference(newMod, modpack));
-                                    }
-                                }
-                                extractedMod.Directory.Delete(true);
-                                InstalledMods.Remove(extractedMod);
-
-                                ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
-                                ModpackTemplateList.Instance.Save();
-                            }
-                        }
+                        await updateTask;
                     }
                     finally
                     {

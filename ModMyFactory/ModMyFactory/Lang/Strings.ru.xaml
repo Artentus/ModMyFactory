@@ -287,6 +287,8 @@
     <sys:String x:Key="PerFactorioVersionGroupItem">Для каждой версии Factorio</sys:String>
     <sys:String x:Key="UpdateSearchGroupItem">Искать обновления при запуске</sys:String>
     <sys:String x:Key="IncludePreReleasesGroupItem">Include prereleases when searching for updates</sys:String>
+    <sys:String x:Key="UpdateZippedGroupItem">Always keep mod updates zipped</sys:String>
+    <sys:String x:Key="KeepOldModVersionsGroupItem">Keep old mod versions when updating</sys:String>
     <sys:String x:Key="GlobalGroupItem">Глобально</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Директория программы</sys:String>
