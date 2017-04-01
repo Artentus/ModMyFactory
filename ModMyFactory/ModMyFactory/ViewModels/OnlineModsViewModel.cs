@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -38,8 +39,12 @@ namespace ModMyFactory.ViewModels
         volatile int asyncFetchExtendedInfoIndex;
         ModInfo selectedMod;
         ExtendedModInfo extendedInfo;
+
         string selectedModName;
         string selectedModDescription;
+        string selectedModLicense;
+        string selectedModHomepage;
+        string selectedModGitHubUrl;
 
         public ListCollectionView ModsView
         {
@@ -114,6 +119,9 @@ namespace ModMyFactory.ViewModels
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedMod)));
 
                     SelectedModName = selectedMod.Title;
+                    SelectedModLicense = selectedMod.License;
+                    SelectedModHomepage = selectedMod.Homepage;
+                    SelectedModGitHubUrl = selectedMod.GitHubUrl;
                     SelectedRelease = null;
 
                     asyncFetchExtendedInfoIndex++;
@@ -167,6 +175,45 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        public string SelectedModLicense
+        {
+            get { return selectedModLicense; }
+            set
+            {
+                if (value != selectedModLicense)
+                {
+                    selectedModLicense = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModLicense)));
+                }
+            }
+        }
+
+        public string SelectedModHomepage
+        {
+            get { return selectedModHomepage; }
+            set
+            {
+                if (value != selectedModHomepage)
+                {
+                    selectedModHomepage = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModHomepage)));
+                }
+            }
+        }
+
+        public string SelectedModGitHubUrl
+        {
+            get { return selectedModGitHubUrl; }
+            set
+            {
+                if (value != selectedModGitHubUrl)
+                {
+                    selectedModGitHubUrl = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModGitHubUrl)));
+                }
+            }
+        }
+
         public ObservableCollection<ModRelease> SelectedReleases { get; }
 
         public RelayCommand DownloadCommand { get; }
@@ -176,6 +223,12 @@ namespace ModMyFactory.ViewModels
         public RelayCommand DeleteCommand { get; }
 
         public RelayCommand RefreshCommand { get; }
+
+        public RelayCommand OpenLicenseLinkCommand { get; }
+
+        public RelayCommand OpenHomepageCommand { get; }
+
+        public RelayCommand OpenGitHubLinkCommand { get; }
 
         private async Task LoadExtendedModInfoAsync(ModInfo mod, int operationIndex)
         {
@@ -219,6 +272,47 @@ namespace ModMyFactory.ViewModels
                     SelectedRelease != GetNewestRelease(ExtendedInfo, SelectedRelease));
             DeleteCommand = new RelayCommand(DeleteSelectedModRelease, () => SelectedRelease != null && SelectedRelease.IsInstalled);
             RefreshCommand = new RelayCommand(async () => await RefreshModList());
+
+            OpenLicenseLinkCommand = new RelayCommand(() =>
+            {
+                string url = SelectedMod.LicenseUrl;
+                if (!string.IsNullOrWhiteSpace(url))
+                {
+                    try
+                    {
+                        Process.Start(url);
+                    }
+                    catch { }
+                }
+            });
+            OpenHomepageCommand = new RelayCommand(() =>
+            {
+                string url = SelectedMod.Homepage;
+                if (!string.IsNullOrWhiteSpace(url))
+                {
+                    try
+                    {
+                        Process.Start(url);
+                    }
+                    catch { }
+                }
+            });
+            OpenGitHubLinkCommand = new RelayCommand(() =>
+            {
+                const string prefix = "https://www.github.com/";
+
+                string url = SelectedMod.GitHubUrl;
+                if (!url.StartsWith(prefix)) url = prefix + url;
+
+                if (!string.IsNullOrWhiteSpace(url))
+                {
+                    try
+                    {
+                        Process.Start(url);
+                    }
+                    catch { }
+                }
+            });
         }
 
         public void UpdateSelectedReleases()
