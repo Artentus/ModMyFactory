@@ -43,8 +43,7 @@
     <StartupObject>ModMyFactory.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>Images\MMF_Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
@@ -97,6 +96,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommandLine.cs" />
+    <Compile Include="ExtendedVersion.cs" />
     <Compile Include="FactorioUpdate\CriticalUpdaterException.cs" />
     <Compile Include="Export\ExportTemplate.cs" />
     <Compile Include="Export\ModpackExport.cs" />
@@ -108,6 +108,7 @@
     <Compile Include="Helpers\DirectoryInfoExtensions.cs" />
     <Compile Include="Helpers\EnumarableExtensions.cs" />
     <Compile Include="Helpers\FileInfoExtensions.cs" />
+    <Compile Include="Helpers\GitHubClientExtensions.cs" />
     <Compile Include="Helpers\ModHelper.cs" />
     <Compile Include="Helpers\PercievedFileType.cs" />
     <Compile Include="Helpers\ProcessExtensions.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Models\UpdateTarget.cs" />
     <Compile Include="ModManager.cs" />
     <Compile Include="Export\ModpackExportTemplate.cs" />
+    <Compile Include="ModpackCollection.cs" />
     <Compile Include="MVVM\Converters\SystemIconConverter.cs" />
     <Compile Include="MVVM\LayoutRoundingWindow.cs" />
     <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />
@@ -135,6 +137,7 @@
     <Compile Include="MVVM\Sorters\UpdateTargetSorter.cs" />
     <Compile Include="FactorioUpdate\UpdatePackageInfo.cs" />
     <Compile Include="FactorioUpdate\UpdaterErrorType.cs" />
+    <Compile Include="TwoPartVersionConverter.cs" />
     <Compile Include="VersionComparer.cs" />
     <Compile Include="ViewModels\CopyOrMoveViewModel.cs" />
     <Compile Include="ViewModels\ModpackExportViewModel.cs" />

@@ -25,14 +25,6 @@ namespace ModMyFactory.IO
             {
                 DestinationPath = Junction.GetDestination(FullName);
             }
-            else if (File.Exists(FullName))
-            {
-                throw new ArgumentException(@"The path can not point to an existing file.", nameof(path));
-            }
-            else if (Directory.Exists(FullName))
-            {
-                throw new ArgumentException(@"The path can not point to an existing directory.", nameof(path));
-            }
         }
 
         public void Create(string destinationPath)
@@ -44,7 +36,7 @@ namespace ModMyFactory.IO
         public void SetDestination(string destinationPath)
         {
             Junction.SetDestination(FullName, destinationPath);
-            DestinationPath = destinationPath;
+            DestinationPath = Path.GetFullPath(destinationPath);
         }
 
         public void Delete()

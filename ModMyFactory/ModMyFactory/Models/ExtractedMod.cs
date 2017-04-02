@@ -48,19 +48,6 @@ namespace ModMyFactory.Models
             Directory.Delete(true);
         }
 
-        /// <summary>
-        /// Updates this mod.
-        /// </summary>
-        /// <param name="newDirectory">The updated mod directory.</param>
-        /// <param name="newVersion">The updated mod version.</param>
-        public void Update(DirectoryInfo newDirectory, Version newVersion)
-        {
-            Directory.Delete(true);
-            Directory = newDirectory;
-            Version = newVersion;
-            SetInfo(newDirectory);
-        }
-
         public override async Task MoveTo(DirectoryInfo destinationDirectory)
         {
             var newDirectory = new DirectoryInfo(Path.Combine(destinationDirectory.FullName, Directory.Name));

@@ -38,6 +38,9 @@
 
     <sys:String x:Key="Information.NoModUpdates.Message">Alle Ihre Mods sind auf dem neusten Stand.</sys:String>
     <sys:String x:Key="Information.NoModUpdates.Title">Keine Updates gefunden</sys:String>
+    
+    <sys:String x:Key="Question.MoveDirectories.Message">Möchten Sie die Inhalte der alten Speicherorte in die neuen verschieben?</sys:String>
+    <sys:String x:Key="Question.MoveDirectories.Title">Inhalte verschieben?</sys:String>
 
     <sys:String x:Key="Warning.HasConflicts.Message">Folgende Konflikte traten beim Importieren der Modpack-Datei auf:</sys:String>
     <sys:String x:Key="Warning.HasConflicts.Title">Modpack-Datei verursacht Konflikte</sys:String>
@@ -189,10 +192,17 @@
     <sys:String x:Key="HelpMenuItem">Hilfe</sys:String>
     
     <!-- context menu -->
-    <sys:String x:Key="DeleteSelectedMenuItem">Ausgewählte löschen</sys:String>
-    <sys:String x:Key="ActivateSelectedMenuItem">Ausgewählte aktivieren</sys:String>
-    <sys:String x:Key="DeactivateSelectedMenuItem">Ausgewählte deaktivieren</sys:String>
-    <sys:String x:Key="SelectActiveMenuItem">Alle aktiven auswählen</sys:String>
+    <sys:String x:Key="DeleteSelectedModsMenuItem">Ausgewählte Mods löschen</sys:String>
+    <sys:String x:Key="ActivateSelectedModsMenuItem">Ausgewählte Mods aktivieren</sys:String>
+    <sys:String x:Key="DeactivateSelectedModsMenuItem">Ausgewählte Mods deaktivieren</sys:String>
+    <sys:String x:Key="SelectActiveModsMenuItem">Alle aktivierten Mods auswählen</sys:String>
+    <sys:String x:Key="SelectInactiveModsMenuItem">Alle deaktivierten Mods auswählen</sys:String>
+    
+    <sys:String x:Key="DeleteSelectedModpacksMenuItem">Ausgewählte Modpacks löschen</sys:String>
+    <sys:String x:Key="ActivateSelectedModpacksMenuItem">Ausgewählte Modpacks aktivieren</sys:String>
+    <sys:String x:Key="DeactivateSelectedModpacksMenuItem">Ausgewählte Modpacks deaktivieren</sys:String>
+    <sys:String x:Key="SelectActiveModpacksMenuItem">Alle aktivierten Modpacks auswählen</sys:String>
+    <sys:String x:Key="SelectInactiveModpacksMenuItem">Alle deaktivierten Modpacks auswählen</sys:String>
     
     <!-- hotkeys -->
     <sys:String x:Key="DownloadModsHotkey">F7</sys:String>
@@ -276,6 +286,9 @@
     <!-- group items -->
     <sys:String x:Key="PerFactorioVersionGroupItem">Pro Factorio-Version</sys:String>
     <sys:String x:Key="UpdateSearchGroupItem">Bei Start nach Updates suchen</sys:String>
+    <sys:String x:Key="IncludePreReleasesGroupItem">Vorabversionen bei der Updatesuche miteinbeziehen</sys:String>
+    <sys:String x:Key="UpdateZippedGroupItem">Mod-Updates immer als ZIP gepackt behalten</sys:String>
+    <sys:String x:Key="KeepOldModVersionsGroupItem">Alte Mod-Versionen beim Updaten behalten</sys:String>
     <sys:String x:Key="GlobalGroupItem">Global</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Anwendungsverzeichnis</sys:String>
@@ -350,13 +363,18 @@
     <sys:String x:Key="ViewsToolTip">Aufrufe</sys:String>
     <sys:String x:Key="DownloadsToolTip">Downloads</sys:String>
     <sys:String x:Key="InstalledToolTip">Installiert</sys:String>
-    <sys:String x:Key="RefreshToolTip">Liste aktualisieren</sys:String>
+    
+    <!-- labels -->
+    <sys:String x:Key="LicenseLabel">Lizenz:</sys:String>
+    <sys:String x:Key="HomepageLabel">Homepage:</sys:String>
+    <sys:String x:Key="GitHubUrlLabel">GitHub:</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ReleasesHeader">Veröffentlichte Versionen</sys:String>
     
     <!-- buttons -->
     <sys:String x:Key="DeleteButton">Löschen</sys:String>
+    <sys:String x:Key="RefreshButton">Aktualisieren</sys:String>
 
 
     <!--

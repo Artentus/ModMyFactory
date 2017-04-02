@@ -50,9 +50,17 @@
                             <Grid Margin="4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="8"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
                                 <CheckBox Grid.Row="0" Margin="2" IsChecked="{Binding UpdateSearchOnStartup}" Content="{DynamicResource UpdateSearchGroupItem}"/>
+                                <CheckBox Grid.Row="1" Margin="2" IsChecked="{Binding IncludePreReleasesForUpdate}" Content="{DynamicResource IncludePreReleasesGroupItem}"/>
+
+                                <CheckBox Grid.Row="3" Margin="2" IsChecked="{Binding AlwaysUpdateZipped}" Content="{DynamicResource UpdateZippedGroupItem}"/>
+                                <CheckBox Grid.Row="4" Margin="2" IsChecked="{Binding KeepOldModVersions}" Content="{DynamicResource KeepOldModVersionsGroupItem}"/>
                             </Grid>
                         </GroupBox>
 
