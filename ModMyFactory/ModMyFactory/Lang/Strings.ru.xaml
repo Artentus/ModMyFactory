@@ -39,8 +39,8 @@
     <sys:String x:Key="Information.NoModUpdates.Message">Ни один мод не нуждается в обновлении.</sys:String>
     <sys:String x:Key="Information.NoModUpdates.Title">Обновлений не найдено</sys:String>
     
-    <sys:String x:Key="Question.MoveDirectories.Message">Do you want to move all contents of the old locations to the new ones?</sys:String>
-    <sys:String x:Key="Question.MoveDirectories.Title">Move location contents?</sys:String>
+    <sys:String x:Key="Question.MoveDirectories.Message">Вы хотите перенести всё содержимое в новое расположение?</sys:String>
+    <sys:String x:Key="Question.MoveDirectories.Title">Перенести содержимое?</sys:String>
     
     <sys:String x:Key="Warning.HasConflicts.Message">При добавлении файлов модпака возникли следующие конфликты:</sys:String>
     <sys:String x:Key="Warning.HasConflicts.Title">Файл модпака создаёт конфликт</sys:String>
@@ -192,17 +192,17 @@
     <sys:String x:Key="HelpMenuItem">Помощь</sys:String>
     
     <!-- context menu -->
-    <sys:String x:Key="DeleteSelectedModsMenuItem">Delete selected mods</sys:String>
-    <sys:String x:Key="ActivateSelectedModsMenuItem">Activate selected mods</sys:String>
-    <sys:String x:Key="DeactivateSelectedModsMenuItem">Deactivate selected mods</sys:String>
-    <sys:String x:Key="SelectActiveModsMenuItem">Select all active mods</sys:String>
-    <sys:String x:Key="SelectInactiveModsMenuItem">Select all inactive mods</sys:String>
+    <sys:String x:Key="DeleteSelectedModsMenuItem">Удалить выбранные моды</sys:String>
+    <sys:String x:Key="ActivateSelectedModsMenuItem">Активировать выбранные моды</sys:String>
+    <sys:String x:Key="DeactivateSelectedModsMenuItem">Деактивировать выбранные моды</sys:String>
+    <sys:String x:Key="SelectActiveModsMenuItem">Выбрать все активные моды</sys:String>
+    <sys:String x:Key="SelectInactiveModsMenuItem">Выбрать все неактивные моды</sys:String>
     
-    <sys:String x:Key="DeleteSelectedModpacksMenuItem">Delete selected modpacks</sys:String>
-    <sys:String x:Key="ActivateSelectedModpacksMenuItem">Activate selected modpacks</sys:String>
-    <sys:String x:Key="DeactivateSelectedModpacksMenuItem">Deactivate selected modpacks</sys:String>
-    <sys:String x:Key="SelectActiveModpacksMenuItem">Select all active modpacks</sys:String>
-    <sys:String x:Key="SelectInactiveModpacksMenuItem">Select all inactive modpacks</sys:String>
+    <sys:String x:Key="DeleteSelectedModpacksMenuItem">Удалить выбранные модпаки</sys:String>
+    <sys:String x:Key="ActivateSelectedModpacksMenuItem">Активировать выбранные модпаки</sys:String>
+    <sys:String x:Key="DeactivateSelectedModpacksMenuItem">Деактивировать выбранные модпаки</sys:String>
+    <sys:String x:Key="SelectActiveModpacksMenuItem">Выбрать все активные модпаки</sys:String>
+    <sys:String x:Key="SelectInactiveModpacksMenuItem">Выбрать все неактивные модпаки</sys:String>
     
     <!-- hotkeys -->
     <sys:String x:Key="DownloadModsHotkey">F7</sys:String>
@@ -286,9 +286,9 @@
     <!-- group items -->
     <sys:String x:Key="PerFactorioVersionGroupItem">Для каждой версии Factorio</sys:String>
     <sys:String x:Key="UpdateSearchGroupItem">Искать обновления при запуске</sys:String>
-    <sys:String x:Key="IncludePreReleasesGroupItem">Include prereleases when searching for updates</sys:String>
-    <sys:String x:Key="UpdateZippedGroupItem">Always keep mod updates zipped</sys:String>
-    <sys:String x:Key="KeepOldModVersionsGroupItem">Keep old mod versions when updating</sys:String>
+    <sys:String x:Key="IncludePreReleasesGroupItem">Показывать пре-релизы при поиске обновлений</sys:String>
+    <sys:String x:Key="UpdateZippedGroupItem">Всегда держать обновления модов в архивах</sys:String>
+    <sys:String x:Key="KeepOldModVersionsGroupItem">Сохранять старые версии модов при обновлении</sys:String>
     <sys:String x:Key="GlobalGroupItem">Глобально</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Директория программы</sys:String>
@@ -365,8 +365,8 @@
     <sys:String x:Key="InstalledToolTip">Установлено</sys:String>
     
     <!-- labels -->
-    <sys:String x:Key="LicenseLabel">License:</sys:String>
-    <sys:String x:Key="HomepageLabel">Homepage:</sys:String>
+    <sys:String x:Key="LicenseLabel">Лицензия:</sys:String>
+    <sys:String x:Key="HomepageLabel">Домашняя страница:</sys:String>
     <sys:String x:Key="GitHubUrlLabel">GitHub:</sys:String>
     
     <!-- headers -->
@@ -374,7 +374,7 @@
     
     <!-- buttons -->
     <sys:String x:Key="DeleteButton">Удалить</sys:String>
-    <sys:String x:Key="RefreshButton">Refresh</sys:String>
+    <sys:String x:Key="RefreshButton">Обновить</sys:String>
 
 
     <!--
