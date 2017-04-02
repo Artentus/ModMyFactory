@@ -230,6 +230,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand OpenGitHubLinkCommand { get; }
 
+        public RelayCommand ClearFilterCommand { get; }
+
         private async Task LoadExtendedModInfoAsync(ModInfo mod, int operationIndex)
         {
             ExtendedModInfo extendedInfo;
@@ -313,6 +315,8 @@ namespace ModMyFactory.ViewModels
                     catch { }
                 }
             });
+
+            ClearFilterCommand = new RelayCommand(() => Filter = string.Empty);
         }
 
         public void UpdateSelectedReleases()

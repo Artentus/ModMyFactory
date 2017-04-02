@@ -148,6 +148,7 @@
     <sys:String x:Key="CancelButton">Cancel</sys:String>
     <sys:String x:Key="DownloadButton">Download</sys:String>
     <sys:String x:Key="UpdateButton">Update</sys:String>
+    <sys:String x:Key="ClearFilterToolTip">Clear filter</sys:String>
 
 
     <!--

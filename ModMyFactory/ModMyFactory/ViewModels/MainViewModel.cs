@@ -551,6 +551,10 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand DeleteSelectedModsAndModpacksCommand { get; }
 
+        public RelayCommand ClearModFilterCommand { get; }
+
+        public RelayCommand ClearModpackFilterCommand { get; }
+
         #endregion
 
         volatile bool modpacksLoading;
@@ -703,6 +707,9 @@ namespace ModMyFactory.ViewModels
                 SelectInactiveModpacksCommand = new RelayCommand(SelectInactiveModpacks);
 
                 DeleteSelectedModsAndModpacksCommand = new RelayCommand(DeleteSelectedModsAndModpacks, () => Mods.Any(mod => mod.IsSelected) || Modpacks.Any(modpack => modpack.IsSelected));
+
+                ClearModFilterCommand = new RelayCommand(() => ModFilterPattern = string.Empty);
+                ClearModpackFilterCommand = new RelayCommand(() => ModpackFilterPattern = string.Empty);
 
 
                 // New ModMyFactory instance started.
