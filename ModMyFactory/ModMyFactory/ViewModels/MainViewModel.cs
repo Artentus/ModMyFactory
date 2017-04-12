@@ -1605,8 +1605,6 @@ namespace ModMyFactory.ViewModels
                     }
                 }
 
-                ModManager.LoadTemplates();
-
                 oldModDirectory.DeleteIfEmpty();
             }
         }
@@ -1762,6 +1760,7 @@ namespace ModMyFactory.ViewModels
             // Reload everything if required
             if (managerModeChanged || moveFactorioDirectory || moveModDirectory)
             {
+                ModManager.LoadTemplates();
                 LoadFactorioVersions();
                 LoadModsAndModpacks();
             }
@@ -1979,25 +1978,34 @@ namespace ModMyFactory.ViewModels
 
         private async void NewInstanceStartedHandler(object sender, InstanceStartedEventArgs e)
         {
-            await Window.Dispatcher.InvokeAsync(async () => await OnNewInstanceStarted(e.CommandLine));
+            await Window.Dispatcher.InvokeAsync(async () => await OnNewInstanceStarted(e.CommandLine, e.GameStarted));
         }
 
-        private async Task OnNewInstanceStarted(CommandLine commandLine)
+        private async Task OnNewInstanceStarted(CommandLine commandLine, bool gameStarted)
         {
-            Window.Activate();
-
-            var fileList = new List<FileInfo>();
-            foreach (string argument in commandLine.Arguments)
+            if (gameStarted)
             {
-                if (argument.EndsWith(".fmp") && File.Exists(argument))
-                {
-                    var file = new FileInfo(argument);
-                    fileList.Add(file);
-                }
+                ModManager.LoadTemplates();
+                LoadFactorioVersions();
+                LoadModsAndModpacks();
             }
+            else
+            {
+                Window.Activate();
 
-            if (fileList.Count > 0)
-                await ImportModpacksInner(fileList);
+                var fileList = new List<FileInfo>();
+                foreach (string argument in commandLine.Arguments)
+                {
+                    if (argument.EndsWith(".fmp") && File.Exists(argument))
+                    {
+                        var file = new FileInfo(argument);
+                        fileList.Add(file);
+                    }
+                }
+
+                if (fileList.Count > 0)
+                    await ImportModpacksInner(fileList);
+            }
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)

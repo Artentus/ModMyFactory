@@ -9,9 +9,12 @@ namespace ModMyFactory
         /// </summary>
         public CommandLine CommandLine { get; }
 
-        public InstanceStartedEventArgs(CommandLine commandLine)
+        public bool GameStarted { get; }
+
+        public InstanceStartedEventArgs(CommandLine commandLine, bool gameStarted)
         {
             CommandLine = commandLine;
+            GameStarted = gameStarted;
         }
     }
 }
