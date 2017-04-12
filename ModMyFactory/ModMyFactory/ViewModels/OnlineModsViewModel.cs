@@ -420,7 +420,7 @@ namespace ModMyFactory.ViewModels
 
             InstalledMods.Add(newMod);
             InstalledModpacks.ExchangeMods(oldMod, newMod);
-            oldMod.Delete(false);
+            oldMod.Update(newMod);
 
             ModpackTemplateList.Instance.Update(InstalledModpacks);
             ModpackTemplateList.Instance.Save();

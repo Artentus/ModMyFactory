@@ -19,13 +19,22 @@ namespace ModMyFactory.Models
     /// </summary>
     abstract class Mod : NotifyPropertyChangedBase
     {
-        /// <summary>
-        /// Loads all mods from the selected mod directory to the specified parent collection.
-        /// </summary>
-        /// <param name="parentCollection">The collection to contain the mods.</param>
-        /// <param name="modpackCollection">The collection containing all modpacks.</param>
-        public static void LoadMods(ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
+        private static void AddToDictionary(Dictionary<string, List<Mod>> modDictionary, Mod mod)
         {
+            List<Mod> list;
+            if (!modDictionary.TryGetValue(mod.Name, out list))
+            {
+                list = new List<Mod>();
+                modDictionary.Add(mod.Name, list);
+            }
+
+            list.Add(mod);
+        }
+
+        private static Dictionary<string, List<Mod>> CreateModDictionary(ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
+        {
+            var modDictionary = new Dictionary<string, List<Mod>>();
+
             var modDirectory = App.Instance.Settings.GetModDirectory();
             if (modDirectory.Exists)
             {
@@ -34,6 +43,7 @@ namespace ModMyFactory.Models
                     Version factorioDirVersion;
                     if (Version.TryParse(directory.Name, out factorioDirVersion))
                     {
+                        // Zipped mods
                         foreach (var file in directory.EnumerateFiles("*.zip"))
                         {
                             Version factorioVersion;
@@ -44,7 +54,7 @@ namespace ModMyFactory.Models
                                 if (factorioVersion == factorioDirVersion)
                                 {
                                     var mod = new ZippedMod(name, version, factorioVersion, file, parentCollection, modpackCollection);
-                                    parentCollection.Add(mod);
+                                    AddToDictionary(modDictionary, mod);
                                 }
                                 else
                                 {
@@ -53,6 +63,7 @@ namespace ModMyFactory.Models
                             }
                         }
 
+                        // Extracted mods
                         foreach (var subDirectory in directory.EnumerateDirectories())
                         {
                             Version factorioVersion;
@@ -63,7 +74,7 @@ namespace ModMyFactory.Models
                                 if (factorioVersion == factorioDirVersion)
                                 {
                                     var mod = new ExtractedMod(name, version, factorioVersion, subDirectory, parentCollection, modpackCollection);
-                                    parentCollection.Add(mod);
+                                    AddToDictionary(modDictionary, mod);
                                 }
                                 else
                                 {
@@ -74,6 +85,50 @@ namespace ModMyFactory.Models
                     }
                 }
             }
+
+            return modDictionary;
+        }
+
+        private static void PopulateModCollection(Dictionary<string, List<Mod>> modDictionary, ICollection<Mod> modCollection)
+        {
+            foreach (List<Mod> list in modDictionary.Values)
+            {
+                list.Sort((a, b) =>
+                {
+                    int result = a.FactorioVersion.CompareTo(b.FactorioVersion);
+                    if (result == 0) result = a.Version.CompareTo(b.Version);
+                    return result;
+                });
+
+                Mod currentMod = list[0];
+                modCollection.Add(currentMod);
+                for (int i = 1; i < list.Count; i++)
+                {
+                    Mod nextMod = list[i];
+
+                    if ((App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion) && (nextMod.FactorioVersion != currentMod.FactorioVersion))
+                    {
+                        modCollection.Add(nextMod);
+                        currentMod = nextMod;
+                    }
+                    else
+                    {
+                        currentMod.OldVersion = nextMod;
+                        currentMod = nextMod;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Loads all mods from the selected mod directory to the specified parent collection.
+        /// </summary>
+        /// <param name="parentCollection">The collection to contain the mods.</param>
+        /// <param name="modpackCollection">The collection containing all modpacks.</param>
+        public static void LoadMods(ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
+        {
+            var modDictionary = CreateModDictionary(parentCollection, modpackCollection);
+            PopulateModCollection(modDictionary, parentCollection);
         }
 
         private static bool TryParseModName(string fileName, out string name, out Version version)
@@ -193,6 +248,10 @@ namespace ModMyFactory.Models
 
             return false;
         }
+
+
+        private readonly ICollection<Mod> parentCollection;
+        private readonly ICollection<Modpack> modpackCollection;
 
         string title;
         string description;
@@ -329,6 +388,11 @@ namespace ModMyFactory.Models
         }
 
         /// <summary>
+        /// An optinal older version of this mod that is also present.
+        /// </summary>
+        protected Mod OldVersion { get; private set; }
+
+        /// <summary>
         /// A command that deletes this mod from the list and the filesystem.
         /// </summary>
         public RelayCommand<bool?> DeleteCommand { get; }
@@ -338,7 +402,11 @@ namespace ModMyFactory.Models
         /// </summary>
         protected abstract void DeleteFilesystemObjects();
 
-        private void Delete(ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection, bool showPrompt)
+        /// <summary>
+        /// Deletes this mod from the list and the filesystem.
+        /// </summary>
+        /// <param name="showPrompt">Indicates whether a confirmation prompt is shown to the user.</param>
+        public void Delete(bool showPrompt)
         {
             if (!showPrompt || (MessageBox.Show(
                 App.Instance.GetLocalizedMessage("DeleteMod", MessageType.Question),
@@ -359,15 +427,6 @@ namespace ModMyFactory.Models
                 ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
                 ModpackTemplateList.Instance.Save();
             }
-        }
-
-        /// <summary>
-        /// Deletes this mod from the list and the filesystem.
-        /// </summary>
-        /// <param name="showPrompt">Indicates whether a confirmation prompt is shown to the user.</param>
-        public void Delete(bool showPrompt)
-        {
-            DeleteCommand.Execute(showPrompt);
         }
 
         /// <summary>
@@ -419,7 +478,28 @@ namespace ModMyFactory.Models
             FactorioVersion = factorioVersion;
             active = ModManager.GetActive(Name, FactorioVersion);
 
-            DeleteCommand = new RelayCommand<bool?>(showPrompt => Delete(parentCollection, modpackCollection, showPrompt ?? true));
+            this.parentCollection = parentCollection;
+            this.modpackCollection = modpackCollection;
+
+            DeleteCommand = new RelayCommand<bool?>(showPrompt => Delete(showPrompt ?? true));
+        }
+
+        /// <summary>
+        /// Updates this mod to a provided new version.
+        /// </summary>
+        /// <param name="newVersion">The new version this mod is getting updated to.</param>
+        public void Update(Mod newVersion)
+        {
+            if (App.Instance.Settings.KeepOldModVersions)
+            {
+                newVersion.OldVersion = this;
+            }
+            else
+            {
+                DeleteFilesystemObjects();
+            }
+
+            parentCollection.Remove(this);
         }
 
         /// <summary>

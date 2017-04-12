@@ -1411,7 +1411,7 @@ namespace ModMyFactory.ViewModels
 
             Mods.Add(newMod);
             Modpacks.ExchangeMods(oldMod, newMod);
-            oldMod.Delete(false);
+            oldMod.Update(newMod);
 
             ModpackTemplateList.Instance.Update(Modpacks);
             ModpackTemplateList.Instance.Save();
@@ -1683,6 +1683,7 @@ namespace ModMyFactory.ViewModels
             DirectoryInfo oldScenarioDirectory = settings.GetScenarioDirectory();
 
             // Manager mode
+            bool managerModeChanged = (settingsViewModel.ManagerMode != settings.ManagerMode);
             settings.ManagerMode = settingsViewModel.ManagerMode;
 
             // Update search
@@ -1759,7 +1760,7 @@ namespace ModMyFactory.ViewModels
 
 
             // Reload everything if required
-            if (moveFactorioDirectory || moveModDirectory)
+            if (managerModeChanged || moveFactorioDirectory || moveModDirectory)
             {
                 LoadFactorioVersions();
                 LoadModsAndModpacks();
