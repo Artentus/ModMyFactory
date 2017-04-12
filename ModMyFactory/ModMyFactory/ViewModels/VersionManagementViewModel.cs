@@ -241,7 +241,7 @@ namespace ModMyFactory.ViewModels
                     {
                         if (is64Bit == Environment.Is64BitOperatingSystem)
                         {
-                            if (FactorioVersions.Any(factorioVersion => factorioVersion.Version == version))
+                            if (FactorioVersions.All(factorioVersion => factorioVersion.Version != version))
                             {
                                 progress.Report(1);
 
@@ -311,118 +311,160 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private async Task MoveContentsToPreserveAsync(DirectoryInfo sourceDirectory)
+        #region PreserveContents
+
+        private void PreserveSavegames(DirectoryInfo localSaveDirectory, DirectoryInfo globalSaveDirectory, bool move)
+        {
+            foreach (var saveFile in localSaveDirectory.GetFiles())
+            {
+                if (!saveFile.Name.StartsWith("_autosave"))
+                {
+                    string newPath = Path.Combine(globalSaveDirectory.FullName, saveFile.Name);
+                    if (File.Exists(newPath))
+                    {
+                        int count = 1;
+                        do
+                        {
+                            string newName = $"{saveFile.NameWithoutExtension()}_{count}{saveFile.Extension}";
+                            newPath = Path.Combine(globalSaveDirectory.FullName, newName);
+                            count++;
+                        } while (File.Exists(newPath));
+                    }
+
+                    if (move)
+                        saveFile.MoveTo(newPath);
+                    else
+                        saveFile.CopyTo(newPath);
+                }
+            }
+
+            if (move) localSaveDirectory.Delete(true);
+        }
+
+        private void PreserveScenarios(DirectoryInfo localScenarioDirectory, DirectoryInfo globalScenarioDirectory, bool move)
+        {
+            foreach (var scenarioFile in localScenarioDirectory.GetFiles())
+            {
+                string newPath = Path.Combine(globalScenarioDirectory.FullName, scenarioFile.Name);
+                if (File.Exists(newPath))
+                {
+                    int count = 1;
+                    do
+                    {
+                        string newName = $"{scenarioFile.NameWithoutExtension()}_{count}{scenarioFile.Extension}";
+                        newPath = Path.Combine(globalScenarioDirectory.FullName, newName);
+                        count++;
+                    } while (File.Exists(newPath));
+                }
+
+                if (move)
+                    scenarioFile.MoveTo(newPath);
+                else
+                    scenarioFile.CopyTo(newPath);
+            }
+
+            if (move) localScenarioDirectory.Delete(true);
+        }
+
+        private void PreserveMods(DirectoryInfo localModDirectory, bool move)
+        {
+            foreach (var modFile in localModDirectory.GetFiles("*.zip"))
+            {
+                Version factorioVersion;
+                string name;
+                Version version;
+                if (Mod.ArchiveFileValid(modFile, out factorioVersion, out name, out version))
+                {
+                    string globalModPath = App.Instance.Settings.GetModDirectory(factorioVersion).FullName;
+                    if (!Directory.Exists(globalModPath)) Directory.CreateDirectory(globalModPath);
+
+                    if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
+                    {
+                        if (move)
+                            modFile.MoveTo(Path.Combine(globalModPath, modFile.Name));
+                        else
+                            modFile.CopyTo(Path.Combine(globalModPath, modFile.Name));
+
+                        MainViewModel.Instance.Window.Dispatcher.Invoke(
+                            () => Mods.Add(new ZippedMod(name, version, factorioVersion, modFile, Mods, MainViewModel.Instance.Modpacks)));
+                    }
+                }
+            }
+
+            foreach (var modFolder in localModDirectory.GetDirectories())
+            {
+                Version factorioVersion;
+                string name;
+                Version version;
+                if (Mod.DirectoryValid(modFolder, out factorioVersion, out name, out version))
+                {
+                    string globalModPath = App.Instance.Settings.GetModDirectory(factorioVersion).FullName;
+                    if (!Directory.Exists(globalModPath)) Directory.CreateDirectory(globalModPath);
+
+                    if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
+                    {
+                        string newPath = Path.Combine(globalModPath, modFolder.Name);
+                        if (move)
+                            modFolder.MoveToAsync(newPath).Wait();
+                        else
+                            modFolder.CopyToAsync(newPath).Wait();
+
+                        MainViewModel.Instance.Window.Dispatcher.Invoke(
+                            () => Mods.Add(new ExtractedMod(name, version, factorioVersion, new DirectoryInfo(newPath), Mods, MainViewModel.Instance.Modpacks)));
+                    }
+                }
+            }
+
+            if (move) localModDirectory.Delete(true);
+        }
+
+        private async Task PreserveContentsAsync(DirectoryInfo sourceDirectory, bool move)
         {
             await Task.Run(() =>
             {
+                // Savegames
                 var localSaveDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "saves"));
                 if (localSaveDirectory.Exists)
                 {
-                    if (!Directory.Exists(App.Instance.GlobalSavePath))
-                        Directory.CreateDirectory(App.Instance.GlobalSavePath);
+                    DirectoryInfo globalSaveDirectory = App.Instance.Settings.GetSavegameDirectory();
+                    if (!globalSaveDirectory.Exists) globalSaveDirectory.Create();
 
-                    foreach (var saveFile in localSaveDirectory.GetFiles())
-                    {
-                        if (!saveFile.Name.StartsWith("_autosave"))
-                        {
-                            string newPath = Path.Combine(App.Instance.GlobalSavePath, saveFile.Name);
-                            if (File.Exists(newPath))
-                            {
-                                int count = 1;
-                                do
-                                {
-                                    string newName = $"{saveFile.NameWithoutExtension()}_{count}{saveFile.Extension}";
-                                    newPath = Path.Combine(App.Instance.GlobalSavePath, newName);
-                                    count++;
-                                } while (File.Exists(newPath));
-                            }
-                            saveFile.MoveTo(newPath);
-                        }
-                    }
-
-                    localSaveDirectory.Delete(true);
+                    PreserveSavegames(localSaveDirectory, globalSaveDirectory, move);
                 }
 
+
+                // Scenarios
                 var localScenarioDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "scenarios"));
                 if (localScenarioDirectory.Exists)
                 {
-                    if (!Directory.Exists(App.Instance.GlobalScenarioPath))
-                        Directory.CreateDirectory(App.Instance.GlobalScenarioPath);
+                    DirectoryInfo globalScenarioDirectory = App.Instance.Settings.GetScenarioDirectory();
+                    if (!globalScenarioDirectory.Exists) globalScenarioDirectory.Create();
 
-                    foreach (var scenarioFile in localScenarioDirectory.GetFiles())
-                    {
-                        string newPath = Path.Combine(App.Instance.GlobalScenarioPath, scenarioFile.Name);
-                        if (File.Exists(newPath))
-                        {
-                            int count = 1;
-                            do
-                            {
-                                string newName = $"{scenarioFile.NameWithoutExtension()}_{count}{scenarioFile.Extension}";
-                                newPath = Path.Combine(App.Instance.GlobalSavePath, newName);
-                                count++;
-                            } while (File.Exists(newPath));
-                        }
-                        scenarioFile.MoveTo(newPath);
-                    }
-
-                    localScenarioDirectory.Delete(true);
+                    PreserveScenarios(localScenarioDirectory, globalScenarioDirectory, move);
                 }
 
+
+                // Mods
                 var localModDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "mods"));
                 if (localModDirectory.Exists)
                 {
-                    
-
-                    foreach (var modFile in localModDirectory.GetFiles("*.zip"))
-                    {
-                        Version factorioVersion;
-                        string name;
-                        Version version;
-                        if (Mod.ArchiveFileValid(modFile, out factorioVersion, out name, out version))
-                        {
-                            string globalModPath = App.Instance.Settings.GetModDirectory(factorioVersion).FullName;
-                            if (!Directory.Exists(globalModPath)) Directory.CreateDirectory(globalModPath);
-
-                            if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
-                            {
-                                modFile.MoveTo(Path.Combine(globalModPath, modFile.Name));
-
-                                MainViewModel.Instance.Window.Dispatcher.Invoke(
-                                    () => Mods.Add(new ZippedMod(name, version, factorioVersion, modFile, Mods, MainViewModel.Instance.Modpacks)));
-                            }
-                        }
-                    }
-
-                    foreach (var modFolder in localModDirectory.GetDirectories())
-                    {
-                        Version factorioVersion;
-                        string name;
-                        Version version;
-                        if (Mod.DirectoryValid(modFolder, out factorioVersion, out name, out version))
-                        {
-                            string globalModPath = App.Instance.Settings.GetModDirectory(factorioVersion).FullName;
-                            if (!Directory.Exists(globalModPath)) Directory.CreateDirectory(globalModPath);
-
-                            if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
-                            {
-                                string newPath = Path.Combine(globalModPath, modFolder.Name);
-                                modFolder.MoveToAsync(newPath).Wait();
-
-                                MainViewModel.Instance.Window.Dispatcher.Invoke(
-                                    () => Mods.Add(new ExtractedMod(name, version, factorioVersion, new DirectoryInfo(newPath), Mods, MainViewModel.Instance.Modpacks)));
-                            }
-                        }
-                    }
-
-                    localModDirectory.Delete(true);
+                    PreserveMods(localModDirectory, move);
                 }
             });
         }
 
+        #endregion
+
         private async Task MoveFactorioInstallationAsync(DirectoryInfo installationDirectory, DirectoryInfo destinationDirectory)
         {
-            await MoveContentsToPreserveAsync(installationDirectory);
+            await PreserveContentsAsync(installationDirectory, true);
             await installationDirectory.MoveToAsync(destinationDirectory.FullName);
+        }
+
+        private async Task CopyFactorioInstallationAsync(DirectoryInfo installationDirectory, DirectoryInfo destinationDirectory)
+        {
+            await PreserveContentsAsync(installationDirectory, false);
+            await installationDirectory.CopyToAsync(destinationDirectory.FullName);
         }
 
         private async Task AddLocalVersion()
@@ -460,11 +502,14 @@ namespace ModMyFactory.ViewModels
                     return;
                 }
 
-                if (MessageBox.Show(Window,
-                    App.Instance.GetLocalizedMessage("MoveFactorioFolder", MessageType.Warning),
-                    App.Instance.GetLocalizedMessageTitle("MoveFactorioFolder", MessageType.Warning),
-                    MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+
+                var copyOrMoveWindow = new CopyOrMoveMessageWindow() { Owner = Window };
+                ((CopyOrMoveViewModel)copyOrMoveWindow.ViewModel).CopyOrMoveType = CopyOrMoveType.Factorio;
+                result = copyOrMoveWindow.ShowDialog();
+                if (result.HasValue && result.Value)
                 {
+                    bool move = copyOrMoveWindow.Move;
+
                     DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
                     if (!factorioDirectory.Exists) factorioDirectory.Create();
                     DirectoryInfo destinationDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.ToString(3)));
@@ -472,15 +517,17 @@ namespace ModMyFactory.ViewModels
                     var progressWindow = new ProgressWindow() { Owner = Window };
                     var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
                     progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingLocalInstallationAction");
-                    progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
+                    progressViewModel.ProgressDescription = move ? App.Instance.GetLocalizedResourceString("MovingFilesDescription") : App.Instance.GetLocalizedResourceString("CopyingFilesDescription");
                     progressViewModel.IsIndeterminate = true;
 
-                    Task moveTask = MoveFactorioInstallationAsync(installationDirectory, destinationDirectory);
+                    Task addTask = move
+                        ? MoveFactorioInstallationAsync(installationDirectory, destinationDirectory)
+                        : CopyFactorioInstallationAsync(installationDirectory, destinationDirectory);
 
-                    Task closeWindowTask = moveTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                    Task closeWindowTask = addTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                     progressWindow.ShowDialog();
 
-                    await moveTask;
+                    await addTask;
                     await closeWindowTask;
 
                     FactorioVersions.Add(new FactorioVersion(destinationDirectory, version));
@@ -531,7 +578,7 @@ namespace ModMyFactory.ViewModels
                     progressViewModel.IsIndeterminate = true;
 
                     var steamAppDataDirectory = new DirectoryInfo(FactorioSteamVersion.SteamAppDataPath);
-                    Task moveTask = MoveContentsToPreserveAsync(steamAppDataDirectory);
+                    Task moveTask = PreserveContentsAsync(steamAppDataDirectory, true);
 
                     Task closeWindowTask = moveTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                     progressWindow.ShowDialog();

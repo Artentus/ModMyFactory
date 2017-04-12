@@ -18,6 +18,8 @@ namespace ModMyFactory
 {
     public partial class App : Application
     {
+        private const int PreReleaseVersion = 5;
+
         /// <summary>
         /// The current application instance.
         /// </summary>
@@ -28,13 +30,21 @@ namespace ModMyFactory
         /// </summary>
         internal static bool IsInDesignMode => !(Application.Current is App);
 
-        ResourceDictionary enDictionary;
-        UpdateSearchResult searchResult;
-
         /// <summary>
         /// The applications version.
         /// </summary>
-        internal Version AssemblyVersion => Assembly.GetExecutingAssembly().GetName().Version;
+        internal static ExtendedVersion Version
+        {
+            get
+            {
+                Version assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+                return PreReleaseVersion >= 0
+                    ? new ExtendedVersion(assemblyVersion.Major, assemblyVersion.Minor, assemblyVersion.Build, PreReleaseVersion)
+                    : new ExtendedVersion(assemblyVersion.Major, assemblyVersion.Minor, assemblyVersion.Build);
+            }
+        }
+
+        UpdateSearchResult searchResult;
 
         /// <summary>
         /// The applications settings.
@@ -50,16 +60,6 @@ namespace ModMyFactory
         /// The application directory.
         /// </summary>
         internal string ApplicationDirectoryPath { get; }
-
-        /// <summary>
-        /// The global location for savegames.
-        /// </summary>
-        internal string GlobalSavePath => Path.Combine(AppDataPath, "saves");
-
-        /// <summary>
-        /// The global location for scenarios.
-        /// </summary>
-        internal string GlobalScenarioPath => Path.Combine(AppDataPath, "scenarios");
 
         public App(bool createCrashLog, string appDataPath)
         {
@@ -187,15 +187,15 @@ namespace ModMyFactory
         /// Searches for available updates on GitHub.
         /// </summary>
         /// <returns>Returns an update-search result.</returns>
-        internal async Task<UpdateSearchResult> SearchForUpdateAsync()
+        internal async Task<UpdateSearchResult> SearchForUpdateAsync(bool includePreReleases)
         {
             if (searchResult == null || !searchResult.UpdateAvailable)
             {
                 var client = new GitHubClient(new ProductHeaderValue("ModMyFactory"));
-                var latestRelease = await client.Repository.Release.GetLatest("Artentus", "ModMyFactory");
+                var latestRelease = await client.GetLatestReleaseAsync("Artentus", "ModMyFactory", includePreReleases);
 
-                var version = Version.Parse(latestRelease.TagName.Substring(2));
-                bool updateAvailable = version > AssemblyVersion;
+                var version = new ExtendedVersion(latestRelease.TagName);
+                bool updateAvailable = version > App.Version;
                 string updateUrl = latestRelease.HtmlUrl;
                 searchResult = new UpdateSearchResult(updateAvailable, updateUrl, version);
             }

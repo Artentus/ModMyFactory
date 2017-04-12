@@ -36,8 +36,11 @@
     <sys:String x:Key="Error.InvalidModFolder.Message">Выбранная папка не содержит модов.</sys:String>
     <sys:String x:Key="Error.InvalidModFolder.Title">Ошибка добавления мода!</sys:String>
 
-    <sys:String x:Key="Information.NoModUpdates.Message">Все ваши моды не нуждаются в обновлении.</sys:String>
+    <sys:String x:Key="Information.NoModUpdates.Message">Ни один мод не нуждается в обновлении.</sys:String>
     <sys:String x:Key="Information.NoModUpdates.Title">Обновлений не найдено</sys:String>
+    
+    <sys:String x:Key="Question.MoveDirectories.Message">Вы хотите перенести всё содержимое в новое расположение?</sys:String>
+    <sys:String x:Key="Question.MoveDirectories.Title">Перенести содержимое?</sys:String>
     
     <sys:String x:Key="Warning.HasConflicts.Message">При добавлении файлов модпака возникли следующие конфликты:</sys:String>
     <sys:String x:Key="Warning.HasConflicts.Title">Файл модпака создаёт конфликт</sys:String>
@@ -66,9 +69,6 @@
     <sys:String x:Key="Error.FactorioVersionInstalled.Message">Эта версия Factorio уже установлена.</sys:String>
     <sys:String x:Key="Error.FactorioVersionInstalled.Title">Эта версия уже установлена!</sys:String>
 
-    <sys:String x:Key="Warning.MoveFactorioFolder.Message">Выбранная установка Factorio будет перемещена согласно настройкам! Рекомендуется создание бэкапа.&#x0a;Вы хотите продолжить?</sys:String>
-    <sys:String x:Key="Warning.MoveFactorioFolder.Title">Предупреждение</sys:String>
-    
     <sys:String x:Key="Warning.MoveSteamFactorio.Message">Все моды, сохранения и сценарии будут перемещены согласно настройкам! Рекомендуется создание бэкапа.&#x0a;Вы хотите продолжить?</sys:String>
     <sys:String x:Key="Warning.MoveSteamFactorio.Title">Предупреждение</sys:String>
     
@@ -84,8 +84,14 @@
     <sys:String x:Key="Question.DeleteMod.Message">Вы действительно хотите удалить этот мод?</sys:String>
     <sys:String x:Key="Question.DeleteMod.Title">Подтвердите</sys:String>
     
+    <sys:String x:Key="Question.DeleteMods.Message">Вы действительно хотите удалить все выбранные моды?</sys:String>
+    <sys:String x:Key="Question.DeleteMods.Title">Подтвердите</sys:String>
+    
     <sys:String x:Key="Question.DeleteModpack.Message">Вы действительно хотите удалить этот модпак?</sys:String>
     <sys:String x:Key="Question.DeleteModpack.Title">Подтвердите</sys:String>
+    
+    <sys:String x:Key="Question.DeleteModpacks.Message">Вы действительно хотите удалить все выбранные модпаки?</sys:String>
+    <sys:String x:Key="Question.DeleteModpacks.Title">Подтвердите</sys:String>
 
     
     <!-- file type descriptions -->
@@ -96,6 +102,7 @@
     
     <!-- progress dialogs -->
     <sys:String x:Key="MovingFilesDescription">Перемещение файлов...</sys:String>
+    <sys:String x:Key="CopyingFilesDescription">Копирование файлов...</sys:String>
     <sys:String x:Key="ExtractingDescription">Извлечение...</sys:String>
     
     <sys:String x:Key="FetchingModsAction">Поиск модов</sys:String>
@@ -141,6 +148,7 @@
     <sys:String x:Key="CancelButton">Отменить</sys:String>
     <sys:String x:Key="DownloadButton">Загрузить</sys:String>
     <sys:String x:Key="UpdateButton">Обновить</sys:String>
+    <sys:String x:Key="ClearFilterToolTip">Clear filter</sys:String>
 
 
     <!--
@@ -184,6 +192,19 @@
     <sys:String x:Key="AboutMenuItem">О ModMyFactory</sys:String>
     <sys:String x:Key="HelpMenuItem">Помощь</sys:String>
     
+    <!-- context menu -->
+    <sys:String x:Key="DeleteSelectedModsMenuItem">Удалить выбранные моды</sys:String>
+    <sys:String x:Key="ActivateSelectedModsMenuItem">Активировать выбранные моды</sys:String>
+    <sys:String x:Key="DeactivateSelectedModsMenuItem">Деактивировать выбранные моды</sys:String>
+    <sys:String x:Key="SelectActiveModsMenuItem">Выбрать все активные моды</sys:String>
+    <sys:String x:Key="SelectInactiveModsMenuItem">Выбрать все неактивные моды</sys:String>
+    
+    <sys:String x:Key="DeleteSelectedModpacksMenuItem">Удалить выбранные модпаки</sys:String>
+    <sys:String x:Key="ActivateSelectedModpacksMenuItem">Активировать выбранные модпаки</sys:String>
+    <sys:String x:Key="DeactivateSelectedModpacksMenuItem">Деактивировать выбранные модпаки</sys:String>
+    <sys:String x:Key="SelectActiveModpacksMenuItem">Выбрать все активные модпаки</sys:String>
+    <sys:String x:Key="SelectInactiveModpacksMenuItem">Выбрать все неактивные модпаки</sys:String>
+    
     <!-- hotkeys -->
     <sys:String x:Key="DownloadModsHotkey">F7</sys:String>
     <sys:String x:Key="AddModFilesHotkey">F8</sys:String>
@@ -200,6 +221,7 @@
     <sys:String x:Key="HelpHotkey">F1</sys:String>
     <sys:String x:Key="UpdateHotkey">F3</sys:String>
     <sys:String x:Key="AboutHotkey">Ctrl+F1</sys:String>
+    <sys:String x:Key="DeleteHotkey">Del</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ModsHeader">Моды</sys:String>
@@ -234,6 +256,12 @@
     -->
 
     <sys:String x:Key="VersionListWindowTitle">Выбрать версию</sys:String>
+    
+    <!-- checkboxes -->
+    <sys:String x:Key="ShowExperimentalCheckBox">Показывать экспериментальные версии</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="ExperimentalToolTip">Экспериментальные</sys:String>
 
 
     <!--
@@ -241,16 +269,27 @@
     -->
 
     <sys:String x:Key="SettingsWindowTitle">Настройки</sys:String>
+    
+    <!-- tab headers -->
+    <sys:String x:Key="GeneralTabHeader">Основное</sys:String>
+    <sys:String x:Key="LocationsTabHeader">Расположения</sys:String>
 
     <!-- group headers -->
     <sys:String x:Key="ManagerModeGroupHeader">Режим работы менеджера</sys:String>
+    <sys:String x:Key="MiscGroupHeader">Дополнительно</sys:String>
+    <sys:String x:Key="CredentialsGroupHeader">Данные для авторизации</sys:String>
+    
     <sys:String x:Key="FactorioDirectoryGroupHeader">Расположение Factorio</sys:String>
     <sys:String x:Key="ModDirectoryGroupHeader">Расположение модов</sys:String>
-    <sys:String x:Key="CredentialsGroupHeader">Данные для авторизации</sys:String>
-
+    <sys:String x:Key="SavegameDirectoryGroupHeader">Расположение сохранений</sys:String>
+    <sys:String x:Key="ScenarioDirectoryGroupHeader">Расположение сценариев</sys:String>
     
     <!-- group items -->
     <sys:String x:Key="PerFactorioVersionGroupItem">Для каждой версии Factorio</sys:String>
+    <sys:String x:Key="UpdateSearchGroupItem">Искать обновления при запуске</sys:String>
+    <sys:String x:Key="IncludePreReleasesGroupItem">Показывать пре-релизы при поиске обновлений</sys:String>
+    <sys:String x:Key="UpdateZippedGroupItem">Всегда держать обновления модов в архивах</sys:String>
+    <sys:String x:Key="KeepOldModVersionsGroupItem">Сохранять старые версии модов при обновлении</sys:String>
     <sys:String x:Key="GlobalGroupItem">Глобально</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Директория программы</sys:String>
@@ -325,13 +364,18 @@
     <sys:String x:Key="ViewsToolTip">Просмотрели</sys:String>
     <sys:String x:Key="DownloadsToolTip">Загрузили</sys:String>
     <sys:String x:Key="InstalledToolTip">Установлено</sys:String>
-    <sys:String x:Key="RefreshToolTip">Обновить список</sys:String>
+    
+    <!-- labels -->
+    <sys:String x:Key="LicenseLabel">Лицензия:</sys:String>
+    <sys:String x:Key="HomepageLabel">Домашняя страница:</sys:String>
+    <sys:String x:Key="GitHubUrlLabel">GitHub:</sys:String>
     
     <!-- headers -->
     <sys:String x:Key="ReleasesHeader">Релизы</sys:String>
     
     <!-- buttons -->
     <sys:String x:Key="DeleteButton">Удалить</sys:String>
+    <sys:String x:Key="RefreshButton">Обновить</sys:String>
 
 
     <!--
@@ -366,5 +410,21 @@
     -->
 
     <sys:String x:Key="UpdateListWindowTitle">Выберите необходимую версию</sys:String>
+    
+    
+    <!--
+    ____________________ CopyOrMoveMessageWindow ____________________
+    -->
+    
+    <sys:String x:Key="CopyOrMoveMessageWindowTitle">Скопировать или переместить?</sys:String>
+    
+    <!-- messages -->
+    <sys:String x:Key="CopyOrMoveFactorioMessage">Вы хотите скопировать или переместить эту версию Factorio?&#x0a;Перемещение удалит предыдущее расположение.</sys:String>
+    <sys:String x:Key="CopyOrMoveModsMessage">Вы хотите скопировать или переместить выбранные моды?</sys:String>
+    <sys:String x:Key="CopyOrMoveModMessage">Вы хотите скопировать или переместить выбранный мод?</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="CopyButton">Скопировать</sys:String>
+    <sys:String x:Key="MoveButton">Переместить</sys:String>
 
 </ResourceDictionary>

@@ -11,9 +11,6 @@ namespace ModMyFactory.Web.ModApi
         [JsonProperty("downloads_count")]
         public int DownloadCount { get; set; }
 
-        [JsonProperty("visits_count")]
-        public int ViewCount { get; set; }
-
         [JsonProperty("name")]
         public string Name { get; set; }
 
@@ -22,5 +19,17 @@ namespace ModMyFactory.Web.ModApi
 
         [JsonProperty("owner")]
         public string Author { get; set; }
+
+        [JsonProperty("license_name")]
+        public string License { get; set; }
+
+        [JsonProperty("license_url")]
+        public string LicenseUrl { get; set; }
+
+        [JsonProperty("github_path")]
+        public string GitHubUrl { get; set; }
+
+        [JsonProperty("homepage")]
+        public string Homepage { get; set; }
     }
 }

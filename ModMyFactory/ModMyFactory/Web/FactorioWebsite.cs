@@ -98,8 +98,8 @@ namespace ModMyFactory.Web
         {
             const string downloadPage = "https://www.factorio.com/download";
             const string experimentalDownloadPage = "https://www.factorio.com/download/experimental";
-            const string pattern = @"<h3> *(?<version>[0-9]+\.[0-9]+\.[0-9]+) *(?<modifier>\([a-z]+\)) *</h3>";
-            string[] allowedModifiers = { "(alpha)" };
+            const string pattern = @"<h3> *(?<version>[0-9]+\.[0-9]+\.[0-9]+) *\((?<modifier>[a-z]+)\) *</h3>";
+            string[] allowedModifiers = { "alpha" };
 
             versions = new List<FactorioOnlineVersion>();
 
@@ -114,7 +114,7 @@ namespace ModMyFactory.Web
 
                 if (allowedModifiers.Contains(modifierString) && VersionCompatibleWithPlatform(version))
                 {
-                    var factorioVersion = new FactorioOnlineVersion(version, modifierString);
+                    var factorioVersion = new FactorioOnlineVersion(version, modifierString, false);
                     versions.Add(factorioVersion);
                 }
             }
@@ -129,7 +129,7 @@ namespace ModMyFactory.Web
 
                 if (allowedModifiers.Contains(modifierString))
                 {
-                    var version = new FactorioOnlineVersion(Version.Parse(versionString), modifierString + " (experimental)");
+                    var version = new FactorioOnlineVersion(Version.Parse(versionString), modifierString, true);
                     versions.Add(version);
                 }
             }

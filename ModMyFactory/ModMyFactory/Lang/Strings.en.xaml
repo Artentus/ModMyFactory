@@ -39,6 +39,9 @@
     <sys:String x:Key="Information.NoModUpdates.Message">All your mods are up to date.</sys:String>
     <sys:String x:Key="Information.NoModUpdates.Title">No updates found</sys:String>
     
+    <sys:String x:Key="Question.MoveDirectories.Message">Do you want to move all contents of the old locations to the new ones?</sys:String>
+    <sys:String x:Key="Question.MoveDirectories.Title">Move location contents?</sys:String>
+    
     <sys:String x:Key="Warning.HasConflicts.Message">The following conflicts occured while importing this modpack file:</sys:String>
     <sys:String x:Key="Warning.HasConflicts.Title">Modpack file causes conflicts</sys:String>
     
@@ -66,9 +69,6 @@
     <sys:String x:Key="Error.FactorioVersionInstalled.Message">This version of Factorio is already installed.</sys:String>
     <sys:String x:Key="Error.FactorioVersionInstalled.Title">Version already installed!</sys:String>
 
-    <sys:String x:Key="Warning.MoveFactorioFolder.Message">The selected installation of Factorio will be moved to the location specified in the settings! The creation of a backup is recommended.&#x0a;Do you wish to continue?</sys:String>
-    <sys:String x:Key="Warning.MoveFactorioFolder.Title">Warning</sys:String>
-    
     <sys:String x:Key="Warning.MoveSteamFactorio.Message">All mods, saves and scenarios will be moved to the location specified in the settings! The creation of a backup is recommended.&#x0a;Do you wish to continue?</sys:String>
     <sys:String x:Key="Warning.MoveSteamFactorio.Title">Warning</sys:String>
     
@@ -84,8 +84,14 @@
     <sys:String x:Key="Question.DeleteMod.Message">Do you really want to delete this mod?</sys:String>
     <sys:String x:Key="Question.DeleteMod.Title">Confirm</sys:String>
     
+    <sys:String x:Key="Question.DeleteMods.Message">Do you really want to delete all selected mods?</sys:String>
+    <sys:String x:Key="Question.DeleteMods.Title">Confirm</sys:String>
+    
     <sys:String x:Key="Question.DeleteModpack.Message">Do you really want to delete this modpack?</sys:String>
     <sys:String x:Key="Question.DeleteModpack.Title">Confirm</sys:String>
+    
+    <sys:String x:Key="Question.DeleteModpacks.Message">Do you really want to delete all selected modpacks?</sys:String>
+    <sys:String x:Key="Question.DeleteModpacks.Title">Confirm</sys:String>
 
     
     <!-- file type descriptions -->
@@ -96,6 +102,7 @@
     
     <!-- progress dialogs -->
     <sys:String x:Key="MovingFilesDescription">Moving files...</sys:String>
+    <sys:String x:Key="CopyingFilesDescription">Copying files...</sys:String>
     <sys:String x:Key="ExtractingDescription">Extracting...</sys:String>
     
     <sys:String x:Key="FetchingModsAction">Fetching mods</sys:String>
@@ -141,6 +148,7 @@
     <sys:String x:Key="CancelButton">Cancel</sys:String>
     <sys:String x:Key="DownloadButton">Download</sys:String>
     <sys:String x:Key="UpdateButton">Update</sys:String>
+    <sys:String x:Key="ClearFilterToolTip">Clear filter</sys:String>
 
 
     <!--
@@ -184,6 +192,19 @@
     <sys:String x:Key="AboutMenuItem">About ModMyFactory</sys:String>
     <sys:String x:Key="HelpMenuItem">Help</sys:String>
     
+    <!-- context menu -->
+    <sys:String x:Key="DeleteSelectedModsMenuItem">Delete selected mods</sys:String>
+    <sys:String x:Key="ActivateSelectedModsMenuItem">Activate selected mods</sys:String>
+    <sys:String x:Key="DeactivateSelectedModsMenuItem">Deactivate selected mods</sys:String>
+    <sys:String x:Key="SelectActiveModsMenuItem">Select all active mods</sys:String>
+    <sys:String x:Key="SelectInactiveModsMenuItem">Select all inactive mods</sys:String>
+    
+    <sys:String x:Key="DeleteSelectedModpacksMenuItem">Delete selected modpacks</sys:String>
+    <sys:String x:Key="ActivateSelectedModpacksMenuItem">Activate selected modpacks</sys:String>
+    <sys:String x:Key="DeactivateSelectedModpacksMenuItem">Deactivate selected modpacks</sys:String>
+    <sys:String x:Key="SelectActiveModpacksMenuItem">Select all active modpacks</sys:String>
+    <sys:String x:Key="SelectInactiveModpacksMenuItem">Select all inactive modpacks</sys:String>
+    
     <!-- hotkeys -->
     <sys:String x:Key="DownloadModsHotkey">F7</sys:String>
     <sys:String x:Key="AddModFilesHotkey">F8</sys:String>
@@ -200,6 +221,7 @@
     <sys:String x:Key="HelpHotkey">F1</sys:String>
     <sys:String x:Key="UpdateHotkey">F3</sys:String>
     <sys:String x:Key="AboutHotkey">Ctrl+F1</sys:String>
+    <sys:String x:Key="DeleteHotkey">Del</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ModsHeader">Mods</sys:String>
@@ -234,6 +256,12 @@
     -->
 
     <sys:String x:Key="VersionListWindowTitle">Select version</sys:String>
+    
+    <!-- checkboxes -->
+    <sys:String x:Key="ShowExperimentalCheckBox">Show experimental versions</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="ExperimentalToolTip">Experimental</sys:String>
 
 
     <!--
@@ -241,16 +269,27 @@
     -->
 
     <sys:String x:Key="SettingsWindowTitle">Settings</sys:String>
+    
+    <!-- tab headers -->
+    <sys:String x:Key="GeneralTabHeader">General</sys:String>
+    <sys:String x:Key="LocationsTabHeader">Locations</sys:String>
 
     <!-- group headers -->
     <sys:String x:Key="ManagerModeGroupHeader">Manager mode</sys:String>
+    <sys:String x:Key="MiscGroupHeader">Miscellaneous</sys:String>
+    <sys:String x:Key="CredentialsGroupHeader">Login credentials</sys:String>
+    
     <sys:String x:Key="FactorioDirectoryGroupHeader">Factorio location</sys:String>
     <sys:String x:Key="ModDirectoryGroupHeader">Mod location</sys:String>
-    <sys:String x:Key="CredentialsGroupHeader">Login credentials</sys:String>
-
+    <sys:String x:Key="SavegameDirectoryGroupHeader">Savegame location</sys:String>
+    <sys:String x:Key="ScenarioDirectoryGroupHeader">Scenario location</sys:String>
     
     <!-- group items -->
     <sys:String x:Key="PerFactorioVersionGroupItem">Per Factorio version</sys:String>
+    <sys:String x:Key="UpdateSearchGroupItem">Search for updates on startup</sys:String>
+    <sys:String x:Key="IncludePreReleasesGroupItem">Include prereleases when searching for updates</sys:String>
+    <sys:String x:Key="UpdateZippedGroupItem">Always keep mod updates zipped</sys:String>
+    <sys:String x:Key="KeepOldModVersionsGroupItem">Keep old mod versions when updating</sys:String>
     <sys:String x:Key="GlobalGroupItem">Global</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Application directory</sys:String>
@@ -325,13 +364,18 @@
     <sys:String x:Key="ViewsToolTip">Views</sys:String>
     <sys:String x:Key="DownloadsToolTip">Downloads</sys:String>
     <sys:String x:Key="InstalledToolTip">Installed</sys:String>
-    <sys:String x:Key="RefreshToolTip">Refresh list</sys:String>
+    
+    <!-- labels -->
+    <sys:String x:Key="LicenseLabel">License:</sys:String>
+    <sys:String x:Key="HomepageLabel">Homepage:</sys:String>
+    <sys:String x:Key="GitHubUrlLabel">GitHub:</sys:String>
     
     <!-- headers -->
     <sys:String x:Key="ReleasesHeader">Releases</sys:String>
     
     <!-- buttons -->
     <sys:String x:Key="DeleteButton">Delete</sys:String>
+    <sys:String x:Key="RefreshButton">Refresh</sys:String>
 
 
     <!--
@@ -366,5 +410,21 @@
     -->
 
     <sys:String x:Key="UpdateListWindowTitle">Select target version</sys:String>
+    
+    
+    <!--
+    ____________________ CopyOrMoveMessageWindow ____________________
+    -->
+    
+    <sys:String x:Key="CopyOrMoveMessageWindowTitle">Copy or move?</sys:String>
+    
+    <!-- messages -->
+    <sys:String x:Key="CopyOrMoveFactorioMessage">Do you want to copy or move this Factorio installation?&#x0a;Moving will destroy the old installation.</sys:String>
+    <sys:String x:Key="CopyOrMoveModsMessage">Do you want to copy or move all selected mods?</sys:String>
+    <sys:String x:Key="CopyOrMoveModMessage">Do you want to copy or move the selected mod?</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="CopyButton">Copy</sys:String>
+    <sys:String x:Key="MoveButton">Move</sys:String>
 
 </ResourceDictionary>

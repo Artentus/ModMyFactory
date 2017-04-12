@@ -18,9 +18,12 @@ namespace ModMyFactory
 {
     public static class Program
     {
-        static readonly object SyncRoot;
-        static NamedPipeServerStream server;
-        static ManualResetEvent resetEvent;
+        private const string NewInstanceGameStartedSpecifier = "_&_game_started_&_";
+
+
+        private static readonly object SyncRoot;
+        private static NamedPipeServerStream server;
+        private static ManualResetEvent resetEvent;
 
         /// <summary>
         /// Occurs if the program gets started again.
@@ -263,7 +266,13 @@ namespace ModMyFactory
                         arguments[i] = argument;
                     }
 
-                    NewInstanceStarted?.Invoke(null, new InstanceStartedEventArgs(new CommandLine(arguments)));
+                    bool gameStarted = false;
+                    if (arguments.Contains(NewInstanceGameStartedSpecifier))
+                    {
+                        gameStarted = true;
+                        arguments = arguments.Take(arguments.Length - 1).ToArray();
+                    }
+                    NewInstanceStarted?.Invoke(null, new InstanceStartedEventArgs(new CommandLine(arguments), gameStarted));
                 }
 
                 resetEvent.Set();
@@ -352,9 +361,9 @@ namespace ModMyFactory
                         if (!hasHandle)
                         {
                             // App already running.
-                            if (StartGameIfSpecified(commandLine, true)) return 0;
+                            StartGameIfSpecified(commandLine, true);
+                            SendNewInstanceStartedMessage(args.Concat(new[] { NewInstanceGameStartedSpecifier }).ToArray());
 
-                            SendNewInstanceStartedMessage(args);
                             return 0;
                         }
                     }

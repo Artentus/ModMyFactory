@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using Newtonsoft.Json;
@@ -14,20 +15,38 @@ namespace ModMyFactory
             var defaultSettings = new Settings(fileName)
             {
                 ManagerMode = ManagerMode.PerFactorioVersion,
+
                 FactorioDirectoryOption = DirectoryOption.AppData,
                 ModDirectoryOption = DirectoryOption.AppData,
+                SavegameDirectoryOption = DirectoryOption.AppData,
+                ScenarioDirectoryOption = DirectoryOption.AppData,
+
                 FactorioDirectory = string.Empty,
                 ModDirectory = string.Empty,
+                SavegameDirectory = string.Empty,
+                ScenarioDirectory = string.Empty,
+
                 SelectedLanguage = "en",
+
                 MainWindowInfo = WindowInfo.Empty,
                 ModGridLength = new GridLength(1, GridUnitType.Star),
                 ModpackGridLength = new GridLength(1, GridUnitType.Star),
                 SelectedVersion = string.Empty,
+
                 VersionManagerWindowInfo = WindowInfo.Empty,
                 OnlineModsWindowInfo = WindowInfo.Empty,
+
                 SteamVersionPath = string.Empty,
+
                 SaveCredentials = false,
                 WarningShown = false,
+                ShowExperimentalDownloads = false,
+
+                UpdateSearchOnStartup = true,
+                IncludePreReleasesForUpdate = false,
+
+                AlwaysUpdateZipped = false,
+                KeepOldModVersions = true,
             };
             return defaultSettings;
         }
@@ -55,10 +74,19 @@ namespace ModMyFactory
 
         public DirectoryOption ModDirectoryOption;
 
+        public DirectoryOption SavegameDirectoryOption;
+
+        public DirectoryOption ScenarioDirectoryOption;
+
         public string FactorioDirectory;
 
         public string ModDirectory;
 
+        public string SavegameDirectory;
+
+        public string ScenarioDirectory;
+
+        [DefaultValue("en")]
         public string SelectedLanguage;
 
         public WindowInfo MainWindowInfo;
@@ -76,6 +104,18 @@ namespace ModMyFactory
         public bool SaveCredentials;
 
         public bool WarningShown;
+
+        public bool ShowExperimentalDownloads;
+
+        [DefaultValue(true)]
+        public bool UpdateSearchOnStartup;
+
+        public bool IncludePreReleasesForUpdate;
+
+        public bool AlwaysUpdateZipped;
+
+        [DefaultValue(true)]
+        public bool KeepOldModVersions;
 
         [JsonConstructor]
         private Settings()
@@ -131,6 +171,40 @@ namespace ModMyFactory
                         return new DirectoryInfo(Path.Combine(ModDirectory, version.ToString(2)));
                     else
                         return new DirectoryInfo(ModDirectory);
+            }
+
+            throw new InvalidOperationException();
+        }
+
+        public DirectoryInfo GetSavegameDirectory()
+        {
+            const string directoryName = "saves";
+
+            switch (SavegameDirectoryOption)
+            {
+                case DirectoryOption.AppData:
+                    return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
+                case DirectoryOption.ApplicationDirectory:
+                    return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
+                case DirectoryOption.Custom:
+                    return new DirectoryInfo(SavegameDirectory);
+            }
+
+            throw new InvalidOperationException();
+        }
+
+        public DirectoryInfo GetScenarioDirectory()
+        {
+            const string directoryName = "scenarios";
+
+            switch (ScenarioDirectoryOption)
+            {
+                case DirectoryOption.AppData:
+                    return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
+                case DirectoryOption.ApplicationDirectory:
+                    return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
+                case DirectoryOption.Custom:
+                    return new DirectoryInfo(ScenarioDirectory);
             }
 
             throw new InvalidOperationException();

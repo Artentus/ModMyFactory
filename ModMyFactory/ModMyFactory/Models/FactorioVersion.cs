@@ -307,7 +307,7 @@ namespace ModMyFactory.Models
 
         private void CreateSaveDirectoryLinkInternal(string localSavePath)
         {
-            var globalSaveDirectory = new DirectoryInfo(App.Instance.GlobalSavePath);
+            var globalSaveDirectory = App.Instance.Settings.GetSavegameDirectory();
             if (!globalSaveDirectory.Exists) globalSaveDirectory.Create();
 
             var localSaveJunction = new JunctionInfo(localSavePath);
@@ -338,7 +338,7 @@ namespace ModMyFactory.Models
 
         private void CreateScenarioDirectoryLinkInternal(string localScenarioPath)
         {
-            var globalScenarioDirectory = new DirectoryInfo(App.Instance.GlobalScenarioPath);
+            var globalScenarioDirectory = App.Instance.Settings.GetScenarioDirectory();
             if (!globalScenarioDirectory.Exists) globalScenarioDirectory.Create();
 
             var localScenarioJunction = new JunctionInfo(localScenarioPath);
