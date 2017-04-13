@@ -420,9 +420,18 @@ namespace ModMyFactory.Models
                         modpack.Mods.Remove(reference);
 
                 }
+
                 DeleteFilesystemObjects();
                 parentCollection.Remove(this);
-                ModManager.RemoveTemplate(Name);
+
+                if (OldVersion != null)
+                {
+                    parentCollection.Add(OldVersion);
+                }
+                else
+                {
+                    ModManager.RemoveTemplate(Name);
+                }
 
                 ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
                 ModpackTemplateList.Instance.Save();

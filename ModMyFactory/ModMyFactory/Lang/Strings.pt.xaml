@@ -273,7 +273,7 @@
     
     <!-- tab headers -->
     <sys:String x:Key="GeneralTabHeader">Geral</sys:String>
-    <sys:String x:Key="LocationsTabHeader">Localização/sys:String>
+    <sys:String x:Key="LocationsTabHeader">Localização</sys:String>
 
     <!-- group headers -->
     <sys:String x:Key="ManagerModeGroupHeader">Controlador de versões</sys:String>
