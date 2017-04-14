@@ -378,7 +378,7 @@
                     <Style TargetType="mvvm:DragDropReadyListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                         <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
                         <Setter Property="ToolTipService.InitialShowDelay" Value="800"/>
-                        <Setter Property="ToolTipService.ShowDuration" Value="15000"/>
+                        <Setter Property="ToolTipService.ShowDuration" Value="20000"/>
                         <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
                     </Style>
                 </mvvm:DragDropReadyListBox.ItemContainerStyle>

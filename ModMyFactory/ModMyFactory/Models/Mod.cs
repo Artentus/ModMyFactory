@@ -459,7 +459,7 @@ namespace ModMyFactory.Models
                     RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
                 if (matches.Count > 0)
                 {
-                    Description = matches[0].Groups["description"].Value;
+                    Description = matches[0].Groups["description"].Value.Replace("\\n", "\n");
                 }
 
                 // Author

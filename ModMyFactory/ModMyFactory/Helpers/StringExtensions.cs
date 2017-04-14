@@ -7,11 +7,7 @@ namespace ModMyFactory.Helpers
 {
     static class StringExtensions
     {
-        /// <summary>
-        /// Wraps this string on a specified with.
-        /// </summary>
-        /// <param name="columnWidth">The width the string gets wraped at.</param>
-        public static string Wrap(this string value, int columnWidth)
+        private static string WrapInternal(string value, int columnWidth)
         {
             string[] words = value.Split(' ');
 
@@ -35,6 +31,20 @@ namespace ModMyFactory.Helpers
             }
 
             return wrappedText.ToString();
+        }
+
+        /// <summary>
+        /// Wraps this string on a specified with.
+        /// </summary>
+        /// <param name="columnWidth">The width the string gets wraped at.</param>
+        public static string Wrap(this string value, int columnWidth)
+        {
+            string[] lines = value.Split('\n');
+
+            for (int i = 0; i < lines.Length; i++)
+                lines[i] = WrapInternal(lines[i], columnWidth);
+
+            return string.Join("\n", lines);
         }
 
         /// <summary>
