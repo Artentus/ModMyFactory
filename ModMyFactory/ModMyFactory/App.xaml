@@ -26,7 +26,9 @@
             <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
             <SolidColorBrush x:Key="HoverBrush" Color="{StaticResource HoverColor}"/>
             <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource SelectionColor}"/>
-            
+
+            <converter:MultiplyConverter x:Key="MultiplyConverter"/>
+
             <Style x:Key="{x:Type Window}" TargetType="{x:Type Window}">
                 <Style.Setters>
                     <Setter Property="UseLayoutRounding" Value="True"/>
@@ -991,47 +993,43 @@
                 <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
             </Style>
 
-            <Style TargetType="{x:Type Expander}">
-                <Style.Resources>
-                    <converter:MultiplyConverter x:Key="MultiplyConverter"/>
-
-                    <ControlTemplate x:Key="ToggleButtonStyle" TargetType="{x:Type ToggleButton}">
-                        <Grid Width="20" Height="20" Margin="0,0,4,0">
-                            <Ellipse Stroke="Gray" StrokeThickness="1" Fill="{StaticResource BackgroundBrush}"/>
-                            <Path x:Name="Arrow" Data="M -4 -1.5, 0 2, 4 -1.5" Stroke="Gray" StrokeThickness="2"
+            <ControlTemplate x:Key="ExpanderToggleButtonTemplate" TargetType="{x:Type ToggleButton}">
+                <Grid Width="20" Height="20" Margin="0,0,4,0">
+                    <Ellipse Stroke="Gray" StrokeThickness="1" Fill="{StaticResource BackgroundBrush}"/>
+                    <Path x:Name="Arrow" Data="M -4 -1.5, 0 2, 4 -1.5" Stroke="Gray" StrokeThickness="2"
                                   HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Path.RenderTransform>
-                                    <TransformGroup>
-                                        <RotateTransform x:Name="RotateTransform"/>
-                                        <TranslateTransform X="2" Y="2"/>
-                                    </TransformGroup>
-                                </Path.RenderTransform>
-                            </Path>
-                        </Grid>
+                        <Path.RenderTransform>
+                            <TransformGroup>
+                                <RotateTransform x:Name="RotateTransform"/>
+                                <TranslateTransform X="2" Y="2"/>
+                            </TransformGroup>
+                        </Path.RenderTransform>
+                    </Path>
+                </Grid>
 
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="RotateTransform" To="180" Duration="0:0:0.2"
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsChecked" Value="True">
+                        <Trigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="RotateTransform" To="180" Duration="0:0:0.2"
                                                              Storyboard.TargetProperty="Angle"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="RotateTransform" To="0" Duration="0:0:0.2"
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.EnterActions>
+                        <Trigger.ExitActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="RotateTransform" To="0" Duration="0:0:0.2"
                                                              Storyboard.TargetProperty="Angle"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Style.Resources>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.ExitActions>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
 
+            <Style x:Key="{x:Type Expander}" TargetType="{x:Type Expander}">
                 <Style.Setters>
                     <Setter Property="Template">
                         <Setter.Value>
@@ -1044,7 +1042,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <ContentPresenter Grid.Column="0" Content="{TemplateBinding Header}"/>
-                                        <ToggleButton x:Name="ExpanderButton" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Template="{StaticResource ToggleButtonStyle}"
+                                        <ToggleButton x:Name="ExpanderButton" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Template="{StaticResource ExpanderToggleButtonTemplate}"
                                                   IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"/>
                                     </Grid>
 
@@ -1060,7 +1058,7 @@
                                             </MultiBinding>
                                         </ScrollViewer.Height>
 
-                                        
+
                                         <ContentPresenter x:Name="ExpanderContent" VerticalAlignment="Top"/>
                                     </ScrollViewer>
                                 </DockPanel>
@@ -1082,6 +1080,72 @@
                                             <BeginStoryboard>
                                                 <Storyboard>
                                                     <DoubleAnimation Storyboard.TargetName="ScrollViewer" Storyboard.TargetProperty="Tag" To="0" Duration="0:0:0.2">
+                                                        <DoubleAnimation.EasingFunction>
+                                                            <CircleEase/>
+                                                        </DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </Trigger.ExitActions>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style.Setters>
+            </Style>
+            
+            <Style x:Key="{x:Type mvvm:DefaultExpandedExpander}" TargetType="{x:Type mvvm:DefaultExpandedExpander}">
+                <Style.Setters>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Expander}">
+                                <DockPanel PreviewMouseWheel="ExpanderPreviewMouseWheelHandler">
+                                    <Grid DockPanel.Dock="Top">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <ContentPresenter Grid.Column="0" Content="{TemplateBinding Header}"/>
+                                        <ToggleButton x:Name="ExpanderButton" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Template="{StaticResource ExpanderToggleButtonTemplate}"
+                                                  IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                    </Grid>
+
+                                    <ScrollViewer x:Name="ScrollViewer" Focusable="False"
+                                                  DockPanel.Dock="Bottom" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
+                                        <ScrollViewer.Tag>
+                                            <sys:Double>1.0</sys:Double>
+                                        </ScrollViewer.Tag>
+                                        <ScrollViewer.Height>
+                                            <MultiBinding Converter="{StaticResource MultiplyConverter}">
+                                                <Binding Path="ActualHeight" ElementName="ExpanderContent"/>
+                                                <Binding Path="Tag" RelativeSource="{RelativeSource Self}" />
+                                            </MultiBinding>
+                                        </ScrollViewer.Height>
+
+
+                                        <ContentPresenter x:Name="ExpanderContent" VerticalAlignment="Top"/>
+                                    </ScrollViewer>
+                                </DockPanel>
+
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsExpanded" Value="False">
+                                        <Trigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="ScrollViewer" Storyboard.TargetProperty="Tag" To="0" Duration="0:0:0.2">
+                                                        <DoubleAnimation.EasingFunction>
+                                                            <CircleEase/>
+                                                        </DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </Trigger.EnterActions>
+                                        <Trigger.ExitActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="ScrollViewer" Storyboard.TargetProperty="Tag" To="1" Duration="0:0:0.2">
                                                         <DoubleAnimation.EasingFunction>
                                                             <CircleEase/>
                                                         </DoubleAnimation.EasingFunction>
