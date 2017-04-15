@@ -430,9 +430,6 @@
     <Resource Include="Images\Downloads.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Views.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\Update.png" />
   </ItemGroup>
   <ItemGroup>
