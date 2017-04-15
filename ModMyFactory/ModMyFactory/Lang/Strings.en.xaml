@@ -172,13 +172,17 @@
     
     <!-- 'Edit' menu -->
     <sys:String x:Key="EditMenuItem">_Edit</sys:String>
+    <sys:String x:Key="UpdateModsMenuItem">Update mods</sys:String>
+    <sys:String x:Key="VersionManagerMenuItem">Version manager</sys:String>
+    <sys:String x:Key="SettingsMenuItem">Settings</sys:String>
+    
+    <!-- 'View' menu -->
+    <sys:String x:Key="ViewMenuItem">_View</sys:String>
     <sys:String x:Key="OpenFactorioFolderMenuItem">Open Factorio folder</sys:String>
     <sys:String x:Key="OpenModFolderMenuItem">Open mod folder</sys:String>
     <sys:String x:Key="OpenSavegameFolderMenuItem">Open savegame folder</sys:String>
     <sys:String x:Key="OpenScenarioFolderMenuItem">Open scenario folder</sys:String>
-    <sys:String x:Key="UpdateModsMenuItem">Update mods</sys:String>
-    <sys:String x:Key="VersionManagerMenuItem">Version manager</sys:String>
-    <sys:String x:Key="SettingsMenuItem">Settings</sys:String>
+    <sys:String x:Key="RefreshMenuItem">Refresh</sys:String>
     
     <!-- 'Language' menu -->
     <sys:String x:Key="LanguageMenuItem">_Language</sys:String>
@@ -213,11 +217,12 @@
     <sys:String x:Key="CreateLinkHotkey">Ctrl+L</sys:String>
     <sys:String x:Key="ExportModpacksHotkey">Ctrl+E</sys:String>
     <sys:String x:Key="ImportModpacksHotkey">Ctrl+I</sys:String>
-    <sys:String x:Key="StartGameHotkey">F5</sys:String>
+    <sys:String x:Key="StartGameHotkey">F6</sys:String>
     <sys:String x:Key="CloseHotkey">Alt+F4</sys:String>
     <sys:String x:Key="UpdateModsHotkey">Ctrl+U</sys:String>
-    <sys:String x:Key="VersionManagerHotkey">F6</sys:String>
+    <sys:String x:Key="VersionManagerHotkey">F10</sys:String>
     <sys:String x:Key="SettingsHotkey">F12</sys:String>
+    <sys:String x:Key="RefreshHotkey">F5</sys:String>
     <sys:String x:Key="HelpHotkey">F1</sys:String>
     <sys:String x:Key="UpdateHotkey">F3</sys:String>
     <sys:String x:Key="AboutHotkey">Ctrl+F1</sys:String>

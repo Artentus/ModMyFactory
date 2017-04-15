@@ -555,6 +555,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand ClearModpackFilterCommand { get; }
 
+        public RelayCommand RefreshCommand { get; }
+
         #endregion
 
         volatile bool modpacksLoading;
@@ -612,6 +614,13 @@ namespace ModMyFactory.ViewModels
             modpacksLoading = false;
         }
 
+        private void Refresh()
+        {
+            ModManager.LoadTemplates();
+            LoadFactorioVersions();
+            LoadModsAndModpacks();
+        }
+
         private MainViewModel()
         {
             if (!App.IsInDesignMode) // Make view model designer friendly.
@@ -631,9 +640,7 @@ namespace ModMyFactory.ViewModels
                 }
                 App.Instance.Settings.WarningShown = true;
 
-                ModManager.LoadTemplates();
-                LoadFactorioVersions();
-                LoadModsAndModpacks();
+                Refresh();
                 
 
                 modGridLength = App.Instance.Settings.ModGridLength;
@@ -653,6 +660,12 @@ namespace ModMyFactory.ViewModels
                 StartGameCommand = new RelayCommand(StartGame, () => SelectedFactorioVersion != null);
 
                 // 'Edit' menu
+                UpdateModsCommand = new RelayCommand(async () => await UpdateMods());
+
+                OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
+                OpenSettingsCommand = new RelayCommand(async () => await OpenSettings());
+
+                // 'View' menu
                 OpenFactorioFolderCommand = new RelayCommand(() =>
                 {
                     var factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
@@ -678,11 +691,7 @@ namespace ModMyFactory.ViewModels
                     Process.Start(scenariosPath);
                 });
 
-                UpdateModsCommand = new RelayCommand(async () => await UpdateMods());
-
-                OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
-
-                OpenSettingsCommand = new RelayCommand(async () => await OpenSettings());
+                RefreshCommand = new RelayCommand(Refresh);
 
                 // 'Info' menu
                 BrowseFactorioWebsiteCommand = new RelayCommand(() => Process.Start("https://www.factorio.com/"));
@@ -1760,9 +1769,7 @@ namespace ModMyFactory.ViewModels
             // Reload everything if required
             if (managerModeChanged || moveFactorioDirectory || moveModDirectory)
             {
-                ModManager.LoadTemplates();
-                LoadFactorioVersions();
-                LoadModsAndModpacks();
+                Refresh();
             }
         }
 
@@ -1985,9 +1992,7 @@ namespace ModMyFactory.ViewModels
         {
             if (gameStarted)
             {
-                ModManager.LoadTemplates();
-                LoadFactorioVersions();
-                LoadModsAndModpacks();
+                Refresh();
             }
             else
             {

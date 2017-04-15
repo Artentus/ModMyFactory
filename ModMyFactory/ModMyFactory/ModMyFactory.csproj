@@ -459,6 +459,7 @@
     <Resource Include="Images\Experimental.png" />
     <Resource Include="Images\Menu.png" />
     <Resource Include="Images\Delete.png" />
+    <Resource Include="Images\Refresh_blue.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>

@@ -33,6 +33,7 @@
         <BitmapImage x:Key="MenuIcon" UriSource="../Images/Menu.png"/>
         <BitmapImage x:Key="NewPackageIcon" UriSource="../Images/NewPackage.png"/>
         <BitmapImage x:Key="OpenFolderIcon" UriSource="../Images/OpenFolder.png"/>
+        <BitmapImage x:Key="RefreshIcon" UriSource="../Images/Refresh_blue.png"/>
         <BitmapImage x:Key="RenameActiveIcon" UriSource="../Images/RenameActive.png"/>
         <BitmapImage x:Key="RenameInactiveIcon" UriSource="../Images/RenameInactive.png"/>
         <BitmapImage x:Key="RunIcon" UriSource="../Images/Run.png"/>
@@ -102,10 +103,11 @@
         <KeyBinding Modifiers="Control" Key="L" Command="{Binding CreateLinkCommand}"/>
         <KeyBinding Modifiers="Control" Key="E" Command="{Binding ExportModpacksCommand}"/>
         <KeyBinding Modifiers="Control" Key="I" Command="{Binding ImportModpacksCommand}"/>
-        <KeyBinding Key="F5" Command="{Binding StartGameCommand}"/>
+        <KeyBinding Key="F6" Command="{Binding StartGameCommand}"/>
         <KeyBinding Modifiers="Control" Key="U" Command="{Binding UpdateModsCommand}"/>
-        <KeyBinding Key="F6" Command="{Binding OpenVersionManagerCommand}"/>
+        <KeyBinding Key="F10" Command="{Binding OpenVersionManagerCommand}"/>
         <KeyBinding Key="F12" Command="{Binding OpenSettingsCommand}"/>
+        <KeyBinding Key="F5" Command="{Binding RefreshCommand}"/>
         <KeyBinding Key="F1" Command="{Binding BrowseWikiCommand}"/>
         <KeyBinding Key="F3" Command="{Binding UpdateCommand}" CommandParameter="{StaticResource False}"/>
         <KeyBinding Modifiers="Control" Key="F1" Command="{Binding OpenAboutWindowCommand}"/>
@@ -156,6 +158,17 @@
                           InputGestureText="{DynamicResource CloseHotkey}" Command="Close"/>
             </MenuItem>
             <MenuItem Header="{DynamicResource EditMenuItem}">
+                <MenuItem Header="{DynamicResource UpdateModsMenuItem}" Icon="{StaticResource UpdateIcon}"
+                          InputGestureText="{DynamicResource UpdateModsHotkey}" Command="{Binding UpdateModsCommand}"/>
+
+                <Separator/>
+
+                <MenuItem Header="{DynamicResource VersionManagerMenuItem}" Icon="{StaticResource ConfigureIcon}"
+                          InputGestureText="{DynamicResource VersionManagerHotkey}" Command="{Binding OpenVersionManagerCommand}"/>
+                <MenuItem Header="{DynamicResource SettingsMenuItem}" Icon="{StaticResource SettingsIcon}"
+                          InputGestureText="{DynamicResource SettingsHotkey}" Command="{Binding OpenSettingsCommand}"/>
+            </MenuItem>
+            <MenuItem Header="{DynamicResource ViewMenuItem}">
                 <MenuItem Header="{DynamicResource OpenFactorioFolderMenuItem}" Icon="{StaticResource OpenFolderIcon}"
                           Command="{Binding OpenFactorioFolderCommand}"/>
                 <MenuItem Header="{DynamicResource OpenModFolderMenuItem}" Icon="{StaticResource OpenFolderIcon}"
@@ -167,18 +180,8 @@
                 
                 <Separator/>
 
-                <MenuItem Header="{DynamicResource UpdateModsMenuItem}" Icon="{StaticResource UpdateIcon}"
-                          InputGestureText="{DynamicResource UpdateModsHotkey}" Command="{Binding UpdateModsCommand}"/>
-
-                <Separator/>
-                
-                <MenuItem Header="{DynamicResource VersionManagerMenuItem}" Icon="{StaticResource ConfigureIcon}"
-                          InputGestureText="{DynamicResource VersionManagerHotkey}" Command="{Binding OpenVersionManagerCommand}"/>
-                
-                <Separator/>
-                
-                <MenuItem Header="{DynamicResource SettingsMenuItem}" Icon="{StaticResource SettingsIcon}"
-                          InputGestureText="{DynamicResource SettingsHotkey}" Command="{Binding OpenSettingsCommand}"/>
+                <MenuItem Header="{DynamicResource RefreshMenuItem}" Icon="{StaticResource RefreshIcon}"
+                          InputGestureText="{DynamicResource RefreshHotkey}"  Command="{Binding RefreshCommand}"/>
             </MenuItem>
             <MenuItem Header="{DynamicResource LanguageMenuItem}" ItemsSource="{Binding AvailableCulturesView}">
                 <MenuItem.ItemTemplate>
