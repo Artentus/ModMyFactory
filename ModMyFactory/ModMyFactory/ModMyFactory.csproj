@@ -132,6 +132,7 @@
     <Compile Include="ModpackCollection.cs" />
     <Compile Include="MVVM\Converters\SystemIconConverter.cs" />
     <Compile Include="MVVM\DefaultExpandedExpander.cs" />
+    <Compile Include="MVVM\FormattingTextBlock.cs" />
     <Compile Include="MVVM\LayoutRoundingWindow.cs" />
     <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\ModUpdateInfoSorter.cs" />

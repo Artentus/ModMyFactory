@@ -116,5 +116,45 @@ namespace ModMyFactory.Helpers
 
             return sb.ToString();
         }
+
+        /// <summary>
+        /// Checks if a given string is equal to this string starting at the given index.
+        /// </summary>
+        /// <param name="startIndex">The index tho start the comparison at.</param>
+        /// <param name="other">Tee string to compare this string to.</param>
+        /// <param name="culture">The culture that is used to compare the strings.</param>
+        /// <param name="options">A value that spoecifies how the two string are compared.</param>
+        /// <returns>Returns true if the given string is equal to this string starting at the given index, otherwise false.</returns>
+        public static bool PositionEquals(this string value, int startIndex, string other, CultureInfo culture, CompareOptions options)
+        {
+            if ((startIndex < 0) || (startIndex >= value.Length)) return false;
+            if ((startIndex + other.Length) >= value.Length) return false;
+            if (string.IsNullOrEmpty(other)) return true;
+
+            return culture.CompareInfo.Compare(value, startIndex, other.Length, other, 0, other.Length, options) == 0;
+        }
+
+        /// <summary>
+        /// Checks if a given string is equal to this string starting at the given index.
+        /// </summary>
+        /// <param name="startIndex">The index tho start the comparison at.</param>
+        /// <param name="other">Tee string to compare this string to.</param>
+        /// <param name="culture">The culture that is used to compare the strings.</param>
+        /// <returns>Returns true if the given string is equal to this string starting at the given index, otherwise false.</returns>
+        public static bool PositionEquals(this string value, int startIndex, string other, CultureInfo culture)
+        {
+            return PositionEquals(value, startIndex, other, culture, CompareOptions.None);
+        }
+
+        /// <summary>
+        /// Checks if a given string is equal to this string starting at the given index.
+        /// </summary>
+        /// <param name="startIndex">The index tho start the comparison at.</param>
+        /// <param name="other">Tee string to compare this string to.</param>
+        /// <returns>Returns true if the given string is equal to this string starting at the given index, otherwise false.</returns>
+        public static bool PositionEquals(this string value, int startIndex, string other)
+        {
+            return PositionEquals(value, startIndex, other, CultureInfo.CurrentCulture, CompareOptions.None);
+        }
     }
 }

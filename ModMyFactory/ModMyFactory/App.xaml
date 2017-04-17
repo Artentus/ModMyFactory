@@ -1391,6 +1391,20 @@
                 </Style.Setters>
             </Style>
             
+            <Style x:Key="{x:Type mvvm:FormattingTextBlock}" TargetType="{x:Type mvvm:FormattingTextBlock}">
+                <Style.Setters>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type mvvm:FormattingTextBlock}">
+                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                    <TextBlock x:Name="PART_ContentHost" TextWrapping="NoWrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style.Setters>
+            </Style>
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

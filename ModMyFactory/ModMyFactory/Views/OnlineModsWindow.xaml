@@ -16,7 +16,6 @@
 
     <Window.Resources>
         <BitmapImage x:Key="DownloadsIcon" UriSource="../Images/Downloads.png"/>
-        <BitmapImage x:Key="ViewsIcon" UriSource="../Images/Views.png"/>
 
         <BitmapImage x:Key="SearchIcon" UriSource="../Images/Search.png"/>
         <BitmapImage x:Key="RefreshIcon" UriSource="../Images/Refresh.png"/>
@@ -125,7 +124,7 @@
             <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Height="4" Fill="{StaticResource SelectionBrush}"/>
 
             <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                <TextBlock Margin="4,10" TextWrapping="Wrap" Text="{Binding SelectedModDescription}"/>
+                <mvvm:FormattingTextBlock Margin="4,10" Text="{Binding SelectedModDescription}"/>
             </ScrollViewer>
 
             <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
