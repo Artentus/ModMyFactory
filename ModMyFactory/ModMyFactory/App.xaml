@@ -1397,7 +1397,7 @@
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type mvvm:FormattingTextBlock}">
                                 <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                                    <TextBlock x:Name="PART_ContentHost" TextWrapping="NoWrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                    <TextBlock x:Name="PART_ContentHost" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                 </Border>
                             </ControlTemplate>
                         </Setter.Value>

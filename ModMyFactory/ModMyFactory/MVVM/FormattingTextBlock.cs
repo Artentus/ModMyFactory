@@ -55,7 +55,11 @@ namespace ModMyFactory.MVVM
             if (textBlock != null)
             {
                 textBlock.Inlines.Clear();
-                if (!string.IsNullOrEmpty(Text)) AddTextToTextBlockFormatted(textBlock, Text);
+
+                if (!string.IsNullOrEmpty(Text))
+                {
+                    AddTextToTextBlockFormatted(textBlock, string.Join(" ", Text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries)));
+                }
             }
         }
 
@@ -142,7 +146,7 @@ namespace ModMyFactory.MVVM
                     index += 2;
 
                     var elements = FormatText(text, ref index, "##", "#", "\r\n", "\r", "\n");
-                    var span = new Span() { FontSize = 20 };
+                    var span = new Span() { FontSize = 26 };
                     foreach (Inline element in elements)
                         span.Inlines.Add(element);
                     result.Add(span);
@@ -156,7 +160,7 @@ namespace ModMyFactory.MVVM
                     index++;
 
                     var elements = FormatText(text, ref index, "#", "\r\n", "\r", "\n");
-                    var span = new Span() { FontSize = 26 };
+                    var span = new Span() { FontSize = 20 };
                     foreach (Inline element in elements)
                         span.Inlines.Add(element);
                     result.Add(span);
@@ -180,14 +184,14 @@ namespace ModMyFactory.MVVM
                     index++;
                     startIndex = index;
                 }
-                else if (text.PositionEquals(index, "**") || text.PositionEquals(index, "__")) // Bold
+                else if (text.PositionEquals(index, "**")) // Bold
                 {
                     if ((index == startIndex) || char.IsWhiteSpace(text[index - 1]))
                     {
                         result.Add(new Run(text.Substring(startIndex, index - startIndex)));
                         index += 2;
 
-                        var elements = FormatText(text, ref index, text.Substring(index - 2, 2));
+                        var elements = FormatText(text, ref index, "**");
                         var span = new Span() { FontWeight = FontWeights.Bold };
                         foreach (Inline element in elements)
                             span.Inlines.Add(element);
@@ -200,14 +204,14 @@ namespace ModMyFactory.MVVM
                         index += 2;
                     }
                 }
-                else if ((c == '*') || (c == '_')) // Italic
+                else if (c == '_') // Italic
                 {
                     if ((index == startIndex) || char.IsWhiteSpace(text[index - 1]))
                     {
                         result.Add(new Run(text.Substring(startIndex, index - startIndex)));
                         index++;
 
-                        var elements = FormatText(text, ref index, text[index - 1].ToString());
+                        var elements = FormatText(text, ref index, "_");
                         var span = new Span() { FontStyle = FontStyles.Italic };
                         foreach (Inline element in elements)
                             span.Inlines.Add(element);
@@ -241,7 +245,16 @@ namespace ModMyFactory.MVVM
                                 index++;
 
                                 string url = text.Substring(index, endIndex - index).SplitOnWhitespace()[0];
-                                link.NavigateUri = new Uri(url);
+                                try
+                                {
+                                    if (!string.IsNullOrWhiteSpace(url))
+                                    {
+                                        var uri = new Uri(url);
+                                        link.NavigateUri = uri;
+                                    }
+                                }
+                                catch (UriFormatException)
+                                { }
 
                                 index = endIndex + 1;
                             }
@@ -249,6 +262,37 @@ namespace ModMyFactory.MVVM
                         result.Add(link);
 
                         startIndex = index;
+                    }
+                }
+                else if (text.PositionEquals(index, "http://") || text.PositionEquals(index, "https://")) // Implicit link
+                {
+                    if ((index == startIndex) || char.IsWhiteSpace(text[index - 1]))
+                    {
+                        result.Add(new Run(text.Substring(startIndex, index - startIndex)));
+
+                        int endIndex = MathHelper.Min(text.IndexOf(' ', index), text.IndexOf("\r\n", index, StringComparison.Ordinal), text.IndexOf('\r', index), text.IndexOf('\n', index), text.Length - 1);
+                        string url = text.Substring(index, endIndex - index);
+
+                        var link = new Hyperlink(new Run(url));
+                        try
+                        {
+                            if (!string.IsNullOrWhiteSpace(url))
+                            {
+                                var uri = new Uri(url);
+                                link.NavigateUri = uri;
+                            }
+                        }
+                        catch (UriFormatException)
+                        { }
+                        link.RequestNavigate += LinkOnRequestNavigate;
+                        result.Add(link);
+
+                        index = endIndex;
+                        startIndex = index;
+                    }
+                    else
+                    {
+                        index++;
                     }
                 }
                 else
