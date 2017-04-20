@@ -10,7 +10,8 @@
         Title="{Binding ActionName}" Width="500" SizeToContent="Height"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
-        Icon="..\Images\MMF_Icon.ico">
+        Icon="..\Images\MMF_Icon.ico"
+        UseLayoutRounding="True">
     
     <Window.DataContext>
         <vm:ProgressViewModel/>
