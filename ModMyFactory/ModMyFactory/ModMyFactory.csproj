@@ -109,7 +109,6 @@
     <Compile Include="Helpers\EnumarableExtensions.cs" />
     <Compile Include="Helpers\FileInfoExtensions.cs" />
     <Compile Include="Helpers\GitHubClientExtensions.cs" />
-    <Compile Include="Helpers\MathHelper.cs" />
     <Compile Include="Helpers\ModHelper.cs" />
     <Compile Include="Helpers\PercievedFileType.cs" />
     <Compile Include="Helpers\ProcessExtensions.cs" />
