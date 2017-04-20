@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -270,7 +271,11 @@ namespace ModMyFactory.MVVM
                     {
                         result.Add(new Run(text.Substring(startIndex, index - startIndex)));
 
-                        int endIndex = MathHelper.Min(text.IndexOf(' ', index), text.IndexOf("\r\n", index, StringComparison.Ordinal), text.IndexOf('\r', index), text.IndexOf('\n', index), text.Length - 1);
+                        int[] endings =
+                        {
+                            text.IndexOf(' ', index), text.IndexOf("\r\n", index, StringComparison.Ordinal), text.IndexOf('\r', index), text.IndexOf('\n', index), text.Length - 1
+                        };
+                        int endIndex = endings.Where((i) => i > -1).Min();
                         string url = text.Substring(index, endIndex - index);
 
                         var link = new Hyperlink(new Run(url));
