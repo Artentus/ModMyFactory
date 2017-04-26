@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -50,6 +51,36 @@ namespace ModMyFactory.Controls
             ApplyTextFormatted();
         }
 
+        private bool LineIsSeparator(string line)
+        {
+            bool containsMinus = false;
+            bool containsOnlyMinusAndWhitespace = true;
+
+            foreach (char c in line)
+            {
+                if ((c == '-') || (c == '*')) containsMinus = true;
+                else if (!char.IsWhiteSpace(c)) containsOnlyMinusAndWhitespace = false;
+            }
+
+            return containsMinus && containsOnlyMinusAndWhitespace;
+        }
+
+        private string RemoveSeparatorLines(string value)
+        {
+            var sb = new StringBuilder(value.Length);
+
+            string[] lines = value.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            foreach (string line in lines)
+            {
+                if (!LineIsSeparator(line))
+                    sb.AppendLine(line);
+                else
+                    sb.AppendLine();
+            }
+
+            return sb.ToString();
+        }
+
         private void ApplyTextFormatted()
         {
             TextBlock textBlock = anchor as TextBlock;
@@ -59,7 +90,7 @@ namespace ModMyFactory.Controls
 
                 if (!string.IsNullOrEmpty(Text))
                 {
-                    AddTextToTextBlockFormatted(textBlock, string.Join(" ", Text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries)));
+                    AddTextToTextBlockFormatted(textBlock, RemoveSeparatorLines(string.Join(" ", Text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries))));
                 }
             }
         }
@@ -222,9 +253,10 @@ namespace ModMyFactory.Controls
                 {
                     if (((index == startIndex) || string.IsNullOrWhiteSpace(text.Substring(startIndex, length))
                         && ((inlines.Count == 0) || (inlines.Last() is LineBreak)))
-                        && ((index + 1 >= text.Length) || ((text[index + 1] != '*') && (text[index + 1] != '-'))))
+                        && ((index + 1 >= text.Length) || (text[index + 1] != '-')))
                     {
                         index++;
+                        if (text[index] == ' ') index++;
 
                         var list = new InlineList();
                         list.ApplyTemplate();

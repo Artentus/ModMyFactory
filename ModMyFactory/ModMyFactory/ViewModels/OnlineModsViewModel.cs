@@ -119,14 +119,27 @@ namespace ModMyFactory.ViewModels
                     selectedMod = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedMod)));
 
-                    SelectedModName = selectedMod.Title;
-                    SelectedModLicense = selectedMod.License;
-                    SelectedModHomepage = selectedMod.Homepage;
-                    SelectedModGitHubUrl = selectedMod.GitHubUrl;
-                    SelectedRelease = null;
+                    if (selectedMod != null)
+                    {
+                        SelectedModName = selectedMod.Title;
+                        SelectedModLicense = selectedMod.License;
+                        SelectedModHomepage = selectedMod.Homepage;
+                        SelectedModGitHubUrl = selectedMod.GitHubUrl;
+                        SelectedRelease = null;
 
-                    asyncFetchExtendedInfoIndex++;
-                    new Action(async () => await LoadExtendedModInfoAsync(selectedMod, asyncFetchExtendedInfoIndex)).Invoke();
+                        asyncFetchExtendedInfoIndex++;
+                        new Action(async () => await LoadExtendedModInfoAsync(selectedMod, asyncFetchExtendedInfoIndex)).Invoke();
+                    }
+                    else
+                    {
+                        SelectedModName = string.Empty;
+                        SelectedModLicense = string.Empty;
+                        SelectedModHomepage = string.Empty;
+                        SelectedModGitHubUrl = string.Empty;
+                        SelectedRelease = null;
+
+                        ExtendedInfo = null;
+                    }
                 }
             }
         }
@@ -139,20 +152,28 @@ namespace ModMyFactory.ViewModels
                 extendedInfo = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(ExtendedInfo)));
 
-                SelectedModDescription = extendedInfo.Description;
-                SelectedReleases.Clear();
-                bool releaseSelected = false;
-                foreach (var release in extendedInfo.Releases)
+                if (extendedInfo != null)
                 {
-                    release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
-                    release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.FactorioVersion);
-
-                    SelectedReleases.Add(release);
-                    if (!releaseSelected && !release.IsVersionInstalled)
+                    SelectedModDescription = extendedInfo.Description;
+                    SelectedReleases.Clear();
+                    bool releaseSelected = false;
+                    foreach (var release in extendedInfo.Releases)
                     {
-                        SelectedRelease = release;
-                        releaseSelected = true;
+                        release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
+                        release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.FactorioVersion);
+
+                        SelectedReleases.Add(release);
+                        if (!releaseSelected && !release.IsVersionInstalled)
+                        {
+                            SelectedRelease = release;
+                            releaseSelected = true;
+                        }
                     }
+                }
+                else
+                {
+                    selectedModDescription = string.Empty;
+                    SelectedReleases.Clear();
                 }
 
                 CommandManager.InvalidateRequerySuggested();
