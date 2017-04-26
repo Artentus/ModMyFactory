@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
@@ -140,12 +141,21 @@ namespace ModMyFactory.ViewModels
 
                 SelectedModDescription = extendedInfo.Description;
                 SelectedReleases.Clear();
+                bool releaseSelected = false;
                 foreach (var release in extendedInfo.Releases)
                 {
                     release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
                     release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.FactorioVersion);
+
                     SelectedReleases.Add(release);
+                    if (!releaseSelected && !release.IsVersionInstalled)
+                    {
+                        SelectedRelease = release;
+                        releaseSelected = true;
+                    }
                 }
+
+                CommandManager.InvalidateRequerySuggested();
             }
         }
 
