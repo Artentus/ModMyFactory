@@ -1405,6 +1405,28 @@
                 </Style.Setters>
             </Style>
             
+            <Style x:Key="{x:Type mvvm:InlineList}" TargetType="{x:Type mvvm:InlineList}">
+                <Style.Setters>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type mvvm:InlineList}">
+                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Margin="6, 0" Text="•"/>
+                                        <TextBlock x:Name="PART_ContentHost" Grid.Column="1" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                    </Grid>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style.Setters>
+            </Style>
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

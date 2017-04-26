@@ -86,15 +86,19 @@ namespace ModMyFactory.MVVM
             return false;
         }
 
-        private static void FormatText(string text, InlineCollection inlines, ref int index, params string[] endPatterns)
+        private static void FormatText(string text, ICollection<Inline> inlines, ref int index, params string[] endPatterns)
         {
+            int length;
+
             int startIndex = index;
             while (index < text.Length)
             {
+                length = index - startIndex;
+
                 int patternLength;
                 if (PatternReached(text, index, endPatterns, out patternLength))
                 {
-                    inlines.Add(new Run(text.Substring(startIndex, index - startIndex)));
+                    if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
 
                     index += patternLength;
                     return;
@@ -103,14 +107,15 @@ namespace ModMyFactory.MVVM
                 char c = text[index];
                 if (c == '\\') // Escape char
                 {
-                    inlines.Add(new Run(text.Substring(startIndex, index - startIndex)));
+                    if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
 
                     index += 2;
                     startIndex = index - 1;
                 }
                 else if (text.PositionEquals(index, "####")) // Heading level 4
                 {
-                    inlines.Add(new Run(text.Substring(startIndex, index - startIndex)));
+                    if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
+
                     index += 4;
 
                     var span = new Span() { TextDecorations = new TextDecorationCollection(TextDecorations.Underline) };
@@ -122,7 +127,8 @@ namespace ModMyFactory.MVVM
                 }
                 else if (text.PositionEquals(index, "###")) // Heading level 3
                 {
-                    inlines.Add(new Run(text.Substring(startIndex, index - startIndex)));
+                    if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
+
                     index += 3;
 
                     var span = new Span() { FontWeight = FontWeights.Bold };
@@ -134,7 +140,8 @@ namespace ModMyFactory.MVVM
                 }
                 else if (text.PositionEquals(index, "##")) // Sub-heading
                 {
-                    inlines.Add(new Run(text.Substring(startIndex, index - startIndex)));
+                    if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
+
                     index += 2;
 
                     var span = new Span() { FontSize = 26 };
@@ -146,7 +153,8 @@ namespace ModMyFactory.MVVM
                 }
                 else if (c == '#') // Heading
                 {
-                    inlines.Add(new Run(text.Substring(startIndex, index - startIndex)));
+                    if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
+
                     index++;
 
                     var span = new Span() { FontSize = 20 };
@@ -158,7 +166,7 @@ namespace ModMyFactory.MVVM
                 }
                 else if (text.PositionEquals(index, "\r\n")) // New line
                 {
-                    inlines.Add(new Run(text.Substring(startIndex, index - startIndex)));
+                    if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
                     inlines.Add(new LineBreak());
 
                     index += 2;
@@ -166,7 +174,7 @@ namespace ModMyFactory.MVVM
                 }
                 else if ((c == '\r') || (c == '\n')) // New line
                 {
-                    inlines.Add(new Run(text.Substring(startIndex, index - startIndex)));
+                    if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
                     inlines.Add(new LineBreak());
 
                     index++;
@@ -176,7 +184,8 @@ namespace ModMyFactory.MVVM
                 {
                     if ((index == startIndex) || char.IsWhiteSpace(text[index - 1]))
                     {
-                        inlines.Add(new Run(text.Substring(startIndex, index - startIndex)));
+                        if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
+
                         index += 2;
 
                         var span = new Span() { FontWeight = FontWeights.Bold };
@@ -194,7 +203,8 @@ namespace ModMyFactory.MVVM
                 {
                     if ((index == startIndex) || char.IsWhiteSpace(text[index - 1]))
                     {
-                        inlines.Add(new Run(text.Substring(startIndex, index - startIndex)));
+                        if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
+
                         index++;
 
                         var span = new Span() { FontStyle = FontStyles.Italic };
@@ -208,12 +218,35 @@ namespace ModMyFactory.MVVM
                         index++;
                     }
                 }
+                else if ((c == '*') || (c == '-')) // List
+                {
+                    if (((index == startIndex) || string.IsNullOrWhiteSpace(text.Substring(startIndex, length))
+                        && ((inlines.Count == 0) || (inlines.Last() is LineBreak)))
+                        && ((index + 1 >= text.Length) || ((text[index + 1] != '*') && (text[index + 1] != '-'))))
+                    {
+                        index++;
+
+                        var list = new InlineList();
+                        list.ApplyTemplate();
+                        var container = new InlineUIContainer(list);
+                        FormatText(text, list.Inlines, ref index, "\r\n", "\r", "\n");
+                        inlines.Add(container);
+                        inlines.Add(new LineBreak());
+
+                        startIndex = index;
+                    }
+                    else
+                    {
+                        index++;
+                    }
+                }
                 else if (c == '[') // Link
                 {
                     int endIndex = text.IndexOf(']', index);
                     if (endIndex > -1)
                     {
-                        inlines.Add(new Run(text.Substring(startIndex, index - startIndex)));
+                        if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
+
                         index++;
 
                         var link = new Hyperlink(new Run(text.Substring(index, endIndex - index)));
@@ -252,7 +285,7 @@ namespace ModMyFactory.MVVM
                 {
                     if ((index == startIndex) || char.IsWhiteSpace(text[index - 1]))
                     {
-                        inlines.Add(new Run(text.Substring(startIndex, index - startIndex)));
+                        if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
 
                         int[] endings =
                         {
@@ -289,7 +322,7 @@ namespace ModMyFactory.MVVM
                 }
             }
 
-            int length = Math.Min(index - startIndex, text.Length - startIndex);
+            length = Math.Min(index - startIndex, text.Length - startIndex);
             if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
         }
 
