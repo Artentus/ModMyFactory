@@ -1,11 +1,10 @@
 ﻿<Application x:Class="ModMyFactory.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ModMyFactory"
              xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
+             xmlns:controls="clr-namespace:ModMyFactory.Controls"
              xmlns:converter="clr-namespace:ModMyFactory.MVVM.Converters"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             xmlns:core="clr-namespace:WPFCore.Windows;assembly=wpfcore"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -28,12 +27,6 @@
             <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource SelectionColor}"/>
 
             <converter:MultiplyConverter x:Key="MultiplyConverter"/>
-
-            <Style x:Key="{x:Type Window}" TargetType="{x:Type Window}">
-                <Style.Setters>
-                    <Setter Property="UseLayoutRounding" Value="True"/>
-                </Style.Setters>
-            </Style>
 
             <Style x:Key="{x:Type Image}" TargetType="{x:Type Image}">
                 <Style.Setters>
@@ -298,7 +291,7 @@
                 </Setter>
             </Style>
 
-            <Style x:Key="{x:Type mvvm:DragDropReadyListBox}" TargetType="{x:Type mvvm:DragDropReadyListBox}" BasedOn="{StaticResource {x:Type ListBox}}"/>
+            <Style x:Key="{x:Type controls:DragDropReadyListBox}" TargetType="{x:Type controls:DragDropReadyListBox}" BasedOn="{StaticResource {x:Type ListBox}}"/>
 
             <Style x:Key="{x:Type ListBoxItem}" TargetType="{x:Type ListBoxItem}">
                 <Setter Property="OverridesDefaultStyle" Value="true"/>
@@ -554,7 +547,7 @@
                 </Setter>
             </Style>
 
-            <Style x:Key="{x:Type mvvm:DragDropReadyListBoxItem}" TargetType="{x:Type mvvm:DragDropReadyListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}"/>
+            <Style x:Key="{x:Type controls:DragDropReadyListBoxItem}" TargetType="{x:Type controls:DragDropReadyListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}"/>
 
             <Style TargetType="ContextMenu">
                 <Setter Property="OverridesDefaultStyle" Value="True"/>
@@ -1094,8 +1087,8 @@
                     </Setter>
                 </Style.Setters>
             </Style>
-            
-            <Style x:Key="{x:Type mvvm:DefaultExpandedExpander}" TargetType="{x:Type mvvm:DefaultExpandedExpander}">
+
+            <Style x:Key="{x:Type controls:DefaultExpandedExpander}" TargetType="{x:Type controls:DefaultExpandedExpander}">
                 <Style.Setters>
                     <Setter Property="Template">
                         <Setter.Value>
@@ -1390,12 +1383,12 @@
                     </Setter>
                 </Style.Setters>
             </Style>
-            
-            <Style x:Key="{x:Type mvvm:FormattingTextBlock}" TargetType="{x:Type mvvm:FormattingTextBlock}">
+
+            <Style x:Key="{x:Type controls:FormattingTextBlock}" TargetType="{x:Type controls:FormattingTextBlock}">
                 <Style.Setters>
                     <Setter Property="Template">
                         <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type mvvm:FormattingTextBlock}">
+                            <ControlTemplate TargetType="{x:Type controls:FormattingTextBlock}">
                                 <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                                     <TextBlock x:Name="PART_ContentHost" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                 </Border>
@@ -1404,12 +1397,12 @@
                     </Setter>
                 </Style.Setters>
             </Style>
-            
-            <Style x:Key="{x:Type mvvm:InlineList}" TargetType="{x:Type mvvm:InlineList}">
+
+            <Style x:Key="{x:Type controls:InlineList}" TargetType="{x:Type controls:InlineList}">
                 <Style.Setters>
                     <Setter Property="Template">
                         <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type mvvm:InlineList}">
+                            <ControlTemplate TargetType="{x:Type controls:InlineList}">
                                 <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>

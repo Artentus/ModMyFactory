@@ -8,7 +8,7 @@ using System.Windows.Documents;
 using System.Windows.Navigation;
 using ModMyFactory.Helpers;
 
-namespace ModMyFactory.MVVM
+namespace ModMyFactory.Controls
 {
     class FormattingTextBlock : Control
     {

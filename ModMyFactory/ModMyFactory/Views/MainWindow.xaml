@@ -1,14 +1,14 @@
-﻿<mvvm:LayoutRoundingWindow x:Class="ModMyFactory.Views.MainWindow" x:ClassModifier="internal"
+﻿<controls:LayoutRoundingWindow x:Class="ModMyFactory.Views.MainWindow" x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ModMyFactory"
         xmlns:converters="clr-namespace:ModMyFactory.MVVM.Converters"
         xmlns:vm="clr-namespace:ModMyFactory.ViewModels"
         xmlns:lang="clr-namespace:ModMyFactory.Lang"
         xmlns:model="clr-namespace:ModMyFactory.Models"
         xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
+        xmlns:controls="clr-namespace:ModMyFactory.Controls"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="{DynamicResource MainWindowTitle}" Width="800" Height="600"
@@ -373,20 +373,20 @@
                     </Grid>
                 </ToggleButton>
             </Grid>
-            <mvvm:DragDropReadyListBox x:Name="ModsListBox" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding ModsView}"
+            <controls:DragDropReadyListBox x:Name="ModsListBox" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding ModsView}"
                                        IsSynchronizedWithCurrentItem="False" SelectionMode="Extended" ScrollViewer.VerticalScrollBarVisibility="Visible"
                                        PreviewMouseDown="ModsListBoxPreviewMouseDownHandler" PreviewMouseMove="ModsListBoxPreviewMouseMoveHandler"
                                        PreviewMouseUp="ModsListBoxPreviewMouseUpHandler">
-                <mvvm:DragDropReadyListBox.ItemContainerStyle>
-                    <Style TargetType="mvvm:DragDropReadyListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                <controls:DragDropReadyListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type controls:DragDropReadyListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                         <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
                         <Setter Property="ToolTipService.InitialShowDelay" Value="800"/>
                         <Setter Property="ToolTipService.ShowDuration" Value="20000"/>
                         <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
                     </Style>
-                </mvvm:DragDropReadyListBox.ItemContainerStyle>
+                </controls:DragDropReadyListBox.ItemContainerStyle>
                 
-                <mvvm:DragDropReadyListBox.GroupStyle>
+                <controls:DragDropReadyListBox.GroupStyle>
                     <GroupStyle>
                         <GroupStyle.Panel>
                             <ItemsPanelTemplate>
@@ -401,8 +401,8 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="{x:Type GroupItem}">
-                                                <mvvm:DefaultExpandedExpander>
-                                                    <mvvm:DefaultExpandedExpander.Header>
+                                                <controls:DefaultExpandedExpander>
+                                                    <controls:DefaultExpandedExpander.Header>
                                                         <Grid>
                                                             <Grid.RowDefinitions>
                                                                 <RowDefinition Height="26"/>
@@ -416,10 +416,10 @@
                                                             <TextBlock Grid.Row="0" Grid.Column="0" Margin="8,2" VerticalAlignment="Center" FontSize="14" Text="{Binding Name}"/>
                                                             <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,-24,-4" Fill="{StaticResource SelectionBrush}"/>
                                                         </Grid>
-                                                    </mvvm:DefaultExpandedExpander.Header>
+                                                    </controls:DefaultExpandedExpander.Header>
                                                     
                                                     <ItemsPresenter Margin="0,4,0,0"/>
-                                                </mvvm:DefaultExpandedExpander>
+                                                </controls:DefaultExpandedExpander>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
@@ -427,9 +427,9 @@
                             </Style>
                         </GroupStyle.ContainerStyle>
                     </GroupStyle>
-                </mvvm:DragDropReadyListBox.GroupStyle>
-                
-                <mvvm:DragDropReadyListBox.ItemTemplate>
+                </controls:DragDropReadyListBox.GroupStyle>
+
+                <controls:DragDropReadyListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type model:Mod}">
                         <Grid Margin="2">
                             <Grid.ColumnDefinitions>
@@ -444,9 +444,9 @@
                                     CommandParameter="{StaticResource True}" Command="{Binding DeleteCommand}"/>
                         </Grid>
                     </DataTemplate>
-                </mvvm:DragDropReadyListBox.ItemTemplate>
-                
-                <mvvm:DragDropReadyListBox.ContextMenu>
+                </controls:DragDropReadyListBox.ItemTemplate>
+
+                <controls:DragDropReadyListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="{DynamicResource ActivateSelectedModsMenuItem}" Command="{Binding ActivateSelectedModsCommand}"/>
                         <MenuItem Header="{DynamicResource DeactivateSelectedModsMenuItem}" Command="{Binding DeactivateSelectedModsCommand}"/>
@@ -457,8 +457,8 @@
                         <MenuItem Header="{DynamicResource SelectActiveModsMenuItem}" Command="{Binding SelectActiveModsCommand}"/>
                         <MenuItem Header="{DynamicResource SelectInactiveModsMenuItem}" Command="{Binding SelectInactiveModsCommand}"/>
                     </ContextMenu>
-                </mvvm:DragDropReadyListBox.ContextMenu>
-            </mvvm:DragDropReadyListBox>
+                </controls:DragDropReadyListBox.ContextMenu>
+            </controls:DragDropReadyListBox>
             <DockPanel Grid.Row="2" Grid.Column="0" Margin="0,4,0,0">
                 <Border DockPanel.Dock="Left" Background="{StaticResource SelectionBrush}">
                     <Image Margin="1" Width="22" Height="22" Stretch="None" Source="{StaticResource SearchIcon}"/>
@@ -519,11 +519,11 @@
                     </Grid>
                 </ToggleButton>
             </Grid>
-            <mvvm:DragDropReadyListBox x:Name="ModpacksListBox" Grid.Row="1" Grid.Column="2" ItemsSource="{Binding ModpacksView}"
+            <controls:DragDropReadyListBox x:Name="ModpacksListBox" Grid.Row="1" Grid.Column="2" ItemsSource="{Binding ModpacksView}"
                                        IsSynchronizedWithCurrentItem="False" SelectionMode="Extended" AllowDrop="True" ScrollViewer.VerticalScrollBarVisibility="Visible"
                       PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler" MouseMove="ModpackListBoxMouseMoveHandler"
                       PreviewMouseUp="ModpackListBoxPreviewMouseUpHandler" Drop="ModpackListBoxDropHandler" DragOver="ModpackListBoxDragOverHandler">
-                <mvvm:DragDropReadyListBox.Resources>
+                <controls:DragDropReadyListBox.Resources>
                     <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
                     
                     <DataTemplate x:Key="SubitemTemplate" DataType="{x:Type model:IModReference}">
@@ -581,15 +581,15 @@
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
-                </mvvm:DragDropReadyListBox.Resources>
+                </controls:DragDropReadyListBox.Resources>
 
-                <mvvm:DragDropReadyListBox.ItemContainerStyle>
-                    <Style TargetType="mvvm:DragDropReadyListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                <controls:DragDropReadyListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type controls:DragDropReadyListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                         <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
                     </Style>
-                </mvvm:DragDropReadyListBox.ItemContainerStyle>
+                </controls:DragDropReadyListBox.ItemContainerStyle>
 
-                <mvvm:DragDropReadyListBox.ItemTemplate>
+                <controls:DragDropReadyListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type model:Modpack}">
                         <Expander>
                             <Expander.Header>
@@ -629,9 +629,9 @@
                             </Border>
                         </Expander>
                     </DataTemplate>
-                </mvvm:DragDropReadyListBox.ItemTemplate>
-                
-                <mvvm:DragDropReadyListBox.ContextMenu>
+                </controls:DragDropReadyListBox.ItemTemplate>
+
+                <controls:DragDropReadyListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="{DynamicResource ActivateSelectedModpacksMenuItem}" Command="{Binding ActivateSelectedModpacksCommand}"/>
                         <MenuItem Header="{DynamicResource DeactivateSelectedModpacksMenuItem}" Command="{Binding DeactivateSelectedModpacksCommand}"/>
@@ -642,8 +642,8 @@
                         <MenuItem Header="{DynamicResource SelectActiveModpacksMenuItem}" Command="{Binding SelectActiveModpacksCommand}"/>
                         <MenuItem Header="{DynamicResource SelectInactiveModpacksMenuItem}" Command="{Binding SelectInactiveModpacksCommand}"/>
                     </ContextMenu>
-                </mvvm:DragDropReadyListBox.ContextMenu>
-            </mvvm:DragDropReadyListBox>
+                </controls:DragDropReadyListBox.ContextMenu>
+            </controls:DragDropReadyListBox>
             <DockPanel Grid.Row="2" Grid.Column="2" Margin="0,4,0,0">
                 <Border DockPanel.Dock="Left" Background="{StaticResource SelectionBrush}">
                     <Image Margin="1" Width="22" Height="22" Stretch="None" Source="{StaticResource SearchIcon}"/>
@@ -663,4 +663,4 @@
             
         </Grid>
     </Grid>
-</mvvm:LayoutRoundingWindow>
+</controls:LayoutRoundingWindow>

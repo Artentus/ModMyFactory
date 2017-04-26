@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
-namespace ModMyFactory.MVVM
+namespace ModMyFactory.Controls
 {
     class InlineList : Control
     {
