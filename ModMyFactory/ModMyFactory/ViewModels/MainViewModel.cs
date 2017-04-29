@@ -750,7 +750,7 @@ namespace ModMyFactory.ViewModels
                         App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
                         App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
                         MessageBoxButton.OK, MessageBoxImage.Error);
-                    throw;
+                    return;
                 }
 
                 if (modInfos != null)
