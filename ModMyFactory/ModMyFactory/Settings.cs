@@ -112,9 +112,9 @@ namespace ModMyFactory
 
         public bool IncludePreReleasesForUpdate;
 
+        [DefaultValue(true)]
         public bool AlwaysUpdateZipped;
 
-        [DefaultValue(true)]
         public bool KeepOldModVersions;
 
         [JsonConstructor]
