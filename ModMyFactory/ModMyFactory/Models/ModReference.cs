@@ -13,6 +13,8 @@ namespace ModMyFactory.Models
 
         public string DisplayName => Mod.Title;
 
+        public string VersionInfo => $"({Mod.FactorioVersion})";
+
         public BitmapImage Image { get; }
 
         public bool? Active
