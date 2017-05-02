@@ -988,7 +988,10 @@ namespace ModMyFactory.ViewModels
                 {
                     string applicationPath = Path.GetFullPath(Assembly.GetExecutingAssembly().Location);
                     string iconPath = Path.Combine(App.Instance.ApplicationDirectoryPath, "Factorio_Icon.ico");
-                    string versionString = propertiesViewModel.SelectedVersion.VersionString;
+                    string versionString =
+                        (propertiesViewModel.UseExactVersion || propertiesViewModel.SelectedVersion.IsSpecialVersion)
+                        ? propertiesViewModel.SelectedVersion.VersionString
+                        : propertiesViewModel.SelectedVersion.Version.ToString(2);
                     string modpackName = propertiesViewModel.SelectedModpack?.Name;
 
                     string arguments = $"--factorio-version=\"{versionString}\"";

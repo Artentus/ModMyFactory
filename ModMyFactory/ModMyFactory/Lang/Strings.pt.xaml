@@ -316,6 +316,10 @@
     
     <!-- buttons -->
     <sys:String x:Key="CreateButton">Criar</sys:String>
+    
+    
+    <!-- checkboxes -->
+    <sys:String x:Key="UseExactVersionCheckBox">Use exact version</sys:String>
 
 
     <!--
