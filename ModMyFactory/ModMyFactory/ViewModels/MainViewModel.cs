@@ -680,15 +680,15 @@ namespace ModMyFactory.ViewModels
                 });
                 OpenSavegameFolderCommand = new RelayCommand(() =>
                 {
-                    string savesPath = Path.Combine(App.Instance.AppDataPath, "saves");
-                    if (!Directory.Exists(savesPath)) Directory.CreateDirectory(savesPath);
-                    Process.Start(savesPath);
+                    var savegameDirectory = App.Instance.Settings.GetSavegameDirectory();
+                    if (!savegameDirectory.Exists) savegameDirectory.Create();
+                    Process.Start(savegameDirectory.FullName);
                 });
                 OpenScenarioFolderCommand = new RelayCommand(() =>
                 {
-                    string scenariosPath = Path.Combine(App.Instance.AppDataPath, "scenarios");
-                    if (!Directory.Exists(scenariosPath)) Directory.CreateDirectory(scenariosPath);
-                    Process.Start(scenariosPath);
+                    var scenariosDirectory = App.Instance.Settings.GetScenarioDirectory();
+                    if (!scenariosDirectory.Exists) scenariosDirectory.Create();
+                    Process.Start(scenariosDirectory.FullName);
                 });
 
                 RefreshCommand = new RelayCommand(Refresh);
