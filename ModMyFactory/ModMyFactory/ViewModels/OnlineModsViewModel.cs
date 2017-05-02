@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -417,7 +416,7 @@ namespace ModMyFactory.ViewModels
 
         private ModRelease GetNewestRelease(ExtendedModInfo info)
         {
-            return info.Releases.MaxBy(release => release.Version, new VersionComparer());
+            return info?.Releases.MaxBy(release => release.Version, new VersionComparer());
         }
 
         private async Task UpdateModAsyncInner(Mod oldMod, ModRelease newestRelease, string token, IProgress<double> progress, CancellationToken cancellationToken)
