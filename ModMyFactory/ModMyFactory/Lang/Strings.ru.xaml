@@ -276,6 +276,9 @@
     <sys:String x:Key="IncludePreReleasesGroupItem">Показывать пре-релизы при поиске обновлений</sys:String>
     <sys:String x:Key="UpdateZippedGroupItem">Всегда держать обновления модов в архивах</sys:String>
     <sys:String x:Key="KeepOldModVersionsGroupItem">Сохранять старые версии модов при обновлении</sys:String>
+    <sys:String x:Key="KeepExtractedModVersionsGroupItem">Keep old versions of extracted mods</sys:String>
+    <sys:String x:Key="KeepZippedModVersionsGroupItem">Keep old versions of zipped mods</sys:String>
+    <sys:String x:Key="KeepOldWhenNewFactorioGroupItem">Keep old mod versions when updating to a new Factorio version</sys:String>
     <sys:String x:Key="GlobalGroupItem">Глобально</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Директория программы</sys:String>

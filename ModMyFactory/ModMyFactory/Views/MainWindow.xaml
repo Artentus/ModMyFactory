@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:converters="clr-namespace:ModMyFactory.MVVM.Converters"
         xmlns:vm="clr-namespace:ModMyFactory.ViewModels"
         xmlns:lang="clr-namespace:ModMyFactory.Lang"
         xmlns:model="clr-namespace:ModMyFactory.Models"
@@ -40,11 +39,9 @@
         <BitmapImage x:Key="SettingsIcon" UriSource="../Images/Settings.png"/>
         <BitmapImage x:Key="UpdateIcon" UriSource="../Images/Update.png"/>
         <BitmapImage x:Key="WebDestinationIcon" UriSource="../Images/WebDestination.png"/>
-        
+
         <BitmapImage x:Key="SearchIcon" UriSource="../Images/Search.png"/>
-
-        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
-
+        
         <sys:Boolean x:Key="False">False</sys:Boolean>
         <sys:Boolean x:Key="True">True</sys:Boolean>
 

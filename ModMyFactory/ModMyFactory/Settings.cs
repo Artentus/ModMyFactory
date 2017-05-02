@@ -45,8 +45,11 @@ namespace ModMyFactory
                 UpdateSearchOnStartup = true,
                 IncludePreReleasesForUpdate = false,
 
-                AlwaysUpdateZipped = false,
-                KeepOldModVersions = true,
+                AlwaysUpdateZipped = true,
+                KeepOldModVersions = false,
+                KeepOldExtractedModVersions = true,
+                KeepOldZippedModVersions = false,
+                KeepOldModVersionsWhenNewFactorioVersion = true,
             };
             return defaultSettings;
         }
@@ -116,6 +119,14 @@ namespace ModMyFactory
         public bool AlwaysUpdateZipped;
 
         public bool KeepOldModVersions;
+
+        [DefaultValue(true)]
+        public bool KeepOldExtractedModVersions;
+
+        public bool KeepOldZippedModVersions;
+
+        [DefaultValue(true)]
+        public bool KeepOldModVersionsWhenNewFactorioVersion;
 
         [JsonConstructor]
         private Settings()

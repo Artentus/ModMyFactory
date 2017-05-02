@@ -301,8 +301,11 @@ namespace ModMyFactory.ViewModels
             asyncFetchExtendedInfoIndex = -1;
 
             DownloadCommand = new RelayCommand(async () => await DownloadSelectedModRelease(), () => SelectedRelease != null && !SelectedRelease.IsInstalled);
-            UpdateCommand = new RelayCommand(async () => await UpdateSelectedModRelease(), () => SelectedRelease != null && SelectedRelease.IsInstalled &&
-                    SelectedRelease != GetNewestRelease(ExtendedInfo, SelectedRelease));
+            UpdateCommand = new RelayCommand(async () => await UpdateSelectedModRelease(), () =>
+            {
+                ModRelease newestRelease = GetNewestRelease(ExtendedInfo);
+                return (SelectedRelease != null) && SelectedRelease.IsInstalled && !newestRelease.IsInstalled && (SelectedRelease != newestRelease);
+            });
             DeleteCommand = new RelayCommand(DeleteSelectedModRelease, () => SelectedRelease != null && SelectedRelease.IsInstalled);
             RefreshCommand = new RelayCommand(async () => await RefreshModList());
 
@@ -412,17 +415,9 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private ModRelease GetNewestRelease(ExtendedModInfo info, ModRelease currentRelease)
+        private ModRelease GetNewestRelease(ExtendedModInfo info)
         {
-            if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
-            {
-                return info.Releases.Where(release => release.FactorioVersion == currentRelease.FactorioVersion)
-                    .MaxBy(release => release.Version, new VersionComparer());
-            }
-            else
-            {
-                return info.Releases.MaxBy(release => release.Version, new VersionComparer());
-            }
+            return info.Releases.MaxBy(release => release.Version, new VersionComparer());
         }
 
         private async Task UpdateModAsyncInner(Mod oldMod, ModRelease newestRelease, string token, IProgress<double> progress, CancellationToken cancellationToken)
@@ -450,8 +445,7 @@ namespace ModMyFactory.ViewModels
             }
 
             InstalledMods.Add(newMod);
-            InstalledModpacks.ExchangeMods(oldMod, newMod);
-            oldMod.Update(newMod);
+            if (oldMod.Update(newMod)) InstalledModpacks.ExchangeMods(oldMod, newMod);
 
             ModpackTemplateList.Instance.Update(InstalledModpacks);
             ModpackTemplateList.Instance.Save();
@@ -462,8 +456,8 @@ namespace ModMyFactory.ViewModels
             string token;
             if (GlobalCredentials.Instance.LogIn(Window, out token))
             {
-                ModRelease newestRelease = GetNewestRelease(ExtendedInfo, SelectedRelease);
-                Mod oldMod = InstalledMods.FindByFactorioVersion(SelectedMod.Name, newestRelease.FactorioVersion);
+                ModRelease newestRelease = GetNewestRelease(ExtendedInfo);
+                Mod oldMod = InstalledMods.Find(SelectedMod.Name).MaxBy(mod => mod.Version);
 
                 var cancellationSource = new CancellationTokenSource();
                 var progressWindow = new ProgressWindow { Owner = Window };

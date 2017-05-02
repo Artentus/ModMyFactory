@@ -27,6 +27,7 @@
             <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource SelectionColor}"/>
 
             <converter:MultiplyConverter x:Key="MultiplyConverter"/>
+            <converter:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
 
             <Style x:Key="{x:Type Image}" TargetType="{x:Type Image}">
                 <Style.Setters>

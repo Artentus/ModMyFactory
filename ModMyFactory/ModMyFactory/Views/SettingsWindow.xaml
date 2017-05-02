@@ -53,6 +53,9 @@
                                     <RowDefinition Height="8"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
                                 <CheckBox Grid.Row="0" Margin="2" IsChecked="{Binding UpdateSearchOnStartup}" Content="{DynamicResource UpdateSearchGroupItem}"/>
@@ -60,6 +63,9 @@
 
                                 <CheckBox Grid.Row="3" Margin="2" IsChecked="{Binding AlwaysUpdateZipped}" Content="{DynamicResource UpdateZippedGroupItem}"/>
                                 <CheckBox Grid.Row="4" Margin="2" IsChecked="{Binding KeepOldModVersions}" Content="{DynamicResource KeepOldModVersionsGroupItem}"/>
+                                <CheckBox Grid.Row="5" Margin="20,2" IsChecked="{Binding KeepExtracted}" Content="{DynamicResource KeepExtractedModVersionsGroupItem}" IsEnabled="{Binding KeepOldModVersions, Converter={StaticResource InverseBooleanConverter}}"/>
+                                <CheckBox Grid.Row="6" Margin="20,2" IsChecked="{Binding KeepZipped}" Content="{DynamicResource KeepZippedModVersionsGroupItem}" IsEnabled="{Binding KeepOldModVersions, Converter={StaticResource InverseBooleanConverter}}"/>
+                                <CheckBox Grid.Row="7" Margin="20,2" IsChecked="{Binding KeepWhenNewFactorioVersion}" Content="{DynamicResource KeepOldWhenNewFactorioGroupItem}" IsEnabled="{Binding KeepOldModVersions, Converter={StaticResource InverseBooleanConverter}}"/>
                             </Grid>
                         </GroupBox>
 

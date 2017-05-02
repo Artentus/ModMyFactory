@@ -1020,12 +1020,12 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        #region ModpackImport
-
-        private ModRelease GetNewestRelease(ExtendedModInfo info)
+        private ModRelease GetNewestModRelease(ExtendedModInfo info)
         {
             return info.Releases.MaxBy(release => release.Version, new VersionComparer());
         }
+
+        #region ModpackImport
 
         private async Task<Tuple<List<ModRelease>, List<Tuple<Mod, ModExportTemplate>>>> GetModsToDownload(ExportTemplate template, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
@@ -1088,12 +1088,12 @@ namespace ModMyFactory.ViewModels
 
                         if (mods.Length == 0)
                         {
-                            ModRelease newestRelease = GetNewestRelease(modInfo);
+                            ModRelease newestRelease = GetNewestModRelease(modInfo);
                             toDownload.Add(newestRelease);
                         }
                         else
                         {
-                            ModRelease newestRelease = GetNewestRelease(modInfo);
+                            ModRelease newestRelease = GetNewestModRelease(modInfo);
 
                             if (!Mods.Contains(modTemplate.Name, newestRelease.Version))
                             {
@@ -1346,19 +1346,6 @@ namespace ModMyFactory.ViewModels
 
         #region ModUpdate
 
-        private ModRelease GetNewestRelease(ExtendedModInfo info, Mod current)
-        {
-            if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
-            {
-                return info.Releases.Where(release => release.FactorioVersion == current.FactorioVersion)
-                    .MaxBy(release => release.Version, new VersionComparer());
-            }
-            else
-            {
-                return info.Releases.MaxBy(release => release.Version, new VersionComparer());
-            }
-        }
-
         private async Task<List<ModUpdateInfo>> GetModUpdatesAsync(IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
             var modUpdates = new List<ModUpdateInfo>();
@@ -1383,8 +1370,8 @@ namespace ModMyFactory.ViewModels
 
                 if (extendedInfo != null)
                 {
-                    ModRelease newestRelease = GetNewestRelease(extendedInfo, mod);
-                    if ((newestRelease != null) && (newestRelease.Version > mod.Version))
+                    ModRelease newestRelease = GetNewestModRelease(extendedInfo);
+                    if ((newestRelease != null) && (newestRelease.Version > mod.Version) && !Mods.Contains(mod.Name, newestRelease.Version))
                         modUpdates.Add(new ModUpdateInfo(mod.Title, mod.Name, mod.Version, newestRelease.Version, mod, newestRelease));
                 }
 
@@ -1419,8 +1406,7 @@ namespace ModMyFactory.ViewModels
             }
 
             Mods.Add(newMod);
-            Modpacks.ExchangeMods(oldMod, newMod);
-            oldMod.Update(newMod);
+            if (oldMod.Update(newMod)) Modpacks.ExchangeMods(oldMod, newMod);
 
             ModpackTemplateList.Instance.Update(Modpacks);
             ModpackTemplateList.Instance.Save();
@@ -1700,6 +1686,9 @@ namespace ModMyFactory.ViewModels
             // Mod update
             settings.AlwaysUpdateZipped = settingsViewModel.AlwaysUpdateZipped;
             settings.KeepOldModVersions = settingsViewModel.KeepOldModVersions;
+            settings.KeepOldExtractedModVersions = settingsViewModel.KeepExtracted;
+            settings.KeepOldZippedModVersions = settingsViewModel.KeepZipped;
+            settings.KeepOldModVersionsWhenNewFactorioVersion = settingsViewModel.KeepWhenNewFactorioVersion;
 
             // Factorio location
             settings.FactorioDirectoryOption = settingsViewModel.FactorioDirectoryOption;

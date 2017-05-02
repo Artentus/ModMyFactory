@@ -55,6 +55,9 @@ namespace ModMyFactory.ViewModels
         bool includePreReleasesForUpdate;
         bool alwaysUpdateZipped;
         bool keepOldModVersions;
+        bool keepExtracted;
+        bool keepZipped;
+        bool keepWhenNewFactorioVersion;
 
         public bool UpdateSearchOnStartup
         {
@@ -104,6 +107,52 @@ namespace ModMyFactory.ViewModels
                 {
                     keepOldModVersions = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(KeepOldModVersions)));
+                }
+
+                if (keepOldModVersions)
+                {
+                    KeepExtracted = true;
+                    KeepZipped = true;
+                    KeepWhenNewFactorioVersion = true;
+                }
+            }
+        }
+
+        public bool KeepExtracted
+        {
+            get { return keepExtracted; }
+            set
+            {
+                if (value != keepExtracted)
+                {
+                    keepExtracted = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(KeepExtracted)));
+                }
+            }
+        }
+
+        public bool KeepZipped
+        {
+            get { return keepZipped; }
+            set
+            {
+                if (value != keepZipped)
+                {
+                    keepZipped = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(KeepZipped)));
+                }
+            }
+        }
+
+        public bool KeepWhenNewFactorioVersion
+        {
+            get { return keepWhenNewFactorioVersion; }
+            set
+            {
+                if (value != keepWhenNewFactorioVersion)
+                {
+                    keepWhenNewFactorioVersion = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(KeepWhenNewFactorioVersion)));
                 }
             }
         }
@@ -473,6 +522,9 @@ namespace ModMyFactory.ViewModels
             IncludePreReleasesForUpdate = settings.IncludePreReleasesForUpdate;
 
             AlwaysUpdateZipped = settings.AlwaysUpdateZipped;
+            KeepExtracted = settings.KeepOldExtractedModVersions;
+            KeepZipped = settings.KeepOldZippedModVersions;
+            KeepWhenNewFactorioVersion = settings.KeepOldModVersionsWhenNewFactorioVersion;
             KeepOldModVersions = settings.KeepOldModVersions;
 
             FactorioDirectoryIsAppData = false;
