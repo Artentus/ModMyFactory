@@ -131,7 +131,10 @@
     <Compile Include="Export\ModpackExportTemplate.cs" />
     <Compile Include="ModpackCollection.cs" />
     <Compile Include="MVVM\Converters\SystemIconConverter.cs" />
-    <Compile Include="MVVM\LayoutRoundingWindow.cs" />
+    <Compile Include="Controls\DefaultExpandedExpander.cs" />
+    <Compile Include="Controls\FormattingTextBlock.cs" />
+    <Compile Include="Controls\InlineList.cs" />
+    <Compile Include="Controls\LayoutRoundingWindow.cs" />
     <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\ModUpdateInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\UpdateTargetSorter.cs" />
@@ -189,8 +192,8 @@
     <Compile Include="Views\ProgressWindow.xaml.cs">
       <DependentUpon>ProgressWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MVVM\DragDropReadyListBox.cs" />
-    <Compile Include="MVVM\DragDropReadyListBoxItem.cs" />
+    <Compile Include="Controls\DragDropReadyListBox.cs" />
+    <Compile Include="Controls\DragDropReadyListBoxItem.cs" />
     <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="MVVM\MenuItemProperties.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
@@ -429,9 +432,6 @@
     <Resource Include="Images\Downloads.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Views.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\Update.png" />
   </ItemGroup>
   <ItemGroup>
@@ -461,6 +461,7 @@
     <Resource Include="Images\Experimental.png" />
     <Resource Include="Images\Menu.png" />
     <Resource Include="Images\Delete.png" />
+    <Resource Include="Images\Refresh_blue.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>

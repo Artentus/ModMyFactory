@@ -555,6 +555,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand ClearModpackFilterCommand { get; }
 
+        public RelayCommand RefreshCommand { get; }
+
         #endregion
 
         volatile bool modpacksLoading;
@@ -612,6 +614,13 @@ namespace ModMyFactory.ViewModels
             modpacksLoading = false;
         }
 
+        private void Refresh()
+        {
+            ModManager.LoadTemplates();
+            LoadFactorioVersions();
+            LoadModsAndModpacks();
+        }
+
         private MainViewModel()
         {
             if (!App.IsInDesignMode) // Make view model designer friendly.
@@ -631,9 +640,7 @@ namespace ModMyFactory.ViewModels
                 }
                 App.Instance.Settings.WarningShown = true;
 
-                ModManager.LoadTemplates();
-                LoadFactorioVersions();
-                LoadModsAndModpacks();
+                Refresh();
                 
 
                 modGridLength = App.Instance.Settings.ModGridLength;
@@ -653,6 +660,12 @@ namespace ModMyFactory.ViewModels
                 StartGameCommand = new RelayCommand(StartGame, () => SelectedFactorioVersion != null);
 
                 // 'Edit' menu
+                UpdateModsCommand = new RelayCommand(async () => await UpdateMods());
+
+                OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
+                OpenSettingsCommand = new RelayCommand(async () => await OpenSettings());
+
+                // 'View' menu
                 OpenFactorioFolderCommand = new RelayCommand(() =>
                 {
                     var factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
@@ -667,22 +680,18 @@ namespace ModMyFactory.ViewModels
                 });
                 OpenSavegameFolderCommand = new RelayCommand(() =>
                 {
-                    string savesPath = Path.Combine(App.Instance.AppDataPath, "saves");
-                    if (!Directory.Exists(savesPath)) Directory.CreateDirectory(savesPath);
-                    Process.Start(savesPath);
+                    var savegameDirectory = App.Instance.Settings.GetSavegameDirectory();
+                    if (!savegameDirectory.Exists) savegameDirectory.Create();
+                    Process.Start(savegameDirectory.FullName);
                 });
                 OpenScenarioFolderCommand = new RelayCommand(() =>
                 {
-                    string scenariosPath = Path.Combine(App.Instance.AppDataPath, "scenarios");
-                    if (!Directory.Exists(scenariosPath)) Directory.CreateDirectory(scenariosPath);
-                    Process.Start(scenariosPath);
+                    var scenariosDirectory = App.Instance.Settings.GetScenarioDirectory();
+                    if (!scenariosDirectory.Exists) scenariosDirectory.Create();
+                    Process.Start(scenariosDirectory.FullName);
                 });
 
-                UpdateModsCommand = new RelayCommand(async () => await UpdateMods());
-
-                OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
-
-                OpenSettingsCommand = new RelayCommand(async () => await OpenSettings());
+                RefreshCommand = new RelayCommand(Refresh);
 
                 // 'Info' menu
                 BrowseFactorioWebsiteCommand = new RelayCommand(() => Process.Start("https://www.factorio.com/"));
@@ -741,7 +750,7 @@ namespace ModMyFactory.ViewModels
                         App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
                         App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
                         MessageBoxButton.OK, MessageBoxImage.Error);
-                    throw;
+                    return;
                 }
 
                 if (modInfos != null)
@@ -979,7 +988,10 @@ namespace ModMyFactory.ViewModels
                 {
                     string applicationPath = Path.GetFullPath(Assembly.GetExecutingAssembly().Location);
                     string iconPath = Path.Combine(App.Instance.ApplicationDirectoryPath, "Factorio_Icon.ico");
-                    string versionString = propertiesViewModel.SelectedVersion.VersionString;
+                    string versionString =
+                        (propertiesViewModel.UseExactVersion || propertiesViewModel.SelectedVersion.IsSpecialVersion)
+                        ? propertiesViewModel.SelectedVersion.VersionString
+                        : propertiesViewModel.SelectedVersion.Version.ToString(2);
                     string modpackName = propertiesViewModel.SelectedModpack?.Name;
 
                     string arguments = $"--factorio-version=\"{versionString}\"";
@@ -1011,12 +1023,12 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        #region ModpackImport
-
-        private ModRelease GetNewestRelease(ExtendedModInfo info)
+        private ModRelease GetNewestModRelease(ExtendedModInfo info)
         {
             return info.Releases.MaxBy(release => release.Version, new VersionComparer());
         }
+
+        #region ModpackImport
 
         private async Task<Tuple<List<ModRelease>, List<Tuple<Mod, ModExportTemplate>>>> GetModsToDownload(ExportTemplate template, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
@@ -1079,12 +1091,12 @@ namespace ModMyFactory.ViewModels
 
                         if (mods.Length == 0)
                         {
-                            ModRelease newestRelease = GetNewestRelease(modInfo);
+                            ModRelease newestRelease = GetNewestModRelease(modInfo);
                             toDownload.Add(newestRelease);
                         }
                         else
                         {
-                            ModRelease newestRelease = GetNewestRelease(modInfo);
+                            ModRelease newestRelease = GetNewestModRelease(modInfo);
 
                             if (!Mods.Contains(modTemplate.Name, newestRelease.Version))
                             {
@@ -1337,19 +1349,6 @@ namespace ModMyFactory.ViewModels
 
         #region ModUpdate
 
-        private ModRelease GetNewestRelease(ExtendedModInfo info, Mod current)
-        {
-            if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
-            {
-                return info.Releases.Where(release => release.FactorioVersion == current.FactorioVersion)
-                    .MaxBy(release => release.Version, new VersionComparer());
-            }
-            else
-            {
-                return info.Releases.MaxBy(release => release.Version, new VersionComparer());
-            }
-        }
-
         private async Task<List<ModUpdateInfo>> GetModUpdatesAsync(IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
             var modUpdates = new List<ModUpdateInfo>();
@@ -1374,8 +1373,8 @@ namespace ModMyFactory.ViewModels
 
                 if (extendedInfo != null)
                 {
-                    ModRelease newestRelease = GetNewestRelease(extendedInfo, mod);
-                    if ((newestRelease != null) && (newestRelease.Version > mod.Version))
+                    ModRelease newestRelease = GetNewestModRelease(extendedInfo);
+                    if ((newestRelease != null) && (newestRelease.Version > mod.Version) && !Mods.Contains(mod.Name, newestRelease.Version))
                         modUpdates.Add(new ModUpdateInfo(mod.Title, mod.Name, mod.Version, newestRelease.Version, mod, newestRelease));
                 }
 
@@ -1410,8 +1409,7 @@ namespace ModMyFactory.ViewModels
             }
 
             Mods.Add(newMod);
-            Modpacks.ExchangeMods(oldMod, newMod);
-            oldMod.Update(newMod);
+            if (oldMod.Update(newMod)) Modpacks.ExchangeMods(oldMod, newMod);
 
             ModpackTemplateList.Instance.Update(Modpacks);
             ModpackTemplateList.Instance.Save();
@@ -1691,6 +1689,9 @@ namespace ModMyFactory.ViewModels
             // Mod update
             settings.AlwaysUpdateZipped = settingsViewModel.AlwaysUpdateZipped;
             settings.KeepOldModVersions = settingsViewModel.KeepOldModVersions;
+            settings.KeepOldExtractedModVersions = settingsViewModel.KeepExtracted;
+            settings.KeepOldZippedModVersions = settingsViewModel.KeepZipped;
+            settings.KeepOldModVersionsWhenNewFactorioVersion = settingsViewModel.KeepWhenNewFactorioVersion;
 
             // Factorio location
             settings.FactorioDirectoryOption = settingsViewModel.FactorioDirectoryOption;
@@ -1760,9 +1761,7 @@ namespace ModMyFactory.ViewModels
             // Reload everything if required
             if (managerModeChanged || moveFactorioDirectory || moveModDirectory)
             {
-                ModManager.LoadTemplates();
-                LoadFactorioVersions();
-                LoadModsAndModpacks();
+                Refresh();
             }
         }
 
@@ -1985,9 +1984,7 @@ namespace ModMyFactory.ViewModels
         {
             if (gameStarted)
             {
-                ModManager.LoadTemplates();
-                LoadFactorioVersions();
-                LoadModsAndModpacks();
+                Refresh();
             }
             else
             {

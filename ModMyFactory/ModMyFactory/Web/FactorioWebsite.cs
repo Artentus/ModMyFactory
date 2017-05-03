@@ -29,7 +29,7 @@ namespace ModMyFactory.Web
         public static bool LogIn(CookieContainer container, string username, SecureString password)
         {
             const string loginPage = "https://www.factorio.com/login";
-            const string pattern = "[0-9]{10}##[0-9a-f]{40}";
+            const string pattern = @"[0-9a-zA-Z_\-]{56}\.[0-9a-zA-Z_\-]{6}\.[0-9a-zA-Z_\-]{27}";
 
             // Get a csrf token.
             string document = WebHelper.GetDocument(loginPage, container);

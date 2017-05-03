@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace ModMyFactory.MVVM
+namespace ModMyFactory.Controls
 {
     public class DragDropReadyListBoxItem : ListBoxItem
     {

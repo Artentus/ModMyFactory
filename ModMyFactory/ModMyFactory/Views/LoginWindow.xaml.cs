@@ -2,7 +2,7 @@
 
 namespace ModMyFactory.Views
 {
-    public partial class LoginWindow : Window
+    partial class LoginWindow
     {
         public LoginWindow()
         {

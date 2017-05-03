@@ -8,6 +8,8 @@ namespace ModMyFactory.Models
     {
         string DisplayName { get; }
 
+        string VersionInfo { get; }
+
         BitmapImage Image { get; }
 
         bool? Active { get; set; }

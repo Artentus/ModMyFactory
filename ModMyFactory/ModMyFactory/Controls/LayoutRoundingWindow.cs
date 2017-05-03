@@ -1,6 +1,6 @@
 ﻿using WPFCore.Windows;
 
-namespace ModMyFactory.MVVM
+namespace ModMyFactory.Controls
 {
     abstract class LayoutRoundingWindow : ViewModelBoundWindow
     {

@@ -10,6 +10,7 @@ namespace ModMyFactory.ViewModels
     sealed class LinkPropertiesViewModel : ViewModelBase
     {
         FactorioVersion selectedVersion;
+        bool useExactVersion;
         Modpack selectedModpack;
         bool canCreate;
 
@@ -28,6 +29,19 @@ namespace ModMyFactory.ViewModels
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedVersion)));
 
                     CanCreate = selectedVersion != null;
+                }
+            }
+        }
+
+        public bool UseExactVersion
+        {
+            get { return useExactVersion; }
+            set
+            {
+                if (value != useExactVersion)
+                {
+                    useExactVersion = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(UseExactVersion)));
                 }
             }
         }

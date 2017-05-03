@@ -95,8 +95,13 @@ namespace ModMyFactory.Models
             {
                 list.Sort((a, b) =>
                 {
-                    int result = a.FactorioVersion.CompareTo(b.FactorioVersion);
-                    if (result == 0) result = a.Version.CompareTo(b.Version);
+                    int result = b.FactorioVersion.CompareTo(a.FactorioVersion);
+                    if (result == 0) result = b.Version.CompareTo(a.Version); // Same Factorio version
+                    if (result == 0) // Same mod version
+                    {
+                        if ((a is ExtractedMod) && (b is ZippedMod)) result = -1;
+                        else if ((b is ExtractedMod) && (a is ZippedMod)) result = 1;
+                    }
                     return result;
                 });
 
@@ -420,9 +425,18 @@ namespace ModMyFactory.Models
                         modpack.Mods.Remove(reference);
 
                 }
+
                 DeleteFilesystemObjects();
                 parentCollection.Remove(this);
-                ModManager.RemoveTemplate(Name);
+
+                if (OldVersion != null)
+                {
+                    parentCollection.Add(OldVersion);
+                }
+                else
+                {
+                    ModManager.RemoveTemplate(Name);
+                }
 
                 ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
                 ModpackTemplateList.Instance.Save();
@@ -450,7 +464,7 @@ namespace ModMyFactory.Models
                     RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
                 if (matches.Count > 0)
                 {
-                    Description = matches[0].Groups["description"].Value;
+                    Description = matches[0].Groups["description"].Value.Replace("\\n", "\n");
                 }
 
                 // Author
@@ -488,18 +502,28 @@ namespace ModMyFactory.Models
         /// Updates this mod to a provided new version.
         /// </summary>
         /// <param name="newVersion">The new version this mod is getting updated to.</param>
-        public void Update(Mod newVersion)
+        public bool Update(Mod newVersion)
         {
-            if (App.Instance.Settings.KeepOldModVersions)
+            var settings = App.Instance.Settings;
+            if (settings.KeepOldModVersions
+                || (settings.KeepOldExtractedModVersions && (this is ExtractedMod))
+                || (settings.KeepOldZippedModVersions && (this is ZippedMod))
+                || (settings.KeepOldModVersionsWhenNewFactorioVersion && (newVersion.FactorioVersion != this.FactorioVersion)))
             {
-                newVersion.OldVersion = this;
+                if ((settings.ManagerMode == ManagerMode.Global) || (newVersion.FactorioVersion == this.FactorioVersion))
+                {
+                    newVersion.OldVersion = this;
+                    parentCollection.Remove(this);
+                    return true;
+                }
             }
             else
             {
                 DeleteFilesystemObjects();
+                parentCollection.Remove(this);
+                return true;
             }
-
-            parentCollection.Remove(this);
+            return false;
         }
 
         /// <summary>

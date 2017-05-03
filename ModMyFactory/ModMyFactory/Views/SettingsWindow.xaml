@@ -1,11 +1,10 @@
-﻿<mvvm:LayoutRoundingWindow x:Class="ModMyFactory.Views.SettingsWindow" x:ClassModifier="internal"
+﻿<controls:LayoutRoundingWindow x:Class="ModMyFactory.Views.SettingsWindow" x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ModMyFactory"
         xmlns:vm="clr-namespace:ModMyFactory.ViewModels"
-        xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
+        xmlns:controls="clr-namespace:ModMyFactory.Controls"
         mc:Ignorable="d"
         Title="{DynamicResource SettingsWindowTitle}" Width="500" SizeToContent="Height"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
@@ -54,6 +53,9 @@
                                     <RowDefinition Height="8"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
                                 <CheckBox Grid.Row="0" Margin="2" IsChecked="{Binding UpdateSearchOnStartup}" Content="{DynamicResource UpdateSearchGroupItem}"/>
@@ -61,6 +63,9 @@
 
                                 <CheckBox Grid.Row="3" Margin="2" IsChecked="{Binding AlwaysUpdateZipped}" Content="{DynamicResource UpdateZippedGroupItem}"/>
                                 <CheckBox Grid.Row="4" Margin="2" IsChecked="{Binding KeepOldModVersions}" Content="{DynamicResource KeepOldModVersionsGroupItem}"/>
+                                <CheckBox Grid.Row="5" Margin="20,2" IsChecked="{Binding KeepExtracted}" Content="{DynamicResource KeepExtractedModVersionsGroupItem}" IsEnabled="{Binding KeepOldModVersions, Converter={StaticResource InverseBooleanConverter}}"/>
+                                <CheckBox Grid.Row="6" Margin="20,2" IsChecked="{Binding KeepZipped}" Content="{DynamicResource KeepZippedModVersionsGroupItem}" IsEnabled="{Binding KeepOldModVersions, Converter={StaticResource InverseBooleanConverter}}"/>
+                                <CheckBox Grid.Row="7" Margin="20,2" IsChecked="{Binding KeepWhenNewFactorioVersion}" Content="{DynamicResource KeepOldWhenNewFactorioGroupItem}" IsEnabled="{Binding KeepOldModVersions, Converter={StaticResource InverseBooleanConverter}}"/>
                             </Grid>
                         </GroupBox>
 
@@ -196,4 +201,4 @@
             <Button Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
         </StackPanel>
     </Grid>
-</mvvm:LayoutRoundingWindow>
+</controls:LayoutRoundingWindow>
