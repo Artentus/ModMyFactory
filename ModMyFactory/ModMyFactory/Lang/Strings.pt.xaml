@@ -177,12 +177,12 @@
     <sys:String x:Key="SettingsMenuItem">Configurações</sys:String>
     
     <!-- 'View' menu -->
-    <sys:String x:Key="ViewMenuItem">_View</sys:String>
+    <sys:String x:Key="ViewMenuItem">_Ver</sys:String>
     <sys:String x:Key="OpenFactorioFolderMenuItem">Abrir a pasta do Factorio</sys:String>
     <sys:String x:Key="OpenModFolderMenuItem">Abrir a pasta dos mods</sys:String>
     <sys:String x:Key="OpenSavegameFolderMenuItem">Abrir a pasta dos jogos guardados</sys:String>
     <sys:String x:Key="OpenScenarioFolderMenuItem">Abrir a pasta dos cenários</sys:String>
-    <sys:String x:Key="RefreshMenuItem">Refresh</sys:String>
+    <sys:String x:Key="RefreshMenuItem">Actualizar</sys:String>
     
     <!-- 'Language' menu -->
     <sys:String x:Key="LanguageMenuItem">_Idioma</sys:String>
