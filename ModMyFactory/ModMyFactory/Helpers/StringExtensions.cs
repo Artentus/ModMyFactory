@@ -156,5 +156,30 @@ namespace ModMyFactory.Helpers
         {
             return PositionEquals(value, startIndex, other, CultureInfo.CurrentCulture, CompareOptions.None);
         }
+
+        /// <summary>
+        /// Returns the string with the first letter being capitalized.
+        /// </summary>
+        public static string CapitalizeFirstChar(this string value, CultureInfo culture)
+        {
+            if (string.IsNullOrEmpty(value)) return string.Empty;
+
+            if (value.Length == 1)
+            {
+                return value.ToUpper(culture);
+            }
+            else
+            {
+                char first = value[0];
+                first = char.ToUpper(first, culture);
+
+                return first + value.Substring(1);
+            }
+        }
+
+        public static string CapitalizeFirstChar(this string value)
+        {
+            return CapitalizeFirstChar(value, CultureInfo.CurrentCulture);
+        }
     }
 }
