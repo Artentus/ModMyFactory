@@ -1349,13 +1349,34 @@ namespace ModMyFactory.ViewModels
 
         #region ModUpdate
 
+        private ICollection<Mod> GetUniqueMods()
+        {
+            var dict = new Dictionary<string, Mod>();
+
+            foreach (var mod in Mods)
+            {
+                if (dict.ContainsKey(mod.Name))
+                {
+                    if (dict[mod.Name].Version < mod.Version)
+                        dict[mod.Name] = mod;
+                }
+                else
+                {
+                    dict.Add(mod.Name, mod);
+                }
+            }
+
+            return dict.Values;
+        }  
+
         private async Task<List<ModUpdateInfo>> GetModUpdatesAsync(IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
+            var uniqueMods = GetUniqueMods();
             var modUpdates = new List<ModUpdateInfo>();
 
-            int modCount = Mods.Count;
+            int modCount = uniqueMods.Count;
             int modIndex = 0;
-            foreach (var mod in Mods)
+            foreach (var mod in uniqueMods)
             {
                 if (cancellationToken.IsCancellationRequested) return null;
 

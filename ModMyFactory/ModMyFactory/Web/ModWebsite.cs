@@ -33,7 +33,7 @@ namespace ModMyFactory.Web
                 if (cancellationToken.IsCancellationRequested)
                     return null;
 
-                ModInfo[] pageResult = await Task.Run<ModInfo[]>(() =>
+                ModInfo[] pageResult = await Task.Run(() =>
                 {
                     string document = WebHelper.GetDocument(currentPageUrl, null);
                     if (!string.IsNullOrEmpty(document))
@@ -60,22 +60,28 @@ namespace ModMyFactory.Web
             return result;
         }
 
-        private static async Task<ExtendedModInfo> GetExtendedInfoAsyncInner(string name)
+        private static ExtendedModInfo GetExtendedInfoInternal(string modName)
         {
-            string modUrl = $"{ModsUrl}/{name}";
+            string modUrl = $"{ModsUrl}/{modName}";
 
-            ExtendedModInfo info = await Task.Run<ExtendedModInfo>(() =>
+            string document = WebHelper.GetDocument(modUrl, null);
+            if (!string.IsNullOrEmpty(document))
             {
-                string document = WebHelper.GetDocument(modUrl, null);
-                if (!string.IsNullOrEmpty(document))
-                {
-                    ExtendedModInfo result = JsonHelper.Deserialize<ExtendedModInfo>(document);
-                    return result;
-                }
+                ExtendedModInfo result = JsonHelper.Deserialize<ExtendedModInfo>(document);
+                return result;
+            }
 
-                return default(ExtendedModInfo);
-            });
+            return default(ExtendedModInfo);
+        }
 
+        /// <summary>
+        /// Gets extended information about a specific mod.
+        /// </summary>
+        /// <param name="modName">The name ot the mod to get the extended information about.</param>
+        /// <returns>Returns extended information about the specified mod.</returns>
+        public static async Task<ExtendedModInfo> GetExtendedInfoAsync(string modName)
+        {
+            ExtendedModInfo info = await Task.Run(() => GetExtendedInfoInternal(modName));
             return info;
         }
 
@@ -86,7 +92,7 @@ namespace ModMyFactory.Web
         /// <returns>Returns extended information about the specified mod.</returns>
         public static async Task<ExtendedModInfo> GetExtendedInfoAsync(ModInfo mod)
         {
-            return await GetExtendedInfoAsyncInner(mod.Name);
+            return await GetExtendedInfoAsync(mod.Name);
         }
 
         /// <summary>
@@ -96,17 +102,7 @@ namespace ModMyFactory.Web
         /// <returns>Returns extended information about the specified mod.</returns>
         public static async Task<ExtendedModInfo> GetExtendedInfoAsync(Mod mod)
         {
-            return await GetExtendedInfoAsyncInner(mod.Name);
-        }
-
-        /// <summary>
-        /// Gets extended information about a specific mod.
-        /// </summary>
-        /// <param name="modName">The name ot the mod to get the extended information about.</param>
-        /// <returns>Returns extended information about the specified mod.</returns>
-        public static async Task<ExtendedModInfo> GetExtendedInfoAsync(string modName)
-        {
-            return await GetExtendedInfoAsyncInner(modName);
+            return await GetExtendedInfoAsync(mod.Name);
         }
 
         /// <summary>
