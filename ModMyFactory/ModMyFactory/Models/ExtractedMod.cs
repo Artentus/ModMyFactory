@@ -54,5 +54,10 @@ namespace ModMyFactory.Models
             await Directory.MoveToAsync(newDirectory.FullName);
             Directory = newDirectory;
         }
+
+        protected override bool AlwaysKeepOnUpdate()
+        {
+            return App.Instance.Settings.KeepOldExtractedModVersions;
+        }
     }
 }

@@ -62,5 +62,10 @@ namespace ModMyFactory.Models
         {
             await File.MoveToAsync(Path.Combine(destinationDirectory.FullName, File.Name));
         }
+
+        protected override bool AlwaysKeepOnUpdate()
+        {
+            return App.Instance.Settings.KeepOldZippedModVersions;
+        }
     }
 }

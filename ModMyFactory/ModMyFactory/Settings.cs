@@ -50,6 +50,7 @@ namespace ModMyFactory
                 KeepOldExtractedModVersions = true,
                 KeepOldZippedModVersions = false,
                 KeepOldModVersionsWhenNewFactorioVersion = true,
+                DownloadIntermediateUpdates = false,
             };
             return defaultSettings;
         }
@@ -127,6 +128,8 @@ namespace ModMyFactory
 
         [DefaultValue(true)]
         public bool KeepOldModVersionsWhenNewFactorioVersion;
+
+        public bool DownloadIntermediateUpdates;
 
         [JsonConstructor]
         private Settings()

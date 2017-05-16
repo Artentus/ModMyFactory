@@ -498,32 +498,41 @@ namespace ModMyFactory.Models
             DeleteCommand = new RelayCommand<bool?>(showPrompt => Delete(showPrompt ?? true));
         }
 
+        protected abstract bool AlwaysKeepOnUpdate();
+
+        private bool KeepOnNewFactorioVersion(Mod newVersion)
+        {
+            return App.Instance.Settings.KeepOldModVersionsWhenNewFactorioVersion &&
+                   (newVersion.FactorioVersion != this.FactorioVersion);
+        }
+
         /// <summary>
         /// Updates this mod to a provided new version.
         /// </summary>
         /// <param name="newVersion">The new version this mod is getting updated to.</param>
         public bool Update(Mod newVersion)
         {
-            var settings = App.Instance.Settings;
-            if (settings.KeepOldModVersions
-                || (settings.KeepOldExtractedModVersions && (this is ExtractedMod))
-                || (settings.KeepOldZippedModVersions && (this is ZippedMod))
-                || (settings.KeepOldModVersionsWhenNewFactorioVersion && (newVersion.FactorioVersion != this.FactorioVersion)))
+            newVersion.Active = this.Active;
+
+            if (App.Instance.Settings.KeepOldModVersions || AlwaysKeepOnUpdate() || KeepOnNewFactorioVersion(newVersion))
             {
-                if ((settings.ManagerMode == ManagerMode.Global) || (newVersion.FactorioVersion == this.FactorioVersion))
+                if ((App.Instance.Settings.ManagerMode == ManagerMode.Global) || (newVersion.FactorioVersion == this.FactorioVersion))
                 {
                     newVersion.OldVersion = this;
                     parentCollection.Remove(this);
                     return true;
                 }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
-                DeleteFilesystemObjects();
                 parentCollection.Remove(this);
+                DeleteFilesystemObjects();
                 return true;
             }
-            return false;
         }
 
         /// <summary>

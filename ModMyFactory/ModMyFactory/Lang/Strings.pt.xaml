@@ -279,6 +279,7 @@
     <sys:String x:Key="KeepExtractedModVersionsGroupItem">Manter as versões antigas dos mods extraídos</sys:String>
     <sys:String x:Key="KeepZippedModVersionsGroupItem">Manter as versões antigas dos mods que estão em arquivos zip</sys:String>
     <sys:String x:Key="KeepOldWhenNewFactorioGroupItem">Manter as versões antigas dos mods quando actualizar para uma nova versão do Factorio</sys:String>
+    <sys:String x:Key="UpdateIntermediateGroupItem">Also download mod updates for older Factorio versions</sys:String>
     <sys:String x:Key="GlobalGroupItem">Global</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Pasta da aplicação</sys:String>

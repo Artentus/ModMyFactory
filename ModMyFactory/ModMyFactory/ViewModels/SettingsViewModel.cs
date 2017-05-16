@@ -58,6 +58,7 @@ namespace ModMyFactory.ViewModels
         bool keepExtracted;
         bool keepZipped;
         bool keepWhenNewFactorioVersion;
+        bool updateIntermediate;
 
         public bool UpdateSearchOnStartup
         {
@@ -153,6 +154,19 @@ namespace ModMyFactory.ViewModels
                 {
                     keepWhenNewFactorioVersion = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(KeepWhenNewFactorioVersion)));
+                }
+            }
+        }
+
+        public bool UpdateIntermediate
+        {
+            get { return updateIntermediate; }
+            set
+            {
+                if (value != updateIntermediate)
+                {
+                    updateIntermediate = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(UpdateIntermediate)));
                 }
             }
         }
@@ -526,6 +540,7 @@ namespace ModMyFactory.ViewModels
             KeepZipped = settings.KeepOldZippedModVersions;
             KeepWhenNewFactorioVersion = settings.KeepOldModVersionsWhenNewFactorioVersion;
             KeepOldModVersions = settings.KeepOldModVersions;
+            UpdateIntermediate = settings.DownloadIntermediateUpdates;
 
             FactorioDirectoryIsAppData = false;
             FactorioDirectoryIsAppDirectory = false;

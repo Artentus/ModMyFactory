@@ -1713,6 +1713,7 @@ namespace ModMyFactory.ViewModels
             settings.KeepOldExtractedModVersions = settingsViewModel.KeepExtracted;
             settings.KeepOldZippedModVersions = settingsViewModel.KeepZipped;
             settings.KeepOldModVersionsWhenNewFactorioVersion = settingsViewModel.KeepWhenNewFactorioVersion;
+            settings.DownloadIntermediateUpdates = settingsViewModel.UpdateIntermediate;
 
             // Factorio location
             settings.FactorioDirectoryOption = settingsViewModel.FactorioDirectoryOption;
