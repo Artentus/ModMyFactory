@@ -312,6 +312,10 @@ namespace ModMyFactory.Controls
 
                         startIndex = index;
                     }
+                    else
+                    {
+                        index++;
+                    }
                 }
                 else if (text.PositionEquals(index, "http://") || text.PositionEquals(index, "https://")) // Implicit link
                 {
