@@ -7,7 +7,7 @@
         xmlns:modApi="clr-namespace:ModMyFactory.Web.ModApi"
         xmlns:controls="clr-namespace:ModMyFactory.Controls"
         mc:Ignorable="d"
-        Title="{DynamicResource OnlineModsWindowTitle}" Height="600" Width="800"
+        Title="{DynamicResource OnlineModsWindowTitle}"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
         WindowStartupLocation="CenterOwner"
         Icon="..\Images\MMF_Icon.ico"

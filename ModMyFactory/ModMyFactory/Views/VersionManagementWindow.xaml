@@ -7,7 +7,7 @@
         xmlns:model="clr-namespace:ModMyFactory.Models"
         xmlns:controls="clr-namespace:ModMyFactory.Controls"
         mc:Ignorable="d"
-        Title="{DynamicResource VersionManagementWindowTitle}" Height="400" Width="500"
+        Title="{DynamicResource VersionManagementWindowTitle}"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
         WindowStartupLocation="CenterOwner"
         Icon="..\Images\MMF_Icon.ico"

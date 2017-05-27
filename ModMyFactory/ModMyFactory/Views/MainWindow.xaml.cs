@@ -13,13 +13,15 @@ namespace ModMyFactory.Views
 {
     partial class MainWindow
     {
+        const int DefaultWidth = 800, DefaultHeight = 600;
+
         Point dragStartPoint;
         bool dragging;
         bool modsListBoxDeselectionOmitted;
         bool modpacksListBoxDeselectionOmitted;
 
         public MainWindow()
-            : base(App.Instance.Settings.MainWindowInfo)
+            : base(App.Instance.Settings.MainWindowInfo, DefaultWidth, DefaultHeight)
         {
             InitializeComponent();
 

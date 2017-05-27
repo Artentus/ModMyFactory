@@ -4,8 +4,10 @@ namespace ModMyFactory.Views
 {
     partial class OnlineModsWindow
     {
+        const int DefaultWidth = 800, DefaultHeight = 600;
+
         public OnlineModsWindow()
-            : base(App.Instance.Settings.OnlineModsWindowInfo)
+            : base(App.Instance.Settings.OnlineModsWindowInfo, DefaultWidth, DefaultHeight)
         {
             InitializeComponent();
 

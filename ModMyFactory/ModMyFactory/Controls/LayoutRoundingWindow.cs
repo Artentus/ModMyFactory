@@ -11,12 +11,15 @@ namespace ModMyFactory.Controls
             UseLayoutRounding = true;
         }
 
-        protected LayoutRoundingWindow(WindowInfo info)
+        protected LayoutRoundingWindow(WindowInfo info, int defaultWidth, int defaultHeight)
             : this()
         {
             if (info == WindowInfo.Empty)
             {
                 WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+                Width = defaultWidth;
+                Height = defaultHeight;
             }
             else
             {

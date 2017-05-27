@@ -8,8 +8,10 @@ namespace ModMyFactory.Views
 {
     partial class VersionManagementWindow
     {
+        const int DefaultWidth = 500, DefaultHeight = 400;
+
         public VersionManagementWindow()
-            : base(App.Instance.Settings.VersionManagerWindowInfo)
+            : base(App.Instance.Settings.VersionManagerWindowInfo, DefaultWidth, DefaultHeight)
         {
             InitializeComponent();
 
