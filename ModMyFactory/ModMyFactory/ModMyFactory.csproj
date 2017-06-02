@@ -135,6 +135,7 @@
     <Compile Include="Controls\FormattingTextBlock.cs" />
     <Compile Include="Controls\InlineList.cs" />
     <Compile Include="Controls\LayoutRoundingWindow.cs" />
+    <Compile Include="MVVM\Sorters\FactorioOnlineVersionSorter.cs" />
     <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\ModUpdateInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\UpdateTargetSorter.cs" />

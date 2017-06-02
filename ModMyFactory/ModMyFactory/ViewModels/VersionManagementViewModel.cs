@@ -100,6 +100,17 @@ namespace ModMyFactory.ViewModels
             return false;
         }
 
+        private bool GetVersionDownloadable(FactorioOnlineVersion version)
+        {
+            foreach (var localVersion in FactorioVersions)
+            {
+                if ((version.Version == localVersion.Version) && localVersion.IsFileSystemEditable)
+                    return false;
+            }
+
+            return true;
+        }
+
         private bool ShowVersionList(CookieContainer container, out FactorioOnlineVersion selectedVersion)
         {
             selectedVersion = null;
@@ -123,7 +134,7 @@ namespace ModMyFactory.ViewModels
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
-            versions.ForEach(item => item.Downloadable = !VersionAlreadyInstalled(item));
+            versions.ForEach(item => item.Downloadable = GetVersionDownloadable(item));
 
             var versionListWindow = new VersionListWindow { Owner = Window };
             var versionListViewModel = (VersionListViewModel)versionListWindow.ViewModel;

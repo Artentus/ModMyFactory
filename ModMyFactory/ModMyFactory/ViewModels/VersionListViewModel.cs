@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
+using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.Web;
 using WPFCore;
 
@@ -79,6 +80,7 @@ namespace ModMyFactory.ViewModels
             FactorioVersions = new ObservableCollection<FactorioOnlineVersion>();
             FactorioVersionsView = (ListCollectionView)(new CollectionViewSource() { Source = FactorioVersions }).View;
             FactorioVersionsView.Filter = VersionFilter;
+            FactorioVersionsView.CustomSort = new FactorioOnlineVersionSorter();
 
             if (!App.IsInDesignMode)
             {

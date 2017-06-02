@@ -67,7 +67,7 @@
                                 <CheckBox Grid.Row="5" Margin="20,2" IsChecked="{Binding KeepExtracted}" Content="{DynamicResource KeepExtractedModVersionsGroupItem}" IsEnabled="{Binding KeepOldModVersions, Converter={StaticResource InverseBooleanConverter}}"/>
                                 <CheckBox Grid.Row="6" Margin="20,2" IsChecked="{Binding KeepZipped}" Content="{DynamicResource KeepZippedModVersionsGroupItem}" IsEnabled="{Binding KeepOldModVersions, Converter={StaticResource InverseBooleanConverter}}"/>
                                 <CheckBox Grid.Row="7" Margin="20,2" IsChecked="{Binding KeepWhenNewFactorioVersion}" Content="{DynamicResource KeepOldWhenNewFactorioGroupItem}" IsEnabled="{Binding KeepOldModVersions, Converter={StaticResource InverseBooleanConverter}}"/>
-                                <CheckBox Grid.Row="8" Margin="2" IsChecked="{Binding UpdateIntermediate}" Content="{DynamicResource UpdateIntermediateGroupItem}"/>
+                                <!--<CheckBox Grid.Row="8" Margin="2" IsChecked="{Binding UpdateIntermediate}" Content="{DynamicResource UpdateIntermediateGroupItem}"/>-->
                             </Grid>
                         </GroupBox>
 
