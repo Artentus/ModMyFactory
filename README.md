@@ -32,6 +32,10 @@ Available locations are AppData, the ModMyFactory installation directory and com
 ModMyFactory has full support of localization.  
 Currently available languages are: English, German, Russian, Portuguese (hopefully more to come).
 
+### Download
+You can find the latest release of ModMyFactory [here](https://github.com/Artentus/ModMyFactory/releases/latest).  
+A full list of all releases can be found [here](https://github.com/Artentus/ModMyFactory/releases).
+
 ### System requirements
 ModMyFactory has the following system requirements:
 
