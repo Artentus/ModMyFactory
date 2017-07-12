@@ -57,7 +57,7 @@ namespace ModMyFactory.FactorioUpdate
             {
                 UpdateStep targetStep = group.MaxBy(step => step.To, new VersionComparer());
                 List<UpdateStep> stepChain = GetStepChain(updateSteps, versionToUpdate.Version, targetStep.To);
-                bool isValid = installedVersions.All(version => version.Version != targetStep.To);
+                bool isValid = installedVersions.All(version => version.IsSpecialVersion || !version.IsFileSystemEditable || version.Version != targetStep.To);
                 UpdateTarget target = new UpdateTarget(stepChain, targetStep.To, targetStep.IsStable, isValid);
                 targets.Add(target);
 
@@ -67,7 +67,7 @@ namespace ModMyFactory.FactorioUpdate
                     if (stableStep != null)
                     {
                         stepChain = GetStepChain(updateSteps, versionToUpdate.Version, stableStep.To);
-                        isValid = installedVersions.All(version => version.Version != stableStep.To);
+                        isValid = installedVersions.All(version => version.IsSpecialVersion || !version.IsFileSystemEditable || version.Version != stableStep.To);
                         target = new UpdateTarget(stepChain, stableStep.To, true, isValid);
                         targets.Add(target);
                     }
