@@ -36,6 +36,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand Translator3Command { get; }
 
+        public RelayCommand Translator4Command { get; }
+
         public AboutViewModel()
         {
             Url1Command = new RelayCommand(() => Process.Start("http://www.iconarchive.com/show/flag-icons-by-famfamfam.html"));
@@ -53,6 +55,7 @@ namespace ModMyFactory.ViewModels
             Translator1Command = new RelayCommand(() => Process.Start("https://github.com/Averssem"));
             Translator2Command = new RelayCommand(() => Process.Start("https://www.reddit.com/user/blackbat24"));
             Translator3Command = new RelayCommand(() => Process.Start("https://github.com/Corwin616"));
+            Translator3Command = new RelayCommand(() => Process.Start("https://github.com/JAMESY9868"));
         }
     }
 }
