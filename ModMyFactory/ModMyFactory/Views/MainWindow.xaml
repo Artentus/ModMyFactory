@@ -342,7 +342,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <CheckBox Grid.Row="1" Grid.Column="0" Margin="2" Content="{DynamicResource ModsHeader}" Style="{StaticResource AllActiveInactiveCheckBoxStyle}" IsChecked="{Binding AllModsActive}"/>
+                <CheckBox Grid.Row="1" Grid.Column="0" Margin="2,2,4,2" Content="{DynamicResource ModsHeader}" Style="{StaticResource AllActiveInactiveCheckBoxStyle}" IsChecked="{Binding AllModsActive}"/>
                 <Rectangle Grid.Row="2" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
 
                 <ToggleButton x:Name="ModsToggleButton" Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" VerticalAlignment="Bottom" Style="{StaticResource MenuToggleButtonStyle}"
@@ -488,7 +488,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <CheckBox Grid.Row="1" Grid.Column="0" Margin="2" Content="{DynamicResource ModpacksHeader}" Style="{StaticResource AllActiveInactiveCheckBoxStyle}" IsChecked="{Binding AllModpacksActive}"/>
+                <CheckBox Grid.Row="1" Grid.Column="0" Margin="2,2,4,2" Content="{DynamicResource ModpacksHeader}" Style="{StaticResource AllActiveInactiveCheckBoxStyle}" IsChecked="{Binding AllModpacksActive}"/>
                 <Rectangle Grid.Row="2" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
 
                 <ToggleButton x:Name="ModpacksToggleButton" Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" VerticalAlignment="Bottom" Style="{StaticResource MenuToggleButtonStyle}"

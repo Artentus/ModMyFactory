@@ -21,6 +21,8 @@ namespace ModMyFactory.Models
 
         public ModRelease NewestRelease { get; }
 
+        public Version FactorioVersion { get; }
+
         public bool IsSelected
         {
             get { return isSelected; }
@@ -34,14 +36,15 @@ namespace ModMyFactory.Models
             }
         }
 
-        public ModUpdateInfo(string title, string name, Version currentVersion, Version newestVersion, Mod mod, ModRelease newestRelease)
+        public ModUpdateInfo(Mod mod, ModRelease newestRelease)
         {
-            Title = title;
-            Name = name;
-            CurrentVersion = currentVersion;
-            NewestVersion = newestVersion;
+            Title = mod.Title;
+            Name = mod.Name;
+            CurrentVersion = mod.Version;
+            NewestVersion = newestRelease.Version;
             Mod = mod;
             NewestRelease = newestRelease;
+            FactorioVersion = mod.FactorioVersion;
             isSelected = true;
         }
     }

@@ -1396,7 +1396,7 @@ namespace ModMyFactory.ViewModels
                 {
                     ModRelease newestRelease = GetNewestModRelease(extendedInfo);
                     if ((newestRelease != null) && (newestRelease.Version > mod.Version) && !Mods.Contains(mod.Name, newestRelease.Version))
-                        modUpdates.Add(new ModUpdateInfo(mod.Title, mod.Name, mod.Version, newestRelease.Version, mod, newestRelease));
+                        modUpdates.Add(new ModUpdateInfo(mod, newestRelease));
                 }
 
                 modIndex++;
