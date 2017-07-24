@@ -148,7 +148,7 @@
     <sys:String x:Key="CancelButton">Отменить</sys:String>
     <sys:String x:Key="DownloadButton">Загрузить</sys:String>
     <sys:String x:Key="UpdateButton">Обновить</sys:String>
-    <sys:String x:Key="ClearFilterToolTip">Clear filter</sys:String>
+    <sys:String x:Key="ClearFilterToolTip">Очистить фильтр</sys:String>
 
 
     <!--
@@ -276,10 +276,10 @@
     <sys:String x:Key="IncludePreReleasesGroupItem">Показывать пре-релизы при поиске обновлений</sys:String>
     <sys:String x:Key="UpdateZippedGroupItem">Всегда держать обновления модов в архивах</sys:String>
     <sys:String x:Key="KeepOldModVersionsGroupItem">Сохранять старые версии модов при обновлении</sys:String>
-    <sys:String x:Key="KeepExtractedModVersionsGroupItem">Keep old versions of extracted mods</sys:String>
-    <sys:String x:Key="KeepZippedModVersionsGroupItem">Keep old versions of zipped mods</sys:String>
-    <sys:String x:Key="KeepOldWhenNewFactorioGroupItem">Keep old mod versions when updating to a new Factorio version</sys:String>
-    <sys:String x:Key="UpdateIntermediateGroupItem">Also download mod updates for older Factorio versions</sys:String>
+    <sys:String x:Key="KeepExtractedModVersionsGroupItem">Оставить предыдущие версии извлеченных модов</sys:String>
+    <sys:String x:Key="KeepZippedModVersionsGroupItem">Оставить предыдущие версии заархивированных модов</sys:String>
+    <sys:String x:Key="KeepOldWhenNewFactorioGroupItem">Оставить предыдущие версии модов при обновлении Factorio на новую версию</sys:String>
+    <sys:String x:Key="UpdateIntermediateGroupItem">Также загружать обновления модов для предыдущих версий Factorio</sys:String>
     <sys:String x:Key="GlobalGroupItem">Глобально</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Директория программы</sys:String>
@@ -320,7 +320,7 @@
     
     
     <!-- checkboxes -->
-    <sys:String x:Key="UseExactVersionCheckBox">Use exact version</sys:String>
+    <sys:String x:Key="UseExactVersionCheckBox">Использовать указанные версии модов</sys:String>
 
 
     <!--
