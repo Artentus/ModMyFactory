@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,9 +19,12 @@ namespace ModMyFactory
 {
     public static class Program
     {
-        static readonly object SyncRoot;
-        static NamedPipeServerStream server;
-        static ManualResetEvent resetEvent;
+        private const string NewInstanceGameStartedSpecifier = "_&_game_started_&_";
+
+
+        private static readonly object SyncRoot;
+        private static NamedPipeServerStream server;
+        private static ManualResetEvent resetEvent;
 
         /// <summary>
         /// Occurs if the program gets started again.
@@ -130,13 +134,21 @@ namespace ModMyFactory
                 if (FactorioSteamVersion.TryLoad(out steamVersion)) versions.Add(steamVersion);
 
                 FactorioVersion factorioVersion = null;
-                if (string.Equals(versionString, FactorioVersion.LatestKey, StringComparison.InvariantCultureIgnoreCase))
+                if (Regex.IsMatch(versionString, @"^[0-9]+\.[0-9]+$")) // Search for main version
                 {
-                    factorioVersion = versions.MaxBy(item => item.Version, new VersionComparer());
+                    var v = Version.Parse(versionString);
+                    factorioVersion = versions.Where(item => !item.IsSpecialVersion && item.Version.Major == v.Major && item.Version.Minor == v.Minor).MaxBy(item => item.Version, new VersionComparer());
                 }
-                else
+                else // Search for specific version
                 {
-                    factorioVersion = versions.Find(item => string.Equals(item.VersionString, versionString, StringComparison.InvariantCultureIgnoreCase));
+                    if (string.Equals(versionString, FactorioVersion.LatestKey, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        factorioVersion = versions.MaxBy(item => item.Version, new VersionComparer());
+                    }
+                    else
+                    {
+                        factorioVersion = versions.Find(item => string.Equals(item.VersionString, versionString, StringComparison.InvariantCultureIgnoreCase));
+                    }
                 }
 
                 if (factorioVersion != null)
@@ -263,7 +275,13 @@ namespace ModMyFactory
                         arguments[i] = argument;
                     }
 
-                    NewInstanceStarted?.Invoke(null, new InstanceStartedEventArgs(new CommandLine(arguments)));
+                    bool gameStarted = false;
+                    if (arguments.Contains(NewInstanceGameStartedSpecifier))
+                    {
+                        gameStarted = true;
+                        arguments = arguments.Take(arguments.Length - 1).ToArray();
+                    }
+                    NewInstanceStarted?.Invoke(null, new InstanceStartedEventArgs(new CommandLine(arguments), gameStarted));
                 }
 
                 resetEvent.Set();
@@ -352,9 +370,9 @@ namespace ModMyFactory
                         if (!hasHandle)
                         {
                             // App already running.
-                            if (StartGameIfSpecified(commandLine, true)) return 0;
+                            StartGameIfSpecified(commandLine, true);
+                            SendNewInstanceStartedMessage(args.Concat(new[] { NewInstanceGameStartedSpecifier }).ToArray());
 
-                            SendNewInstanceStartedMessage(args);
                             return 0;
                         }
                     }

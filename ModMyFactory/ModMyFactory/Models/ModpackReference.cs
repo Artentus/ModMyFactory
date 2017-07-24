@@ -12,6 +12,8 @@ namespace ModMyFactory.Models
 
         public string DisplayName => Modpack.Name;
 
+        public string VersionInfo => string.Empty;
+
         public BitmapImage Image { get; }
 
         public bool? Active

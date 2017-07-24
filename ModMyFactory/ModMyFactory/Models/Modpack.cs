@@ -318,7 +318,7 @@ namespace ModMyFactory.Models
 
         public void CancelEdit()
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
     }
 }

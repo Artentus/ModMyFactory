@@ -5,13 +5,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
@@ -118,14 +118,27 @@ namespace ModMyFactory.ViewModels
                     selectedMod = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedMod)));
 
-                    SelectedModName = selectedMod.Title;
-                    SelectedModLicense = selectedMod.License;
-                    SelectedModHomepage = selectedMod.Homepage;
-                    SelectedModGitHubUrl = selectedMod.GitHubUrl;
-                    SelectedRelease = null;
+                    if (selectedMod != null)
+                    {
+                        SelectedModName = selectedMod.Title;
+                        SelectedModLicense = selectedMod.License;
+                        SelectedModHomepage = selectedMod.Homepage;
+                        SelectedModGitHubUrl = selectedMod.GitHubUrl;
+                        SelectedRelease = null;
 
-                    asyncFetchExtendedInfoIndex++;
-                    new Action(async () => await LoadExtendedModInfoAsync(selectedMod, asyncFetchExtendedInfoIndex)).Invoke();
+                        asyncFetchExtendedInfoIndex++;
+                        new Action(async () => await LoadExtendedModInfoAsync(selectedMod, asyncFetchExtendedInfoIndex)).Invoke();
+                    }
+                    else
+                    {
+                        SelectedModName = string.Empty;
+                        SelectedModLicense = string.Empty;
+                        SelectedModHomepage = string.Empty;
+                        SelectedModGitHubUrl = string.Empty;
+                        SelectedRelease = null;
+
+                        ExtendedInfo = null;
+                    }
                 }
             }
         }
@@ -138,14 +151,31 @@ namespace ModMyFactory.ViewModels
                 extendedInfo = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(ExtendedInfo)));
 
-                SelectedModDescription = extendedInfo.Description;
-                SelectedReleases.Clear();
-                foreach (var release in extendedInfo.Releases)
+                if (extendedInfo != null)
                 {
-                    release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
-                    release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.FactorioVersion);
-                    SelectedReleases.Add(release);
+                    SelectedModDescription = extendedInfo.Description;
+                    SelectedReleases.Clear();
+                    bool releaseSelected = false;
+                    foreach (var release in extendedInfo.Releases)
+                    {
+                        release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
+                        release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.FactorioVersion);
+
+                        SelectedReleases.Add(release);
+                        if (!releaseSelected && !release.IsVersionInstalled)
+                        {
+                            SelectedRelease = release;
+                            releaseSelected = true;
+                        }
+                    }
                 }
+                else
+                {
+                    selectedModDescription = string.Empty;
+                    SelectedReleases.Clear();
+                }
+
+                CommandManager.InvalidateRequerySuggested();
             }
         }
 
@@ -230,6 +260,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand OpenGitHubLinkCommand { get; }
 
+        public RelayCommand ClearFilterCommand { get; }
+
         private async Task LoadExtendedModInfoAsync(ModInfo mod, int operationIndex)
         {
             ExtendedModInfo extendedInfo;
@@ -268,8 +300,11 @@ namespace ModMyFactory.ViewModels
             asyncFetchExtendedInfoIndex = -1;
 
             DownloadCommand = new RelayCommand(async () => await DownloadSelectedModRelease(), () => SelectedRelease != null && !SelectedRelease.IsInstalled);
-            UpdateCommand = new RelayCommand(async () => await UpdateSelectedModRelease(), () => SelectedRelease != null && SelectedRelease.IsInstalled &&
-                    SelectedRelease != GetNewestRelease(ExtendedInfo, SelectedRelease));
+            UpdateCommand = new RelayCommand(async () => await UpdateSelectedModRelease(), () =>
+            {
+                ModRelease newestRelease = GetNewestRelease(ExtendedInfo);
+                return (SelectedRelease != null) && SelectedRelease.IsInstalled && !newestRelease.IsInstalled && (SelectedRelease != newestRelease);
+            });
             DeleteCommand = new RelayCommand(DeleteSelectedModRelease, () => SelectedRelease != null && SelectedRelease.IsInstalled);
             RefreshCommand = new RelayCommand(async () => await RefreshModList());
 
@@ -313,6 +348,8 @@ namespace ModMyFactory.ViewModels
                     catch { }
                 }
             });
+
+            ClearFilterCommand = new RelayCommand(() => Filter = string.Empty);
         }
 
         public void UpdateSelectedReleases()
@@ -377,17 +414,9 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private ModRelease GetNewestRelease(ExtendedModInfo info, ModRelease currentRelease)
+        private ModRelease GetNewestRelease(ExtendedModInfo info)
         {
-            if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
-            {
-                return info.Releases.Where(release => release.FactorioVersion == currentRelease.FactorioVersion)
-                    .MaxBy(release => release.Version, new VersionComparer());
-            }
-            else
-            {
-                return info.Releases.MaxBy(release => release.Version, new VersionComparer());
-            }
+            return info?.Releases.MaxBy(release => release.Version, new VersionComparer());
         }
 
         private async Task UpdateModAsyncInner(Mod oldMod, ModRelease newestRelease, string token, IProgress<double> progress, CancellationToken cancellationToken)
@@ -415,8 +444,7 @@ namespace ModMyFactory.ViewModels
             }
 
             InstalledMods.Add(newMod);
-            InstalledModpacks.ExchangeMods(oldMod, newMod);
-            oldMod.Delete(false);
+            if (oldMod.Update(newMod)) InstalledModpacks.ExchangeMods(oldMod, newMod);
 
             ModpackTemplateList.Instance.Update(InstalledModpacks);
             ModpackTemplateList.Instance.Save();
@@ -427,8 +455,8 @@ namespace ModMyFactory.ViewModels
             string token;
             if (GlobalCredentials.Instance.LogIn(Window, out token))
             {
-                ModRelease newestRelease = GetNewestRelease(ExtendedInfo, SelectedRelease);
-                Mod oldMod = InstalledMods.FindByFactorioVersion(SelectedMod.Name, newestRelease.FactorioVersion);
+                ModRelease newestRelease = GetNewestRelease(ExtendedInfo);
+                Mod oldMod = InstalledMods.Find(SelectedMod.Name).MaxBy(mod => mod.Version);
 
                 var cancellationSource = new CancellationTokenSource();
                 var progressWindow = new ProgressWindow { Owner = Window };

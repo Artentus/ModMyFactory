@@ -148,6 +148,7 @@
     <sys:String x:Key="CancelButton">Abbrechen</sys:String>
     <sys:String x:Key="DownloadButton">Herunterladen</sys:String>
     <sys:String x:Key="UpdateButton">Aktualisieren</sys:String>
+    <sys:String x:Key="ClearFilterToolTip">Filter aufheben</sys:String>
 
 
     <!--
@@ -171,13 +172,17 @@
 
     <!-- 'Edit' menu -->
     <sys:String x:Key="EditMenuItem">_Bearbeiten</sys:String>
+    <sys:String x:Key="UpdateModsMenuItem">Mods aktualisieren</sys:String>
+    <sys:String x:Key="VersionManagerMenuItem">Versionsmanager</sys:String>
+    <sys:String x:Key="SettingsMenuItem">Einstellungen</sys:String>
+    
+    <!-- 'View' menu -->
+    <sys:String x:Key="ViewMenuItem">_Ansicht</sys:String>
     <sys:String x:Key="OpenFactorioFolderMenuItem">Factorio-Ordner öffnen</sys:String>
     <sys:String x:Key="OpenModFolderMenuItem">Mod-Ordner öffnen</sys:String>
     <sys:String x:Key="OpenSavegameFolderMenuItem">Spielstand-Ordner öffnen</sys:String>
     <sys:String x:Key="OpenScenarioFolderMenuItem">Szenario-Ordner öffnen</sys:String>
-    <sys:String x:Key="UpdateModsMenuItem">Mods aktualisieren</sys:String>
-    <sys:String x:Key="VersionManagerMenuItem">Versionsmanager</sys:String>
-    <sys:String x:Key="SettingsMenuItem">Einstellungen</sys:String>
+    <sys:String x:Key="RefreshMenuItem">Aktualisieren</sys:String>
 
     <!-- 'Language' menu -->
     <sys:String x:Key="LanguageMenuItem">_Sprache</sys:String>
@@ -205,20 +210,12 @@
     <sys:String x:Key="SelectInactiveModpacksMenuItem">Alle deaktivierten Modpacks auswählen</sys:String>
     
     <!-- hotkeys -->
-    <sys:String x:Key="DownloadModsHotkey">F7</sys:String>
-    <sys:String x:Key="AddModFilesHotkey">F8</sys:String>
     <sys:String x:Key="AddModFolderHotkey">Strg+F8</sys:String>
     <sys:String x:Key="NewModpackHotkey">Strg+N</sys:String>
     <sys:String x:Key="CreateLinkHotkey">Strg+L</sys:String>
     <sys:String x:Key="ExportModpacksHotkey">Strg+E</sys:String>
     <sys:String x:Key="ImportModpacksHotkey">Strg+I</sys:String>
-    <sys:String x:Key="StartGameHotkey">F5</sys:String>
-    <sys:String x:Key="CloseHotkey">Alt+F4</sys:String>
     <sys:String x:Key="UpdateModsHotkey">Strg+U</sys:String>
-    <sys:String x:Key="VersionManagerHotkey">F6</sys:String>
-    <sys:String x:Key="SettingsHotkey">F12</sys:String>
-    <sys:String x:Key="HelpHotkey">F1</sys:String>
-    <sys:String x:Key="UpdateHotkey">F3</sys:String>
     <sys:String x:Key="AboutHotkey">Strg+F1</sys:String>
     <sys:String x:Key="DeleteHotkey">Entf</sys:String>
 
@@ -289,6 +286,10 @@
     <sys:String x:Key="IncludePreReleasesGroupItem">Vorabversionen bei der Updatesuche miteinbeziehen</sys:String>
     <sys:String x:Key="UpdateZippedGroupItem">Mod-Updates immer als ZIP gepackt behalten</sys:String>
     <sys:String x:Key="KeepOldModVersionsGroupItem">Alte Mod-Versionen beim Updaten behalten</sys:String>
+    <sys:String x:Key="KeepExtractedModVersionsGroupItem">Alte Versionen von extrahierten Mods behalten</sys:String>
+    <sys:String x:Key="KeepZippedModVersionsGroupItem">Alte Versionen von gepackten Mods behalten</sys:String>
+    <sys:String x:Key="KeepOldWhenNewFactorioGroupItem">Alte Mod-Versionen behalten, wenn Factorio-Version verschieden</sys:String>
+    <sys:String x:Key="UpdateIntermediateGroupItem">Auch Mod-Updates für ältere Factorio-Versionen herunterladen</sys:String>
     <sys:String x:Key="GlobalGroupItem">Global</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Anwendungsverzeichnis</sys:String>
@@ -326,6 +327,10 @@
 
     <!-- buttons -->
     <sys:String x:Key="CreateButton">Erstellen</sys:String>
+    
+    
+    <!-- checkboxes -->
+    <sys:String x:Key="UseExactVersionCheckBox">Exakte Version verwenden</sys:String>
 
 
     <!--

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Media.Imaging;
+using ModMyFactory.Helpers;
 using WPFCore;
 using WPFCore.Commands;
 
@@ -20,7 +21,7 @@ namespace ModMyFactory.Lang
         /// <summary>
         /// The name of the language.
         /// </summary>
-        public string Name => culture.NativeName;
+        public string Name => culture.NativeName.CapitalizeFirstChar(culture);
 
         /// <summary>
         /// The english name of the language.

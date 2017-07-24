@@ -148,6 +148,7 @@
     <sys:String x:Key="CancelButton">Отменить</sys:String>
     <sys:String x:Key="DownloadButton">Загрузить</sys:String>
     <sys:String x:Key="UpdateButton">Обновить</sys:String>
+    <sys:String x:Key="ClearFilterToolTip">Clear filter</sys:String>
 
 
     <!--
@@ -171,13 +172,17 @@
     
     <!-- 'Edit' menu -->
     <sys:String x:Key="EditMenuItem">_Изменить</sys:String>
+    <sys:String x:Key="UpdateModsMenuItem">Обновить моды</sys:String>
+    <sys:String x:Key="VersionManagerMenuItem">Менеджер версий</sys:String>
+    <sys:String x:Key="SettingsMenuItem">Настройки</sys:String>
+    
+    <!-- 'View' menu -->
+    <sys:String x:Key="ViewMenuItem">_Вид</sys:String>
     <sys:String x:Key="OpenFactorioFolderMenuItem">Открыть папку Factorio</sys:String>
     <sys:String x:Key="OpenModFolderMenuItem">Открыть папку модов</sys:String>
     <sys:String x:Key="OpenSavegameFolderMenuItem">Открыть папку сохранений</sys:String>
     <sys:String x:Key="OpenScenarioFolderMenuItem">Открыть папку сценариев</sys:String>
-    <sys:String x:Key="UpdateModsMenuItem">Обновить моды</sys:String>
-    <sys:String x:Key="VersionManagerMenuItem">Менеджер версий</sys:String>
-    <sys:String x:Key="SettingsMenuItem">Настройки</sys:String>
+    <sys:String x:Key="RefreshMenuItem">Обновить</sys:String>
     
     <!-- 'Language' menu -->
     <sys:String x:Key="LanguageMenuItem">_Язык</sys:String>
@@ -203,24 +208,6 @@
     <sys:String x:Key="DeactivateSelectedModpacksMenuItem">Деактивировать выбранные модпаки</sys:String>
     <sys:String x:Key="SelectActiveModpacksMenuItem">Выбрать все активные модпаки</sys:String>
     <sys:String x:Key="SelectInactiveModpacksMenuItem">Выбрать все неактивные модпаки</sys:String>
-    
-    <!-- hotkeys -->
-    <sys:String x:Key="DownloadModsHotkey">F7</sys:String>
-    <sys:String x:Key="AddModFilesHotkey">F8</sys:String>
-    <sys:String x:Key="AddModFolderHotkey">Ctrl+F8</sys:String>
-    <sys:String x:Key="NewModpackHotkey">Ctrl+N</sys:String>
-    <sys:String x:Key="CreateLinkHotkey">Ctrl+L</sys:String>
-    <sys:String x:Key="ExportModpacksHotkey">Ctrl+E</sys:String>
-    <sys:String x:Key="ImportModpacksHotkey">Ctrl+I</sys:String>
-    <sys:String x:Key="StartGameHotkey">F5</sys:String>
-    <sys:String x:Key="CloseHotkey">Alt+F4</sys:String>
-    <sys:String x:Key="UpdateModsHotkey">Ctrl+U</sys:String>
-    <sys:String x:Key="VersionManagerHotkey">F6</sys:String>
-    <sys:String x:Key="SettingsHotkey">F12</sys:String>
-    <sys:String x:Key="HelpHotkey">F1</sys:String>
-    <sys:String x:Key="UpdateHotkey">F3</sys:String>
-    <sys:String x:Key="AboutHotkey">Ctrl+F1</sys:String>
-    <sys:String x:Key="DeleteHotkey">Del</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ModsHeader">Моды</sys:String>
@@ -289,6 +276,10 @@
     <sys:String x:Key="IncludePreReleasesGroupItem">Показывать пре-релизы при поиске обновлений</sys:String>
     <sys:String x:Key="UpdateZippedGroupItem">Всегда держать обновления модов в архивах</sys:String>
     <sys:String x:Key="KeepOldModVersionsGroupItem">Сохранять старые версии модов при обновлении</sys:String>
+    <sys:String x:Key="KeepExtractedModVersionsGroupItem">Keep old versions of extracted mods</sys:String>
+    <sys:String x:Key="KeepZippedModVersionsGroupItem">Keep old versions of zipped mods</sys:String>
+    <sys:String x:Key="KeepOldWhenNewFactorioGroupItem">Keep old mod versions when updating to a new Factorio version</sys:String>
+    <sys:String x:Key="UpdateIntermediateGroupItem">Also download mod updates for older Factorio versions</sys:String>
     <sys:String x:Key="GlobalGroupItem">Глобально</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Директория программы</sys:String>
@@ -326,6 +317,10 @@
     
     <!-- buttons -->
     <sys:String x:Key="CreateButton">Создать</sys:String>
+    
+    
+    <!-- checkboxes -->
+    <sys:String x:Key="UseExactVersionCheckBox">Use exact version</sys:String>
 
 
     <!--

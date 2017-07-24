@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Drawing;
+using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 using Newtonsoft.Json;
 
 namespace ModMyFactory
@@ -71,6 +74,15 @@ namespace ModMyFactory
             {
                 height = value;
                 IsEmpty = false;
+            }
+        }
+
+        public bool IsInScreenBounds
+        {
+            get
+            {
+                var rect = new Rectangle(PosX, PosY, Width, Height);
+                return Screen.AllScreens.Any(screen => screen.Bounds.IntersectsWith(rect));
             }
         }
 

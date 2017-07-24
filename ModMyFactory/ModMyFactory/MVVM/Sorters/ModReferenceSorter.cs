@@ -16,13 +16,13 @@ namespace ModMyFactory.MVVM.Sorters
 
             if (modReferenceX != null && modReferenceY != null)
             {
-                return string.Compare(x.DisplayName, y.DisplayName,
-                    StringComparison.InvariantCultureIgnoreCase);
+                int result = string.Compare(x.DisplayName, y.DisplayName, StringComparison.InvariantCultureIgnoreCase);
+                if (result == 0) result = modReferenceY.Mod.FactorioVersion.CompareTo(modReferenceX.Mod.FactorioVersion);
+                return result;
             }
             else if (modpackReferenceX != null && modpackReferenceY != null)
             {
-                return string.Compare(x.DisplayName, y.DisplayName,
-                    StringComparison.InvariantCultureIgnoreCase);
+                return string.Compare(x.DisplayName, y.DisplayName, StringComparison.InvariantCultureIgnoreCase);
             }
             else
             {
