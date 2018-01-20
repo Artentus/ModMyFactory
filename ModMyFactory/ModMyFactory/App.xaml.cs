@@ -77,19 +77,15 @@ namespace ModMyFactory
             string handlerName = RegistryHelper.RegisterHandler("FactorioModpack", 1, "Factorio modpack", $"\"{iconPath}\"");
             RegistryHelper.RegisterFileType(".fmp", handlerName, "application/json", PercievedFileType.Text);
 
+            // Reset log
+            ResetExceptionLog();
+
             // Generate log when crashed.
             if (createCrashLog)
             {
                 this.DispatcherUnhandledException += (sender, e) =>
                 {
-                    var logFile = new FileInfo(Path.Combine(AppDataPath, "crash-log.txt"));
-                    using (Stream stream = logFile.Open(FileMode.Create, FileAccess.Write))
-                    {
-                        using (var writer = new StreamWriter(stream))
-                        {
-                            writer.Write(e.Exception.ToString());
-                        }
-                    }
+                    WriteExceptionLog(e.Exception);
 
                     MessageBox.Show("A crash log has been created in %AppData%\\ModMyFactory.",
                         "ModMyFactory crashed!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -103,6 +99,45 @@ namespace ModMyFactory
         public App(bool createCrashLog = true)
             : this(createCrashLog, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ModMyFactory"))
         { }
+
+        /// <summary>
+        /// Deletes the default log file if it exists.
+        /// </summary>
+        private void ResetExceptionLog()
+        {
+            var logFile = new FileInfo(Path.Combine(AppDataPath, "error-log.txt"));
+            if (logFile.Exists) logFile.Delete();
+        }
+
+        /// <summary>
+        /// Writes an error message to the default log file.
+        /// </summary>
+        internal void WriteExceptionLog(Exception exception)
+        {
+            var logFile = new FileInfo(Path.Combine(AppDataPath, "error-log.txt"));
+            if (logFile.Exists)
+            {
+                using (Stream stream = logFile.Open(FileMode.Append, FileAccess.Write))
+                {
+                    using (var writer = new StreamWriter(stream))
+                    {
+                        writer.WriteLine();
+                        writer.WriteLine();
+                        writer.Write(exception.ToString());
+                    }
+                }
+            }
+            else
+            {
+                using (Stream stream = logFile.Open(FileMode.Create, FileAccess.Write))
+                {
+                    using (var writer = new StreamWriter(stream))
+                    {
+                        writer.Write(exception.ToString());
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Lists all available cultures.

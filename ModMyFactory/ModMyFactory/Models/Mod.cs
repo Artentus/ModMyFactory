@@ -205,19 +205,27 @@ namespace ModMyFactory.Models
             Version fileVersion;
             if (!TryParseModName(archiveFile.NameWithoutExtension(), out fileName, out fileVersion)) return false;
 
-            using (ZipArchive archive = ZipFile.OpenRead(archiveFile.FullName))
+            try
             {
-                foreach (var entry in archive.Entries)
+                using (ZipArchive archive = ZipFile.OpenRead(archiveFile.FullName))
                 {
-                    if (entry.Name == "info.json")
+                    foreach (var entry in archive.Entries)
                     {
-                        using (Stream stream = entry.Open())
+                        if (entry.Name == "info.json")
                         {
-                            if (TryParseInfoFile(stream, out validFactorioVersion, out validName, out validVersion))
-                                return (validName == fileName) && (validVersion == fileVersion);
+                            using (Stream stream = entry.Open())
+                            {
+                                if (TryParseInfoFile(stream, out validFactorioVersion, out validName, out validVersion))
+                                    return (validName == fileName) && (validVersion == fileVersion);
+                            }
                         }
                     }
                 }
+            }
+            catch (InvalidDataException ex)
+            {
+                App.Instance.WriteExceptionLog(ex);
+                return false;
             }
 
             return false;
