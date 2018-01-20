@@ -5,11 +5,24 @@ namespace ModMyFactory.Helpers
 {
     static class JsonHelper
     {
+        private static readonly JsonSerializerSettings DefaultSettings;
+
+        static JsonHelper()
+        {
+            DefaultSettings = new JsonSerializerSettings()
+            {
+                DefaultValueHandling = DefaultValueHandling.Include,
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                DateParseHandling = DateParseHandling.DateTime,
+                DateTimeZoneHandling = DateTimeZoneHandling.Utc
+            };
+        }
+
         public static void Serialize<T>(T value, FileInfo file)
         {
             using (var writer = file.CreateText())
             {
-                string json = JsonConvert.SerializeObject(value, Formatting.Indented, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Include });
+                string json = JsonConvert.SerializeObject(value, Formatting.Indented, DefaultSettings);
                 writer.Write(json);
             }
         }
@@ -19,13 +32,13 @@ namespace ModMyFactory.Helpers
             using (var reader = file.OpenText())
             {
                 string json = reader.ReadToEnd();
-                return JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Populate });
+                return JsonConvert.DeserializeObject<T>(json, DefaultSettings);
             }
         }
 
         public static T Deserialize<T>(string json)
         {
-            return JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Populate });
+            return JsonConvert.DeserializeObject<T>(json, DefaultSettings);
         }
     }
 }

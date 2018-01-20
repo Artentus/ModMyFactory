@@ -35,6 +35,8 @@ namespace ModMyFactory.ViewModels
         List<ModInfo> mods;
         string filter;
         ModRelease selectedRelease;
+        ListCollectionView selectedReleasesView;
+        ModRelease[] selectedReleases; 
 
         volatile int asyncFetchExtendedInfoIndex;
         ModInfo selectedMod;
@@ -72,6 +74,43 @@ namespace ModMyFactory.ViewModels
                     ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
                     ModsView.Filter = ModFilter;
                     ModsView.CustomSort = new ModInfoSorter();
+                }
+            }
+        }
+
+        public ListCollectionView SelectedReleasesView
+        {
+            get { return selectedReleasesView; }
+            private set
+            {
+                if (value != selectedReleasesView)
+                {
+                    selectedReleasesView = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedReleasesView)));
+                }
+            }
+            
+        }
+
+        public ModRelease[] SelectedReleases
+        {
+            get { return selectedReleases; }
+            private set
+            {
+                if (value != selectedReleases)
+                {
+                    selectedReleases = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedReleases)));
+
+                    if (selectedReleases != null)
+                    {
+                        SelectedReleasesView = (ListCollectionView)(new CollectionViewSource() { Source = selectedReleases }).View;
+                        SelectedReleasesView.CustomSort = new ModReleaseSorter();
+                    }
+                    else
+                    {
+                        SelectedReleasesView = null;
+                    }
                 }
             }
         }
@@ -121,11 +160,11 @@ namespace ModMyFactory.ViewModels
                     if (selectedMod != null)
                     {
                         SelectedModName = selectedMod.Title;
-                        SelectedModLicense = selectedMod.License;
-                        SelectedModHomepage = selectedMod.Homepage;
-                        SelectedModGitHubUrl = selectedMod.GitHubUrl;
-                        SelectedRelease = null;
+                        //SelectedModLicense = selectedMod.License;
+                        //SelectedModHomepage = selectedMod.Homepage;
+                        //SelectedModGitHubUrl = selectedMod.GitHubUrl;
 
+                        ExtendedInfo = null;
                         asyncFetchExtendedInfoIndex++;
                         new Action(async () => await LoadExtendedModInfoAsync(selectedMod, asyncFetchExtendedInfoIndex)).Invoke();
                     }
@@ -135,7 +174,6 @@ namespace ModMyFactory.ViewModels
                         SelectedModLicense = string.Empty;
                         SelectedModHomepage = string.Empty;
                         SelectedModGitHubUrl = string.Empty;
-                        SelectedRelease = null;
 
                         ExtendedInfo = null;
                     }
@@ -153,28 +191,23 @@ namespace ModMyFactory.ViewModels
 
                 if (extendedInfo != null)
                 {
-                    SelectedModDescription = extendedInfo.Description;
-                    SelectedReleases.Clear();
-                    bool releaseSelected = false;
+                    //SelectedModDescription = extendedInfo.Description;
                     foreach (var release in extendedInfo.Releases)
                     {
                         release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
-                        release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.FactorioVersion);
-
-                        SelectedReleases.Add(release);
-                        if (!releaseSelected && !release.IsVersionInstalled)
-                        {
-                            SelectedRelease = release;
-                            releaseSelected = true;
-                        }
+                        release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.InfoFile.FactorioVersion);
                     }
+
+                    SelectedReleases = extendedInfo.Releases;
+                    SelectedRelease = SelectedReleases.MinBy(item => item, new ModReleaseSorter());
                 }
                 else
                 {
                     selectedModDescription = string.Empty;
-                    SelectedReleases.Clear();
+                    SelectedReleases = null;
+                    SelectedRelease = null;
                 }
-
+                
                 CommandManager.InvalidateRequerySuggested();
             }
         }
@@ -244,8 +277,6 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        public ObservableCollection<ModRelease> SelectedReleases { get; }
-
         public RelayCommand DownloadCommand { get; }
 
         public RelayCommand UpdateCommand { get; }
@@ -296,7 +327,6 @@ namespace ModMyFactory.ViewModels
             InstalledMods = MainViewModel.Instance.Mods;
             InstalledModpacks = MainViewModel.Instance.Modpacks;
 
-            SelectedReleases = new ObservableCollection<ModRelease>();
             asyncFetchExtendedInfoIndex = -1;
 
             DownloadCommand = new RelayCommand(async () => await DownloadSelectedModRelease(), () => SelectedRelease != null && !SelectedRelease.IsInstalled);
@@ -310,43 +340,43 @@ namespace ModMyFactory.ViewModels
 
             OpenLicenseLinkCommand = new RelayCommand(() =>
             {
-                string url = SelectedMod.LicenseUrl;
-                if (!string.IsNullOrWhiteSpace(url))
-                {
-                    try
-                    {
-                        Process.Start(url);
-                    }
-                    catch { }
-                }
+                //string url = SelectedMod.LicenseUrl;
+                //if (!string.IsNullOrWhiteSpace(url))
+                //{
+                //    try
+                //    {
+                //        Process.Start(url);
+                //    }
+                //    catch { }
+                //}
             });
             OpenHomepageCommand = new RelayCommand(() =>
             {
-                string url = SelectedMod.Homepage;
-                if (!string.IsNullOrWhiteSpace(url))
-                {
-                    try
-                    {
-                        Process.Start(url);
-                    }
-                    catch { }
-                }
+                //string url = SelectedMod.Homepage;
+                //if (!string.IsNullOrWhiteSpace(url))
+                //{
+                //    try
+                //    {
+                //        Process.Start(url);
+                //    }
+                //    catch { }
+                //}
             });
             OpenGitHubLinkCommand = new RelayCommand(() =>
             {
                 const string prefix = "https://www.github.com/";
 
-                string url = SelectedMod.GitHubUrl;
-                if (!url.StartsWith(prefix)) url = prefix + url;
+                //string url = SelectedMod.GitHubUrl;
+                //if (!url.StartsWith(prefix)) url = prefix + url;
 
-                if (!string.IsNullOrWhiteSpace(url))
-                {
-                    try
-                    {
-                        Process.Start(url);
-                    }
-                    catch { }
-                }
+                //if (!string.IsNullOrWhiteSpace(url))
+                //{
+                //    try
+                //    {
+                //        Process.Start(url);
+                //    }
+                //    catch { }
+                //}
             });
 
             ClearFilterCommand = new RelayCommand(() => Filter = string.Empty);
@@ -357,7 +387,7 @@ namespace ModMyFactory.ViewModels
             foreach (var release in SelectedReleases)
             {
                 release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
-                release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.FactorioVersion);
+                release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.InfoFile.FactorioVersion);
             }
         }
 
@@ -426,21 +456,21 @@ namespace ModMyFactory.ViewModels
 
             if (App.Instance.Settings.AlwaysUpdateZipped || (oldMod is ZippedMod))
             {
-                newMod = new ZippedMod(oldMod.Name, newestRelease.Version, newestRelease.FactorioVersion, modFile, InstalledMods, InstalledModpacks);
+                newMod = new ZippedMod(oldMod.Name, newestRelease.Version, newestRelease.InfoFile.FactorioVersion, modFile, InstalledMods, InstalledModpacks);
             }
             else
             {
                 DirectoryInfo modDirectory = await Task.Run(() =>
                 {
                     progress.Report(2);
-                    DirectoryInfo modsDirectory = App.Instance.Settings.GetModDirectory(newestRelease.FactorioVersion);
+                    DirectoryInfo modsDirectory = App.Instance.Settings.GetModDirectory(newestRelease.InfoFile.FactorioVersion);
                     ZipFile.ExtractToDirectory(modFile.FullName, modsDirectory.FullName);
                     modFile.Delete();
 
                     return new DirectoryInfo(Path.Combine(modsDirectory.FullName, modFile.NameWithoutExtension()));
                 });
 
-                newMod = new ExtractedMod(oldMod.Name, newestRelease.Version, newestRelease.FactorioVersion, modDirectory, InstalledMods, InstalledModpacks);
+                newMod = new ExtractedMod(oldMod.Name, newestRelease.Version, newestRelease.InfoFile.FactorioVersion, modDirectory, InstalledMods, InstalledModpacks);
             }
 
             InstalledMods.Add(newMod);
@@ -510,7 +540,7 @@ namespace ModMyFactory.ViewModels
                 foreach (var release in SelectedReleases)
                 {
                     release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
-                    release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.FactorioVersion);
+                    release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.InfoFile.FactorioVersion);
                 }
             }
         }

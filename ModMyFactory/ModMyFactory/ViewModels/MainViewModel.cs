@@ -1073,7 +1073,7 @@ namespace ModMyFactory.ViewModels
                                 else
                                 {
                                     if ((App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion) &&
-                                        mods.All(mod => mod.FactorioVersion != release.FactorioVersion))
+                                        mods.All(mod => mod.FactorioVersion != release.InfoFile.FactorioVersion))
                                     {
                                         toDownload.Add(release);
                                     }
@@ -1101,7 +1101,7 @@ namespace ModMyFactory.ViewModels
                             if (!Mods.Contains(modTemplate.Name, newestRelease.Version))
                             {
                                 if ((App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion) &&
-                                    mods.All(mod => mod.FactorioVersion != newestRelease.FactorioVersion))
+                                    mods.All(mod => mod.FactorioVersion != newestRelease.InfoFile.FactorioVersion))
                                 {
                                     toDownload.Add(newestRelease);
                                 }
@@ -1413,20 +1413,20 @@ namespace ModMyFactory.ViewModels
 
             if (App.Instance.Settings.AlwaysUpdateZipped || (oldMod is ZippedMod))
             {
-                newMod = new ZippedMod(oldMod.Name, modUpdate.NewestRelease.Version, modUpdate.NewestRelease.FactorioVersion, modFile, Mods, Modpacks);
+                newMod = new ZippedMod(oldMod.Name, modUpdate.NewestRelease.Version, modUpdate.NewestRelease.InfoFile.FactorioVersion, modFile, Mods, Modpacks);
             }
             else
             {
                 DirectoryInfo modDirectory = await Task.Run(() =>
                 {
-                    DirectoryInfo modsDirectory = App.Instance.Settings.GetModDirectory(modUpdate.NewestRelease.FactorioVersion);
+                    DirectoryInfo modsDirectory = App.Instance.Settings.GetModDirectory(modUpdate.NewestRelease.InfoFile.FactorioVersion);
                     ZipFile.ExtractToDirectory(modFile.FullName, modsDirectory.FullName);
                     modFile.Delete();
 
                     return new DirectoryInfo(Path.Combine(modsDirectory.FullName, modFile.NameWithoutExtension()));
                 });
 
-                newMod = new ExtractedMod(oldMod.Name, modUpdate.NewestRelease.Version, modUpdate.NewestRelease.FactorioVersion, modDirectory, Mods, Modpacks);
+                newMod = new ExtractedMod(oldMod.Name, modUpdate.NewestRelease.Version, modUpdate.NewestRelease.InfoFile.FactorioVersion, modDirectory, Mods, Modpacks);
             }
 
             Mods.Add(newMod);

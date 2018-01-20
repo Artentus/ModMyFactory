@@ -13,18 +13,28 @@ namespace ModMyFactory.Web.ModApi
         [JsonConverter(typeof(VersionConverter))]
         public Version Version { get; set; }
 
-        [JsonProperty("factorio_version")]
-        [JsonConverter(typeof(TwoPartVersionConverter))]
-        public Version FactorioVersion { get; set; }
-
         [JsonProperty("download_url")]
         public string DownloadUrl { get; set; }
 
         [JsonProperty("file_name")]
         public string FileName { get; set; }
 
-        [JsonProperty("downloads_count")]
-        public int DownloadCount { get; set; }
+        [JsonProperty("released_at")]
+        public DateTime ReleaseDate { get; set; }
+
+        [JsonProperty("info_json")]
+        public InfoFile InfoFile { get; set; }
+
+
+        // Removed from API
+
+        //[JsonProperty("factorio_version")]
+        //[JsonConverter(typeof(TwoPartVersionConverter))]
+        //public Version FactorioVersion { get; set; }
+
+        //[JsonProperty("downloads_count")]
+        //public int DownloadCount { get; set; }
+
 
         bool isInstalled;
         bool isVersionInstalled;

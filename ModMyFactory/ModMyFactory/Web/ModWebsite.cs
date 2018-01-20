@@ -118,7 +118,7 @@ namespace ModMyFactory.Web
         public static async Task<Mod> DownloadReleaseAsync(ModRelease release, string username, string token, IProgress<double> progress, CancellationToken cancellationToken,
             ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
         {
-            DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory(release.FactorioVersion);
+            DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory(release.InfoFile.FactorioVersion);
             if (!modDirectory.Exists) modDirectory.Create();
 
             var downloadUrl = new Uri($"{BaseUrl}{release.DownloadUrl}?username={username}&token={token}");
@@ -134,7 +134,7 @@ namespace ModMyFactory.Web
                     Version version;
                     if (Mod.ArchiveFileValid(modFile, out factorioVersion, out name, out version))
                     {
-                        if (factorioVersion == release.FactorioVersion)
+                        if (factorioVersion == release.InfoFile.FactorioVersion)
                         {
                             return new ZippedMod(name, version, factorioVersion, modFile, parentCollection, modpackCollection);
                         }
@@ -163,7 +163,7 @@ namespace ModMyFactory.Web
         /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
         public static async Task<FileInfo> UpdateReleaseAsync(ModRelease release, string username, string token, IProgress<double> progress, CancellationToken cancellationToken)
         {
-            DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory(release.FactorioVersion);
+            DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory(release.InfoFile.FactorioVersion);
             if (!modDirectory.Exists) modDirectory.Create();
 
             var downloadUrl = new Uri($"{BaseUrl}{release.DownloadUrl}?username={username}&token={token}");
