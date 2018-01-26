@@ -773,19 +773,19 @@ namespace ModMyFactory.ViewModels
             {
                 if (!Mods.ContainsByFactorioVersion(name, factorioVersion))
                 {
+                    var versionDirectory = App.Instance.Settings.GetModDirectory(factorioVersion);
+                    if (!versionDirectory.Exists) versionDirectory.Create();
+                    string modFilePath = Path.Combine(versionDirectory.FullName, archiveFile.Name);
+
                     await Task.Run(() =>
                     {
-                        var versionDirectory = App.Instance.Settings.GetModDirectory(factorioVersion);
-                        if (!versionDirectory.Exists) versionDirectory.Create();
-
-                        var modFilePath = Path.Combine(versionDirectory.FullName, archiveFile.Name);
                         if (move)
                             archiveFile.MoveTo(modFilePath);
                         else
                             archiveFile.CopyTo(modFilePath);
                     });
 
-                    var mod = new ZippedMod(name, version, factorioVersion, archiveFile, Mods, Modpacks);
+                    var mod = new ZippedMod(name, version, factorioVersion, new FileInfo(modFilePath), Mods, Modpacks);
                     Mods.Add(mod);
                 }
                 else
