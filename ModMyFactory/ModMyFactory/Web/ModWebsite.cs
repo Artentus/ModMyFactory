@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -105,6 +106,21 @@ namespace ModMyFactory.Web
             return await GetExtendedInfoAsync(mod.Name);
         }
 
+        private static bool IsEmail(string username)
+        {
+            string[] parts = username.Split('@');
+            if (parts.Length != 2) return false;
+
+            string domain = parts[1];
+            int dotIndex = domain.LastIndexOf('.');
+            return (dotIndex < (domain.Length - 1));
+        }
+
+        private static Uri BuildUrl(ModRelease release, string username, string token)
+        {
+            return new Uri($"{BaseUrl}{release.DownloadUrl}?username={username}&token={token}");
+        }
+
         /// <summary>
         /// Downloads a mod.
         /// </summary>
@@ -121,7 +137,8 @@ namespace ModMyFactory.Web
             DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory(release.InfoFile.FactorioVersion);
             if (!modDirectory.Exists) modDirectory.Create();
 
-            var downloadUrl = new Uri($"{BaseUrl}{release.DownloadUrl}?username={username}&token={token}");
+            var downloadUrl = BuildUrl(release, username, token);
+            Debug.Print(token);
             var modFile = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
 
             try
@@ -166,7 +183,7 @@ namespace ModMyFactory.Web
             DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory(release.InfoFile.FactorioVersion);
             if (!modDirectory.Exists) modDirectory.Create();
 
-            var downloadUrl = new Uri($"{BaseUrl}{release.DownloadUrl}?username={username}&token={token}");
+            var downloadUrl = BuildUrl(release, username, token);
             var modFile = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
 
             await WebHelper.DownloadFileAsync(downloadUrl, null, modFile, progress, cancellationToken);

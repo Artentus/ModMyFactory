@@ -165,6 +165,7 @@
       <DependentUpon>UpdateListWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Web\ApiAuthentication.cs" />
+    <Compile Include="Web\AuthenticationApi\AuthenticationInfo.cs" />
     <Compile Include="Web\ModApi\ApiPage.cs" />
     <Compile Include="Models\ExtractedMod.cs" />
     <Compile Include="Models\ZippedMod.cs" />

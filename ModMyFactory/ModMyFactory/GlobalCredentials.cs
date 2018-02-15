@@ -9,6 +9,7 @@ using System.Windows;
 using ModMyFactory.Helpers;
 using ModMyFactory.Views;
 using ModMyFactory.Web;
+using ModMyFactory.Web.AuthenticationApi;
 using Newtonsoft.Json;
 using WPFCore;
 
@@ -130,7 +131,14 @@ namespace ModMyFactory
             }
             else if (IsLoggedIn()) // Only credentials available.
             {
-                failed = !ApiAuthentication.LogIn(Username, Password, out token);
+                AuthenticationInfo info;
+                failed = !ApiAuthentication.LogIn(Username, Password, out info);
+                token = info.Token;
+                if (!failed)
+                {
+                    username = info.Username;
+                    if (App.Instance.Settings.SaveCredentials) Save();
+                }
             }
 
             if (failed)
@@ -155,15 +163,18 @@ namespace ModMyFactory
                 bool saveCredentials = loginWindow.SaveCredentialsBox.IsChecked ?? false;
                 App.Instance.Settings.SaveCredentials = saveCredentials;
 
-                failed = !ApiAuthentication.LogIn(Username, Password, out token);
+                AuthenticationInfo info;
+                failed = !ApiAuthentication.LogIn(Username, Password, out info);
                 if (failed)
                 {
                     token = null;
                     container = null;
                 }
-                else if (saveCredentials)
+                else
                 {
-                    Save();
+                    username = info.Username;
+                    token = info.Token;
+                    if (saveCredentials) Save();
                 }
             }
 
