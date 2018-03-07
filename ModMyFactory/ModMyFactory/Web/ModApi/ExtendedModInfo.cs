@@ -8,6 +8,8 @@ namespace ModMyFactory.Web.ModApi
         [JsonProperty("releases")]
         public ModRelease[] Releases { get; set; }
 
+        [JsonProperty("summary")]
+        public string Summary { get; set; }
 
         // Removed from API
 
@@ -19,8 +21,5 @@ namespace ModMyFactory.Web.ModApi
 
         //[JsonProperty("github_path")]
         //public string GitHubUrl { get; set; }
-
-        //[JsonProperty("description")]
-        //public string Description { get; set; }
     }
 }
