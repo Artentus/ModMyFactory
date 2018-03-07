@@ -191,7 +191,7 @@ namespace ModMyFactory.ViewModels
 
                 if (extendedInfo != null)
                 {
-                    //SelectedModDescription = extendedInfo.Description;
+                    SelectedModDescription = extendedInfo.Summary;
                     foreach (var release in extendedInfo.Releases)
                     {
                         release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
