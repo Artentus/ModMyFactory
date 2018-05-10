@@ -122,6 +122,7 @@
                 <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator1Command}">Averssem</Hyperlink>, <Hyperlink Command="{Binding Translator3Command}">Corwin616</Hyperlink> (Russian)</TextBlock>
                 <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator2Command}">blackbat24</Hyperlink> (Portuguese)</TextBlock>
                 <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator4Command}">James Y.</Hyperlink> (Chinese)</TextBlock>
+                <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator5Command}">Xagros</Hyperlink> (Korean)</TextBlock>
             </WrapPanel>
         </Grid>
 

@@ -17,6 +17,7 @@
             <ResourceDictionary x:Key="Strings.ru" Source="Lang/Strings.ru.xaml"/>
             <ResourceDictionary x:Key="Strings.pt" Source="Lang/Strings.pt.xaml"/>
             <ResourceDictionary x:Key="Strings.zh" Source="Lang/Strings.zh.xaml"/>
+            <ResourceDictionary x:Key="Strings.ko" Source="Lang/Strings.ko.xaml"/>
 
             <Color x:Key="BackgroundColor">White</Color>
             <Color x:Key="BorderColor">LightGray</Color>

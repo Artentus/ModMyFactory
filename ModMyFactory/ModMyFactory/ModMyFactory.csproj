@@ -269,6 +269,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Resource>
+    <Page Include="Lang\Strings.ko.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Lang\Strings.zh.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -471,6 +475,7 @@
     <Resource Include="Images\Delete.png" />
     <Resource Include="Images\Refresh_blue.png" />
     <Resource Include="Images\Lang\zh.png" />
+    <Resource Include="Images\Lang\ko.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>
