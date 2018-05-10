@@ -161,8 +161,8 @@
     <sys:String x:Key="FileMenuItem">_파일</sys:String>
     <sys:String x:Key="AddModsMenuItem">모드 추가</sys:String>
     <sys:String x:Key="DownloadModsMenuItem">다운로드</sys:String>
-    <sys:String x:Key="AddModFilesMenuItem">열기</sys:String>
-    <sys:String x:Key="AddModFolderMenuItem">폴더 열기</sys:String>
+    <sys:String x:Key="AddModFilesMenuItem">ZIP 형식 추가</sys:String>
+    <sys:String x:Key="AddModFolderMenuItem">폴더 형식 추가</sys:String>
     <sys:String x:Key="NewModpackMenuItem">새로운 모드팩</sys:String>
     <sys:String x:Key="CreateLinkMenuItem">링크 만들기</sys:String>
     <sys:String x:Key="ExportModpacksMenuItem">모드팩 가져오기</sys:String>
@@ -173,7 +173,7 @@
     <!-- 'Edit' menu -->
     <sys:String x:Key="EditMenuItem">_편집</sys:String>
     <sys:String x:Key="UpdateModsMenuItem">모드 업데이트</sys:String>
-    <sys:String x:Key="VersionManagerMenuItem">버전 관리자</sys:String>
+    <sys:String x:Key="VersionManagerMenuItem">클라이언트 관리</sys:String>
     <sys:String x:Key="SettingsMenuItem">설정</sys:String>
     
     <!-- 'View' menu -->
@@ -246,7 +246,7 @@
     ____________________ VersionManagementWindow ____________________
     -->
 
-    <sys:String x:Key="VersionManagementWindowTitle">버전 관리자</sys:String>
+    <sys:String x:Key="VersionManagementWindowTitle">클라이언트 관리</sys:String>
 
     <!-- buttons -->
     <sys:String x:Key="AddZipButton">ZIP 파일 추가</sys:String>
