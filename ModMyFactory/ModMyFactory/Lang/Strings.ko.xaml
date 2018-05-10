@@ -1,0 +1,443 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xml:space="preserve">
+    <!--
+    Newline character: &#x0a;
+    -->
+    
+    
+    
+    <sys:String x:Key="NewModpackName">새로운 모드팩</sys:String>
+    <sys:String x:Key="LatestFactorioName">최근 설치된 버전</sys:String>
+    
+    
+    
+    <!--
+    ____________________ Dialogs ____________________
+    -->
+
+    <!-- messages -->
+    <sys:String x:Key="Error.InternetConnection.Message">인터넷 연결에 문제가 있습니다.&#x0a;컴퓨터가 안정적인 인터넷 연결 상태인지 확인한 다음 다시 시도하십시오.</sys:String>
+    <sys:String x:Key="Error.InternetConnection.Title">네트워크 오류!</sys:String>
+    
+    <sys:String x:Key="Information.32Bit.Message">32비트 Windows 운영체제를 실행하고 있습니다. 현재 운영체제에서는 0.15 이후 버전의 팩토리오를 실행 할 수 없습니다.</sys:String>
+    <sys:String x:Key="Information.32Bit.Title">32비트 Windows 운영체제가 감지됨</sys:String>
+    
+    <sys:String x:Key="Information.ModExistsPerVersion.Message">팩토리오 {1}의 '{0}'모드가 이미 존재합니다.</sys:String>
+    <sys:String x:Key="Information.ModExistsPerVersion.Title">모드 생략</sys:String>
+    
+    <sys:String x:Key="Information.ModExists.Message">'{0}'모드가 이미 존재합니다.</sys:String>
+    <sys:String x:Key="Information.ModExists.Title">모드 생략</sys:String>
+    
+    <sys:String x:Key="Error.InvalidModArchive.Message">'{0}'ZIP 파일에 유효한 모드가 포함되지 않았습니다.</sys:String>
+    <sys:String x:Key="Error.InvalidModArchive.Title">모드 추가 오류!</sys:String>
+    
+    <sys:String x:Key="Error.InvalidModFolder.Message">선택한 폴더에 유효한 모드가 포함되지 않았습니다.</sys:String>
+    <sys:String x:Key="Error.InvalidModFolder.Title">모드 추가 오류!</sys:String>
+
+    <sys:String x:Key="Information.NoModUpdates.Message">모든 모드가 최신 버전입니다.</sys:String>
+    <sys:String x:Key="Information.NoModUpdates.Title">업데이트 없음</sys:String>
+    
+    <sys:String x:Key="Question.MoveDirectories.Message">이전 위치의 모든 내용을 새 위치로 옮기시겠습니까?</sys:String>
+    <sys:String x:Key="Question.MoveDirectories.Title">콘텐츠 위치 이동</sys:String>
+    
+    <sys:String x:Key="Warning.HasConflicts.Message">모드팩 파일을 불러오는 동안 다음 충돌이 발생했습니다:</sys:String>
+    <sys:String x:Key="Warning.HasConflicts.Title">모드팩 파일이 충돌을 일으킴</sys:String>
+    
+    <sys:String x:Key="Question.Update.Message">현재 ModMyFactory의 이전 버전을 실행 중입니다. (현재 버전: {0}, 최신 버전:{1})&#x0a;최신 버전을 다운로드 하시겠습니까?</sys:String>
+    <sys:String x:Key="Question.Update.Title">유효한 업데이트</sys:String>
+    
+    <sys:String x:Key="Information.NoUpdate.Message">최신 버전의 ModMyFactory를 실행하고 있습니다.</sys:String>
+    <sys:String x:Key="Information.NoUpdate.Title">유효한 업데이트 없음</sys:String>
+    
+    <sys:String x:Key="Error.RetrievingVersions.Message">사용 가능한 팩토리오 버전을 검색 할 수 없습니다.</sys:String>
+    <sys:String x:Key="Error.RetrievingVersions.Title">오류!</sys:String>
+
+    <sys:String x:Key="Error.InvalidFactorioArchive.Message">선택한 ZIP 파일에는 유효한 팩토리오 클라이언트가 포함되어 있지 않습니다.</sys:String>
+    <sys:String x:Key="Error.InvalidFactorioArchive.Title">잘못된 ZIP 파일!</sys:String>
+
+    <sys:String x:Key="Question.DeleteFactorioArchive.Message">원본 파일을 삭제 하시겠습니까?</sys:String>
+    <sys:String x:Key="Question.DeleteFactorioArchive.Title">파일 삭제 확인</sys:String>
+
+    <sys:String x:Key="Error.InvalidFactorioFolder.Message">선택한 폴더에는 유효한 팩토리오 클라이언트가 포함되어 있지 않습니다.</sys:String>
+    <sys:String x:Key="Error.InvalidFactorioFolder.Title">잘못된 폴더!</sys:String>
+    
+    <sys:String x:Key="Error.IncompatiblePlatform.Message">이 팩토리오 버전은 현재 사용자의 운영체제와 호환되지 않습니다.&#x0a;32비트 Windows 운영체제에서 32비트 팩토리오를 사용하고 64비트 Windows 운영체제에서 64비트 팩토리오를 사용해야합니다.</sys:String>
+    <sys:String x:Key="Error.IncompatiblePlatform.Title">호환되지 않는 플랫폼!</sys:String>
+    
+    <sys:String x:Key="Error.FactorioVersionInstalled.Message">이 버전의 팩토리오 클라이언트는 이미 설치되어 있습니다.</sys:String>
+    <sys:String x:Key="Error.FactorioVersionInstalled.Title">버전이 이미 설치됨!</sys:String>
+
+    <sys:String x:Key="Warning.MoveSteamFactorio.Message">모든 모드, 세이브, 시나리오가 지정한 위치로 이동됩니다. 백업을 만든 후 실행하는 것을 추천드립니다.&#x0a;계속 하시겠습니까?</sys:String>
+    <sys:String x:Key="Warning.MoveSteamFactorio.Title">경고</sys:String>
+    
+    <sys:String x:Key="Error.FactorioUpdaterCritical.Message">팩토리오 클라이언트 업데이터에 치명적인 오류가 발생하였습니다.&#x0a;클라이언트가 손상되었을 가능성이 높으므로 다시 설치해야합니다.</sys:String>
+    <sys:String x:Key="Error.FactorioUpdaterCritical.Title">치명적인 업데이트 오류!</sys:String>
+    
+    <sys:String x:Key="Information.NoFactorioUpdate.Message">팩토리오 클라이언트의 버전은 최신 버전입니다.</sys:String>
+    <sys:String x:Key="Information.NoFactorioUpdate.Title">유효한 업데이트 없음</sys:String>
+    
+    <sys:String x:Key="Question.RemoveFactorioVersion.Message">선택한 버전의 팩토리오 클라이언트를 정말로 제거 하시겠습니까?&#x0a;제거 할 경우 모든 해당 파일이 삭제됩니다.</sys:String>
+    <sys:String x:Key="Question.RemoveFactorioVersion.Title">확인</sys:String>
+    
+    <sys:String x:Key="Question.DeleteMod.Message">선택한 모드를 정말로 삭제 하시겠습니까?</sys:String>
+    <sys:String x:Key="Question.DeleteMod.Title">확인</sys:String>
+    
+    <sys:String x:Key="Question.DeleteMods.Message">선택한 모든 모드를 정말로 삭제 하시겠습니까?</sys:String>
+    <sys:String x:Key="Question.DeleteMods.Title">확인</sys:String>
+    
+    <sys:String x:Key="Question.DeleteModpack.Message">선택한 모드팩을 정말로 삭제 하시겠습니까?</sys:String>
+    <sys:String x:Key="Question.DeleteModpack.Title">확인</sys:String>
+    
+    <sys:String x:Key="Question.DeleteModpacks.Message">선택한 모든 모드팩을 정말로 삭제 하시겠습니까?</sys:String>
+    <sys:String x:Key="Question.DeleteModpacks.Title">확인</sys:String>
+
+    
+    <!-- file type descriptions -->
+    <sys:String x:Key="ZipDescription">ZIP 파일</sys:String>
+    <sys:String x:Key="LnkDescription">단축아이콘</sys:String>
+    <sys:String x:Key="FmpDescription">팩토리오 모드팩</sys:String>
+    
+    
+    <!-- progress dialogs -->
+    <sys:String x:Key="MovingFilesDescription">파일 이동중...</sys:String>
+    <sys:String x:Key="CopyingFilesDescription">파일 복사중...</sys:String>
+    <sys:String x:Key="ExtractingDescription">추출중...</sys:String>
+    
+    <sys:String x:Key="FetchingModsAction">모드 가져오기</sys:String>
+    <sys:String x:Key="ParsingFirstPageDescription">1페이지 가져오는중...</sys:String>
+    <sys:String x:Key="ParsingPageDescription">전체 {1} 중 {0}페이지 가져오는중...</sys:String>
+    
+    <sys:String x:Key="ProcessingModsAction">모드 처리</sys:String>
+    <sys:String x:Key="ProcessingModAction">모드 처리중...</sys:String>
+    
+    <sys:String x:Key="SearchingForUpdatesAction">업데이트 검색</sys:String>
+    <sys:String x:Key="UpdatingModsAction">모드 업데이트</sys:String>
+    
+    <sys:String x:Key="MovingDirectoriesAction">디렉토리 이동</sys:String>
+
+    <sys:String x:Key="DownloadingAction">다운로드</sys:String>
+    <sys:String x:Key="DownloadingDescription">다운로드중... {0}</sys:String>
+
+    <sys:String x:Key="AddingFromZipAction">ZIP 파일 추가</sys:String>
+    <sys:String x:Key="CheckingValidityDescription">유효성 검사중...</sys:String>
+    
+    <sys:String x:Key="AddingLocalInstallationAction">클라이언트 위치 추가</sys:String>
+    
+    <sys:String x:Key="AddingSteamVersionAction">스팀 버전 추가</sys:String>
+
+    <sys:String x:Key="RemovingFactorioVersionAction">팩토리오 버전 삭제</sys:String>
+    <sys:String x:Key="DeletingFilesDescription">파일 삭제중...</sys:String>
+    
+    <sys:String x:Key="UpdatingAction">업데이트</sys:String>
+    
+    <sys:String x:Key="UpdatingFactorioAction">팩토리오 업데이트</sys:String>
+    <sys:String x:Key="UpdatingFactorioStage1Description">업데이트 패키지 다운로드중...</sys:String>
+    <sys:String x:Key="UpdatingFactorioStage2Description">업데이트 적용중..</sys:String>
+
+    
+    
+    <!--
+    ____________________ Misc ____________________
+    -->
+    
+    <!-- buttons -->
+    <sys:String x:Key="OkButton">확인</sys:String>
+    <sys:String x:Key="CloseButton">닫기</sys:String>
+    <sys:String x:Key="CancelButton">취소</sys:String>
+    <sys:String x:Key="DownloadButton">다운로드</sys:String>
+    <sys:String x:Key="UpdateButton">업데이트</sys:String>
+    <sys:String x:Key="ClearFilterToolTip">필터 초기화</sys:String>
+
+
+    <!--
+    ____________________ MainWindow ____________________
+    -->
+
+    <sys:String x:Key="MainWindowTitle">ModMyFactory</sys:String>
+
+    <!-- 'File' menu -->
+    <sys:String x:Key="FileMenuItem">_파일</sys:String>
+    <sys:String x:Key="AddModsMenuItem">모드 추가</sys:String>
+    <sys:String x:Key="DownloadModsMenuItem">다운로드</sys:String>
+    <sys:String x:Key="AddModFilesMenuItem">ZIP 형식 추가</sys:String>
+    <sys:String x:Key="AddModFolderMenuItem">폴더 형식 추가</sys:String>
+    <sys:String x:Key="NewModpackMenuItem">새로운 모드팩</sys:String>
+    <sys:String x:Key="CreateLinkMenuItem">링크 만들기</sys:String>
+    <sys:String x:Key="ExportModpacksMenuItem">모드팩 가져오기</sys:String>
+    <sys:String x:Key="ImportModpacksMenuItem">모드팩 내보내기</sys:String>
+    <sys:String x:Key="StartGameMenuItem">게임 실행</sys:String>
+    <sys:String x:Key="CloseMenuItem">닫기</sys:String>
+    
+    <!-- 'Edit' menu -->
+    <sys:String x:Key="EditMenuItem">_편집</sys:String>
+    <sys:String x:Key="UpdateModsMenuItem">모드 업데이트</sys:String>
+    <sys:String x:Key="VersionManagerMenuItem">클라이언트 관리</sys:String>
+    <sys:String x:Key="SettingsMenuItem">설정</sys:String>
+    
+    <!-- 'View' menu -->
+    <sys:String x:Key="ViewMenuItem">_보기</sys:String>
+    <sys:String x:Key="OpenFactorioFolderMenuItem">팩토리오 폴더 열기</sys:String>
+    <sys:String x:Key="OpenModFolderMenuItem">모드 폴더 열기</sys:String>
+    <sys:String x:Key="OpenSavegameFolderMenuItem">세이브 폴더 열기</sys:String>
+    <sys:String x:Key="OpenScenarioFolderMenuItem">시나리오 폴더 열기</sys:String>
+    <sys:String x:Key="RefreshMenuItem">새로고침</sys:String>
+    
+    <!-- 'Language' menu -->
+    <sys:String x:Key="LanguageMenuItem">_언어</sys:String>
+    
+    <!-- 'Info' menu -->
+    <sys:String x:Key="InfoMenuItem">_정보</sys:String>
+    <sys:String x:Key="FactorioComMenuItem">팩토리오 홈페이지</sys:String>
+    <sys:String x:Key="FactorioModsComMenuItem">팩토리오 모드 포럼</sys:String>
+    <sys:String x:Key="ForumThreadMenuItem">ModMyFactory 커뮤니티</sys:String>
+    <sys:String x:Key="CheckUpdateMenuItem">업데이트 확인</sys:String>
+    <sys:String x:Key="AboutMenuItem">ModMyFactory 정보</sys:String>
+    <sys:String x:Key="HelpMenuItem">도움말</sys:String>
+    
+    <!-- context menu -->
+    <sys:String x:Key="DeleteSelectedModsMenuItem">선택된 모드 제거</sys:String>
+    <sys:String x:Key="ActivateSelectedModsMenuItem">선택된 모드 활성화</sys:String>
+    <sys:String x:Key="DeactivateSelectedModsMenuItem">선택된 모드 비활성화</sys:String>
+    <sys:String x:Key="SelectActiveModsMenuItem">활성화된 모드 전체 선택</sys:String>
+    <sys:String x:Key="SelectInactiveModsMenuItem">비활성화된 모드 전체 선택</sys:String>
+    
+    <sys:String x:Key="DeleteSelectedModpacksMenuItem">선택된 모드팩 제거</sys:String>
+    <sys:String x:Key="ActivateSelectedModpacksMenuItem">선택된 모드팩 활성화</sys:String>
+    <sys:String x:Key="DeactivateSelectedModpacksMenuItem">선택된 모드팩 비활성화</sys:String>
+    <sys:String x:Key="SelectActiveModpacksMenuItem">활성화된 모드팩 전체 선택</sys:String>
+    <sys:String x:Key="SelectInactiveModpacksMenuItem">비활성화된 모드팩 전체 선택</sys:String>
+    
+    <!-- hotkeys -->
+    <sys:String x:Key="DownloadModsHotkey">F7</sys:String>
+    <sys:String x:Key="AddModFilesHotkey">F8</sys:String>
+    <sys:String x:Key="AddModFolderHotkey">Ctrl+F8</sys:String>
+    <sys:String x:Key="NewModpackHotkey">Ctrl+N</sys:String>
+    <sys:String x:Key="CreateLinkHotkey">Ctrl+L</sys:String>
+    <sys:String x:Key="ExportModpacksHotkey">Ctrl+E</sys:String>
+    <sys:String x:Key="ImportModpacksHotkey">Ctrl+I</sys:String>
+    <sys:String x:Key="StartGameHotkey">F6</sys:String>
+    <sys:String x:Key="CloseHotkey">Alt+F4</sys:String>
+    <sys:String x:Key="UpdateModsHotkey">Ctrl+U</sys:String>
+    <sys:String x:Key="VersionManagerHotkey">F10</sys:String>
+    <sys:String x:Key="SettingsHotkey">F12</sys:String>
+    <sys:String x:Key="RefreshHotkey">F5</sys:String>
+    <sys:String x:Key="HelpHotkey">F1</sys:String>
+    <sys:String x:Key="UpdateHotkey">F3</sys:String>
+    <sys:String x:Key="AboutHotkey">Ctrl+F1</sys:String>
+    <sys:String x:Key="DeleteHotkey">Del</sys:String>
+
+    <!-- headers -->
+    <sys:String x:Key="ModsHeader">모드</sys:String>
+    <sys:String x:Key="ModpacksHeader">모드팩</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="RenameToolTip">이름 변경</sys:String>
+    <sys:String x:Key="DeleteToolTip">삭제</sys:String>
+    <sys:String x:Key="RemoveToolTip">모드팩에서 제거</sys:String>
+    <sys:String x:Key="SetActiveToolTip">활성화</sys:String>
+    <sys:String x:Key="SetInactiveToolTip">비활성화</sys:String>
+    <sys:String x:Key="SetAllActiveToolTip">모두 활성화</sys:String>
+    <sys:String x:Key="SetAllInactiveToolTip">모두 비활성화</sys:String>
+    
+    
+    <!--
+    ____________________ VersionManagementWindow ____________________
+    -->
+
+    <sys:String x:Key="VersionManagementWindowTitle">클라이언트 관리</sys:String>
+
+    <!-- buttons -->
+    <sys:String x:Key="AddZipButton">ZIP 파일 추가</sys:String>
+    <sys:String x:Key="AddFolderButton">폴더 추가</sys:String>
+    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center">스팀 버전&#x0a;선택</TextBlock>
+    <sys:String x:Key="OpenFolderButton">폴더 열기</sys:String>
+    <sys:String x:Key="RemoveButton">제거</sys:String>
+
+
+    <!--
+    ____________________ VersionListWindow ____________________
+    -->
+
+    <sys:String x:Key="VersionListWindowTitle">버전 선택</sys:String>
+    
+    <!-- checkboxes -->
+    <sys:String x:Key="ShowExperimentalCheckBox">실험 버전 표시</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="ExperimentalToolTip">실험 버전</sys:String>
+
+
+    <!--
+    ____________________ SettingsWindow ____________________
+    -->
+
+    <sys:String x:Key="SettingsWindowTitle">설정</sys:String>
+    
+    <!-- tab headers -->
+    <sys:String x:Key="GeneralTabHeader">일반</sys:String>
+    <sys:String x:Key="LocationsTabHeader">위치</sys:String>
+
+    <!-- group headers -->
+    <sys:String x:Key="ManagerModeGroupHeader">관리자 모드</sys:String>
+    <sys:String x:Key="MiscGroupHeader">기타</sys:String>
+    <sys:String x:Key="CredentialsGroupHeader">계정 관리</sys:String>
+    
+    <sys:String x:Key="FactorioDirectoryGroupHeader">클라이언트 위치</sys:String>
+    <sys:String x:Key="ModDirectoryGroupHeader">모드 위치</sys:String>
+    <sys:String x:Key="SavegameDirectoryGroupHeader">세이브 위치</sys:String>
+    <sys:String x:Key="ScenarioDirectoryGroupHeader">시나리오 위치</sys:String>
+    
+    <!-- group items -->
+    <sys:String x:Key="PerFactorioVersionGroupItem">클라이언트 버전</sys:String>
+    <sys:String x:Key="UpdateSearchGroupItem">시작 시 업데이트 검색</sys:String>
+    <sys:String x:Key="IncludePreReleasesGroupItem">업데이트를 검색 시 시험적 버전 포함</sys:String>
+    <sys:String x:Key="UpdateZippedGroupItem">모드 업데이트 시 항상 ZIP 파일 형식을 유지</sys:String>
+    <sys:String x:Key="KeepOldModVersionsGroupItem">업데이트 할 때 이전 버전의 모드 유지</sys:String>
+    <sys:String x:Key="KeepExtractedModVersionsGroupItem">추출 된 모드(폴더 형식)의 이전 버전 유지</sys:String>
+    <sys:String x:Key="KeepZippedModVersionsGroupItem">압축 된 모드(ZIP 파일 형식)의 이전 버전 유지</sys:String>
+    <sys:String x:Key="KeepOldWhenNewFactorioGroupItem">팩토리오 클라이언트 업데이트 시 기존 모드 버전 유지</sys:String>
+    <sys:String x:Key="UpdateIntermediateGroupItem">이전 팩토리오 클라이언트 버전에 맞는 모드 다운로드</sys:String>
+    <sys:String x:Key="GlobalGroupItem">전체</sys:String>
+    <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
+    <sys:String x:Key="AppDirectoryGroupItem">Application directory</sys:String>
+    <sys:String x:Key="SelectGroupItem">선택:</sys:String>
+
+    <!-- buttons -->
+    <sys:String x:Key="BrowseButton">검색</sys:String>
+
+
+    <!--
+    ____________________ LoginWindow ____________________
+    -->
+
+    <sys:String x:Key="LoginWindowTitle">로그인</sys:String>
+    
+    <!-- headers -->
+    <sys:String x:Key="UsernameHeader">Username 또는 Email</sys:String>
+    <sys:String x:Key="PasswordHeader">비밀번호</sys:String>
+    <sys:String x:Key="SaveCredentialsHeader">로그인 상태 유지</sys:String>
+
+    <!-- messages -->
+    <sys:String x:Key="LoginFailedMessage">로그인 실패</sys:String>
+
+
+    <!--
+    ____________________ LinkPropertiesWindow ____________________
+    -->
+
+    <sys:String x:Key="LinkPropertiesWindowTitle">링크 속성 선택</sys:String>
+    
+    <!-- headers -->
+    <sys:String x:Key="SelectFactorioHeader">팩토리오 버전 선택:</sys:String>
+    <sys:String x:Key="SelectModpackHeader">모드팩 선택:</sys:String>
+    
+    
+    <!-- buttons -->
+    <sys:String x:Key="CreateButton">생성</sys:String>
+    
+    
+    <!-- checkboxes -->
+    <sys:String x:Key="UseExactVersionCheckBox">정확한 버전 사용</sys:String>
+
+
+    <!--
+    ____________________ AboutWindow ____________________
+    -->
+
+    <sys:String x:Key="AboutWindowTitle">ModMyFactory 정보</sys:String>
+
+    
+    <!-- labels -->
+    <sys:String x:Key="AuthorLabel">by Mathis Rech</sys:String>
+    <sys:String x:Key="FlagsLabel">Flag icons:</sys:String>
+    <sys:String x:Key="FontLabel">Factorio font:</sys:String>
+    <sys:String x:Key="DialogsLabel">Dialogs:</sys:String>
+    <sys:String x:Key="JsonLabel">JSON Framework:</sys:String>
+    <sys:String x:Key="GitHubLabel">GitHub API:</sys:String>
+    <sys:String x:Key="ZlibLabel">CRC32 implementation:</sys:String>
+    <sys:String x:Key="XdeltaLabel">VCDIFF implementation:</sys:String>
+    
+    <!-- headers -->
+    <sys:String x:Key="ContributorsHeader">기여자</sys:String>
+    <sys:String x:Key="TranslatorsHeader">번역자</sys:String>
+
+
+    <!--
+    ____________________ OnlineModsWindow ____________________
+    -->
+
+    <sys:String x:Key="OnlineModsWindowTitle">온라인 모드 탐색</sys:String>
+    
+    <!-- format strings -->
+    <sys:String x:Key="ByFormat">by {0}</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="ViewsToolTip">보기</sys:String>
+    <sys:String x:Key="DownloadsToolTip">다운로드</sys:String>
+    <sys:String x:Key="InstalledToolTip">설치됨</sys:String>
+    
+    <!-- labels -->
+    <sys:String x:Key="LicenseLabel">라이센스:</sys:String>
+    <sys:String x:Key="HomepageLabel">홈페이지:</sys:String>
+    <sys:String x:Key="GitHubUrlLabel">깃허브:</sys:String>
+    
+    <!-- headers -->
+    <sys:String x:Key="ReleasesHeader">공개 버전</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="DeleteButton">삭제</sys:String>
+    <sys:String x:Key="RefreshButton">새로고침</sys:String>
+
+
+    <!--
+    ____________________ ModUpdateWindow ____________________
+    -->
+    
+    <sys:String x:Key="ModUpdateWindowTitle">업데이트 할 모드 선택</sys:String>
+    
+    <!-- format strings -->
+    <sys:String x:Key="CurrentVersionFormat">현재 버전: {0}</sys:String>
+    <sys:String x:Key="NewestVersionFormat">최신 버전: {0}</sys:String>
+    
+    
+    <!--
+    ____________________ ModpackExportWindow ____________________
+    -->
+    
+    <sys:String x:Key="ModpackExportWindowTitle">내보낼 모드팩 선택</sys:String>
+    
+    <!-- options -->
+    <sys:String x:Key="IncludeVersionInfoOption">버전 정보 포함</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="IncludeVersionsToolTip">내보낸 모드의 버전이 내보낸 파일에 저장됩니다.&#x0a;가져올 때 ModMyFactory는 이 정보를 사용하여 지정된 버전의 모드를 다운로드합니다.</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="ExportButton">내보내기</sys:String>
+    
+    
+    <!--
+    ____________________ UpdateListWindow ____________________
+    -->
+
+    <sys:String x:Key="UpdateListWindowTitle">목표 버전 선택</sys:String>
+    
+    
+    <!--
+    ____________________ CopyOrMoveMessageWindow ____________________
+    -->
+    
+    <sys:String x:Key="CopyOrMoveMessageWindowTitle">복사 또는 이동</sys:String>
+    
+    <!-- messages -->
+    <sys:String x:Key="CopyOrMoveFactorioMessage">선택된 팩토리오 클라이언트를 복사하거나 이동하시겠습니까?&#x0a;이동을 선택시 현재 위치의 클라이언트는 제거됩니다.</sys:String>
+    <sys:String x:Key="CopyOrMoveModsMessage">선택된 모든 모드 파일을 복사하거나 이동하시겠습니까?</sys:String>
+    <sys:String x:Key="CopyOrMoveModMessage">선택된 모드 파일을 복사하거나 이동 하시겠습니까??</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="CopyButton">복사</sys:String>
+    <sys:String x:Key="MoveButton">이동</sys:String>
+
+</ResourceDictionary>
