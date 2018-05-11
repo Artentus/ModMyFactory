@@ -165,8 +165,8 @@
     <sys:String x:Key="AddModFolderMenuItem">폴더 형식 추가</sys:String>
     <sys:String x:Key="NewModpackMenuItem">새로운 모드팩</sys:String>
     <sys:String x:Key="CreateLinkMenuItem">링크 만들기</sys:String>
-    <sys:String x:Key="ExportModpacksMenuItem">모드팩 가져오기</sys:String>
-    <sys:String x:Key="ImportModpacksMenuItem">모드팩 내보내기</sys:String>
+    <sys:String x:Key="ExportModpacksMenuItem">모드팩 내보내기</sys:String>
+    <sys:String x:Key="ImportModpacksMenuItem">모드팩 가져오기</sys:String>
     <sys:String x:Key="StartGameMenuItem">게임 실행</sys:String>
     <sys:String x:Key="CloseMenuItem">닫기</sys:String>
     
