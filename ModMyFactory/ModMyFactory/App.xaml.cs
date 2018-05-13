@@ -18,7 +18,7 @@ namespace ModMyFactory
 {
     public partial class App : Application
     {
-        private const int PreReleaseVersion = 2;
+        private const int PreReleaseVersion = 3;
 
         /// <summary>
         /// The current application instance.
