@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -25,6 +25,9 @@ namespace ModMyFactory.ViewModels
 {
     sealed class OnlineModsViewModel : ViewModelBase
     {
+        const int ModTitleMinLength = 2;
+        static readonly string[] ModBlacklist = { "[Abandoned]", "[Deprecated]", "[Discontinued]", "[Outdated]" };
+
         static OnlineModsViewModel instance;
 
         public static OnlineModsViewModel Instance => instance ?? (instance = new OnlineModsViewModel());
@@ -203,7 +206,7 @@ namespace ModMyFactory.ViewModels
                 }
                 else
                 {
-                    selectedModDescription = string.Empty;
+                    SelectedModDescription = string.Empty;
                     SelectedReleases = null;
                     SelectedRelease = null;
                 }
@@ -227,7 +230,8 @@ namespace ModMyFactory.ViewModels
 
         public string SelectedModDescription
         {
-            get { return string.IsNullOrWhiteSpace(selectedModDescription) ? selectedMod?.Summary ?? string.Empty : selectedModDescription; }
+            //get { return string.IsNullOrWhiteSpace(selectedModDescription) ? selectedMod?.Summary ?? string.Empty : selectedModDescription; }
+            get { return selectedModDescription; }
             set
             {
                 if (value != selectedModDescription)
@@ -312,10 +316,15 @@ namespace ModMyFactory.ViewModels
             if (operationIndex == asyncFetchExtendedInfoIndex) ExtendedInfo = extendedInfo;
         }
 
+        private bool ModIsBlacklisted(ModInfo mod)
+        {
+            return ModBlacklist.Any(keyword => mod.Title.StartsWith(keyword, StringComparison.InvariantCultureIgnoreCase));
+        }
+
         private bool ModFilter(object item)
         {
             ModInfo mod = item as ModInfo;
-            if (mod == null) return false;
+            if ((mod == null) || (string.IsNullOrWhiteSpace(mod.Title) || (mod.Title.Length < ModTitleMinLength) || ModIsBlacklisted(mod))) return false;
 
             if (string.IsNullOrWhiteSpace(filter)) return true;
 
