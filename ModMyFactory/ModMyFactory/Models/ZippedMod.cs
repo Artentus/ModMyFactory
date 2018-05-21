@@ -53,7 +53,7 @@ namespace ModMyFactory.Models
             SetInfo(File);
         }
 
-        protected override void DeleteFilesystemObjects()
+        public override void DeleteFilesystemObjects()
         {
             File.Delete();
         }
@@ -63,7 +63,7 @@ namespace ModMyFactory.Models
             await File.MoveToAsync(Path.Combine(destinationDirectory.FullName, File.Name));
         }
 
-        protected override bool AlwaysKeepOnUpdate()
+        public override bool AlwaysKeepOnUpdate()
         {
             return App.Instance.Settings.KeepOldZippedModVersions;
         }

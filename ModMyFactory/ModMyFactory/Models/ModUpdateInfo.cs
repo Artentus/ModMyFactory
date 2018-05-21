@@ -25,6 +25,10 @@ namespace ModMyFactory.Models
 
         public Version NewestFactorioVersion { get; }
 
+        public bool ExchangeInModpacks { get; }
+
+        public bool KeepOld { get; }
+
         public bool IsSelected
         {
             get { return isSelected; }
@@ -38,7 +42,7 @@ namespace ModMyFactory.Models
             }
         }
 
-        public ModUpdateInfo(Mod mod, ModRelease newestRelease)
+        public ModUpdateInfo(Mod mod, ModRelease newestRelease, bool exchangeInModpacks, bool keepOld)
         {
             Title = mod.Title;
             Name = mod.Name;
@@ -48,6 +52,8 @@ namespace ModMyFactory.Models
             NewestRelease = newestRelease;
             CurrentFactorioVersion = mod.FactorioVersion;
             NewestFactorioVersion = newestRelease.InfoFile.FactorioVersion;
+            ExchangeInModpacks = exchangeInModpacks;
+            KeepOld = keepOld;
             isSelected = true;
         }
     }

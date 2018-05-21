@@ -283,8 +283,6 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand DownloadCommand { get; }
 
-        public RelayCommand UpdateCommand { get; }
-
         public RelayCommand DeleteCommand { get; }
 
         public RelayCommand RefreshCommand { get; }
@@ -339,11 +337,6 @@ namespace ModMyFactory.ViewModels
             asyncFetchExtendedInfoIndex = -1;
 
             DownloadCommand = new RelayCommand(async () => await DownloadSelectedModRelease(), () => SelectedRelease != null && !SelectedRelease.IsInstalled);
-            UpdateCommand = new RelayCommand(async () => await UpdateSelectedModRelease(), () =>
-            {
-                ModRelease newestRelease = GetNewestRelease(ExtendedInfo);
-                return (SelectedRelease != null) && SelectedRelease.IsInstalled && !newestRelease.IsInstalled && (SelectedRelease != newestRelease);
-            });
             DeleteCommand = new RelayCommand(DeleteSelectedModRelease, () => SelectedRelease != null && SelectedRelease.IsInstalled);
             RefreshCommand = new RelayCommand(async () => await RefreshModList());
 
@@ -456,102 +449,6 @@ namespace ModMyFactory.ViewModels
         private ModRelease GetNewestRelease(ExtendedModInfo info)
         {
             return info?.Releases.MaxBy(release => release.Version, new VersionComparer());
-        }
-
-        private async Task UpdateModAsyncInner(Mod oldMod, ModRelease newestRelease, string token, IProgress<double> progress, CancellationToken cancellationToken)
-        {
-            FileInfo modFile = await ModWebsite.UpdateReleaseAsync(newestRelease, GlobalCredentials.Instance.Username, token, progress, cancellationToken);
-            Mod newMod;
-
-            if (App.Instance.Settings.AlwaysUpdateZipped || (oldMod is ZippedMod))
-            {
-                newMod = new ZippedMod(oldMod.Name, newestRelease.Version, newestRelease.InfoFile.FactorioVersion, modFile, InstalledMods, InstalledModpacks);
-            }
-            else
-            {
-                DirectoryInfo modDirectory = await Task.Run(() =>
-                {
-                    progress.Report(2);
-                    DirectoryInfo modsDirectory = App.Instance.Settings.GetModDirectory(newestRelease.InfoFile.FactorioVersion);
-                    ZipFile.ExtractToDirectory(modFile.FullName, modsDirectory.FullName);
-                    modFile.Delete();
-
-                    return new DirectoryInfo(Path.Combine(modsDirectory.FullName, modFile.NameWithoutExtension()));
-                });
-
-                newMod = new ExtractedMod(oldMod.Name, newestRelease.Version, newestRelease.InfoFile.FactorioVersion, modDirectory, InstalledMods, InstalledModpacks);
-            }
-
-            InstalledMods.Add(newMod);
-            if (oldMod.Update(newMod)) InstalledModpacks.ExchangeMods(oldMod, newMod);
-
-            ModpackTemplateList.Instance.Update(InstalledModpacks);
-            ModpackTemplateList.Instance.Save();
-        }
-
-        private async Task UpdateSelectedModRelease()
-        {
-            string token;
-            if (GlobalCredentials.Instance.LogIn(Window, out token))
-            {
-                ModRelease newestRelease = GetNewestRelease(ExtendedInfo);
-                Mod oldMod = InstalledMods.Find(SelectedMod.Name).MaxBy(mod => mod.Version);
-
-                var cancellationSource = new CancellationTokenSource();
-                var progressWindow = new ProgressWindow { Owner = Window };
-                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("UpdatingAction");
-                progressViewModel.ProgressDescription = string.Format(App.Instance.GetLocalizedResourceString("DownloadingDescription"), newestRelease.FileName);
-                progressViewModel.CanCancel = true;
-                progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
-
-                IProgress<double> progress = new Progress<double>(p =>
-                {
-                    if (p > 1)
-                    {
-                        progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
-                        progressViewModel.IsIndeterminate = true;
-                        progressViewModel.CanCancel = false;
-                    }
-                    else
-                    {
-                        progressViewModel.Progress = p;
-                    }
-                });
-
-                try
-                {
-                    Task closeWindowTask = null;
-                    try
-                    {
-                        Task updateTask = UpdateModAsyncInner(oldMod, newestRelease, token, progress, cancellationSource.Token);
-
-                        closeWindowTask = updateTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-                        progressWindow.ShowDialog();
-
-                        await updateTask;
-                    }
-                    finally
-                    {
-                        if (closeWindowTask != null) await closeWindowTask;
-                    }
-                }
-                catch (HttpRequestException)
-                {
-                    MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
-                        App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                SelectedRelease = null;
-                foreach (var release in SelectedReleases)
-                {
-                    release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
-                    release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.InfoFile.FactorioVersion);
-                }
-            }
         }
 
         private void DeleteSelectedModRelease()

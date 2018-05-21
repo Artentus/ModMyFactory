@@ -43,7 +43,7 @@ namespace ModMyFactory.Models
             SetInfo(Directory);
         }
 
-        protected override void DeleteFilesystemObjects()
+        public override void DeleteFilesystemObjects()
         {
             Directory.Delete(true);
         }
@@ -55,7 +55,7 @@ namespace ModMyFactory.Models
             Directory = newDirectory;
         }
 
-        protected override bool AlwaysKeepOnUpdate()
+        public override bool AlwaysKeepOnUpdate()
         {
             return App.Instance.Settings.KeepOldExtractedModVersions;
         }
