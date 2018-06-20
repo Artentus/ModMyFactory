@@ -105,6 +105,15 @@ namespace ModMyFactory.Views
                     ModpackTemplateList.Instance.Save();
                 }
             }
+            else
+            {
+                if (e.Data.GetDataPresent(typeof(List<Mod>)))
+                {
+                    var model = (MainViewModel)ViewModel;
+                    var mods = (List<Mod>)e.Data.GetData(typeof(List<Mod>));
+                    model.CreateNewModpack(mods);
+                }
+            }
         }
 
         private void ModpackListBoxDragOverHandler(object sender, DragEventArgs e)

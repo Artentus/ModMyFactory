@@ -505,6 +505,8 @@
                                     <MenuItem Header="{DynamicResource ActivateSelectedModpacksMenuItem}" Command="{Binding ActivateSelectedModpacksCommand}"/>
                                     <MenuItem Header="{DynamicResource DeactivateSelectedModpacksMenuItem}" Command="{Binding DeactivateSelectedModpacksCommand}"/>
                                     <Separator/>
+                                    <MenuItem Header="{DynamicResource NewModpackMenuItem}" Icon="{StaticResource NewPackageIcon}" InputGestureText="{DynamicResource NewModpackHotkey}"
+                                              Command="{Binding CreateModpackCommand}"/>
                                     <MenuItem Header="{DynamicResource DeleteSelectedModpacksMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
                                               Command="{Binding DeleteSelectedModpacksCommand}"/>
                                     <Separator/>
@@ -591,7 +593,7 @@
 
                 <controls:DragDropReadyListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type model:Modpack}">
-                        <Expander>
+                        <Expander IsExpanded="{Binding ContentsExpanded, Mode=TwoWay}">
                             <Expander.Header>
                                 <Grid Margin="2">
                                     <Grid.ColumnDefinitions>
@@ -636,6 +638,8 @@
                         <MenuItem Header="{DynamicResource ActivateSelectedModpacksMenuItem}" Command="{Binding ActivateSelectedModpacksCommand}"/>
                         <MenuItem Header="{DynamicResource DeactivateSelectedModpacksMenuItem}" Command="{Binding DeactivateSelectedModpacksCommand}"/>
                         <Separator/>
+                        <MenuItem Header="{DynamicResource NewModpackMenuItem}" Icon="{StaticResource NewPackageIcon}" InputGestureText="{DynamicResource NewModpackHotkey}"
+                                  Command="{Binding CreateModpackCommand}"/>
                         <MenuItem Header="{DynamicResource DeleteSelectedModpacksMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
                                   Command="{Binding DeleteSelectedModpacksCommand}"/>
                         <Separator/>

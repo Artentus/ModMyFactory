@@ -22,6 +22,7 @@ namespace ModMyFactory.Models
         bool? active;
         bool activeChanging;
         bool isSelected;
+        bool contentsExpanded;
 
         /// <summary>
         /// The name of the modpack.
@@ -111,6 +112,22 @@ namespace ModMyFactory.Models
                         ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
                         ModpackTemplateList.Instance.Save();
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether the contents of this modpack are currently expanded on the UI.
+        /// </summary>
+        public bool ContentsExpanded
+        {
+            get { return contentsExpanded; }
+            set
+            {
+                if (value != contentsExpanded)
+                {
+                    contentsExpanded = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ContentsExpanded)));
                 }
             }
         }

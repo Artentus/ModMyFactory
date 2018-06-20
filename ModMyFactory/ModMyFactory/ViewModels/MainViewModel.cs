@@ -953,7 +953,7 @@ namespace ModMyFactory.ViewModels
             return Modpacks.Any(item => item.Name == name);
         }
 
-        private void CreateNewModpack()
+        public void CreateNewModpack(ICollection<Mod> mods)
         {
             string name = App.Instance.GetLocalizedResourceString("NewModpackName");
             string newName = name;
@@ -968,8 +968,25 @@ namespace ModMyFactory.ViewModels
             modpack.ParentView = ModpacksView;
             Modpacks.Add(modpack);
 
+            if (mods != null)
+            {
+                foreach (Mod mod in mods)
+                {
+                    var reference = new ModReference(mod, modpack);
+                    modpack.Mods.Add(reference);
+                }
+
+                modpack.ContentsExpanded = true;
+            }
+
+            ((MainWindow)View).ModpacksToggledPopup.IsOpen = false;
             modpack.Editing = true;
             Window.ModpacksListBox.ScrollIntoView(modpack);
+        }
+
+        public void CreateNewModpack()
+        {
+            CreateNewModpack(null);
         }
 
         private void CreateLink()
@@ -1395,7 +1412,8 @@ namespace ModMyFactory.ViewModels
             if (newestRelease.Version > newestModVersion.Version)
             {
                 bool exchange = (newestModVersion.FactorioVersion == newestRelease.InfoFile.FactorioVersion) || !App.Instance.Settings.DownloadIntermediateUpdates;
-                bool keepOld = newestModVersion.AlwaysKeepOnUpdate() || (App.Instance.Settings.KeepOldModVersionsWhenNewFactorioVersion && (newestModVersion.FactorioVersion != newestRelease.InfoFile.FactorioVersion));
+                bool keepOld = newestModVersion.AlwaysKeepOnUpdate()
+                    || ((App.Instance.Settings.KeepOldModVersionsWhenNewFactorioVersion || App.Instance.Settings.DownloadIntermediateUpdates) && (newestModVersion.FactorioVersion != newestRelease.InfoFile.FactorioVersion));
 
                 candidates.Add(newestRelease);
                 result.Add(new ModUpdateInfo(newestModVersion, newestRelease, exchange, keepOld));
