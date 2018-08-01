@@ -226,6 +226,7 @@
     <Compile Include="Web\FactorioWebsite.cs" />
     <Compile Include="Web\ModApi\ExtendedModInfo.cs" />
     <Compile Include="Web\ModApi\InfoFile.cs" />
+    <Compile Include="Web\ModApi\LicenseInfo.cs" />
     <Compile Include="Web\ModApi\ModInfo.cs" />
     <Compile Include="Web\ModApi\ModRelease.cs" />
     <Compile Include="Web\ModApi\PageInfo.cs" />

@@ -63,7 +63,7 @@ namespace ModMyFactory.Web
 
         private static ExtendedModInfo GetExtendedInfoInternal(string modName)
         {
-            string modUrl = $"{ModsUrl}/{modName}";
+            string modUrl = $"{ModsUrl}/{modName}/full";
 
             string document = WebHelper.GetDocument(modUrl, null);
             if (!string.IsNullOrEmpty(document))
@@ -106,15 +106,15 @@ namespace ModMyFactory.Web
             return await GetExtendedInfoAsync(mod.Name);
         }
 
-        private static bool IsEmail(string username)
-        {
-            string[] parts = username.Split('@');
-            if (parts.Length != 2) return false;
+        //private static bool IsEmail(string username)
+        //{
+        //    string[] parts = username.Split('@');
+        //    if (parts.Length != 2) return false;
 
-            string domain = parts[1];
-            int dotIndex = domain.LastIndexOf('.');
-            return (dotIndex < (domain.Length - 1));
-        }
+        //    string domain = parts[1];
+        //    int dotIndex = domain.LastIndexOf('.');
+        //    return (dotIndex < (domain.Length - 1));
+        //}
 
         private static Uri BuildUrl(ModRelease release, string username, string token)
         {

@@ -19,20 +19,5 @@ namespace ModMyFactory.Web.ModApi
 
         [JsonProperty("owner")]
         public string Author { get; set; }
-
-
-        // Removed from API
-
-        //[JsonProperty("license_name")]
-        //public string License { get; set; }
-
-        //[JsonProperty("license_url")]
-        //public string LicenseUrl { get; set; }
-
-        //[JsonProperty("github_path")]
-        //public string GitHubUrl { get; set; }
-
-        //[JsonProperty("homepage")]
-        //public string Homepage { get; set; }
     }
 }

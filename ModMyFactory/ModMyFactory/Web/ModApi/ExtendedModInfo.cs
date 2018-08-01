@@ -8,18 +8,16 @@ namespace ModMyFactory.Web.ModApi
         [JsonProperty("releases")]
         public ModRelease[] Releases { get; set; }
 
-        [JsonProperty("summary")]
-        public string Summary { get; set; }
+        [JsonProperty("description")]
+        public string Description { get; set; }
 
-        // Removed from API
+        [JsonProperty("homepage")]
+        public string Homepage { get; set; }
 
-        //[JsonProperty("license_name")]
-        //public string LicenseName { get; set; }
+        [JsonProperty("github_path")]
+        public string GitHubUrl { get; set; }
 
-        //[JsonProperty("license_url")]
-        //public string LicenseUrl { get; set; }
-
-        //[JsonProperty("github_path")]
-        //public string GitHubUrl { get; set; }
+        [JsonProperty("license")]
+        public LicenseInfo License { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -44,7 +45,8 @@ namespace ModMyFactory.ViewModels
 
         string selectedModName;
         string selectedModDescription;
-        string selectedModLicense;
+        string selectedModLicenseUrl;
+        string selectedModLicenseName;
         string selectedModHomepage;
         string selectedModGitHubUrl;
 
@@ -160,9 +162,6 @@ namespace ModMyFactory.ViewModels
                     if (selectedMod != null)
                     {
                         SelectedModName = selectedMod.Title;
-                        //SelectedModLicense = selectedMod.License;
-                        //SelectedModHomepage = selectedMod.Homepage;
-                        //SelectedModGitHubUrl = selectedMod.GitHubUrl;
 
                         ExtendedInfo = null;
                         asyncFetchExtendedInfoIndex++;
@@ -171,10 +170,6 @@ namespace ModMyFactory.ViewModels
                     else
                     {
                         SelectedModName = string.Empty;
-                        SelectedModLicense = string.Empty;
-                        SelectedModHomepage = string.Empty;
-                        SelectedModGitHubUrl = string.Empty;
-
                         ExtendedInfo = null;
                     }
                 }
@@ -191,7 +186,11 @@ namespace ModMyFactory.ViewModels
 
                 if (extendedInfo != null)
                 {
-                    SelectedModDescription = extendedInfo.Summary;
+                    SelectedModDescription = extendedInfo.Description;
+                    SelectedModLicenseUrl = extendedInfo.License?.Url;
+                    SelectedModLicenseName = extendedInfo.License?.Name;
+                    SelectedModHomepage = extendedInfo.Homepage;
+                    SelectedModGitHubUrl = extendedInfo.GitHubUrl;
                     foreach (var release in extendedInfo.Releases)
                     {
                         release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
@@ -204,6 +203,11 @@ namespace ModMyFactory.ViewModels
                 else
                 {
                     SelectedModDescription = string.Empty;
+                    SelectedModLicenseUrl = string.Empty;
+                    SelectedModLicenseName = string.Empty;
+                    SelectedModHomepage = string.Empty;
+                    SelectedModGitHubUrl = string.Empty;
+
                     SelectedReleases = null;
                     SelectedRelease = null;
                 }
@@ -227,8 +231,8 @@ namespace ModMyFactory.ViewModels
 
         public string SelectedModDescription
         {
-            //get { return string.IsNullOrWhiteSpace(selectedModDescription) ? selectedMod?.Summary ?? string.Empty : selectedModDescription; }
-            get { return selectedModDescription; }
+            get { return (string.IsNullOrWhiteSpace(selectedModDescription) || (selectedModDescription == "."))
+                    ? selectedMod?.Summary ?? string.Empty : selectedModDescription; }
             set
             {
                 if (value != selectedModDescription)
@@ -239,15 +243,28 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        public string SelectedModLicense
+        public string SelectedModLicenseUrl
         {
-            get { return selectedModLicense; }
+            get { return selectedModLicenseUrl; }
             set
             {
-                if (value != selectedModLicense)
+                if (value != selectedModLicenseUrl)
                 {
-                    selectedModLicense = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModLicense)));
+                    selectedModLicenseUrl = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModLicenseUrl)));
+                }
+            }
+        }
+
+        public string SelectedModLicenseName
+        {
+            get { return selectedModLicenseName; }
+            set
+            {
+                if (value != selectedModLicenseName)
+                {
+                    selectedModLicenseName = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModLicenseName)));
                 }
             }
         }
@@ -339,43 +356,43 @@ namespace ModMyFactory.ViewModels
 
             OpenLicenseLinkCommand = new RelayCommand(() =>
             {
-                //string url = SelectedMod.LicenseUrl;
-                //if (!string.IsNullOrWhiteSpace(url))
-                //{
-                //    try
-                //    {
-                //        Process.Start(url);
-                //    }
-                //    catch { }
-                //}
+                string url = SelectedModLicenseUrl;
+                if (!string.IsNullOrWhiteSpace(url))
+                {
+                    try
+                    {
+                        Process.Start(url);
+                    }
+                    catch { }
+                }
             });
             OpenHomepageCommand = new RelayCommand(() =>
             {
-                //string url = SelectedMod.Homepage;
-                //if (!string.IsNullOrWhiteSpace(url))
-                //{
-                //    try
-                //    {
-                //        Process.Start(url);
-                //    }
-                //    catch { }
-                //}
+                string url = SelectedModHomepage;
+                if (!string.IsNullOrWhiteSpace(url))
+                {
+                    try
+                    {
+                        Process.Start(url);
+                    }
+                    catch { }
+                }
             });
             OpenGitHubLinkCommand = new RelayCommand(() =>
             {
                 const string prefix = "https://www.github.com/";
 
-                //string url = SelectedMod.GitHubUrl;
-                //if (!url.StartsWith(prefix)) url = prefix + url;
+                string url = SelectedModGitHubUrl;
+                if (!url.StartsWith(prefix)) url = prefix + url;
 
-                //if (!string.IsNullOrWhiteSpace(url))
-                //{
-                //    try
-                //    {
-                //        Process.Start(url);
-                //    }
-                //    catch { }
-                //}
+                if (!string.IsNullOrWhiteSpace(url))
+                {
+                    try
+                    {
+                        Process.Start(url);
+                    }
+                    catch { }
+                }
             });
 
             ClearFilterCommand = new RelayCommand(() => Filter = string.Empty);
