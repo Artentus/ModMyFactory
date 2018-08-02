@@ -26,16 +26,6 @@ namespace ModMyFactory.Web.ModApi
         public InfoFile InfoFile { get; set; }
 
 
-        // Removed from API
-
-        //[JsonProperty("factorio_version")]
-        //[JsonConverter(typeof(TwoPartVersionConverter))]
-        //public Version FactorioVersion { get; set; }
-
-        //[JsonProperty("downloads_count")]
-        //public int DownloadCount { get; set; }
-
-
         bool isInstalled;
         bool isVersionInstalled;
 

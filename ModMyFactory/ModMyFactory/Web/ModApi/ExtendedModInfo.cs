@@ -19,5 +19,8 @@ namespace ModMyFactory.Web.ModApi
 
         [JsonProperty("license")]
         public LicenseInfo License { get; set; }
+
+        [JsonProperty("changelog")]
+        public string Changelog { get; set; }
     }
 }

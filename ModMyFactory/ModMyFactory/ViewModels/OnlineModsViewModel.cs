@@ -45,7 +45,7 @@ namespace ModMyFactory.ViewModels
 
         string selectedModName;
         string selectedModDescription;
-        string selectedModLicenseUrl;
+        string selectedModChangelog;
         string selectedModLicenseName;
         string selectedModHomepage;
         string selectedModGitHubUrl;
@@ -187,7 +187,7 @@ namespace ModMyFactory.ViewModels
                 if (extendedInfo != null)
                 {
                     SelectedModDescription = extendedInfo.Description;
-                    SelectedModLicenseUrl = extendedInfo.License?.Url;
+                    SelectedModChangelog = extendedInfo.Changelog;
                     SelectedModLicenseName = extendedInfo.License?.Name;
                     SelectedModHomepage = extendedInfo.Homepage;
                     SelectedModGitHubUrl = extendedInfo.GitHubUrl;
@@ -203,7 +203,7 @@ namespace ModMyFactory.ViewModels
                 else
                 {
                     SelectedModDescription = string.Empty;
-                    SelectedModLicenseUrl = string.Empty;
+                    SelectedModChangelog = string.Empty;
                     SelectedModLicenseName = string.Empty;
                     SelectedModHomepage = string.Empty;
                     SelectedModGitHubUrl = string.Empty;
@@ -243,22 +243,22 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        public string SelectedModLicenseUrl
+        public string SelectedModChangelog
         {
-            get { return selectedModLicenseUrl; }
+            get { return selectedModChangelog; }
             set
             {
-                if (value != selectedModLicenseUrl)
+                if (value != selectedModChangelog)
                 {
-                    selectedModLicenseUrl = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModLicenseUrl)));
+                    selectedModChangelog = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModChangelog)));
                 }
             }
         }
 
         public string SelectedModLicenseName
         {
-            get { return selectedModLicenseName; }
+            get { return (ExtendedInfo != null && string.IsNullOrEmpty(selectedModLicenseName)) ? "N/A" : selectedModLicenseName; }
             set
             {
                 if (value != selectedModLicenseName)
@@ -271,7 +271,7 @@ namespace ModMyFactory.ViewModels
 
         public string SelectedModHomepage
         {
-            get { return selectedModHomepage; }
+            get { return (ExtendedInfo != null && string.IsNullOrEmpty(selectedModHomepage)) ? "N/A" : selectedModHomepage; }
             set
             {
                 if (value != selectedModHomepage)
@@ -284,7 +284,7 @@ namespace ModMyFactory.ViewModels
 
         public string SelectedModGitHubUrl
         {
-            get { return selectedModGitHubUrl; }
+            get { return (ExtendedInfo != null && string.IsNullOrEmpty(selectedModGitHubUrl)) ? "N/A" : selectedModGitHubUrl; }
             set
             {
                 if (value != selectedModGitHubUrl)
@@ -306,6 +306,10 @@ namespace ModMyFactory.ViewModels
         public RelayCommand OpenHomepageCommand { get; }
 
         public RelayCommand OpenGitHubLinkCommand { get; }
+
+        public RelayCommand OpenOnModPortalCommand { get; }
+
+        public RelayCommand OpenAuthorCommand { get; }
 
         public RelayCommand ClearFilterCommand { get; }
 
@@ -356,7 +360,7 @@ namespace ModMyFactory.ViewModels
 
             OpenLicenseLinkCommand = new RelayCommand(() =>
             {
-                string url = SelectedModLicenseUrl;
+                string url = ExtendedInfo?.License?.Url;
                 if (!string.IsNullOrWhiteSpace(url))
                 {
                     try
@@ -368,7 +372,7 @@ namespace ModMyFactory.ViewModels
             });
             OpenHomepageCommand = new RelayCommand(() =>
             {
-                string url = SelectedModHomepage;
+                string url = ExtendedInfo?.Homepage;
                 if (!string.IsNullOrWhiteSpace(url))
                 {
                     try
@@ -382,18 +386,44 @@ namespace ModMyFactory.ViewModels
             {
                 const string prefix = "https://www.github.com/";
 
-                string url = SelectedModGitHubUrl;
-                if (!url.StartsWith(prefix)) url = prefix + url;
-
+                string url = ExtendedInfo?.GitHubUrl;
+                
                 if (!string.IsNullOrWhiteSpace(url))
                 {
                     try
                     {
+                        if (!url.StartsWith(prefix)) url = prefix + url;
                         Process.Start(url);
                     }
                     catch { }
                 }
             });
+            OpenOnModPortalCommand = new RelayCommand(() =>
+            {
+                if (SelectedMod != null)
+                {
+                    try
+                    {
+                        string name = SelectedMod.Name;
+                        string url = $"https://mods.factorio.com/mod/{name}";
+                        Process.Start(url);
+                    }
+                    catch { }
+                }
+            }, () => SelectedMod != null);
+            OpenAuthorCommand = new RelayCommand(() =>
+            {
+                if (SelectedMod != null)
+                {
+                    try
+                    {
+                        string name = SelectedMod.Author;
+                        string url = $"https://mods.factorio.com/user/{name}";
+                        Process.Start(url);
+                    }
+                    catch { }
+                }
+            }, () => SelectedMod != null);
 
             ClearFilterCommand = new RelayCommand(() => Filter = string.Empty);
         }

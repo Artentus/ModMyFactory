@@ -8,5 +8,8 @@ namespace ModMyFactory.Web.ModApi
         [JsonProperty("factorio_version")]
         [JsonConverter(typeof(TwoPartVersionConverter))]
         public Version FactorioVersion { get; set; }
+
+        [JsonProperty("dependencies")]
+        public string[] Dependencies { get; set; }
     }
 }

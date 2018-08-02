@@ -385,10 +385,14 @@
     
     <!-- headers -->
     <sys:String x:Key="ReleasesHeader">Releases</sys:String>
+    <sys:String x:Key="DescriptionHeader">Description</sys:String>
+    <sys:String x:Key="ChangelogHeader">Changelog</sys:String>
     
     <!-- buttons -->
     <sys:String x:Key="DeleteButton">Delete</sys:String>
     <sys:String x:Key="RefreshButton">Refresh</sys:String>
+    <sys:String x:Key="ViewOnlineButton">View online</sys:String>
+    <sys:String x:Key="ViewAuthorButton">View author</sys:String>
 
 
     <!--

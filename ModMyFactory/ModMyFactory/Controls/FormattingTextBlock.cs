@@ -175,7 +175,7 @@ namespace ModMyFactory.Controls
 
                     index += 2;
 
-                    var span = new Span() { FontSize = 26 };
+                    var span = new Span() { FontSize = 18 };
                     FormatText(text, span.Inlines, ref index, "##", "#", "\r\n", "\r", "\n");
                     inlines.Add(span);
                     inlines.Add(new LineBreak());

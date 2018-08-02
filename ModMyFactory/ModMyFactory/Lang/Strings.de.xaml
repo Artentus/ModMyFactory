@@ -376,10 +376,14 @@
 
     <!-- headers -->
     <sys:String x:Key="ReleasesHeader">Veröffentlichte Versionen</sys:String>
+    <sys:String x:Key="DescriptionHeader">Beschreibung</sys:String>
+    <sys:String x:Key="ChangelogHeader">Änderungen</sys:String>
     
     <!-- buttons -->
     <sys:String x:Key="DeleteButton">Löschen</sys:String>
     <sys:String x:Key="RefreshButton">Aktualisieren</sys:String>
+    <sys:String x:Key="ViewOnlineButton">Online ansehen</sys:String>
+    <sys:String x:Key="ViewAuthorButton">Autor ansehen</sys:String>
 
 
     <!--
