@@ -64,5 +64,26 @@ namespace ModMyFactory.Helpers
                 return maxElement;
             }
         }
+
+        public static bool Contains<TSource, TValue>(this IEnumerable<TSource> source, TValue value, Func<TSource, TValue> selector, IComparer<TValue> comparer = null)
+        {
+            if (comparer == null) comparer = Comparer<TValue>.Default;
+
+            foreach (TSource sourceItem in source)
+            {
+                TValue selectedItem = selector(sourceItem);
+                if (comparer.Compare(selectedItem, value) == 0) return true;
+            }
+            return false;
+        }
+
+        public static bool Contains<TSource, TValue>(this IEnumerable<TSource> source, TValue value, Func<TSource, TValue, bool> comparison)
+        {
+            foreach (TSource item in source)
+            {
+                if (comparison(item, value)) return true;
+            }
+            return false;
+        }
     }
 }

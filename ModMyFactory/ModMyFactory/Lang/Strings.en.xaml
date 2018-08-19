@@ -413,9 +413,17 @@
     <sys:String x:Key="ModpackExportWindowTitle">Select modpacks to export</sys:String>
     
     <!-- options -->
+    <sys:String x:Key="DownloadNewerOption">Download newer versions of included mods</sys:String>
     <sys:String x:Key="IncludeVersionInfoOption">Include version info</sys:String>
     
     <!-- tooltips -->
+    <sys:String x:Key="ExportToolTip">Export</sys:String>
+    <sys:String x:Key="NoExportToolTip">Don't export</sys:String>
+    <sys:String x:Key="NewestToolTip">Use newest available version</sys:String>
+    <sys:String x:Key="SpecificToolTip">Use currently installed version</sys:String>
+    <sys:String x:Key="FactorioVersionToolTip">Use newest available version for same Factorio version</sys:String>
+    <sys:String x:Key="IncludeToolTip">Include in exported file</sys:String>
+    <sys:String x:Key="DownloadNewerToolTip">If this setting is enabled, even mods that are included in the&#x0a;exported file will still be downloaded again according to the&#x0a;option used if a newer version is available.</sys:String>
     <sys:String x:Key="IncludeVersionsToolTip">This will save the versions of the exported mods into the exported file.&#x0a;On import ModMyFactory will use this info to download specific mod versions.</sys:String>
     
     <!-- buttons -->

@@ -1032,10 +1032,10 @@ namespace ModMyFactory.ViewModels
                 result = dialog.ShowDialog(Window);
                 if (result.HasValue && result.Value)
                 {
-                    ExportTemplate template = ModpackExport.CreateTemplate(
-                        exportWindow.ModpackListBox.SelectedItems.Cast<Modpack>(),
-                        exportViewModel.IncludeVersionInfo);
-                    ModpackExport.ExportTemplate(template, dialog.FileName);
+                    //ExportTemplate template = ModpackExport.CreateTemplate(
+                    //    exportWindow.ModpackListBox.SelectedItems.Cast<Modpack>(),
+                    //    exportViewModel.IncludeVersionInfo);
+                    //ModpackExport.ExportTemplate(template, dialog.FileName);
                 }
             }
         }

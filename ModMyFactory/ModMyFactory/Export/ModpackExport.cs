@@ -7,6 +7,8 @@ namespace ModMyFactory.Export
 {
     static class ModpackExport
     {
+        //--------------------------------------------------------------- Deprecated ------------------------------------------------------------------------------------
+
         private static void AddModpacksRecursive(Modpack modpack, ICollection<ModpackExportTemplate> templateCollection, bool includeVersionInfo)
         {
             var template = ModpackExportTemplate.FromModpack(modpack, includeVersionInfo);
@@ -41,6 +43,17 @@ namespace ModMyFactory.Export
 
             return new ExportTemplate(includeVersionInfo, modTemplates.ToArray(), modpackTemplates.ToArray());
         }
+
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        
+
+
+
+
+
+
+
+
 
         public static void ExportTemplate(ExportTemplate template, string filePath)
         {

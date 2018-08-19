@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using ModMyFactory.Models;
 using Newtonsoft.Json;
 
@@ -8,6 +9,8 @@ namespace ModMyFactory.Export
     [JsonObject(MemberSerialization.OptOut)]
     sealed class ModpackExportTemplate : IEquatable<ModpackExportTemplate>
     {
+        //---------------------------------------------------- Deprecated ------------------------------------------------------------
+
         public static ModpackExportTemplate FromModpack(Modpack modpack, bool includeVersionInfo)
         {
             var mods = new List<ModExportTemplate>();
@@ -31,19 +34,68 @@ namespace ModMyFactory.Export
             return new ModpackExportTemplate(modpack.Name, mods.ToArray(), modpacks.ToArray());
         }
 
-        public string Name { get; }
-
+        [DefaultValue(null)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public ModExportTemplate[] Mods { get; }
 
+        [DefaultValue(null)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string[] Modpacks { get; }
 
-        [JsonConstructor]
-        public ModpackExportTemplate(string name, ModExportTemplate[] mods, string[] modpacks)
+        private ModpackExportTemplate(string name, ModExportTemplate[] mods, string[] modpacks)
+            : this(-1, name, mods, modpacks, null, null)
+        { }
+
+        //----------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+        private static int globalUid = 0;
+
+        public static void ResetUid()
         {
+            globalUid = 0;
+        }
+
+
+
+        [DefaultValue(-1)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public int Uid { get; }
+
+        public string Name { get; }
+
+        [DefaultValue(null)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public int[] ModIds { get; }
+
+        [DefaultValue(null)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public int[] ModpackIds { get; }
+
+        [JsonConstructor]
+        private ModpackExportTemplate(int uid, string name, ModExportTemplate[] mods, string[] modpacks, int[] modIds, int[] modpackIds)
+        {
+            Uid = uid;
             Name = name;
             Mods = mods;
             Modpacks = modpacks;
+            ModIds = modIds;
+            ModpackIds = modpackIds;
         }
+
+        public ModpackExportTemplate(string name, int[] modIds, int[] modpackIds)
+        {
+            Uid = globalUid;
+            globalUid++;
+
+            Name = name;
+            ModIds = modIds;
+            ModpackIds = modpackIds;
+        }
+
+
 
         public bool Equals(ModpackExportTemplate other)
         {

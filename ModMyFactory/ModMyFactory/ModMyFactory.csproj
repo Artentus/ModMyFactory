@@ -96,6 +96,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommandLine.cs" />
+    <Compile Include="Export\ExportMode.cs" />
     <Compile Include="ExtendedVersion.cs" />
     <Compile Include="FactorioUpdate\CriticalUpdaterException.cs" />
     <Compile Include="Export\ExportTemplate.cs" />
@@ -124,6 +125,8 @@
     <Compile Include="ModCollection.cs" />
     <Compile Include="Models\CopyOrMoveType.cs" />
     <Compile Include="Models\FactorioSteamVersion.cs" />
+    <Compile Include="Models\ModpackTemplate.cs" />
+    <Compile Include="Models\ModTemplate.cs" />
     <Compile Include="Models\ModUpdateInfo.cs" />
     <Compile Include="Export\ModExportTemplate.cs" />
     <Compile Include="Models\UpdateTarget.cs" />
@@ -477,6 +480,9 @@
     <Resource Include="Images\Refresh_blue.png" />
     <Resource Include="Images\Lang\zh.png" />
     <Resource Include="Images\Lang\ko.png" />
+    <Resource Include="Images\Folder.png" />
+    <Resource Include="Images\Factorio.png" />
+    <Resource Include="Images\Installed.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>
