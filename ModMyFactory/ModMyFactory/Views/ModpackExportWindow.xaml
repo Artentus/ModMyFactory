@@ -13,6 +13,71 @@
         <vm:ModpackExportViewModel/>
     </Window.DataContext>
     
+    <Window.Resources>
+        <BitmapImage x:Key="ModImage" UriSource="../Images/Document.png"/>
+        <BitmapImage x:Key="ModpackImage" UriSource="../Images/Package.png"/>
+        <BitmapImage x:Key="IncludeImage" UriSource="../Images/Folder.png"/>
+        <BitmapImage x:Key="NewestImage" UriSource="../Images/Update.png"/>
+        <BitmapImage x:Key="InstalledImage" UriSource="../Images/Installed.png"/>
+        <BitmapImage x:Key="FactorioImage" UriSource="../Images/Factorio.png"/>
+
+        <Style x:Key="FlatToggleButtonStyle" TargetType="{x:Type ToggleButton}">
+            <Style.Setters>
+                <Setter Property="Width" Value="24"/>
+                <Setter Property="Height" Value="24"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <Border x:Name="Border" BorderThickness="1" BorderBrush="Transparent" Background="Transparent">
+                                <Image Width="18" Height="18" VerticalAlignment="Center" Stretch="None" Source="{TemplateBinding Content}"/>
+                            </Border>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" SourceName="Border" Value="True">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Background.Color" From="Transparent" To="{StaticResource HoverColor}" Duration="0:0:0.1"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background.Color">
+                                                    <DiscreteColorKeyFrame KeyTime="0:0:0" Value="Transparent"/>
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="BorderBrush.Color" From="Transparent" To="{StaticResource SelectionColor}" Duration="0:0:0.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="BorderBrush.Color">
+                                                    <DiscreteColorKeyFrame KeyTime="0:0:0" Value="Transparent"/>
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+        </Style>
+    </Window.Resources>
+    
     <Grid Margin="4">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -30,13 +95,6 @@
             <ScrollViewer>
                 <ItemsControl Margin="1" ItemsSource="{Binding ModpacksView}">
                     <ItemsControl.Resources>
-                        <BitmapImage x:Key="ModImage" UriSource="../Images/Document.png"/>
-                        <BitmapImage x:Key="ModpackImage" UriSource="../Images/Package.png"/>
-                        <BitmapImage x:Key="IncludeImage" UriSource="../Images/Folder.png"/>
-                        <BitmapImage x:Key="NewestImage" UriSource="../Images/Update.png"/>
-                        <BitmapImage x:Key="InstalledImage" UriSource="../Images/Installed.png"/>
-                        <BitmapImage x:Key="FactorioImage" UriSource="../Images/Factorio.png"/>
-
                         <Style x:Key="ExportCheckBoxStyle" TargetType="{x:Type CheckBox}">
                             <Style.Setters>
                                 <Setter Property="ToolTip" Value="{DynamicResource ExportToolTip}"/>
@@ -50,62 +108,6 @@
                             </Style.Triggers>
                         </Style>
                         
-                        <Style x:Key="FlatToggleButtonStyle" TargetType="{x:Type ToggleButton}">
-                            <Style.Setters>
-                                <Setter Property="Width" Value="24"/>
-                                <Setter Property="Height" Value="24"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                            <Border x:Name="Border" BorderThickness="1" BorderBrush="Transparent" Background="Transparent">
-                                                <Image Width="18" Height="18" VerticalAlignment="Center" Stretch="None" Source="{TemplateBinding Content}"/>
-                                            </Border>
-
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" SourceName="Border" Value="True">
-                                                    <Trigger.EnterActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <ColorAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Background.Color" From="Transparent" To="{StaticResource HoverColor}" Duration="0:0:0.1"/>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </Trigger.EnterActions>
-                                                    <Trigger.ExitActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background.Color">
-                                                                    <DiscreteColorKeyFrame KeyTime="0:0:0" Value="Transparent"/>
-                                                                </ColorAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </Trigger.ExitActions>
-                                                </Trigger>
-
-                                                <Trigger Property="IsChecked" Value="True">
-                                                    <Trigger.EnterActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <ColorAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="BorderBrush.Color" From="Transparent" To="{StaticResource SelectionColor}" Duration="0:0:0.2"/>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </Trigger.EnterActions>
-                                                    <Trigger.ExitActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="BorderBrush.Color">
-                                                                    <DiscreteColorKeyFrame KeyTime="0:0:0" Value="Transparent"/>
-                                                                </ColorAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </Trigger.ExitActions>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style.Setters>
-                        </Style>
-
                         <DataTemplate x:Key="ModTemplate" DataType="{x:Type model:ModTemplate}">
                             <Border BorderBrush="Transparent" BorderThickness="1" Background="Transparent">
                                 <Border.Style>
@@ -261,8 +263,34 @@
                 </ItemsControl>
             </ScrollViewer>
         </Border>
-        
-        <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="2" IsChecked="{Binding DownloadNewer}" Content="{DynamicResource DownloadNewerOption}" ToolTip="{DynamicResource DownloadNewerToolTip}"/>
+
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <CheckBox Margin="2" IsChecked="{Binding DownloadNewer}" Content="{DynamicResource DownloadNewerOption}" ToolTip="{DynamicResource DownloadNewerToolTip}"/>
+
+            <RadioButton Grid.Column="2" Margin="1,1" Style="{StaticResource FlatToggleButtonStyle}"
+                                                 Content="{StaticResource NewestImage}" ToolTip="{DynamicResource AllNewestToolTip}"
+                                                 IsChecked="{Binding UseNewestVersion, Mode=TwoWay}"/>
+            <RadioButton Grid.Column="3" Margin="1,1" Style="{StaticResource FlatToggleButtonStyle}"
+                                                 Content="{StaticResource InstalledImage}" ToolTip="{DynamicResource AllSpecificToolTip}"
+                                                 IsChecked="{Binding UseSpecificVersion, Mode=TwoWay}"/>
+            <RadioButton Grid.Column="4" Margin="1,1" Style="{StaticResource FlatToggleButtonStyle}"
+                                                 Content="{StaticResource FactorioImage}" ToolTip="{DynamicResource AllFactorioVersionToolTip}"
+                                                 IsChecked="{Binding UseFactorioVersion, Mode=TwoWay}"/>
+            <Rectangle Grid.Column="5" Margin="2,3" Width="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Fill="{StaticResource BorderBrush}"/>
+            <CheckBox Grid.Column="6" Margin="1,1,3,1" Style="{StaticResource FlatToggleButtonStyle}"
+                                              Content="{StaticResource IncludeImage}" ToolTip="{DynamicResource AllIncludeToolTip}"
+                                              IsChecked="{Binding Include, Mode=TwoWay}"/>
+        </Grid>
         <Button Grid.Row="2" Grid.Column="1" Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
         <Button Grid.Row="2" Grid.Column="2" Margin="2" IsDefault="True" IsEnabled="{Binding CanExport}" Content="{DynamicResource ExportButton}" Click="ExportButtonClickHandler"/>
     </Grid>
