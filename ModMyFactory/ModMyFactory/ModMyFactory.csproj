@@ -148,6 +148,7 @@
     <Compile Include="TwoPartVersionConverter.cs" />
     <Compile Include="VersionComparer.cs" />
     <Compile Include="ViewModels\CopyOrMoveViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel_ModpackExport.cs" />
     <Compile Include="ViewModels\ModpackExportViewModel.cs" />
     <Compile Include="ViewModels\ModUpdateViewModel.cs" />
     <Compile Include="ViewModels\OnlineModsViewModel.cs" />

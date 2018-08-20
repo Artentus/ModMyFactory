@@ -98,6 +98,7 @@
     <sys:String x:Key="ZipDescription">ZIP-Archives</sys:String>
     <sys:String x:Key="LnkDescription">Shortcuts</sys:String>
     <sys:String x:Key="FmpDescription">Factorio modpacks</sys:String>
+    <sys:String x:Key="FmpaDescription">Modpack archives</sys:String>
     
     
     <!-- progress dialogs -->

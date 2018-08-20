@@ -31,8 +31,11 @@ namespace ModMyFactory.Export
         {
             globalUid = 0;
         }
-        
 
+
+
+        [JsonIgnore]
+        public Mod Mod { get; }
 
         [DefaultValue(-1)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
@@ -54,6 +57,12 @@ namespace ModMyFactory.Export
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public Version FactorioVersion { get; }
 
+        [JsonIgnore]
+        public bool Included => ExportMode.HasFlag(ExportMode.Included);
+
+        [JsonIgnore]
+        public ExportMode MaskedExportMode => ExportMode & ExportMode.Mask;
+
 
 
         [JsonConstructor]
@@ -66,24 +75,25 @@ namespace ModMyFactory.Export
             FactorioVersion = factorioVersion;
         }
 
-        public ModExportTemplate(string name, ExportMode exportMode, Version version)
+        public ModExportTemplate(Mod mod, ExportMode exportMode)
         {
             Uid = globalUid;
             globalUid++;
 
-            Name = name;
+            Mod = mod;
+            Name = mod.Name;
             ExportMode = exportMode;
 
             var modeValue = exportMode & ExportMode.Mask;
             switch (modeValue)
             {
                 case ExportMode.SpecificVersion:
-                    Version = version;
+                    Version = mod.Version;
                     FactorioVersion = null;
                     break;
                 case ExportMode.FactorioVersion:
                     Version = null;
-                    FactorioVersion = version;
+                    FactorioVersion = mod.FactorioVersion;
                     break;
                 default:
                     Version = null;

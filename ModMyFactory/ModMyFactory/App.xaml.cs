@@ -76,6 +76,7 @@ namespace ModMyFactory
             string iconPath = Path.Combine(ApplicationDirectoryPath, "Factorio_Modpack_Icon.ico");
             string handlerName = RegistryHelper.RegisterHandler("FactorioModpack", 1, "Factorio modpack", $"\"{iconPath}\"");
             RegistryHelper.RegisterFileType(".fmp", handlerName, "application/json", PercievedFileType.Text);
+            RegistryHelper.RegisterFileType(".fmpa", handlerName, "application/x-zip-compressed", PercievedFileType.Text);
 
             // Reset log
             ResetExceptionLog();

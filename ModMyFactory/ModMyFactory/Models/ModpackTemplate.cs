@@ -79,7 +79,7 @@ namespace ModMyFactory.Models
             ModTemplateView = (ListCollectionView)(new CollectionViewSource() { Source = ModTemplates }).View;
             ModTemplateView.CustomSort = new ModSorter();
 
-            ModpackTemplates = modpack.Mods.Where(reference => reference is ModpackReference).Select(reference => new InnerModpackTemplate(((ModpackReference)reference).Modpack)).ToList();
+            ModpackTemplates = modpack.Mods.Where(reference => reference is ModpackReference).Select(reference => new InnerModpackTemplate(((ModpackReference)reference).Modpack, parentCollection)).ToList();
             ModpackTemplateView = (ListCollectionView)(new CollectionViewSource() { Source = ModpackTemplates }).View;
             ModpackTemplateView.CustomSort = new ModpackSorter();
         }
@@ -87,13 +87,18 @@ namespace ModMyFactory.Models
 
     sealed class InnerModpackTemplate
     {
+        readonly List<ModpackTemplate> parentCollection;
+
         public Modpack Modpack { get; }
 
         public string Name => Modpack.Name;
 
-        public InnerModpackTemplate(Modpack modpack)
+        public ModpackTemplate OuterTemplate => parentCollection.First(template => template.Modpack == Modpack);
+
+        public InnerModpackTemplate(Modpack modpack, List<ModpackTemplate> parentCollection)
         {
             Modpack = modpack;
+            this.parentCollection = parentCollection;
         }
     }
 }

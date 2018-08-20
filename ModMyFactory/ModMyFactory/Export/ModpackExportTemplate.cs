@@ -60,6 +60,9 @@ namespace ModMyFactory.Export
 
 
 
+        [JsonIgnore]
+        public Modpack Modpack { get; }
+
         [DefaultValue(-1)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int Uid { get; }
@@ -85,12 +88,13 @@ namespace ModMyFactory.Export
             ModpackIds = modpackIds;
         }
 
-        public ModpackExportTemplate(string name, int[] modIds, int[] modpackIds)
+        public ModpackExportTemplate(Modpack modpack, int[] modIds, int[] modpackIds)
         {
             Uid = globalUid;
             globalUid++;
 
-            Name = name;
+            Modpack = modpack;
+            Name = modpack.Name;
             ModIds = modIds;
             ModpackIds = modpackIds;
         }

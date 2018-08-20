@@ -211,7 +211,7 @@ namespace ModMyFactory
             var fileList = new List<FileInfo>();
             foreach (string argument in commandLine.Arguments)
             {
-                if (argument.EndsWith(".fmp") && File.Exists(argument))
+                if ((argument.EndsWith(".fmp") || argument.EndsWith(".fmpa")) && File.Exists(argument))
                 {
                     var file = new FileInfo(argument);
                     fileList.Add(file);

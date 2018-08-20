@@ -28,7 +28,7 @@ using WPFCore.Commands;
 
 namespace ModMyFactory.ViewModels
 {
-    sealed class MainViewModel : ViewModelBase
+    sealed partial class MainViewModel : ViewModelBase
     {
         static MainViewModel instance;
 
@@ -1017,29 +1017,7 @@ namespace ModMyFactory.ViewModels
                 }
             }
         }
-
-        private void ExportModpacks()
-        {
-            var exportWindow = new ModpackExportWindow() { Owner = Window };
-            var exportViewModel = (ModpackExportViewModel)exportWindow.ViewModel;
-            bool? result = exportWindow.ShowDialog();
-            if (result.HasValue && result.Value)
-            {
-                var dialog = new VistaSaveFileDialog();
-                dialog.Filter = App.Instance.GetLocalizedResourceString("FmpDescription") + @" (*.fmp)|*.fmp";
-                dialog.AddExtension = true;
-                dialog.DefaultExt = ".fmp";
-                result = dialog.ShowDialog(Window);
-                if (result.HasValue && result.Value)
-                {
-                    //ExportTemplate template = ModpackExport.CreateTemplate(
-                    //    exportWindow.ModpackListBox.SelectedItems.Cast<Modpack>(),
-                    //    exportViewModel.IncludeVersionInfo);
-                    //ModpackExport.ExportTemplate(template, dialog.FileName);
-                }
-            }
-        }
-
+        
         private ModRelease GetNewestModRelease(ExtendedModInfo info)
         {
             return info.Releases.MaxBy(release => release.Version, new VersionComparer());
