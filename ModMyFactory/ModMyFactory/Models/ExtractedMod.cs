@@ -45,7 +45,7 @@ namespace ModMyFactory.Models
 
         public override void DeleteFilesystemObjects()
         {
-            Directory.Delete(true);
+            if (Directory.Exists) Directory.Delete(true);
         }
 
         public override async Task MoveTo(DirectoryInfo destinationDirectory)

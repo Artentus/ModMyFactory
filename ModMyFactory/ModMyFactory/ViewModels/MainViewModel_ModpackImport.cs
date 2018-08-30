@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -429,6 +430,39 @@ namespace ModMyFactory.ViewModels
             progress.Report(1);
         }
 
+        private bool ModAlreadyInstalled(string name, Version factorioVersion, out Mod installedMod)
+        {
+            installedMod = Mods.FindByFactorioVersion(name, factorioVersion);
+            return installedMod != null;
+        }
+
+        private string GetNameWithoutUid(string name)
+        {
+            int index = name.IndexOf('+');
+            return name.Substring(index + 1);
+        }
+
+        private async Task AddZippedMod(FileInfo file, string name, Version version, Version factorioVersion, ModExportTemplate modTemplate)
+        {
+            var destDir = App.Instance.Settings.GetModDirectory(factorioVersion);
+            await file.MoveToAsync(Path.Combine(destDir.FullName, GetNameWithoutUid(file.Name)));
+
+            var mod = new ZippedMod(name, version, factorioVersion, file, Mods, Modpacks);
+            modTemplate.Mod = mod;
+            Mods.Add(mod);
+        }
+
+        private async Task AddExtractedMod(DirectoryInfo directory, string name, Version version, Version factorioVersion, ModExportTemplate modTemplate)
+        {
+            var destDir = App.Instance.Settings.GetModDirectory(factorioVersion);
+            var newDir = new DirectoryInfo(Path.Combine(destDir.FullName, GetNameWithoutUid(directory.Name)));
+            await directory.MoveToAsync(newDir.FullName);
+
+            var mod = new ExtractedMod(name, version, factorioVersion, newDir, Mods, Modpacks);
+            modTemplate.Mod = mod;
+            Mods.Add(mod);
+        }
+
         private async Task AddMod(ModExportTemplate modTemplate, DirectoryInfo fileLocation)
         {
             var fsInfo = GetIncludedFileOrDirectory(modTemplate, fileLocation);
@@ -439,15 +473,27 @@ namespace ModMyFactory.ViewModels
                 string name;
                 Version version;
                 Version factorioVersion;
-                if (Mod.ArchiveFileValid(file, out factorioVersion, out name, out version))
+                if (Mod.ArchiveFileValid(file, out factorioVersion, out name, out version, true))
                 {
-                    //ToDo: resolve conflicts
+                    Mod installedMod;
+                    if (ModAlreadyInstalled(name, factorioVersion, out installedMod))
+                    {
+                        if (installedMod.Version >= version)
+                        {
+                            modTemplate.Mod = installedMod;
+                        }
+                        else
+                        {
+                            await AddZippedMod(file, name, version, factorioVersion, modTemplate);
 
-                    var destDir = App.Instance.Settings.GetModDirectory(factorioVersion);
-                    await file.MoveToAsync(Path.Combine(destDir.FullName, file.Name));
-
-                    var mod = new ZippedMod(name, version, factorioVersion, file, Mods, Modpacks);
-                    modTemplate.Mod = mod;
+                            if (!(App.Instance.Settings.KeepOldModVersions || (App.Instance.Settings.KeepOldExtractedModVersions && (installedMod is ExtractedMod))))
+                                installedMod.DeleteFilesystemObjects();
+                        }
+                    }
+                    else
+                    {
+                        await AddZippedMod(file, name, version, factorioVersion, modTemplate);
+                    }
 
                     return;
                 }
@@ -463,16 +509,28 @@ namespace ModMyFactory.ViewModels
                 string name;
                 Version version;
                 Version factorioVersion;
-                if (Mod.DirectoryValid(directory, out factorioVersion, out name, out version))
+                if (Mod.DirectoryValid(directory, out factorioVersion, out name, out version, true))
                 {
-                    //ToDo: resolve conflicts
+                    Mod installedMod;
+                    if (ModAlreadyInstalled(name, factorioVersion, out installedMod))
+                    {
+                        if (installedMod.Version >= version)
+                        {
+                            modTemplate.Mod = installedMod;
+                        }
+                        else
+                        {
+                            await AddExtractedMod(directory, name, version, factorioVersion, modTemplate);
 
-                    var destDir = App.Instance.Settings.GetModDirectory(factorioVersion);
-                    await directory.MoveToAsync(Path.Combine(destDir.FullName, directory.Name));
-
-                    var mod = new ExtractedMod(name, version, factorioVersion, directory, Mods, Modpacks);
-                    modTemplate.Mod = mod;
-
+                            if (!(App.Instance.Settings.KeepOldModVersions || (App.Instance.Settings.KeepOldExtractedModVersions && (installedMod is ExtractedMod))))
+                                installedMod.DeleteFilesystemObjects();
+                        }
+                    }
+                    else
+                    {
+                        await AddExtractedMod(directory, name, version, factorioVersion, modTemplate);
+                    }
+                    
                     return;
                 }
                 else
@@ -524,7 +582,7 @@ namespace ModMyFactory.ViewModels
                 Task closeWindowTask = null;
                 try
                 {
-                    Task downloadTask = DownloadImportedMods(template, fileLocation, null, cancellationSource.Token);
+                    Task downloadTask = DownloadImportedMods(template, fileLocation, progress, cancellationSource.Token);
 
                     closeWindowTask = downloadTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                     progressWindow.ShowDialog();
@@ -563,18 +621,19 @@ namespace ModMyFactory.ViewModels
                 foreach (var modpackTemplate in template.Modpacks)
                 {
                     var modpack = new Modpack(modpackTemplate.Name, Modpacks);
+                    modpacks.Add(modpack);
                     modpackTemplate.Modpack = modpack;
-
+                    
                     foreach (var modId in modpackTemplate.ModIds)
                     {
                         Mod mod = GetModFromUid(template, modId);
-                        modpack.Mods.Add(new ModReference(mod, modpack));
+                        if (mod != null) modpack.Mods.Add(new ModReference(mod, modpack));
                     }
 
                     foreach (var modpackId in modpackTemplate.ModpackIds)
                     {
                         Modpack subModpack = GetModpackFromUid(template, modpackId);
-                        modpack.Mods.Add(new ModpackReference(subModpack, modpack));
+                        if (subModpack != null) modpack.Mods.Add(new ModpackReference(subModpack, modpack));
                     }
                 }
             }
@@ -670,13 +729,19 @@ namespace ModMyFactory.ViewModels
                         }
                     }
                 }
+
+                ModpackTemplateList.Instance.Update(Modpacks);
+                ModpackTemplateList.Instance.Save();
+                Refresh();
             }
         }
 
         private async Task ImportModpacks()
         {
             var dialog = new VistaOpenFileDialog();
-            dialog.Filter = App.Instance.GetLocalizedResourceString("FmpDescription") + @" (*.fmp)|*.fmp|" + App.Instance.GetLocalizedResourceString("FmpaDescription") + @" (*.fmpa)|*.fmpa";
+            dialog.Filter = App.Instance.GetLocalizedResourceString("AllCompatibleDescription") + @" (*.fmp;*.fmpa)|*.fmp;*.fmpa|"
+                            + App.Instance.GetLocalizedResourceString("FmpDescription") + @" (*.fmp)|*.fmp|"
+                            + App.Instance.GetLocalizedResourceString("FmpaDescription") + @" (*.fmpa)|*.fmpa";
             dialog.Multiselect = true;
             bool? result = dialog.ShowDialog(Window);
             if (result.HasValue && result.Value)

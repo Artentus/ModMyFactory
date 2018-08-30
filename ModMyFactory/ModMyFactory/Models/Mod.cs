@@ -136,7 +136,13 @@ namespace ModMyFactory.Models
             PopulateModCollection(modDictionary, parentCollection);
         }
 
-        private static bool TryParseModName(string fileName, out string name, out Version version)
+        private static string GetNameWithoutUid(string name)
+        {
+            int index = name.IndexOf('+');
+            return name.Substring(index + 1);
+        }
+
+        private static bool TryParseModName(string fileName, out string name, out Version version, bool hasUid)
         {
             name = null;
             version = null;
@@ -145,6 +151,7 @@ namespace ModMyFactory.Models
             if ((index < 1) || (index >= fileName.Length - 1)) return false;
 
             name = fileName.Substring(0, index);
+            if (hasUid) name = GetNameWithoutUid(name);
             string versionString = fileName.Substring(index + 1);
             return Version.TryParse(versionString, out version);
         }
@@ -195,7 +202,7 @@ namespace ModMyFactory.Models
         /// <param name="validName">Out. The name of the mod contained in the archive file.</param>
         /// <param name="validVersion">Out. The version of the mod contained in the archive file.</param>
         /// <returns>Returns true if the specified archive file contains a valid mod, otherwise false.</returns>
-        public static bool ArchiveFileValid(FileInfo archiveFile, out Version validFactorioVersion, out string validName, out Version validVersion)
+        public static bool ArchiveFileValid(FileInfo archiveFile, out Version validFactorioVersion, out string validName, out Version validVersion, bool hasUid = false)
         {
             validFactorioVersion = null;
             validName = null;
@@ -203,7 +210,7 @@ namespace ModMyFactory.Models
 
             string fileName;
             Version fileVersion;
-            if (!TryParseModName(archiveFile.NameWithoutExtension(), out fileName, out fileVersion)) return false;
+            if (!TryParseModName(archiveFile.NameWithoutExtension(), out fileName, out fileVersion, hasUid)) return false;
 
             try
             {
@@ -239,7 +246,7 @@ namespace ModMyFactory.Models
         /// <param name="validName">Out. The name of the mod contained in the directory.</param>
         /// <param name="validVersion">Out. The version of the mod contained in the archive file.</param>
         /// <returns>Returns true if the specified directory contains a valid mod, otherwise false.</returns>
-        public static bool DirectoryValid(DirectoryInfo directory, out Version validFactorioVersion, out string validName, out Version validVersion)
+        public static bool DirectoryValid(DirectoryInfo directory, out Version validFactorioVersion, out string validName, out Version validVersion, bool hasUid = false)
         {
             validFactorioVersion = null;
             validName = null;
@@ -247,7 +254,7 @@ namespace ModMyFactory.Models
 
             string fileName;
             Version fileVersion;
-            if (!TryParseModName(directory.Name, out fileName, out fileVersion)) return false;
+            if (!TryParseModName(directory.Name, out fileName, out fileVersion, hasUid)) return false;
 
             var file = directory.EnumerateFiles("info.json").FirstOrDefault();
             if (file != null)
