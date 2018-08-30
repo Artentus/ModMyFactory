@@ -109,6 +109,7 @@
     <Compile Include="Helpers\DirectoryInfoExtensions.cs" />
     <Compile Include="Helpers\EnumarableExtensions.cs" />
     <Compile Include="Helpers\FileInfoExtensions.cs" />
+    <Compile Include="Helpers\FileSystemInfoExtensions.cs" />
     <Compile Include="Helpers\GitHubClientExtensions.cs" />
     <Compile Include="Helpers\ModHelper.cs" />
     <Compile Include="Helpers\PercievedFileType.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="VersionComparer.cs" />
     <Compile Include="ViewModels\CopyOrMoveViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel_ModpackExport.cs" />
+    <Compile Include="ViewModels\MainViewModel_ModpackImport.cs" />
     <Compile Include="ViewModels\ModpackExportViewModel.cs" />
     <Compile Include="ViewModels\ModUpdateViewModel.cs" />
     <Compile Include="ViewModels\OnlineModsViewModel.cs" />

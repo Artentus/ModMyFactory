@@ -2,6 +2,7 @@
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading.Tasks;
 using ModMyFactory.Export;
 using ModMyFactory.Models;
 using ModMyFactory.Views;
@@ -23,7 +24,19 @@ namespace ModMyFactory.ViewModels
             return result;
         }
 
-        private void ExportModpacks()
+        private async Task ExportArchive(IEnumerable<ModpackTemplate> modpacks, string fileName)
+        {
+            var tempDir = new DirectoryInfo(App.Instance.TempPath);
+            if (!tempDir.Exists) tempDir.Create();
+
+            var exportTemplate = await ModpackExport.CreateTemplateV2(modpacks);
+            ModpackExport.ExportTemplate(exportTemplate, Path.Combine(tempDir.FullName, "pack.json"));
+
+            ZipFile.CreateFromDirectory(tempDir.FullName, fileName);
+            tempDir.Delete(true);
+        }
+
+        private async Task ExportModpacks()
         {
             var exportWindow = new ModpackExportWindow() { Owner = Window };
             var exportViewModel = (ModpackExportViewModel)exportWindow.ViewModel;
@@ -40,18 +53,26 @@ namespace ModMyFactory.ViewModels
                 {
                     if (dialog.FileName.EndsWith(".fmpa"))
                     {
-                        var tempDir = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "ModMyFactory"));
-                        if (!tempDir.Exists) tempDir.Create();
+                        var progressWindow = new ProgressWindow() { Owner = Window };
+                        var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                        progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ExportingAction");
 
-                        var exportTemplate = ModpackExport.CreateTemplateV2(exportViewModel.Modpacks.Where(modpackTemplate => modpackTemplate.Export), exportViewModel.DownloadNewer);
-                        ModpackExport.ExportTemplate(exportTemplate, Path.Combine(tempDir.FullName, "pack.json"));
+                        Task closeWindowTask = null;
+                        try
+                        {
+                            var task = ExportArchive(exportViewModel.Modpacks.Where(modpackTemplate => modpackTemplate.Export), dialog.FileName);
 
-                        ZipFile.CreateFromDirectory(tempDir.FullName, dialog.FileName);
-                        tempDir.Delete(true);
+                            closeWindowTask = task.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                            progressWindow.ShowDialog();
+                        }
+                        finally
+                        {
+                            if (closeWindowTask != null) await closeWindowTask;
+                        }
                     }
                     else
                     {
-                        var exportTemplate = ModpackExport.CreateTemplateV2(exportViewModel.Modpacks.Where(modpackTemplate => modpackTemplate.Export), exportViewModel.DownloadNewer);
+                        var exportTemplate = await ModpackExport.CreateTemplateV2(exportViewModel.Modpacks.Where(modpackTemplate => modpackTemplate.Export));
                         ModpackExport.ExportTemplate(exportTemplate, dialog.FileName);
                     }
                 }

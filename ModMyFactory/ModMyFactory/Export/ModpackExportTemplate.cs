@@ -61,7 +61,7 @@ namespace ModMyFactory.Export
 
 
         [JsonIgnore]
-        public Modpack Modpack { get; }
+        public Modpack Modpack { get; set; }
 
         [DefaultValue(-1)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]

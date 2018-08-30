@@ -18,7 +18,7 @@ namespace ModMyFactory
 {
     public partial class App : Application
     {
-        private const int PreReleaseVersion = -1;
+        private const int PreReleaseVersion = 1;
 
         /// <summary>
         /// The current application instance.
@@ -55,6 +55,11 @@ namespace ModMyFactory
         /// The applications AppData path.
         /// </summary>
         internal string AppDataPath { get; }
+
+        /// <summary>
+        /// The applications temp path.
+        /// </summary>
+        internal string TempPath => Path.Combine(Path.GetTempPath(), "ModMyFactory");
 
         /// <summary>
         /// The application directory.

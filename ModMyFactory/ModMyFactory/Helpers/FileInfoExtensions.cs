@@ -25,6 +25,9 @@ namespace ModMyFactory.Helpers
             }
         }
 
+        /// <summary>
+        /// Moves the file to a new location.
+        /// </summary>
         public static async Task MoveToAsync(this FileInfo file, string destination)
         {
             await Task.Run(() => file.MoveTo(destination));

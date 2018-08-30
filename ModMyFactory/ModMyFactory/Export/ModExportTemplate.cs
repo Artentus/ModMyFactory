@@ -35,7 +35,7 @@ namespace ModMyFactory.Export
 
 
         [JsonIgnore]
-        public Mod Mod { get; }
+        public Mod Mod { get; set; }
 
         [DefaultValue(-1)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
@@ -59,6 +59,9 @@ namespace ModMyFactory.Export
 
         [JsonIgnore]
         public bool Included => ExportMode.HasFlag(ExportMode.Included);
+
+        [JsonIgnore]
+        public bool DownloadNewer => ExportMode.HasFlag(ExportMode.DownloadNewer);
 
         [JsonIgnore]
         public ExportMode MaskedExportMode => ExportMode & ExportMode.Mask;

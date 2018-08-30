@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 
@@ -103,8 +104,10 @@ namespace ModMyFactory.Export
             return false;
         }
 
-        private static ModExportTemplate AddUniqueModTemplate(ModTemplate template, List<ModExportTemplate> uniqueTemplates, bool downloadNewer)
+        private static async Task<ModExportTemplate> AddUniqueModTemplate(ModTemplate template, List<ModExportTemplate> uniqueTemplates)
         {
+            bool downloadNewer = template.Include && (template.UseNewestVersion || template.UseFactorioVersion);
+
             foreach (var exportTemplate in uniqueTemplates)
             {
                 if (ModTemplatesEqual(template, exportTemplate, downloadNewer))
@@ -118,20 +121,20 @@ namespace ModMyFactory.Export
 
             if (template.Include)
             {
-                var tempDir = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "ModMyFactory"));
+                var tempDir = new DirectoryInfo(App.Instance.TempPath);
                 if (!tempDir.Exists) tempDir.Create();
 
                 var zippedMod = newExportTemplate.Mod as ZippedMod;
                 if (zippedMod != null)
                 {
                     var tempFile = new FileInfo(Path.Combine(tempDir.FullName, $"{newExportTemplate.Uid}+{zippedMod.File.Name}"));
-                    zippedMod.File.CopyTo(tempFile.FullName, true);
+                    await Task.Run(() => zippedMod.File.CopyTo(tempFile.FullName, true));
                 }
                 else
                 {
                     var extractedMod = (ExtractedMod)newExportTemplate.Mod;
                     string tempName = Path.Combine(tempDir.FullName, extractedMod.Directory.Name);
-                    extractedMod.Directory.CopyToAsync(tempName).Wait();
+                    await extractedMod.Directory.CopyToAsync(tempName);
                 }
             }
 
@@ -169,7 +172,7 @@ namespace ModMyFactory.Export
             return result;
         }
 
-        public static ExportTemplate CreateTemplateV2(IEnumerable<ModpackTemplate> modpacks, bool downloadNewer)
+        public static async Task<ExportTemplate> CreateTemplateV2(IEnumerable<ModpackTemplate> modpacks)
         {
             ModExportTemplate.ResetUid();
             ModpackExportTemplate.ResetUid();
@@ -186,7 +189,7 @@ namespace ModMyFactory.Export
 
                 foreach (var mod in modpack.ModTemplates)
                 {
-                    var template = AddUniqueModTemplate(mod, modExportTemplates, downloadNewer);
+                    var template = await AddUniqueModTemplate(mod, modExportTemplates);
                     modIds.Add(template.Uid);
                 }
 

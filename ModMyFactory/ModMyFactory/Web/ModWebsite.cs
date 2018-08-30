@@ -171,6 +171,38 @@ namespace ModMyFactory.Web
         }
 
         /// <summary>
+        /// Downloads a mod.
+        /// </summary>
+        /// <param name="release">The mods release to be downloaded.</param>
+        /// <param name="username">The username.</param>
+        /// <param name="token">The login token.</param>
+        /// <param name="fileName">The destination file name.</param>
+        /// <param name="progress">A progress object used to report the progress of the operation.</param>
+        /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
+        public static async Task<Mod> DownloadReleaseToFileAsync(ModRelease release, string username, string token, string fileName, IProgress<double> progress, CancellationToken cancellationToken)
+        {
+            DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory(release.InfoFile.FactorioVersion);
+            if (!modDirectory.Exists) modDirectory.Create();
+
+            var downloadUrl = BuildUrl(release, username, token);
+            Debug.Print(token);
+            var modFile = new FileInfo(fileName);
+
+            try
+            {
+                await WebHelper.DownloadFileAsync(downloadUrl, null, modFile, progress, cancellationToken);
+            }
+            catch (Exception)
+            {
+                if (modFile.Exists) modFile.Delete();
+
+                throw;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Downloads a mod for updating.
         /// </summary>
         /// <param name="release">The mods release to be downloaded.</param>

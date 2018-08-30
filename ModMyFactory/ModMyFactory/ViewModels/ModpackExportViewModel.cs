@@ -14,25 +14,11 @@ namespace ModMyFactory.ViewModels
     {
         bool activeEditing;
         bool propertyChanged;
-
-        bool downloadNewer;
+        
         bool useNewestVersion;
         bool useSpecificVersion;
         bool useFactorioVersion;
         bool include;
-
-        public bool DownloadNewer
-        {
-            get { return downloadNewer; }
-            set
-            {
-                if (value != downloadNewer)
-                {
-                    downloadNewer = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DownloadNewer)));
-                }
-            }
-        }
 
         public bool UseNewestVersion
         {
@@ -136,6 +122,8 @@ namespace ModMyFactory.ViewModels
 
                     if (!propertyChanged)
                     {
+                        if (include) UseSpecificVersion = true;
+
                         activeEditing = true;
                         foreach (var modpackTemplate in Modpacks)
                         {

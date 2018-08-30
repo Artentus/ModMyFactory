@@ -92,6 +92,9 @@
     
     <sys:String x:Key="Question.DeleteModpacks.Message">Do you really want to delete all selected modpacks?</sys:String>
     <sys:String x:Key="Question.DeleteModpacks.Title">Confirm</sys:String>
+    
+    <sys:String x:Key="Error.InvalidModpack.Message">Failed to import modpacks: file invalid or corrupt.</sys:String>
+    <sys:String x:Key="Error.InvalidModpack.Title">Modpack file invalid!</sys:String>
 
     
     <!-- file type descriptions -->
@@ -136,6 +139,8 @@
     <sys:String x:Key="UpdatingFactorioAction">Updating Factorio</sys:String>
     <sys:String x:Key="UpdatingFactorioStage1Description">Downloading update packages</sys:String>
     <sys:String x:Key="UpdatingFactorioStage2Description">Applying update</sys:String>
+    
+    <sys:String x:Key="ExportingAction">Exporting modpacks</sys:String>
 
     
     

@@ -92,6 +92,9 @@
     
     <sys:String x:Key="Question.DeleteModpacks.Message">Möchten Sie wirklich alle ausgewählten Modpacks entfernen?</sys:String>
     <sys:String x:Key="Question.DeleteModpacks.Title">Bestätigen</sys:String>
+    
+    <sys:String x:Key="Error.InvalidModpack.Message">Import fehlgeschlagen: Datei ungültig oder beschädigt.</sys:String>
+    <sys:String x:Key="Error.InvalidModpack.Title">Datei ungültig!</sys:String>
 
 
     <!-- file type descriptions -->
@@ -136,6 +139,8 @@
     <sys:String x:Key="UpdatingFactorioAction">Factorio wird aktualisiert</sys:String>
     <sys:String x:Key="UpdatingFactorioStage1Description">Update-Pakete werden heruntergeladen</sys:String>
     <sys:String x:Key="UpdatingFactorioStage2Description">Update wird angewendet</sys:String>
+    
+    <sys:String x:Key="ExportingAction">Modpacks werden exportiert</sys:String>
 
 
 

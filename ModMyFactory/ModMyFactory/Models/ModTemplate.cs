@@ -64,6 +64,8 @@ namespace ModMyFactory.Models
                 {
                     include = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Include)));
+
+                    if (include) UseSpecificVersion = true;
                 }
             }
         }

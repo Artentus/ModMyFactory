@@ -266,7 +266,6 @@
 
         <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -275,19 +274,17 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             
-            <CheckBox Margin="2" IsChecked="{Binding DownloadNewer}" Content="{DynamicResource DownloadNewerOption}" ToolTip="{DynamicResource DownloadNewerToolTip}"/>
-
-            <RadioButton Grid.Column="2" Margin="1,1" Style="{StaticResource FlatToggleButtonStyle}"
+            <RadioButton Grid.Column="1" Margin="1,1" Style="{StaticResource FlatToggleButtonStyle}"
                                                  Content="{StaticResource NewestImage}" ToolTip="{DynamicResource AllNewestToolTip}"
                                                  IsChecked="{Binding UseNewestVersion, Mode=TwoWay}"/>
-            <RadioButton Grid.Column="3" Margin="1,1" Style="{StaticResource FlatToggleButtonStyle}"
+            <RadioButton Grid.Column="2" Margin="1,1" Style="{StaticResource FlatToggleButtonStyle}"
                                                  Content="{StaticResource InstalledImage}" ToolTip="{DynamicResource AllSpecificToolTip}"
                                                  IsChecked="{Binding UseSpecificVersion, Mode=TwoWay}"/>
-            <RadioButton Grid.Column="4" Margin="1,1" Style="{StaticResource FlatToggleButtonStyle}"
+            <RadioButton Grid.Column="3" Margin="1,1" Style="{StaticResource FlatToggleButtonStyle}"
                                                  Content="{StaticResource FactorioImage}" ToolTip="{DynamicResource AllFactorioVersionToolTip}"
                                                  IsChecked="{Binding UseFactorioVersion, Mode=TwoWay}"/>
-            <Rectangle Grid.Column="5" Margin="2,3" Width="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Fill="{StaticResource BorderBrush}"/>
-            <CheckBox Grid.Column="6" Margin="1,1,3,1" Style="{StaticResource FlatToggleButtonStyle}"
+            <Rectangle Grid.Column="4" Margin="2,3" Width="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Fill="{StaticResource BorderBrush}"/>
+            <CheckBox Grid.Column="5" Margin="1,1,3,1" Style="{StaticResource FlatToggleButtonStyle}"
                                               Content="{StaticResource IncludeImage}" ToolTip="{DynamicResource AllIncludeToolTip}"
                                               IsChecked="{Binding Include, Mode=TwoWay}"/>
         </Grid>
