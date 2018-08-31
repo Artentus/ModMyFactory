@@ -108,7 +108,14 @@ namespace ModMyFactory
 
             if (App.Instance.Settings.SaveCredentials)
             {
-                if (CredentialsFile.Exists) Load(CredentialsFile);
+                try
+                {
+                    if (CredentialsFile.Exists) Load(CredentialsFile);
+                }
+                catch (CryptographicException)
+                {
+                    DeleteSave();
+                }
             }
             else
             {
