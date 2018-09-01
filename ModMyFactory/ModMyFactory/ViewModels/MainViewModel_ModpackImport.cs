@@ -654,30 +654,39 @@ namespace ModMyFactory.ViewModels
 
             try
             {
-                await Task.Run(() => ZipFile.ExtractToDirectory(archiveFile.FullName, tempDir.FullName));
-            }
-            catch
-            {
-                ShowInvalidModpackError();
-            }
-
-            var packFile = new FileInfo(Path.Combine(tempDir.FullName, "pack.json"));
-            if (!packFile.Exists) ShowInvalidModpackError();
-            
-            try
-            {
-                var template = ModpackExport.ImportTemplate(packFile);
-                if (template.Version != 2)
+                try
+                {
+                    await Task.Run(() => ZipFile.ExtractToDirectory(archiveFile.FullName, tempDir.FullName));
+                }
+                catch
                 {
                     ShowInvalidModpackError();
                     return;
                 }
 
-                await ImportModpackFileV2(template, tempDir);
-            }
-            catch (JsonSerializationException)
-            {
-                ShowInvalidModpackError();
+                var packFile = new FileInfo(Path.Combine(tempDir.FullName, "pack.json"));
+                if (!packFile.Exists)
+                {
+                    ShowInvalidModpackError();
+                    return;
+                }
+
+                try
+                {
+                    var template = ModpackExport.ImportTemplate(packFile);
+                    if (template.Version != 2)
+                    {
+                        ShowInvalidModpackError();
+                        return;
+                    }
+
+                    await ImportModpackFileV2(template, tempDir);
+                }
+                catch (JsonSerializationException)
+                {
+                    ShowInvalidModpackError();
+                    return;
+                }
             }
             finally
             {

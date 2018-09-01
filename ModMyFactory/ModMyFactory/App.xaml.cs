@@ -74,6 +74,9 @@ namespace ModMyFactory
             var appDataDirectory = new DirectoryInfo(AppDataPath);
             if (!appDataDirectory.Exists) appDataDirectory.Create();
 
+            var tempDirectory = new DirectoryInfo(TempPath);
+            if (tempDirectory.Exists) tempDirectory.Delete(true);
+
             string settingsFile = Path.Combine(appDataDirectory.FullName, "settings.json");
             Settings = Settings.Load(settingsFile, true);
 
