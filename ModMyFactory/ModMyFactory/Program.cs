@@ -70,7 +70,7 @@ namespace ModMyFactory
             Console.WriteLine(@"Usage:");
             Console.WriteLine(@"  modmyfactory.exe -h | --help");
             Console.WriteLine(@"  modmyfactory.exe [options] [<modpack-file>...]");
-            Console.WriteLine(@"  modmyfactory.exe [options] -f <version> | --factorio-version=<version> [(-p <name> | --modpack=<name>)]");
+            Console.WriteLine(@"  modmyfactory.exe [options] -f <version> | --factorio-version=<version> [(-p <name> | --modpack=<name>) (-s <name> | --savegame=<name>) (-c <commandline> | --commands=<commandline>)]");
             Console.WriteLine();
             Console.WriteLine(@"Options:");
             Console.WriteLine(@"  -h, --help                                 Display this help message.");
@@ -80,6 +80,8 @@ namespace ModMyFactory
             Console.WriteLine(@"  -u, --no-update                            Don't search for update on startup.");
             Console.WriteLine(@"  -f VERSION, --factorio-version=VERSION     Start the specified version of Factorio.");
             Console.WriteLine(@"  -p NAME, --modpack=NAME                    Enable the specified modpack.");
+            Console.WriteLine(@"  -s NAME, --savegame=NAME                   Load the specified savegame.");
+            Console.WriteLine(@"  -c COMMANDLINE, --commands=COMMANDLINE     Start Factorio with the specified command line.");
 
             if (attatchedConsole)
             {
@@ -153,6 +155,8 @@ namespace ModMyFactory
 
                 if (factorioVersion != null)
                 {
+                    var startInfo = new ProcessStartInfo(factorioVersion.ExecutablePath);
+
                     var mods = new List<Mod>();
                     var modpacks = new List<Modpack>();
 
@@ -178,10 +182,23 @@ namespace ModMyFactory
                         }
                     }
 
+                    string savegameName;
+                    if (commandLine.TryGetArgument('s', "savegame", out savegameName))
+                    {
+                        startInfo.Arguments = $"--load-game \"{savegameName}\"";
+                    }
+
+                    string factorioCommandline;
+                    if (commandLine.TryGetArgument('c', "commands", out factorioCommandline))
+                    {
+                        if (!string.IsNullOrEmpty(startInfo.Arguments)) startInfo.Arguments += " ";
+                        startInfo.Arguments += factorioCommandline.Replace('\'', '"');
+                    }
+
                     ModManager.EndUpdateTemplates(true);
                     ModManager.SaveTemplates();
-
-                    Process.Start(factorioVersion.ExecutablePath);
+                    
+                    Process.Start(startInfo);
                 }
                 else
                 {

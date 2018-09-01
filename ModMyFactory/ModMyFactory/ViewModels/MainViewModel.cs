@@ -1009,9 +1009,13 @@ namespace ModMyFactory.ViewModels
                         ? propertiesViewModel.SelectedVersion.VersionString
                         : propertiesViewModel.SelectedVersion.Version.ToString(2);
                     string modpackName = propertiesViewModel.SelectedModpack?.Name;
+                    string savegameName = propertiesViewModel.SelectedSavegame?.FullName;
+                    string customArgs = propertiesViewModel.Arguments?.Replace('"', '\'');
 
                     string arguments = $"--factorio-version=\"{versionString}\"";
                     if (!string.IsNullOrEmpty(modpackName)) arguments += $" --modpack=\"{modpackName}\"";
+                    if (propertiesViewModel.LoadGame) arguments += $" --savegame=\"{savegameName}\"";
+                    if (propertiesViewModel.UseArguments) arguments += $" {customArgs}";
                     ShellHelper.CreateShortcut(dialog.FileName, applicationPath, arguments, iconPath);
                 }
             }

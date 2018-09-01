@@ -6,6 +6,8 @@
         xmlns:model="clr-namespace:ModMyFactory.Models"
         xmlns:vm="clr-namespace:ModMyFactory.ViewModels"
         xmlns:controls="clr-namespace:ModMyFactory.Controls"
+        xmlns:io="clr-namespace:System.IO;assembly=mscorlib"
+        xmlns:converter="clr-namespace:ModMyFactory.MVVM.Converters"
         mc:Ignorable="d"
         Title="{DynamicResource LinkPropertiesWindowTitle}" Width="400" Height="500"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
@@ -15,6 +17,10 @@
     <Window.DataContext>
         <vm:LinkPropertiesViewModel/>
     </Window.DataContext>
+
+    <Window.Resources>
+        <converter:RemoveFileExtensionConverter x:Key="RemoveFileExtensionConverter"/>
+    </Window.Resources>
     
     <Grid Margin="4">
         <Grid.RowDefinitions>
@@ -23,6 +29,10 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
@@ -34,7 +44,7 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
-        <CheckBox Grid.Row="2" Margin="2" Content="{DynamicResource UseExactVersionCheckBox}" IsChecked="{Binding UseExactVersion}"/>
+        <CheckBox Grid.Row="2" Margin="2" Content="{DynamicResource UseExactVersionCheckBox}" IsChecked="{Binding UseExactVersion, Mode=TwoWay}"/>
 
         <TextBlock Grid.Row="3" Margin="4,6,4,2" Text="{DynamicResource SelectModpackHeader}"/>
         <ListBox Grid.Row="4" Margin="2" IsSynchronizedWithCurrentItem="False" PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler"
@@ -46,7 +56,19 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <StackPanel Grid.Row="5" Orientation="Horizontal" FlowDirection="RightToLeft">
+        <CheckBox Grid.Row="5" Margin="2,6,2,2" Content="{DynamicResource LoadGameCheckBox}" IsChecked="{Binding LoadGame, Mode=TwoWay}"/>
+        <ComboBox Grid.Row="6" Margin="2" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding SavegameView}" SelectedItem="{Binding SelectedSavegame}" IsEnabled="{Binding LoadGame, Mode=OneWay}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type io:FileInfo}">
+                    <TextBlock Margin="4,2" VerticalAlignment="Center" Text="{Binding Name, Converter={StaticResource RemoveFileExtensionConverter}}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <CheckBox Grid.Row="7" Margin="2,6,2,2" Content="{DynamicResource UseArgumentsCheckBox}" IsChecked="{Binding UseArguments, Mode=TwoWay}"/>
+        <TextBox Grid.Row="8" Margin="2" Padding="2" Text="{Binding Arguments, Mode=TwoWay}" IsEnabled="{Binding UseArguments, Mode=OneWay}"/>
+
+        <StackPanel Grid.Row="9" Margin="0,6,0,0" Orientation="Horizontal" FlowDirection="RightToLeft">
             <Button Margin="2" IsDefault="True" IsEnabled="{Binding CanCreate}" Content="{DynamicResource CreateButton}" Click="CreateButtonClickHandler"/>
             <Button Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
         </StackPanel>

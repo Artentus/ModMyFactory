@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Data;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
@@ -11,7 +12,15 @@ namespace ModMyFactory.ViewModels
     {
         FactorioVersion selectedVersion;
         bool useExactVersion;
+
         Modpack selectedModpack;
+
+        bool loadGame;
+        FileInfo selectedSavegame;
+
+        bool useArguments;
+        string arguments;
+
         bool canCreate;
 
         public ListCollectionView FactorioVersionsView { get; }
@@ -28,7 +37,7 @@ namespace ModMyFactory.ViewModels
                     selectedVersion = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedVersion)));
 
-                    CanCreate = selectedVersion != null;
+                    EvaluateCanCreate();
                 }
             }
         }
@@ -63,6 +72,70 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        public bool LoadGame
+        {
+            get { return loadGame; }
+            set
+            {
+                if (value != loadGame)
+                {
+                    loadGame = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(LoadGame)));
+
+                    EvaluateCanCreate();
+                }
+            }
+        }
+
+        public ListCollectionView SavegameView { get; }
+
+        public FileInfo[] Savegames { get; }
+
+        public FileInfo SelectedSavegame
+        {
+            get { return selectedSavegame; }
+            set
+            {
+                if (value != selectedSavegame)
+                {
+                    selectedSavegame = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedSavegame)));
+
+                    EvaluateCanCreate();
+                }
+            }
+        }
+
+        public bool UseArguments
+        {
+            get { return useArguments; }
+            set
+            {
+                if (value != useArguments)
+                {
+                    useArguments = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(UseArguments)));
+
+                    EvaluateCanCreate();
+                }
+            }
+        }
+
+        public string Arguments
+        {
+            get { return arguments; }
+            set
+            {
+                if (value != arguments)
+                {
+                    arguments = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Arguments)));
+
+                    EvaluateCanCreate();
+                }
+            }
+        }
+
         public bool CanCreate
         {
             get { return canCreate; }
@@ -76,6 +149,17 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        private void EvaluateCanCreate()
+        {
+            bool value = true;
+
+            if (SelectedVersion == null) value = false;
+            if (LoadGame && (SelectedSavegame == null)) value = false;
+            if (UseArguments && string.IsNullOrWhiteSpace(Arguments)) value = false;
+
+            CanCreate = value;
+        }
+
         public LinkPropertiesViewModel()
         {
             if (!App.IsInDesignMode)
@@ -87,6 +171,9 @@ namespace ModMyFactory.ViewModels
                 Modpacks = MainViewModel.Instance.Modpacks;
                 ModpacksView = (ListCollectionView)(new CollectionViewSource() { Source = Modpacks }).View;
                 ModpacksView.CustomSort = new ModpackSorter();
+
+                Savegames = App.Instance.Settings.GetSavegameDirectory().GetFiles();
+                SavegameView = (ListCollectionView)(new CollectionViewSource() { Source = Savegames }).View;
             }
         }
     }

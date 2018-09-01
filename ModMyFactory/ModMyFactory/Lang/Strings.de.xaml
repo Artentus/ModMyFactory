@@ -338,6 +338,8 @@
     
     <!-- checkboxes -->
     <sys:String x:Key="UseExactVersionCheckBox">Exakte Version verwenden</sys:String>
+    <sys:String x:Key="LoadGameCheckBox">Spielstand laden</sys:String>
+    <sys:String x:Key="UseArgumentsCheckBox">Benutzerdefinierte Argumente hinzufügen</sys:String>
 
 
     <!--
