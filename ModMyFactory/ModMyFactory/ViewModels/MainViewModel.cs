@@ -1009,8 +1009,20 @@ namespace ModMyFactory.ViewModels
                         ? propertiesViewModel.SelectedVersion.VersionString
                         : propertiesViewModel.SelectedVersion.Version.ToString(2);
                     string modpackName = propertiesViewModel.SelectedModpack?.Name;
-                    string savegameName = propertiesViewModel.SelectedSavegame?.FullName;
+                    string savegameName = propertiesViewModel.SelectedSavegame?.Name;
                     string customArgs = propertiesViewModel.Arguments?.Replace('"', '\'');
+
+                    if ((versionString == FactorioSteamVersion.Key) && (propertiesViewModel.LoadGame || propertiesViewModel.UseArguments))
+                    {
+                        if (MessageBox.Show(Window,
+                            App.Instance.GetLocalizedMessage("SteamCustomArgs", MessageType.Question),
+                            App.Instance.GetLocalizedMessageTitle("SteamCustomArgs", MessageType.Question),
+                            MessageBoxButton.YesNo, MessageBoxImage.Question)
+                            == MessageBoxResult.No)
+                        {
+                            return;
+                        }
+                    }
 
                     string arguments = $"--factorio-version=\"{versionString}\"";
                     if (!string.IsNullOrEmpty(modpackName)) arguments += $" --modpack=\"{modpackName}\"";

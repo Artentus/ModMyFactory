@@ -95,6 +95,9 @@
     
     <sys:String x:Key="Error.InvalidModpack.Message">Import fehlgeschlagen: Datei ungültig oder beschädigt.</sys:String>
     <sys:String x:Key="Error.InvalidModpack.Title">Datei ungültig!</sys:String>
+    
+    <sys:String x:Key="Question.SteamCustomArgs.Message">Das Laden von Spielständen oder die Verwendung von benutzerdefinierten Argumenten bei der Steam-Version von Factorio zeigt eine Steam-Benachrichtigung bei jedem Start an. Trotzdem fortfahren?</sys:String>
+    <sys:String x:Key="Question.SteamCustomArgs.Title">Benutzerdefinierte Argumente bei Steam-Version</sys:String>
 
 
     <!-- file type descriptions -->
