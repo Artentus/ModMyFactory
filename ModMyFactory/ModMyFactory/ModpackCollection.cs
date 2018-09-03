@@ -17,5 +17,15 @@ namespace ModMyFactory
                 }
             }
         }
+
+        public bool Contains(string name)
+        {
+            foreach (var modpack in this)
+            {
+                if (modpack.Name == name)
+                    return true;
+            }
+            return false;
+        }
     }
 }

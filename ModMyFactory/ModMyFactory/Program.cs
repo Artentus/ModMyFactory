@@ -157,8 +157,8 @@ namespace ModMyFactory
                 {
                     var startInfo = new ProcessStartInfo(factorioVersion.ExecutablePath);
 
-                    var mods = new List<Mod>();
-                    var modpacks = new List<Modpack>();
+                    var mods = new ModCollection();
+                    var modpacks = new ModpackCollection();
 
                     ModManager.BeginUpdateTemplates();
                     Mod.LoadMods(mods, modpacks);

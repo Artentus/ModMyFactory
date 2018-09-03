@@ -97,7 +97,7 @@ namespace ModMyFactory
             return Modpacks.First(template => template.Name == name);
         }
 
-        public void PopulateModpackList(ICollection<Mod> modList, ICollection<Modpack> modpackList, IEditableCollectionView modpackView)
+        public void PopulateModpackList(ICollection<Mod> modList, ModpackCollection modpackList, IEditableCollectionView modpackView)
         {
             foreach (var template in Modpacks)
             {

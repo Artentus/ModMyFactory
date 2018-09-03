@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -17,12 +16,30 @@ namespace ModMyFactory.Models
     /// </summary>
     class Modpack : NotifyPropertyChangedBase, IEditableObject
     {
+        private 
+
         string name;
+        string editingName;
+        readonly ModpackCollection parentCollection;
         bool editing;
         bool? active;
         bool activeChanging;
         bool isSelected;
         bool contentsExpanded;
+
+        private string GetUniqueName(string baseName)
+        {
+            int counter = 0;
+            string candidateName = baseName;
+            
+            while (parentCollection.Contains(candidateName))
+            {
+                counter++;
+                candidateName = $"{baseName} ({counter})";
+            }
+
+            return candidateName;
+        }
 
         /// <summary>
         /// The name of the modpack.
@@ -34,8 +51,24 @@ namespace ModMyFactory.Models
             {
                 if (value != name)
                 {
-                    name = value;
+                    string newName = GetUniqueName(value);
+                    name = newName;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Name)));
+
+                    EditingName = newName;
+                }
+            }
+        }
+
+        public string EditingName
+        {
+            get { return editingName; }
+            set
+            {
+                if (value != editingName)
+                {
+                    editingName = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Editing)));
                 }
             }
         }
@@ -106,6 +139,7 @@ namespace ModMyFactory.Models
                     }
                     else
                     {
+                        Name = EditingName;
                         ParentView.CommitEdit();
 
                         MainViewModel.Instance.Window.ModpacksListBox.ScrollIntoView(this);
@@ -155,7 +189,7 @@ namespace ModMyFactory.Models
         /// <summary>
         /// A command that finishes renaming this modpack.
         /// </summary>
-        public RelayCommand FinishRenameCommand { get; }
+        public RelayCommand EndEditCommand { get; }
 
         /// <summary>
         /// Checks if this modpack contains a specified mod.
@@ -280,7 +314,11 @@ namespace ModMyFactory.Models
             }
         }
 
-        private void Delete(ICollection<Modpack> parentCollection, bool showPrompt)
+        /// <summary>
+        /// Deletes this modpack from the list.
+        /// </summary>
+        /// <param name="showPrompt">Indicates whether a confirmation prompt is shown to the user.</param>
+        public void Delete(bool showPrompt)
         {
             if (!showPrompt || MessageBox.Show(
                 App.Instance.GetLocalizedMessage("DeleteModpack", MessageType.Question),
@@ -299,22 +337,14 @@ namespace ModMyFactory.Models
         }
 
         /// <summary>
-        /// Deletes this modpack from the list.
-        /// </summary>
-        /// <param name="showPrompt">Indicates whether a confirmation prompt is shown to the user.</param>
-        public void Delete(bool showPrompt)
-        {
-            DeleteCommand.Execute(showPrompt);
-        }
-
-        /// <summary>
         /// Creates a modpack.
         /// </summary>
         /// <param name="name">The name of the modpack.</param>
         /// <param name="parentCollection">The collection containing this modpack.</param>
-        public Modpack(string name, ICollection<Modpack> parentCollection)
+        public Modpack(string name, ModpackCollection parentCollection)
         {
-            this.name = name;
+            this.parentCollection = parentCollection;
+            Name = name;
             active = false;
             activeChanging = false;
             Mods = new ObservableCollection<IModReference>();
@@ -323,15 +353,19 @@ namespace ModMyFactory.Models
             ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
             ModsView.CustomSort = new ModReferenceSorter();
 
-            DeleteCommand = new RelayCommand<bool?>(showPrompt => Delete(parentCollection, showPrompt ?? true));
-            FinishRenameCommand = new RelayCommand(() => Editing = false, () => Editing);
+            DeleteCommand = new RelayCommand<bool?>(showPrompt => Delete(showPrompt ?? true));
+            EndEditCommand = new RelayCommand(EndEdit, () => Editing);
         }
 
         public void BeginEdit()
-        { }
+        {
+            Editing = true;
+        }
 
         public void EndEdit()
-        { }
+        {
+            Editing = false;
+        }
 
         public void CancelEdit()
         {
