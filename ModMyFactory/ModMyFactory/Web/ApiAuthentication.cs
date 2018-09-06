@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Net;
+﻿using System.Net;
 using System.Security;
 using System.Text;
 using ModMyFactory.Helpers;
@@ -34,8 +33,7 @@ namespace ModMyFactory.Web
             {
                 string document = WebHelper.GetDocument(loginPage, null, content);
                 info = JsonHelper.Deserialize<AuthenticationInfo>(document);
-
-                Debug.Print("Token: " + info.Token + ", Name: " + info.Username);
+                
                 if (string.IsNullOrWhiteSpace(info.Token) || string.IsNullOrWhiteSpace(info.Username)) return false;
                 
                 return true;

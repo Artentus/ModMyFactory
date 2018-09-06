@@ -28,7 +28,7 @@ namespace ModMyFactory.Web
 
             progress.Report(new Tuple<double, string>(0, App.Instance.GetLocalizedResourceString("ParsingFirstPageDescription")));
 
-            string currentPageUrl = ModsUrl;
+            string currentPageUrl = ModsUrl + "?page_size=500";
             while (!string.IsNullOrEmpty(currentPageUrl))
             {
                 if (cancellationToken.IsCancellationRequested)
