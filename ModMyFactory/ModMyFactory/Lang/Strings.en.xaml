@@ -399,6 +399,7 @@
     <sys:String x:Key="ReleasesHeader">Releases</sys:String>
     <sys:String x:Key="DescriptionHeader">Description</sys:String>
     <sys:String x:Key="ChangelogHeader">Changelog</sys:String>
+    <sys:String x:Key="FaqHeader">FAQ</sys:String>
     
     <!-- buttons -->
     <sys:String x:Key="DeleteButton">Delete</sys:String>

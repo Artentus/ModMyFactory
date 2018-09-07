@@ -22,5 +22,8 @@ namespace ModMyFactory.Web.ModApi
 
         [JsonProperty("changelog")]
         public string Changelog { get; set; }
+
+        [JsonProperty("faq")]
+        public string Faq { get; set; }
     }
 }

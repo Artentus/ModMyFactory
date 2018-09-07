@@ -46,6 +46,7 @@ namespace ModMyFactory.ViewModels
         string selectedModName;
         string selectedModDescription;
         string selectedModChangelog;
+        string selectedModFaq;
         string selectedModLicenseName;
         string selectedModHomepage;
         string selectedModGitHubUrl;
@@ -188,6 +189,7 @@ namespace ModMyFactory.ViewModels
                 {
                     SelectedModDescription = extendedInfo.Description;
                     SelectedModChangelog = extendedInfo.Changelog;
+                    SelectedModFaq = extendedInfo.Faq;
                     SelectedModLicenseName = extendedInfo.License?.Name;
                     SelectedModHomepage = extendedInfo.Homepage;
                     SelectedModGitHubUrl = extendedInfo.GitHubUrl;
@@ -204,6 +206,7 @@ namespace ModMyFactory.ViewModels
                 {
                     SelectedModDescription = string.Empty;
                     SelectedModChangelog = string.Empty;
+                    SelectedModFaq = string.Empty;
                     SelectedModLicenseName = string.Empty;
                     SelectedModHomepage = string.Empty;
                     SelectedModGitHubUrl = string.Empty;
@@ -252,9 +255,28 @@ namespace ModMyFactory.ViewModels
                 {
                     selectedModChangelog = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModChangelog)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowChangelog)));
                 }
             }
         }
+
+        public bool ShowChangelog => !string.IsNullOrWhiteSpace(SelectedModChangelog);
+
+        public string SelectedModFaq
+        {
+            get { return selectedModFaq; }
+            set
+            {
+                if (value != selectedModFaq)
+                {
+                    selectedModFaq = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModFaq)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowFaq)));
+                }
+            }
+        }
+
+        public bool ShowFaq => !string.IsNullOrWhiteSpace(SelectedModFaq);
 
         public string SelectedModLicenseName
         {

@@ -128,9 +128,14 @@
                         <controls:FormattingTextBlock Margin="4" Text="{Binding SelectedModDescription}"/>
                     </ScrollViewer>
                 </TabItem>
-                <TabItem Header="{DynamicResource ChangelogHeader}">
+                <TabItem Header="{DynamicResource ChangelogHeader}" Visibility="{Binding ShowChangelog, Converter={StaticResource VisibilityConverter}}">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                         <controls:FormattingTextBlock Margin="4" Text="{Binding SelectedModChangelog}"/>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem Header="{DynamicResource FaqHeader}" Visibility="{Binding ShowFaq, Converter={StaticResource VisibilityConverter}}">
+                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                        <controls:FormattingTextBlock Margin="4" Text="{Binding SelectedModFaq}"/>
                     </ScrollViewer>
                 </TabItem>
             </TabControl>
