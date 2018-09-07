@@ -9,9 +9,20 @@ namespace ModMyFactory.Views
 {
     partial class ModpackExportWindow
     {
+        const int DefaultWidth = 700, DefaultHeight = 800;
+
         public ModpackExportWindow()
+            : base(App.Instance.Settings.ModpackExportWindowInfo, DefaultWidth, DefaultHeight)
         {
             InitializeComponent();
+
+            Closing += ClosingHandler;
+        }
+
+        private void ClosingHandler(object sender, CancelEventArgs e)
+        {
+            App.Instance.Settings.ModpackExportWindowInfo = CreateInfo();
+            App.Instance.Settings.Save();
         }
 
         private void ExportButtonClickHandler(object sender, RoutedEventArgs e)

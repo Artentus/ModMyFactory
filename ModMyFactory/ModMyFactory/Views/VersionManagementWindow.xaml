@@ -9,7 +9,6 @@
         mc:Ignorable="d"
         Title="{DynamicResource VersionManagementWindowTitle}"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
-        WindowStartupLocation="CenterOwner"
         Icon="..\Images\MMF_Icon.ico"
         DataContext="{x:Static vm:VersionManagementViewModel.Instance}">
     

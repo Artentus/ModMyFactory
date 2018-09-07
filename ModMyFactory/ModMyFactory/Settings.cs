@@ -35,6 +35,7 @@ namespace ModMyFactory
 
                 VersionManagerWindowInfo = WindowInfo.Empty,
                 OnlineModsWindowInfo = WindowInfo.Empty,
+                ModpackExportWindowInfo = WindowInfo.Empty,
 
                 SteamVersionPath = string.Empty,
 
@@ -102,6 +103,8 @@ namespace ModMyFactory
         public WindowInfo VersionManagerWindowInfo;
 
         public WindowInfo OnlineModsWindowInfo;
+
+        public WindowInfo ModpackExportWindowInfo;
 
         public string SteamVersionPath;
 

@@ -4,9 +4,8 @@
         xmlns:vm="clr-namespace:ModMyFactory.ViewModels"
         xmlns:model="clr-namespace:ModMyFactory.Models"
         xmlns:controls="clr-namespace:ModMyFactory.Controls"
-        Title="{DynamicResource ModpackExportWindowTitle}" Height="800" Width="700"
+        Title="{DynamicResource ModpackExportWindowTitle}"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
-        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon="..\Images\MMF_Icon.ico">
 
     <Window.DataContext>
