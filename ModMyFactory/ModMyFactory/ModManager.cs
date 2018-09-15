@@ -58,10 +58,10 @@ namespace ModMyFactory
 
         public static void SetActive(string name, Version version, bool value)
         {
-            ModTemplateList list;
-            if (Contains(version, out list))
+            if (Contains(version, out var list))
             {
                 list.SetActive(name, value);
+                list.Save();
             }
             else
             {
@@ -70,6 +70,7 @@ namespace ModMyFactory
                 TemplateLists.Add(list);
 
                 list.SetActive(name, value);
+                list.Save();
             }
         }
 
@@ -77,9 +78,14 @@ namespace ModMyFactory
         /// Removes a mods template.
         /// </summary>
         /// <param name="name">The mods name.</param>
-        public static void RemoveTemplate(string name)
+        /// <param name="version">The mods Factorio version.</param>
+        public static void RemoveTemplate(string name, Version version)
         {
-            TemplateLists.ForEach(list => list.Remove(name));
+            if (Contains(version, out var list))
+            {
+                list.Remove(name);
+                list.Save();
+            }
         }
 
         /// <summary>

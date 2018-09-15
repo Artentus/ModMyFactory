@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ModMyFactory")]
-[assembly: AssemblyCopyright("Copyright © 2016 Mathis Rech")]
+[assembly: AssemblyCopyright("Copyright © 2018 Mathis Rech")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,8 +51,8 @@ using System.Windows;
 // Sie können alle Werte angeben oder die standardmäßigen Build- und Revisionsnummern 
 // übernehmen, indem Sie "*" eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.6.0.0")]
-[assembly: AssemblyFileVersion("1.6.0.0")]
+[assembly: AssemblyVersion("1.7.0.0")]
+[assembly: AssemblyFileVersion("1.7.0.0")]
 [assembly: NeutralResourcesLanguage("en")]
 [assembly: Guid("8DABD447-7527-40A5-83E3-42CA0A4BD0EA")]
 
