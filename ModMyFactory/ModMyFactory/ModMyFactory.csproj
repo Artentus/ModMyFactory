@@ -130,10 +130,13 @@
     <Compile Include="Models\FactorioSteamVersion.cs" />
     <Compile Include="Models\InfoFile.cs" />
     <Compile Include="Models\ModDependency.cs" />
+    <Compile Include="Models\ModFile.cs" />
+    <Compile Include="Models\ModFileCollection.cs" />
     <Compile Include="Models\ModpackTemplate.cs" />
     <Compile Include="Models\ModTemplate.cs" />
     <Compile Include="Models\ModUpdateInfo.cs" />
     <Compile Include="Export\ModExportTemplate.cs" />
+    <Compile Include="Models\Mod_Adding.cs" />
     <Compile Include="Models\Mod_Loading.cs" />
     <Compile Include="Models\UpdateTarget.cs" />
     <Compile Include="ModManager.cs" />

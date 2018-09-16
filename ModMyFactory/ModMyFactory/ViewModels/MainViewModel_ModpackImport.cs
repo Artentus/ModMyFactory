@@ -441,25 +441,24 @@ namespace ModMyFactory.ViewModels
             return name.Substring(index + 1);
         }
 
-        private async Task AddZippedMod(FileInfo file, string name, Version version, Version factorioVersion, ModExportTemplate modTemplate)
+        private async Task AddZippedMod(FileInfo file, ModExportTemplate modTemplate)
         {
-            var destDir = App.Instance.Settings.GetModDirectory(factorioVersion);
-            await file.MoveToAsync(Path.Combine(destDir.FullName, GetNameWithoutUid(file.Name)));
-
-            var mod = new ZippedMod(name, version, factorioVersion, file, Mods, Modpacks);
-            modTemplate.Mod = mod;
-            Mods.Add(mod);
+            Mod mod = await Mod.Add(file, Mods, Modpacks, false, true);
+            if (mod != null)
+            {
+                modTemplate.Mod = mod;
+                Mods.Add(mod);
+            }
         }
 
         private async Task AddExtractedMod(DirectoryInfo directory, string name, Version version, Version factorioVersion, ModExportTemplate modTemplate)
         {
-            var destDir = App.Instance.Settings.GetModDirectory(factorioVersion);
-            var newDir = new DirectoryInfo(Path.Combine(destDir.FullName, GetNameWithoutUid(directory.Name)));
-            await directory.MoveToAsync(newDir.FullName);
-
-            var mod = new ExtractedMod(name, version, factorioVersion, newDir, Mods, Modpacks);
-            modTemplate.Mod = mod;
-            Mods.Add(mod);
+            Mod mod = await Mod.Add(directory, Mods, Modpacks, false, true);
+            if (mod != null)
+            {
+                modTemplate.Mod = mod;
+                Mods.Add(mod);
+            }
         }
 
         private async Task AddMod(ModExportTemplate modTemplate, DirectoryInfo fileLocation)

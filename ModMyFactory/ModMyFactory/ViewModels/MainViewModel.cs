@@ -155,7 +155,7 @@ namespace ModMyFactory.ViewModels
             if (mod == null) return false;
 
             if (string.IsNullOrWhiteSpace(ModFilterPattern)) return true;
-            return StringHelper.FilterIsContained(ModFilterPattern, $"{mod.Title} {mod.Author}");
+            return StringHelper.FilterIsContained(ModFilterPattern, $"{mod.FriendlyName} {mod.Author}");
         }
 
         public bool? AllModsActive
@@ -964,7 +964,7 @@ namespace ModMyFactory.ViewModels
         {
             public string Name { get; }
 
-            public string Title => ModVersions.MaxBy(modVersion => modVersion.Version).Title;
+            public string Title => ModVersions.MaxBy(modVersion => modVersion.Version).FriendlyName;
 
             public List<Mod> ModVersions { get; }
 

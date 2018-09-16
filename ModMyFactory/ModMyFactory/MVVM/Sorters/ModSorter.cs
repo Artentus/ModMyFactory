@@ -12,7 +12,7 @@ namespace ModMyFactory.MVVM.Sorters
             int versionOrder = y.FactorioVersion.CompareTo(x.FactorioVersion);
             if (versionOrder != 0) return versionOrder;
 
-            return string.Compare(x.Title, y.Title, StringComparison.InvariantCultureIgnoreCase);
+            return string.Compare(x.FriendlyName, y.FriendlyName, StringComparison.InvariantCultureIgnoreCase);
         }
 
         public int Compare(ModTemplate x, ModTemplate y)

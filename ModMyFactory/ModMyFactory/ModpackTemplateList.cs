@@ -83,7 +83,7 @@ namespace ModMyFactory
 
         private Mod GetMod(ICollection<Mod> modList, ModpackTemplateMod modTemplate)
         {
-            return modList.FirstOrDefault(mod => (mod.Name == modTemplate.Name || mod.Title == modTemplate.Name)
+            return modList.FirstOrDefault(mod => (mod.Name == modTemplate.Name || mod.FriendlyName == modTemplate.Name)
                                                  && mod.FactorioVersion == modTemplate.FactorioVersion);
         }
 

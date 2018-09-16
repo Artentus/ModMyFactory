@@ -47,6 +47,15 @@ namespace ModMyFactory.Models
                 }
             }
 
+            public override async Task ExportFile(string destination, int uid = -1)
+            {
+                string fileName = File.Name;
+                if (uid >= 0) fileName = $"{uid}+{fileName}";
+
+                string newPath = Path.Combine(destination, fileName);
+                await Task.Run(() => File.CopyTo(newPath));
+            }
+
             public override bool AlwaysKeepOnUpdate()
             {
                 return App.Instance.Settings.KeepOldZippedModVersions;

@@ -11,7 +11,7 @@ namespace ModMyFactory.Models
     {
         public Mod Mod { get; }
 
-        public string DisplayName => Mod.Title;
+        public string DisplayName => Mod.FriendlyName;
 
         public string VersionInfo => $"({Mod.FactorioVersion})";
 
@@ -53,7 +53,7 @@ namespace ModMyFactory.Models
         {
             switch (e.PropertyName)
             {
-                case nameof(Mod.Title):
+                case nameof(Mod.FriendlyName):
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayName)));
                     break;
                 case nameof(Mod.Active):

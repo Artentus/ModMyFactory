@@ -124,18 +124,7 @@ namespace ModMyFactory.Export
                 var tempDir = new DirectoryInfo(App.Instance.TempPath);
                 if (!tempDir.Exists) tempDir.Create();
 
-                var zippedMod = newExportTemplate.Mod as ZippedMod;
-                if (zippedMod != null)
-                {
-                    var tempFile = new FileInfo(Path.Combine(tempDir.FullName, $"{newExportTemplate.Uid}+{zippedMod.File.Name}"));
-                    await Task.Run(() => zippedMod.File.CopyTo(tempFile.FullName, true));
-                }
-                else
-                {
-                    var extractedMod = (ExtractedMod)newExportTemplate.Mod;
-                    string tempName = Path.Combine(tempDir.FullName, extractedMod.Directory.Name);
-                    await extractedMod.Directory.CopyToAsync(tempName);
-                }
+                await newExportTemplate.Mod.ExportFile(tempDir.FullName, newExportTemplate.Uid);
             }
 
             uniqueTemplates.Add(newExportTemplate);

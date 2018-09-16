@@ -74,7 +74,7 @@ namespace ModMyFactory.Models
 
         public Mod Mod { get; }
 
-        public string Name => Mod.Title;
+        public string Name => Mod.FriendlyName;
 
         public string VersionInfo => $"({Mod.FactorioVersion.ToString(2)})";
 

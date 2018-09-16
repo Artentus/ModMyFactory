@@ -56,5 +56,25 @@ namespace ModMyFactory.Helpers
                 return;
             }
         }
+
+        /// <summary>
+        /// Copies the file to a new location.
+        /// </summary>
+        public static async Task CopyToAsync(this FileSystemInfo file, string destination)
+        {
+            FileInfo fileInfo = file as FileInfo;
+            if (fileInfo != null)
+            {
+                await Task.Run(() => fileInfo.CopyTo(destination));
+                return;
+            }
+
+            DirectoryInfo directoryInfo = file as DirectoryInfo;
+            if (directoryInfo != null)
+            {
+                await directoryInfo.CopyToAsync(destination);
+                return;
+            }
+        }
     }
 }

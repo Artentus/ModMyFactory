@@ -44,7 +44,7 @@ namespace ModMyFactory.Models
 
         public ModUpdateInfo(Mod mod, ModRelease newestRelease, bool exchangeInModpacks, bool keepOld)
         {
-            Title = mod.Title;
+            Title = mod.FriendlyName;
             Name = mod.Name;
             CurrentVersion = mod.Version;
             NewestVersion = newestRelease.Version;
