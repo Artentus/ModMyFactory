@@ -24,10 +24,10 @@
     <sys:String x:Key="Information.32Bit.Message">Sie führen eine 32-Bit-Version von Windows aus. Sie können keine Version von Factorio ab 0.15 spielen.</sys:String>
     <sys:String x:Key="Information.32Bit.Title">32-Bit-Windows erkannt</sys:String>
 
-    <sys:String x:Key="Information.ModExistsPerVersion.Message">Die Mod '{0}' für Factorio {1} existiert bereits!</sys:String>
+    <sys:String x:Key="Information.ModExistsPerVersion.Message">Es existiert bereits eine neuere Version von '{0}' für Factorio {1} in Ihrer Bibliothek.</sys:String>
     <sys:String x:Key="Information.ModExistsPerVersion.Title">Mod übersprungen</sys:String>
 
-    <sys:String x:Key="Information.ModExists.Message">Die Mod '{0}' existiert bereits!</sys:String>
+    <sys:String x:Key="Information.ModExists.Message">Es existiert bereits eine neuere Version von '{0}' in Ihrer Bibliothek.</sys:String>
     <sys:String x:Key="Information.ModExists.Title">Mod übersprungen</sys:String>
 
     <sys:String x:Key="Error.InvalidModArchive.Message">Das ZIP-Archiv '{0}' enthält keine gültige Mod.</sys:String>
@@ -98,6 +98,9 @@
     
     <sys:String x:Key="Question.SteamCustomArgs.Message">Das Laden von Spielständen oder die Verwendung von benutzerdefinierten Argumenten bei der Steam-Version von Factorio zeigt eine Steam-Benachrichtigung bei jedem Start an. Trotzdem fortfahren?</sys:String>
     <sys:String x:Key="Question.SteamCustomArgs.Title">Benutzerdefinierte Argumente bei Steam-Version</sys:String>
+    
+    <sys:String x:Key="Information.FMPv1.Message">Diese Modpack-Datei wurde in ModMyFactory 1.5 oder früher erstellt. Die Unterstützung für alte Dateien wurde in Version 1.7 von ModMyFactory eingestellt.&#x0a;Die Datei kann in ModMyFactory 1.6 importiert und dann im neuen Format wieder exportiert werden.</sys:String>
+    <sys:String x:Key="Information.FMPv1.Title">Import nicht möglich</sys:String>
 
 
     <!-- file type descriptions -->

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using ModMyFactory.Helpers;
@@ -128,6 +127,11 @@ namespace ModMyFactory.Models
             }
         }
 
+        /// <summary>
+        /// A command that deletes this mod from the list and the filesystem.
+        /// </summary>
+        public RelayCommand<bool?> DeleteCommand { get; }
+
         private Mod(ModCollection parentCollection, ModpackCollection modpackCollection)
         {
             this.parentCollection = parentCollection;
@@ -161,54 +165,45 @@ namespace ModMyFactory.Models
             active = ModManager.GetActive(Name, FactorioVersion);
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        private bool KeepOldFile(ModFile newFile)
+        {
+            bool isNewFactorioVersion = newFile.InfoFile.FactorioVersion > FactorioVersion;
+            if (App.Instance.Settings.KeepOldModVersionsWhenNewFactorioVersion && isNewFactorioVersion) return true;
+            return file.KeepOnUpdate;
+        }
 
         /// <summary>
-        /// Specifies if updates for this mod should be extracted.
+        /// Updates this mod to a given new mod file.
+        /// If the given mod file is not a valid update for this mod the update will fail and no action will be taken.
         /// </summary>
-        public abstract bool ExtractUpdates { get; }
+        /// <param name="newFile">The updated mod file.</param>
+        /// <returns>Returns true if the update was sucessful, otherwise false.</returns>
+        public async Task<bool> UpdateAsync(ModFile newFile)
+        {
+            if ((newFile.Name != Name) || (newFile.Version <= Version)) return false;
 
-        
+            if (File.ExtractUpdates)
+                newFile = await newFile.ExtractAsync();
 
-        
-        
-        /// <summary>
-        /// A command that deletes this mod from the list and the filesystem.
-        /// </summary>
-        public RelayCommand<bool?> DeleteCommand { get; }
+            if (KeepOldFile(newFile))
+            {
+                oldVersions.Add(File);
+            }
+            else
+            {
+                File.Delete();
+            }
 
+            File = newFile;
+            return true;
+        }
+        
         private void DeleteOldVersions()
         {
-            foreach (var file in OldVersions)
-            {
-                if (file.Exists)
-                    file.Delete();
-            }
+            foreach (var file in oldVersions)
+                file.Delete();
         }
 
-        protected abstract void DeleteFile();
-
-        /// <summary>
-        /// Deletes this mod at file system level.
-        /// </summary>
-        public void DeleteFilesystemObjects()
-        {
-            DeleteFile();
-            DeleteOldVersions();
-        }
-        
         /// <summary>
         /// Deletes this mod from the list and the filesystem.
         /// </summary>
@@ -225,10 +220,10 @@ namespace ModMyFactory.Models
                     ModReference reference;
                     if (modpack.Contains(this, out reference))
                         modpack.Mods.Remove(reference);
-
                 }
 
-                DeleteFilesystemObjects();
+                File.Delete();
+                DeleteOldVersions();
                 parentCollection.Remove(this);
 
                 ModManager.RemoveTemplate(Name, FactorioVersion);
@@ -236,24 +231,24 @@ namespace ModMyFactory.Models
                 ModpackTemplateList.Instance.Save();
             }
         }
-
-        public void PrepareUpdate(Version newFactorioVersion)
-        {
-            FactorioVersion = newFactorioVersion;
-        }
-
         
-
-        public abstract bool AlwaysKeepOnUpdate();
-
         /// <summary>
         /// Moves this mod to a specified directory.
         /// </summary>
-        public abstract Task MoveTo(DirectoryInfo destinationDirectory, bool copy);
+        public async Task MoveToAsync(string destination)
+        {
+            await File.MoveToAsync(destination);
+
+            foreach (var file in oldVersions)
+                await file.MoveToAsync(destination);
+        }
 
         /// <summary>
         /// Exports the mods file.
         /// </summary>
-        public abstract Task ExportFile(string destination, int uid = -1);
+        public async Task<ModFile> ExportFile(string destination, int uid = -1)
+        {
+            return await File.CopyToAsync(destination, uid);
+        }
     }
 }

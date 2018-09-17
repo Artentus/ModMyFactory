@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ModMyFactory.Models
 {
-    public sealed class ModDependency
+    sealed class ModDependency
     {
         /// <summary>
         /// Indicates whether this dependency is optional.

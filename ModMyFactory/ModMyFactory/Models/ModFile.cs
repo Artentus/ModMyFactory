@@ -31,6 +31,21 @@ namespace ModMyFactory.Models
         /// </summary>
         public Version Version => InfoFile.Version;
 
+        /// <summary>
+        /// Indicates whether updates for this mod should be extracted.
+        /// </summary>
+        public bool ExtractUpdates => !(isFile || App.Instance.Settings.AlwaysUpdateZipped);
+
+        /// <summary>
+        /// Indicates whether this mod file should be preserved when updating to a new mod version.
+        /// </summary>
+        public bool KeepOnUpdate => isFile ? App.Instance.Settings.KeepOldZippedModVersions : App.Instance.Settings.KeepOldExtractedModVersions;
+
+        /// <summary>
+        /// Indicaes whether this mod file resides inside the managed mod directory.
+        /// </summary>
+        public bool ResidesInModDirectory => file.ParentDirectory().DirectoryEquals(App.Instance.Settings.GetModDirectory(InfoFile.FactorioVersion));
+
         private string BuildNewFileName(int uid)
         {
             var sb = new StringBuilder();
@@ -83,6 +98,25 @@ namespace ModMyFactory.Models
 
             var newFile = GetNewFile(newPath);
             return new ModFile(newFile, InfoFile, isFile);
+        }
+
+        /// <summary>
+        /// Extracts this mod file to the same location and deletes the original.
+        /// If the file is already extracted no action is taken.
+        /// </summary>
+        /// <returns>Returns the extracted mod file.</returns>
+        public async Task<ModFile> ExtractAsync()
+        {
+            if (!isFile) return this;
+
+            var fi = (FileInfo)file;
+            await Task.Run(() => ZipFile.ExtractToDirectory(fi.FullName, fi.DirectoryName));
+
+            var newDir = new DirectoryInfo(Path.Combine(fi.DirectoryName, fi.NameWithoutExtension()));
+            var newModFile = new ModFile(newDir, InfoFile, false);
+
+            fi.Delete();
+            return newModFile;
         }
 
         /// <summary>

@@ -76,5 +76,19 @@ namespace ModMyFactory.Helpers
                 return;
             }
         }
+
+        /// <summary>
+        /// Gets the files parent directory.
+        /// </summary>
+        public static DirectoryInfo ParentDirectory(this FileSystemInfo file)
+        {
+            FileInfo fileInfo = file as FileInfo;
+            if (fileInfo != null) return fileInfo.Directory;
+
+            DirectoryInfo directoryInfo = file as DirectoryInfo;
+            if (directoryInfo != null) return directoryInfo.Parent;
+
+            return new DirectoryInfo(Path.GetDirectoryName(file.FullName));
+        }
     }
 }

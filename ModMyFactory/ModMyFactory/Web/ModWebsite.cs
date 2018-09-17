@@ -132,28 +132,25 @@ namespace ModMyFactory.Web
         /// <param name="parentCollection">The collection to contain the mods.</param>
         /// <param name="modpackCollection">The collection containing all modpacks.</param>
         public static async Task<Mod> DownloadReleaseAsync(ModRelease release, string username, string token, IProgress<double> progress, CancellationToken cancellationToken,
-            ICollection<Mod> parentCollection, ICollection<Modpack> modpackCollection)
+            ModCollection parentCollection, ModpackCollection modpackCollection)
         {
             DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory(release.InfoFile.FactorioVersion);
             if (!modDirectory.Exists) modDirectory.Create();
 
             var downloadUrl = BuildUrl(release, username, token);
             Debug.Print(token);
-            var modFile = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
+            var file = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
 
             try
             {
-                await WebHelper.DownloadFileAsync(downloadUrl, null, modFile, progress, cancellationToken);
+                await WebHelper.DownloadFileAsync(downloadUrl, null, file, progress, cancellationToken);
                 if (!cancellationToken.IsCancellationRequested)
                 {
-                    Version factorioVersion;
-                    string name;
-                    Version version;
-                    if (Mod.ArchiveFileValid(modFile, out factorioVersion, out name, out version))
+                    if (ModFile.TryLoadFromFile(file, out ModFile modFile))
                     {
-                        if (factorioVersion == release.InfoFile.FactorioVersion)
+                        if (modFile.InfoFile.FactorioVersion == release.InfoFile.FactorioVersion)
                         {
-                            return new ZippedMod(name, version, factorioVersion, modFile, parentCollection, modpackCollection);
+                            return await Mod.Add(modFile, parentCollection, modpackCollection, false);
                         }
                     }
 
@@ -162,7 +159,7 @@ namespace ModMyFactory.Web
             }
             catch (Exception)
             {
-                if (modFile.Exists) modFile.Delete();
+                if (file.Exists) file.Delete();
 
                 throw;
             }
