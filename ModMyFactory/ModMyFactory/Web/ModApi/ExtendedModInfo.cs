@@ -1,5 +1,7 @@
 ﻿using ModMyFactory.Helpers;
 using Newtonsoft.Json;
+using System;
+using System.Linq;
 
 namespace ModMyFactory.Web.ModApi
 {
@@ -27,6 +29,12 @@ namespace ModMyFactory.Web.ModApi
         [JsonProperty("faq")]
         public string Faq { get; set; }
 
-        public ModRelease LatestRelease => Releases.MaxBy(release => release.Version, new VersionComparer());
+        public ModRelease LatestRelease(Version factorioVersion = null)
+        {
+            if (factorioVersion == null)
+                return Releases.MaxBy(release => release.Version, new VersionComparer());
+            else
+                return Releases.Where(release => release.InfoFile.FactorioVersion == factorioVersion).MaxBy(release => release.Version, new VersionComparer());
+        }
     }
 }

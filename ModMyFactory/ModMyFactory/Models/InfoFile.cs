@@ -51,7 +51,6 @@ namespace ModMyFactory.Models
         /// The mods dependencies.
         /// </summary>
         [JsonProperty("dependencies")]
-        [JsonConverter(typeof(ModDependencyJsonConverter))]
         public ModDependency[] Dependencies { get; }
 
         /// <summary>

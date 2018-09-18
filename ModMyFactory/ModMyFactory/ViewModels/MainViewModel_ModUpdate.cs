@@ -1,14 +1,12 @@
-﻿using ModMyFactory.Helpers;
-using ModMyFactory.Models;
+﻿using ModMyFactory.Models;
 using ModMyFactory.Views;
 using ModMyFactory.Web;
 using ModMyFactory.Web.ModApi;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,76 +15,30 @@ namespace ModMyFactory.ViewModels
 {
     partial class MainViewModel
     {
-        private class ModGrouping
+        private void SetLatestInstalledVersion(Dictionary<string, Mod> latestInstalledVersions, Mod mod)
         {
-            public string Name { get; }
-
-            public string FriendlyName => ModVersions.MaxBy(modVersion => modVersion.Version).FriendlyName;
-
-            public List<Mod> ModVersions { get; }
-
-            public ModGrouping(string name)
+            Mod latestInstalledVersion;
+            if (latestInstalledVersions.TryGetValue(mod.Name, out latestInstalledVersion))
             {
-                Name = name;
-                ModVersions = new List<Mod>();
+                if (mod.Version > latestInstalledVersion.Version)
+                    latestInstalledVersions[mod.Name] = mod;
+            }
+            else
+            {
+                latestInstalledVersions.Add(mod.Name, mod);
             }
         }
 
-        private ICollection<ModGrouping> GetUniqueMods()
+        private async Task<ExtendedModInfo> GetInfoAsync(Dictionary<string, ExtendedModInfo> infos, string modName)
         {
-            var dict = new Dictionary<string, ModGrouping>();
-
-            foreach (var mod in Mods)
+            ExtendedModInfo info;
+            if (!infos.TryGetValue(modName, out info))
             {
-                if (dict.ContainsKey(mod.Name))
-                {
-                    dict[mod.Name].ModVersions.Add(mod);
-                }
-                else
-                {
-                    var grouping = new ModGrouping(mod.Name);
-                    grouping.ModVersions.Add(mod);
-                    dict.Add(mod.Name, grouping);
-                }
+                info = await ModWebsite.GetExtendedInfoAsync(modName);
+                infos.Add(modName, info);
             }
 
-            return dict.Values;
-        }
-
-        private ICollection<ModUpdateInfo> GetReleaseDownloadCandidates(ModGrouping grouping, ExtendedModInfo info)
-        {
-            var candidates = new List<ModRelease>();
-            var result = new List<ModUpdateInfo>();
-
-            var newestRelease = GetNewestModRelease(info);
-            Mod newestModVersion = grouping.ModVersions.MaxBy(modVersion => modVersion.Version, new VersionComparer());
-            if (newestRelease.Version > newestModVersion.Version)
-            {
-                bool exchange = (newestModVersion.FactorioVersion == newestRelease.InfoFile.FactorioVersion) || !App.Instance.Settings.DownloadIntermediateUpdates;
-                bool keepOld = newestModVersion.AlwaysKeepOnUpdate()
-                    || ((App.Instance.Settings.KeepOldModVersionsWhenNewFactorioVersion || App.Instance.Settings.DownloadIntermediateUpdates) && (newestModVersion.FactorioVersion != newestRelease.InfoFile.FactorioVersion));
-
-                candidates.Add(newestRelease);
-                result.Add(new ModUpdateInfo(newestModVersion, newestRelease, exchange, keepOld));
-            }
-
-            if (App.Instance.Settings.DownloadIntermediateUpdates)
-            {
-                foreach (var modVersion in grouping.ModVersions)
-                {
-                    var releaseList = info.Releases.Where(release => release.InfoFile.FactorioVersion == modVersion.FactorioVersion);
-                    var newest = releaseList.MaxBy(release => release.Version, new VersionComparer());
-                    var updateInfo = new ModUpdateInfo(modVersion, newest, true, modVersion.AlwaysKeepOnUpdate());
-
-                    if ((newest.Version > modVersion.Version) && (!candidates.Contains(newest) && !Mods.Contains(modVersion.Name, newest.Version)))
-                    {
-                        candidates.Add(newest);
-                        result.Add(updateInfo);
-                    }
-                }
-            }
-
-            return result;
+            return info;
         }
 
         private async Task<List<ModUpdateInfo>> GetModUpdatesAsync(IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
@@ -95,7 +47,34 @@ namespace ModMyFactory.ViewModels
 
             if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
             {
+                var latestInstalledVersions = new Dictionary<string, Mod>();
+                var infos = new Dictionary<string, ExtendedModInfo>();
+                
+                int modCount = Mods.Count;
+                int index = 0;
+                foreach (var mod in Mods)
+                {
+                    progress.Report(new Tuple<double, string>((double)index / modCount, mod.FriendlyName));
 
+                    SetLatestInstalledVersion(latestInstalledVersions, mod);
+                    ExtendedModInfo info = await GetInfoAsync(infos, mod.Name);
+
+                    var release = info.LatestRelease(mod.FactorioVersion);
+                    if ((release != null) && (release.Version > mod.Version))
+                            result.Add(new ModUpdateInfo(mod, release, false));
+
+                    index++;
+                }
+
+                foreach (var kvp in latestInstalledVersions)
+                {
+                    var mod = kvp.Value;
+                    var info = infos[kvp.Key];
+
+                    var latestRelease = info.LatestRelease();
+                    if (latestRelease.InfoFile.FactorioVersion > mod.FactorioVersion)
+                        result.Add(new ModUpdateInfo(mod, latestRelease, true));
+                }
             }
             else
             {
@@ -105,9 +84,10 @@ namespace ModMyFactory.ViewModels
                 {
                     progress.Report(new Tuple<double, string>((double)index / modCount, mod.FriendlyName));
 
-                    var extendedInfo = await ModWebsite.GetExtendedInfoAsync(mod.Name);
-                    if (extendedInfo.LatestRelease.Version > mod.Version)
-                        result.Add(new ModUpdateInfo(mod, extendedInfo.LatestRelease, false));
+                    var info = await ModWebsite.GetExtendedInfoAsync(mod.Name);
+                    var latestRelease = info.LatestRelease();
+                    if ((latestRelease != null) && (latestRelease.Version > mod.Version))
+                        result.Add(new ModUpdateInfo(mod, latestRelease, false));
 
                     index++;
                 }
@@ -118,23 +98,11 @@ namespace ModMyFactory.ViewModels
 
         private async Task UpdateModAsyncInner(ModUpdateInfo modUpdate, string token, IProgress<double> progress, CancellationToken cancellationToken)
         {
-            FileInfo updateFile = await ModWebsite.UpdateReleaseAsync(modUpdate.NewestRelease, GlobalCredentials.Instance.Username, token, progress, cancellationToken);
-            Mod mod = modUpdate.Mod;
-
-            if (mod.ExtractUpdates)
-            {
-                DirectoryInfo updateDirectory = await Task.Run(() =>
-                {
-                    DirectoryInfo modsDirectory = App.Instance.Settings.GetModDirectory(modUpdate.NewestRelease.InfoFile.FactorioVersion);
-                    ZipFile.ExtractToDirectory(updateFile.FullName, modsDirectory.FullName);
-                    updateFile.Delete();
-
-                    return new DirectoryInfo(Path.Combine(modsDirectory.FullName, updateFile.NameWithoutExtension()));
-                });
-            }
-
-            if (!modUpdate.KeepOld) mod.DeleteFilesystemObjects();
-            if (!App.Instance.Settings.DownloadIntermediateUpdates) mod.PrepareUpdate(modUpdate.UpdateFactorioVersion);
+            var updateFile = await ModWebsite.DownloadUpdateAsync(modUpdate.Update, GlobalCredentials.Instance.Username, token, progress, cancellationToken);
+            if (modUpdate.CreateNewMod)
+                await Mod.Add(updateFile, Mods, Modpacks, false, true);
+            else
+                await modUpdate.Mod.UpdateAsync(updateFile);
         }
 
         private async Task UpdateModsAsyncInner(List<ModUpdateInfo> modUpdates, string token, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
@@ -151,7 +119,7 @@ namespace ModMyFactory.ViewModels
                     var modProgress = new Progress<double>(value =>
                     {
                         modProgressValue = value / modCount;
-                        progress.Report(new Tuple<double, string>(baseProgressValue + modProgressValue, modUpdate.Title));
+                        progress.Report(new Tuple<double, string>(baseProgressValue + modProgressValue, modUpdate.FriendlyName));
                     });
 
                     try

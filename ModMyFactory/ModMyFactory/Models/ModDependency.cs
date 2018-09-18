@@ -121,5 +121,15 @@ namespace ModMyFactory.Models
                 }
             }
         }
+
+        public static implicit operator ModDependency(string value)
+        {
+            return new ModDependency(value);
+        }
+
+        public static implicit operator string(ModDependency value)
+        {
+            return value.FriendlyDescription;
+        }
     }
 }

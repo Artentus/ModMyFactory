@@ -125,7 +125,6 @@
     <Compile Include="ManagerMode.cs" />
     <Compile Include="MessageType.cs" />
     <Compile Include="ModCollection.cs" />
-    <Compile Include="ModDependencyJsonConverter.cs" />
     <Compile Include="Models\CopyOrMoveType.cs" />
     <Compile Include="Models\FactorioSteamVersion.cs" />
     <Compile Include="Models\InfoFile.cs" />

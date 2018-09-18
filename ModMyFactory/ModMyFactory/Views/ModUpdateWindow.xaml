@@ -51,8 +51,8 @@
                                             <TextBlock Text="{Binding CurrentFactorioVersion, StringFormat=(Factorio {0})}" Margin="3,0,0,0" Foreground="Gray"/>
                                         </StackPanel>
                                         <StackPanel Margin="8,2,0,4" Orientation="Horizontal">
-                                            <TextBlock Text="{Binding NewestVersion, StringFormat={StaticResource NewestVersionFormat}}" Foreground="Gray"/>
-                                            <TextBlock Text="{Binding NewestFactorioVersion, StringFormat=(Factorio {0})}" Margin="3,0,0,0" Foreground="Gray"/>
+                                            <TextBlock Text="{Binding UpdateVersion, StringFormat={StaticResource NewestVersionFormat}}" Foreground="Gray"/>
+                                            <TextBlock Text="{Binding UpdateFactorioVersion, StringFormat=(Factorio {0})}" Margin="3,0,0,0" Foreground="Gray"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </Grid>

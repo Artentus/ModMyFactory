@@ -207,16 +207,20 @@ namespace ModMyFactory.Web
         /// <param name="token">The login token.</param>
         /// <param name="progress">A progress object used to report the progress of the operation.</param>
         /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
-        public static async Task<FileInfo> UpdateReleaseAsync(ModRelease release, string username, string token, IProgress<double> progress, CancellationToken cancellationToken)
+        public static async Task<ModFile> DownloadUpdateAsync(ModRelease release, string username, string token, IProgress<double> progress, CancellationToken cancellationToken)
         {
             DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory(release.InfoFile.FactorioVersion);
             if (!modDirectory.Exists) modDirectory.Create();
 
             var downloadUrl = BuildUrl(release, username, token);
-            var modFile = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
+            var file = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
+            await WebHelper.DownloadFileAsync(downloadUrl, null, file, progress, cancellationToken);
+            if (cancellationToken.IsCancellationRequested) return null;
 
-            await WebHelper.DownloadFileAsync(downloadUrl, null, modFile, progress, cancellationToken);
-            return cancellationToken.IsCancellationRequested ? null : modFile;
+            ModFile modFile;
+            if (!ModFile.TryLoadFromFile(file, out modFile))
+                throw new InvalidOperationException("The server sent an invalid mod file.");
+            return modFile;
         }
     }
 }
