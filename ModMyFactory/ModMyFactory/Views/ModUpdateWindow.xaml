@@ -44,7 +44,7 @@
                                             <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
                                         </CheckBox.LayoutTransform>
                                     </CheckBox>
-                                    <TextBlock Grid.Column="1" Grid.Row="0" Margin="2,0" VerticalAlignment="Center" Text="{Binding Title}" FontSize="14"/>
+                                    <TextBlock Grid.Column="1" Grid.Row="0" Margin="2,0" VerticalAlignment="Center" Text="{Binding FriendlyName}" FontSize="14"/>
                                     <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Vertical">
                                         <StackPanel Margin="8,0,0,0" Orientation="Horizontal">
                                             <TextBlock Text="{Binding CurrentVersion, StringFormat={StaticResource CurrentVersionFormat}}" Foreground="Gray"/>

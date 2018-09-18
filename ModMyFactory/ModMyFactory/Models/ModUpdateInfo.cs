@@ -9,25 +9,23 @@ namespace ModMyFactory.Models
     {
         bool isSelected;
 
-        public string Title { get; }
-
-        public string Name { get; }
-
-        public Version CurrentVersion { get; }
-
-        public Version NewestVersion { get; }
-
         public Mod Mod { get; }
 
-        public ModRelease NewestRelease { get; }
+        public ModRelease Update { get; }
 
-        public Version CurrentFactorioVersion { get; }
+        public string Name => Mod.Name;
 
-        public Version NewestFactorioVersion { get; }
+        public string FriendlyName => Mod.FriendlyName;
 
-        public bool ExchangeInModpacks { get; }
+        public Version CurrentVersion => Mod.Version;
 
-        public bool KeepOld { get; }
+        public Version UpdateVersion => Update.Version;
+
+        public Version CurrentFactorioVersion => Mod.FactorioVersion;
+
+        public Version UpdateFactorioVersion => Update.InfoFile.FactorioVersion;
+
+        public bool CreateNewMod { get; }
 
         public bool IsSelected
         {
@@ -42,18 +40,11 @@ namespace ModMyFactory.Models
             }
         }
 
-        public ModUpdateInfo(Mod mod, ModRelease newestRelease, bool exchangeInModpacks, bool keepOld)
+        public ModUpdateInfo(Mod mod, ModRelease update, bool createNewMod)
         {
-            Title = mod.FriendlyName;
-            Name = mod.Name;
-            CurrentVersion = mod.Version;
-            NewestVersion = newestRelease.Version;
             Mod = mod;
-            NewestRelease = newestRelease;
-            CurrentFactorioVersion = mod.FactorioVersion;
-            NewestFactorioVersion = newestRelease.InfoFile.FactorioVersion;
-            ExchangeInModpacks = exchangeInModpacks;
-            KeepOld = keepOld;
+            Update = update;
+            CreateNewMod = createNewMod;
             isSelected = true;
         }
     }

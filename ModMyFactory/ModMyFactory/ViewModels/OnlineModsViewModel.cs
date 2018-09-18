@@ -481,7 +481,7 @@ namespace ModMyFactory.ViewModels
                     Task closeWindowTask = null;
                     try
                     {
-                        Task<Mod>  downloadTask = ModWebsite.DownloadReleaseAsync(selectedRelease,
+                        var downloadTask = ModWebsite.DownloadReleaseAsync(selectedRelease,
                             GlobalCredentials.Instance.Username, token,
                             progress, cancellationSource.Token, InstalledMods, MainViewModel.Instance.Modpacks);
 
@@ -503,18 +503,9 @@ namespace ModMyFactory.ViewModels
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-
-                if (!cancellationSource.IsCancellationRequested)
-                {
-                    if (newMod != null) InstalledMods.Add(newMod);
-                    UpdateSelectedReleases();
-                }
+                
+                UpdateSelectedReleases();
             }
-        }
-
-        private ModRelease GetNewestRelease(ExtendedModInfo info)
-        {
-            return info?.Releases.MaxBy(release => release.Version, new VersionComparer());
         }
 
         private void DeleteSelectedModRelease()

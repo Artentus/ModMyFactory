@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using ModMyFactory.Helpers;
+using Newtonsoft.Json;
 
 namespace ModMyFactory.Web.ModApi
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     sealed class ExtendedModInfo
     {
         [JsonProperty("releases")]
@@ -25,5 +26,7 @@ namespace ModMyFactory.Web.ModApi
 
         [JsonProperty("faq")]
         public string Faq { get; set; }
+
+        public ModRelease LatestRelease => Releases.MaxBy(release => release.Version, new VersionComparer());
     }
 }

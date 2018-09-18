@@ -11,7 +11,7 @@ namespace ModMyFactory.Models
     /// <summary>
     /// Represents a mod file or directory.
     /// </summary>
-    sealed class ModFile
+    sealed class ModFile : IComparable<ModFile>
     {
         private readonly bool isFile;
         private FileSystemInfo file;
@@ -125,6 +125,25 @@ namespace ModMyFactory.Models
         public void Delete()
         {
             file.DeleteRecursive();
+        }
+
+        public int CompareTo(ModFile other)
+        {
+            int result = Version.CompareTo(other.Version);
+            
+            if (result == 0)
+            {
+                if (isFile)
+                {
+                    result = other.isFile ? 0 : -1;
+                }
+                else
+                {
+                    result = other.isFile ? 1 : 0;
+                }
+            }
+
+            return result;
         }
 
         private ModFile(FileSystemInfo file, InfoFile infoFile, bool isFile)

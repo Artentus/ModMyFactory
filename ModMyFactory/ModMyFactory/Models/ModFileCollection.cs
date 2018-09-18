@@ -24,7 +24,7 @@ namespace ModMyFactory.Models
             {
                 list.Add(item);
 
-                if ((Latest == null) || (Latest.Version < item.Version))
+                if ((Latest == null) || (Latest.CompareTo(item) < 0))
                     Latest = item;
             }
 
