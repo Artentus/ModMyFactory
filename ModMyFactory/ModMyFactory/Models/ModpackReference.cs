@@ -22,6 +22,8 @@ namespace ModMyFactory.Models
             set { Modpack.Active = value; }
         }
 
+        public bool HasUnsatisfiedDependencies => Modpack.HasUnsatisfiedDependencies;
+
         /// <summary>
         /// The view this modpack reference is presented in.
         /// </summary>
@@ -52,6 +54,9 @@ namespace ModMyFactory.Models
                     break;
                 case nameof(Modpack.Active):
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
+                    break;
+                case nameof(Modpack.HasUnsatisfiedDependencies):
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasUnsatisfiedDependencies)));
                     break;
                 case nameof(Modpack.Editing):
                     if (Modpack.Editing)

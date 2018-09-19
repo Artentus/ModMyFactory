@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,6 +21,7 @@ namespace ModMyFactory.Models
 
         bool active;
         bool isSelected;
+        bool hasUnsatisfiedDependencies;
         ModFile file;
 
         /// <summary>
@@ -52,6 +54,22 @@ namespace ModMyFactory.Models
                 {
                     isSelected = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsSelected)));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether this mod has unsatisfied dependencies.
+        /// </summary>
+        public bool HasUnsatisfiedDependencies
+        {
+            get => hasUnsatisfiedDependencies;
+            private set
+            {
+                if (value != hasUnsatisfiedDependencies)
+                {
+                    hasUnsatisfiedDependencies = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasUnsatisfiedDependencies)));
                 }
             }
         }
@@ -123,6 +141,8 @@ namespace ModMyFactory.Models
             get
             {
                 var authorAndVersion = $"Author: {Author}     Version: {Version}";
+                if (Description.Length > authorAndVersion.Length)
+                    authorAndVersion = authorAndVersion.PadRight(Math.Min(Description.Length, 100));
                 return $"{authorAndVersion}\n\n{Description.Wrap(authorAndVersion.Length)}";
             }
         }
@@ -164,7 +184,30 @@ namespace ModMyFactory.Models
 
             active = ModManager.GetActive(Name, FactorioVersion);
         }
+        
+        /// <summary>
+        /// Evaluates the dependencies of this mod.
+        /// </summary>
+        public void EvaluateDependencies()
+        {
+            if ((Dependencies == null) || (Dependencies.Length == 0))
+            {
+                HasUnsatisfiedDependencies = false;
+                return;
+            }
 
+            foreach (var dependency in Dependencies)
+            {
+                if (!dependency.IsOptional && !dependency.IsMet(parentCollection))
+                {
+                    HasUnsatisfiedDependencies = true;
+                    return;
+                }
+            }
+
+            HasUnsatisfiedDependencies = false;
+        }
+        
         private bool KeepOldFile(ModFile newFile)
         {
             bool isNewFactorioVersion = newFile.InfoFile.FactorioVersion > FactorioVersion;

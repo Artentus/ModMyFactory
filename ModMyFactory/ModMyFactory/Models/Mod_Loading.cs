@@ -76,6 +76,8 @@ namespace ModMyFactory.Models
                 var fileDictionary = CreateFileDictionary(selectedDirectories.ToArray());
                 LoadModsFromFileDictionary(fileDictionary, parentCollection, modpackCollection);
             }
+
+            parentCollection.EvaluateDependencies();
         }
     }
 }

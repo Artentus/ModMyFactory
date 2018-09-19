@@ -23,6 +23,8 @@
         <BitmapImage x:Key="CloseIcon" UriSource="../Images/Close.png"/>
         <BitmapImage x:Key="ConfigureIcon" UriSource="../Images/Configure.png"/>
         <BitmapImage x:Key="DeleteIcon" UriSource="../Images/Delete.png"/>
+        <BitmapImage x:Key="DependencyIcon" UriSource="../Images/Dependency.png"/>
+        <BitmapImage x:Key="DependencyWarningIcon" UriSource="../Images/DependencyWarning.png"/>
         <BitmapImage x:Key="DownloadIcon" UriSource="../Images/Download.png"/>
         <BitmapImage x:Key="ExportPackageIcon" UriSource="../Images/ExportPackage.png"/>
         <BitmapImage x:Key="HelpIcon" UriSource="../Images/Help.png"/>
@@ -102,6 +104,7 @@
         <KeyBinding Modifiers="Control" Key="I" Command="{Binding ImportModpacksCommand}"/>
         <KeyBinding Key="F6" Command="{Binding StartGameCommand}"/>
         <KeyBinding Modifiers="Control" Key="U" Command="{Binding UpdateModsCommand}"/>
+        <KeyBinding Modifiers="Control" Key="D" Command="{Binding EditDependenciesCommand}"/>
         <KeyBinding Key="F10" Command="{Binding OpenVersionManagerCommand}"/>
         <KeyBinding Key="F12" Command="{Binding OpenSettingsCommand}"/>
         <KeyBinding Key="F5" Command="{Binding RefreshCommand}"/>
@@ -157,6 +160,8 @@
             <MenuItem Header="{DynamicResource EditMenuItem}">
                 <MenuItem Header="{DynamicResource UpdateModsMenuItem}" Icon="{StaticResource UpdateIcon}"
                           InputGestureText="{DynamicResource UpdateModsHotkey}" Command="{Binding UpdateModsCommand}"/>
+                <MenuItem Header="{DynamicResource DependenciesMenuItem}" Icon="{StaticResource DependencyIcon}"
+                          InputGestureText="{DynamicResource DependenciesHotkey}" Command="{Binding EditDependenciesCommand}"/>
 
                 <Separator/>
 
@@ -260,6 +265,9 @@
 
             <Button ToolTip="{DynamicResource UpdateModsMenuItem}" Command="{Binding UpdateModsCommand}">
                 <Image Margin="1" Stretch="None" Source="{StaticResource UpdateIcon}"/>
+            </Button>
+            <Button ToolTip="{DynamicResource DependenciesMenuItem}" Command="{Binding EditDependenciesCommand}">
+                <Image Margin="1" Stretch="None" Source="{StaticResource DependencyIcon}"/>
             </Button>
 
             <Separator/>
@@ -433,11 +441,16 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <CheckBox Grid.Column="0" Margin="4" Style="{StaticResource ActiveInactiveCheckBoxStyle}" IsChecked="{Binding Active, Mode=TwoWay}"/>
                             <TextBlock Grid.Column="1" Margin="2,0" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding FriendlyName}"/>
-                            <Button Grid.Column="2" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
+                            <Border Grid.Column="2" Margin="2" Background="Transparent" ToolTip="{DynamicResource MissingDependenciesModToolTip}"
+                                    Visibility="{Binding HasUnsatisfiedDependencies, Converter={StaticResource VisibilityConverter}}">
+                                <Image Margin="1" Source="{StaticResource DependencyWarningIcon}" Stretch="None"/>
+                            </Border>
+                            <Button Grid.Column="3" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
                                     CommandParameter="{StaticResource True}" Command="{Binding DeleteCommand}"/>
                         </Grid>
                     </DataTemplate>
@@ -523,8 +536,6 @@
                       PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler" MouseMove="ModpackListBoxMouseMoveHandler"
                       PreviewMouseUp="ModpackListBoxPreviewMouseUpHandler" Drop="ModpackListBoxDropHandler" DragOver="ModpackListBoxDragOverHandler">
                 <controls:DragDropReadyListBox.Resources>
-                    <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
-                    
                     <DataTemplate x:Key="SubitemTemplate" DataType="{x:Type model:IModReference}">
                         <Border BorderBrush="Transparent" BorderThickness="1" Background="Transparent">
                             <Border.Style>
@@ -601,6 +612,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     
                                     <CheckBox Grid.Column="0" Margin="4" Style="{StaticResource ActiveInactiveCheckBoxStyle}" IsChecked="{Binding Active, Mode=TwoWay}"/>
@@ -615,7 +627,11 @@
                                             <KeyBinding Key="Return" Command="{Binding EndEditCommand}"/>
                                         </TextBox.InputBindings>
                                     </TextBox>
-                                    <Button Grid.Column="3" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
+                                    <Border Grid.Column="3" Margin="2" Background="Transparent" ToolTip="{DynamicResource MissingDependenciesModpackToolTip}"
+                                            Visibility="{Binding HasUnsatisfiedDependencies, Converter={StaticResource VisibilityConverter}}">
+                                        <Image Margin="1" Source="{StaticResource DependencyWarningIcon}" Stretch="None"/>
+                                    </Border>
+                                    <Button Grid.Column="4" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
                                             CommandParameter="{StaticResource True}" Command="{Binding DeleteCommand}"/>
                                 </Grid>
                             </Expander.Header>

@@ -30,6 +30,7 @@
 
             <converter:MultiplyConverter x:Key="MultiplyConverter"/>
             <converter:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+            <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
 
             <Style x:Key="{x:Type Image}" TargetType="{x:Type Image}">
                 <Style.Setters>
@@ -403,10 +404,6 @@
 
                                 <ToggleButton x:Name="ToggleButton" Focusable="false" ClickMode="Press"
                                               IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <ToggleButton.Resources>
-                                        <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
-                                    </ToggleButton.Resources>
-
                                     <ToggleButton.Template>
                                         <ControlTemplate TargetType="{x:Type ToggleButton}">
                                             <ControlTemplate.Resources>
@@ -827,10 +824,6 @@
 
                                 <ToggleButton x:Name="ToggleButton" Focusable="false" ClickMode="Press"
                                                   IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <ToggleButton.Resources>
-                                        <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
-                                    </ToggleButton.Resources>
-                                    
                                     <ToggleButton.Template>
                                         <ControlTemplate TargetType="{x:Type ToggleButton}">
                                             <ControlTemplate.Resources>

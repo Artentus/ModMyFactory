@@ -17,8 +17,6 @@
 
         <BitmapImage x:Key="SearchIcon" UriSource="../Images/Search.png"/>
         <BitmapImage x:Key="RefreshIcon" UriSource="../Images/Refresh.png"/>
-        
-        <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
     </Window.Resources>
     
     <Grid Margin="4">

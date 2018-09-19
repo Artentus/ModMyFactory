@@ -31,10 +31,6 @@
         <ListBox Grid.Row="0" Grid.Column="0" Margin="2" Grid.ColumnSpan="3" IsSynchronizedWithCurrentItem="False"
                  ItemsSource="{Binding UpdateTargetsView}" SelectedItem="{Binding SelectedTarget, Mode=TwoWay}"
                  PreviewMouseDown="UpdateListBoxPreviewMouseDownHandler">
-            <ListBox.Resources>
-                <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
-            </ListBox.Resources>
-
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                     <Style.Triggers>

@@ -94,5 +94,14 @@ namespace ModMyFactory
                     string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase));
             }
         }
+
+        /// <summary>
+        /// Evaluates the dependencies of all mods in the collection.
+        /// </summary>
+        public void EvaluateDependencies()
+        {
+            foreach (var mod in this)
+                mod.EvaluateDependencies();
+        }
     }
 }

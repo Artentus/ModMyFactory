@@ -26,6 +26,7 @@ namespace ModMyFactory.Models
         bool activeChanging;
         bool isSelected;
         bool contentsExpanded;
+        bool hasUnsatisfiedDependencies;
 
         private string GetUniqueName(string baseName)
         {
@@ -167,6 +168,22 @@ namespace ModMyFactory.Models
         }
 
         /// <summary>
+        /// Indicates whether this modpack has unsatisfied dependencies.
+        /// </summary>
+        public bool HasUnsatisfiedDependencies
+        {
+            get => hasUnsatisfiedDependencies;
+            private set
+            {
+                if (value != hasUnsatisfiedDependencies)
+                {
+                    hasUnsatisfiedDependencies = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasUnsatisfiedDependencies)));
+                }
+            }
+        }
+
+        /// <summary>
         /// The view that presents all contents of this modpack.
         /// </summary>
         public ListCollectionView ModsView { get; }
@@ -282,11 +299,36 @@ namespace ModMyFactory.Models
             }
         }
 
+        private void SetHasUnsatisfiedDependencies()
+        {
+            if (Mods.Count == 0)
+            {
+                HasUnsatisfiedDependencies = false;
+                return;
+            }
+
+            bool newValue = false;
+            foreach (var mod in Mods)
+            {
+                if (mod.HasUnsatisfiedDependencies)
+                {
+                    newValue = true;
+                    break;
+                }
+            }
+            HasUnsatisfiedDependencies = newValue;
+        }
+
         private void ModPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Mod.Active))
+            switch (e.PropertyName)
             {
-                SetActive();
+                case nameof(IModReference.Active):
+                    SetActive();
+                    break;
+                case nameof(IModReference.HasUnsatisfiedDependencies):
+                    SetHasUnsatisfiedDependencies();
+                    break;
             }
         }
 
@@ -298,11 +340,13 @@ namespace ModMyFactory.Models
                     foreach (IModReference mod in e.NewItems)
                         mod.PropertyChanged += ModPropertyChanged;
                     SetActive();
+                    SetHasUnsatisfiedDependencies();
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     foreach (IModReference mod in e.OldItems)
                         mod.PropertyChanged -= ModPropertyChanged;
                     SetActive();
+                    SetHasUnsatisfiedDependencies();
                     break;
                 case NotifyCollectionChangedAction.Reset:
                     foreach (IModReference mod in e.NewItems)
@@ -310,6 +354,7 @@ namespace ModMyFactory.Models
                     foreach (IModReference mod in e.OldItems)
                         mod.PropertyChanged -= ModPropertyChanged;
                     SetActive();
+                    SetHasUnsatisfiedDependencies();
                     break;
             }
         }

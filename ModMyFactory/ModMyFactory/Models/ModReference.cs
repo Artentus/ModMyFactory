@@ -27,6 +27,8 @@ namespace ModMyFactory.Models
             }
         }
 
+        public bool HasUnsatisfiedDependencies => Mod.HasUnsatisfiedDependencies;
+
         public RelayCommand RemoveFromParentCommand { get; }
 
         public ModReference(Mod mod, Modpack parent)
@@ -58,6 +60,9 @@ namespace ModMyFactory.Models
                     break;
                 case nameof(Mod.Active):
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
+                    break;
+                case nameof(Mod.HasUnsatisfiedDependencies):
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasUnsatisfiedDependencies)));
                     break;
             }
         }

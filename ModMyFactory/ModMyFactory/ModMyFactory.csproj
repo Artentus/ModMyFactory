@@ -493,6 +493,8 @@
     <Resource Include="Images\Folder.png" />
     <Resource Include="Images\Factorio.png" />
     <Resource Include="Images\Installed.png" />
+    <Resource Include="Images\DependencyWarning.png" />
+    <Resource Include="Images\Dependency.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>

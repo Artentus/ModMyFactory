@@ -5,7 +5,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -20,7 +19,6 @@ using Ookii.Dialogs.Wpf;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.Views;
-using ModMyFactory.Web;
 using ModMyFactory.Web.ModApi;
 using WPFCore;
 using WPFCore.Commands;
@@ -512,6 +510,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand UpdateModsCommand { get; }
 
+        public RelayCommand EditDependenciesCommand { get; }
+
         public RelayCommand OpenVersionManagerCommand { get; }
 
         public RelayCommand OpenSettingsCommand { get; }
@@ -761,14 +761,10 @@ namespace ModMyFactory.ViewModels
                     modsWindow.ShowDialog();
                 }
             }
-        }
 
-        private async Task AddModFromFile(FileInfo archiveFile, bool move)
-        {
-            Mod mod = await Mod.Add(archiveFile, Mods, Modpacks, !move);
-            if (mod != null) Mods.Add(mod);
+            Mods.EvaluateDependencies();
         }
-
+        
         private async Task AddModsFromFilesInner(string[] fileNames, bool move, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
             int fileCount = fileNames.Length;
@@ -781,12 +777,14 @@ namespace ModMyFactory.ViewModels
                 progress.Report(new Tuple<double, string>((double)counter / fileCount, Path.GetFileName(fileName)));
 
                 var archiveFile = new FileInfo(fileName);
-                await AddModFromFile(archiveFile, move);
+                await Mod.Add(archiveFile, Mods, Modpacks, !move);
 
                 counter++;
             }
 
             progress.Report(new Tuple<double, string>(1, string.Empty));
+
+            Mods.EvaluateDependencies();
         }
 
         private async Task AddModsFromFiles()
@@ -854,8 +852,8 @@ namespace ModMyFactory.ViewModels
                     });
                     progressWindow.ShowDialog();
 
-                    Mod mod = await addModTask;
-                    if (mod != null) Mods.Add(mod);
+                    await addModTask;
+                    Mods.EvaluateDependencies();
                 }
             }
         }

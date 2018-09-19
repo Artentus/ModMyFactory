@@ -380,7 +380,7 @@ namespace ModMyFactory.ViewModels
                 ModpackTemplateList.Instance.Save();
             }
 
-            Refresh();
+            Mods.EvaluateDependencies();
         }
 
         private async Task ImportModpacks()

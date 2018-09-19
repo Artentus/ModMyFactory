@@ -18,7 +18,6 @@
     
     <Window.Resources>
         <BitmapImage x:Key="ExperimentalIcon" UriSource="../Images/Experimental.png"/>
-        <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
     </Window.Resources>
 
     <Grid Margin="4">

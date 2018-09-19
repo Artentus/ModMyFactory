@@ -186,6 +186,7 @@
     <!-- 'Edit' menu -->
     <sys:String x:Key="EditMenuItem">_Edit</sys:String>
     <sys:String x:Key="UpdateModsMenuItem">Update mods</sys:String>
+    <sys:String x:Key="DependenciesMenuItem">Mod dependencies</sys:String>
     <sys:String x:Key="VersionManagerMenuItem">Version manager</sys:String>
     <sys:String x:Key="SettingsMenuItem">Settings</sys:String>
     
@@ -233,6 +234,7 @@
     <sys:String x:Key="StartGameHotkey">F6</sys:String>
     <sys:String x:Key="CloseHotkey">Alt+F4</sys:String>
     <sys:String x:Key="UpdateModsHotkey">Ctrl+U</sys:String>
+    <sys:String x:Key="DependenciesHotkey">Ctrl+D</sys:String>
     <sys:String x:Key="VersionManagerHotkey">F10</sys:String>
     <sys:String x:Key="SettingsHotkey">F12</sys:String>
     <sys:String x:Key="RefreshHotkey">F5</sys:String>
@@ -253,6 +255,8 @@
     <sys:String x:Key="SetInactiveToolTip">Deactivate</sys:String>
     <sys:String x:Key="SetAllActiveToolTip">Activate all</sys:String>
     <sys:String x:Key="SetAllInactiveToolTip">Deactivate all</sys:String>
+    <sys:String x:Key="MissingDependenciesModToolTip">Dependencies of this mod are missing.</sys:String>
+    <sys:String x:Key="MissingDependenciesModpackToolTip">Dependencies of mods in this modpack are missing.</sys:String>
     
     
     <!--

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace ModMyFactory.Models
@@ -55,16 +54,11 @@ namespace ModMyFactory.Models
         /// <summary>
         /// Checks if a collection of mods satisfies this dependency.
         /// </summary>
-        public bool IsMet(ModCollection mods, ICollection<FactorioVersion> factorioVersions)
+        public bool IsMet(ModCollection mods)
         {
             if (IsBase)
             {
-                if (!HasVersionRestriction) return true;
-
-                foreach (var factorio in factorioVersions)
-                {
-                    if ((factorio.Version.Major == ModVersion.Major) && (factorio.Version.Minor == ModVersion.Minor) && (factorio.Version >= ModVersion)) return true;
-                }
+                return true;
             }
             else
             {
@@ -122,6 +116,21 @@ namespace ModMyFactory.Models
             }
         }
 
+        public override string ToString()
+        {
+            var result = new StringBuilder();
+
+            if (IsOptional) result.Append("? ");
+            result.Append(ModName);
+            if (HasVersionRestriction)
+            {
+                result.Append(" >= ");
+                result.Append(ModVersion.ToString());
+            }
+
+            return result.ToString();
+        }
+
         public static implicit operator ModDependency(string value)
         {
             return new ModDependency(value);
@@ -129,7 +138,7 @@ namespace ModMyFactory.Models
 
         public static implicit operator string(ModDependency value)
         {
-            return value.FriendlyDescription;
+            return value.ToString();
         }
     }
 }

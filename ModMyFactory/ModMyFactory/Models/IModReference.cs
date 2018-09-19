@@ -14,6 +14,8 @@ namespace ModMyFactory.Models
 
         bool? Active { get; set; }
 
+        bool HasUnsatisfiedDependencies { get; }
+
         RelayCommand RemoveFromParentCommand { get; }
     }
 }

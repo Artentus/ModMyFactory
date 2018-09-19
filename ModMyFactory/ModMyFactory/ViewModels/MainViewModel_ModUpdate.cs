@@ -141,8 +141,7 @@ namespace ModMyFactory.ViewModels
 
             ModpackTemplateList.Instance.Update(Modpacks);
             ModpackTemplateList.Instance.Save();
-
-            Refresh();
+            Mods.EvaluateDependencies();
         }
 
         private async Task UpdateMods()

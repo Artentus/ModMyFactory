@@ -186,6 +186,7 @@
     <!-- 'Edit' menu -->
     <sys:String x:Key="EditMenuItem">_Bearbeiten</sys:String>
     <sys:String x:Key="UpdateModsMenuItem">Mods aktualisieren</sys:String>
+    <sys:String x:Key="DependenciesMenuItem">Mod-Abhängigkeiten</sys:String>
     <sys:String x:Key="VersionManagerMenuItem">Versionsmanager</sys:String>
     <sys:String x:Key="SettingsMenuItem">Einstellungen</sys:String>
     
@@ -229,6 +230,7 @@
     <sys:String x:Key="ExportModpacksHotkey">Strg+E</sys:String>
     <sys:String x:Key="ImportModpacksHotkey">Strg+I</sys:String>
     <sys:String x:Key="UpdateModsHotkey">Strg+U</sys:String>
+    <sys:String x:Key="DependenciesHotkey">Strg+D</sys:String>
     <sys:String x:Key="AboutHotkey">Strg+F1</sys:String>
     <sys:String x:Key="DeleteHotkey">Entf</sys:String>
 
@@ -244,6 +246,8 @@
     <sys:String x:Key="SetInactiveToolTip">Deaktivieren</sys:String>
     <sys:String x:Key="SetAllActiveToolTip">Alle aktivieren</sys:String>
     <sys:String x:Key="SetAllInactiveToolTip">Alle deaktivieren</sys:String>
+    <sys:String x:Key="MissingDependenciesModToolTip">Abhängigkeiten dieser Mod fehlen.</sys:String>
+    <sys:String x:Key="MissingDependenciesModpackToolTip">Abhängigkeiten von Mods in diesem Modpack fehlen.</sys:String>
 
 
     <!--
