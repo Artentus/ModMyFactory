@@ -104,7 +104,7 @@
         <KeyBinding Modifiers="Control" Key="I" Command="{Binding ImportModpacksCommand}"/>
         <KeyBinding Key="F6" Command="{Binding StartGameCommand}"/>
         <KeyBinding Modifiers="Control" Key="U" Command="{Binding UpdateModsCommand}"/>
-        <KeyBinding Modifiers="Control" Key="D" Command="{Binding EditDependenciesCommand}"/>
+        <KeyBinding Modifiers="Control" Key="D" Command="{Binding DownloadDependenciesCommand}"/>
         <KeyBinding Key="F10" Command="{Binding OpenVersionManagerCommand}"/>
         <KeyBinding Key="F12" Command="{Binding OpenSettingsCommand}"/>
         <KeyBinding Key="F5" Command="{Binding RefreshCommand}"/>
@@ -161,7 +161,7 @@
                 <MenuItem Header="{DynamicResource UpdateModsMenuItem}" Icon="{StaticResource UpdateIcon}"
                           InputGestureText="{DynamicResource UpdateModsHotkey}" Command="{Binding UpdateModsCommand}"/>
                 <MenuItem Header="{DynamicResource DependenciesMenuItem}" Icon="{StaticResource DependencyIcon}"
-                          InputGestureText="{DynamicResource DependenciesHotkey}" Command="{Binding EditDependenciesCommand}"/>
+                          InputGestureText="{DynamicResource DependenciesHotkey}" Command="{Binding DownloadDependenciesCommand}"/>
 
                 <Separator/>
 
@@ -266,7 +266,7 @@
             <Button ToolTip="{DynamicResource UpdateModsMenuItem}" Command="{Binding UpdateModsCommand}">
                 <Image Margin="1" Stretch="None" Source="{StaticResource UpdateIcon}"/>
             </Button>
-            <Button ToolTip="{DynamicResource DependenciesMenuItem}" Command="{Binding EditDependenciesCommand}">
+            <Button ToolTip="{DynamicResource DependenciesMenuItem}" Command="{Binding DownloadDependenciesCommand}">
                 <Image Margin="1" Stretch="None" Source="{StaticResource DependencyIcon}"/>
             </Button>
 

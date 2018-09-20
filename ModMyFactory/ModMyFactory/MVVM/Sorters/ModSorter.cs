@@ -22,11 +22,11 @@ namespace ModMyFactory.MVVM.Sorters
 
         public int Compare(object x, object y)
         {
-            if ((x is Mod) || (y is Mod))
+            if ((x is Mod) && (y is Mod))
             {
                 return Compare((Mod)x, (Mod)y);
             }
-            else if ((x is ModTemplate) || (y is ModTemplate))
+            else if ((x is ModTemplate) && (y is ModTemplate))
             {
                 return Compare((ModTemplate)x, (ModTemplate)y);
             }

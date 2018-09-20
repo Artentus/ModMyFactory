@@ -510,7 +510,7 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand UpdateModsCommand { get; }
 
-        public RelayCommand EditDependenciesCommand { get; }
+        public RelayCommand DownloadDependenciesCommand { get; }
 
         public RelayCommand OpenVersionManagerCommand { get; }
 
@@ -660,6 +660,7 @@ namespace ModMyFactory.ViewModels
 
                 // 'Edit' menu
                 UpdateModsCommand = new RelayCommand(async () => await UpdateMods());
+                DownloadDependenciesCommand = new RelayCommand(async () => await DownloadDependencies());
 
                 OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
                 OpenSettingsCommand = new RelayCommand(async () => await OpenSettings());

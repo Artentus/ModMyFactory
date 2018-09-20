@@ -1,4 +1,4 @@
-﻿<controls:LayoutRoundingWindow x:Class="ModMyFactory.Views.ModUpdateWindow" x:ClassModifier="internal"
+﻿<controls:LayoutRoundingWindow x:Class="ModMyFactory.Views.DependencyDownloadWindow" x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,29 +7,35 @@
         xmlns:model="clr-namespace:ModMyFactory.Models"
         xmlns:controls="clr-namespace:ModMyFactory.Controls"
         mc:Ignorable="d"
-        Title="{DynamicResource ModUpdateWindowTitle}" Height="700" Width="500"
+        Title="{DynamicResource DependencyDownloadWindowTitle}" Height="700" Width="500"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon="..\Images\MMF_Icon.ico">
-    
+
     <Window.DataContext>
-        <vm:ModUpdateViewModel/>
+        <vm:DependencyDownloadViewModel/>
     </Window.DataContext>
-    
+
+    <Window.Resources>
+        <BitmapImage x:Key="OptionalIcon" UriSource="../Images/Optional.png"/>
+    </Window.Resources>
+
     <Grid Margin="4">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
-                <ItemsControl Margin="1" ItemsSource="{Binding ModsView}">
+                <ItemsControl Margin="1" ItemsSource="{Binding DependenciesView}">
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="{x:Type model:ModUpdateInfo}">
+                        <DataTemplate DataType="{x:Type model:ModDependencyInfo}">
                             <Border Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="1,1,1,0">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
@@ -44,15 +50,13 @@
                                             <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
                                         </CheckBox.LayoutTransform>
                                     </CheckBox>
-                                    <TextBlock Grid.Column="1" Grid.Row="0" Margin="2,0" VerticalAlignment="Center" Text="{Binding FriendlyName}" FontSize="14"/>
-                                    <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Vertical">
-                                        <StackPanel Margin="8,0,0,0" Orientation="Horizontal">
-                                            <TextBlock Text="{Binding CurrentVersion, StringFormat={StaticResource CurrentVersionFormat}}" Foreground="Gray"/>
-                                            <TextBlock Text="{Binding CurrentFactorioVersion, StringFormat=(Factorio {0})}" Margin="3,0,0,0" Foreground="Gray"/>
-                                        </StackPanel>
-                                        <StackPanel Margin="8,2,0,4" Orientation="Horizontal">
-                                            <TextBlock Text="{Binding UpdateVersion, StringFormat={StaticResource NewestVersionFormat}}" Foreground="Gray"/>
-                                            <TextBlock Text="{Binding UpdateFactorioVersion, StringFormat=(Factorio {0})}" Margin="3,0,0,0" Foreground="Gray"/>
+                                    <Image Grid.Column="1" Grid.Row="0" Source="{StaticResource OptionalIcon}" Visibility="{Binding IsOptional, Converter={StaticResource VisibilityConverter}}"
+                                           Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="{DynamicResource IsOptionalToolTip}"/>
+                                    <TextBlock Grid.Column="2" Grid.Row="0" Margin="2,0" VerticalAlignment="Center" Text="{Binding Name}" FontSize="14"/>
+                                    <StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Vertical">
+                                        <StackPanel Margin="8,0,0,4" Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Version}" Foreground="Gray"/>
+                                            <TextBlock Text="{Binding FactorioVersion, StringFormat=(Factorio {0})}" Margin="3,0,0,0" Foreground="Gray"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </Grid>
@@ -63,9 +67,11 @@
             </ScrollViewer>
         </Border>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft">
-            <Button Margin="0,4,0,0" IsDefault="True" Content="{DynamicResource UpdateButton}" Click="UpdateButtonClickHandler"/>
-            <Button Margin="4,4,4,0" IsCancel="True" Content="{DynamicResource CancelButton}"/>
+        <CheckBox Grid.Row="1" Margin="2,6,2,2" Content="{DynamicResource ShowOptionalCheckBox}" IsChecked="{Binding ShowOptional, Mode=TwoWay}"/>
+
+        <StackPanel Grid.Row="2" Margin="0,6,0,0" Orientation="Horizontal" FlowDirection="RightToLeft">
+            <Button Margin="2" IsDefault="True" IsEnabled="{Binding CanDownload}" Content="{DynamicResource DownloadButton}" Click="DownloadButtonClickHandler"/>
+            <Button Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
         </StackPanel>
     </Grid>
 </controls:LayoutRoundingWindow>

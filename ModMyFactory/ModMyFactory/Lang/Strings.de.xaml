@@ -465,5 +465,17 @@
     <!-- buttons -->
     <sys:String x:Key="CopyButton">Kopieren</sys:String>
     <sys:String x:Key="MoveButton">Verschieben</sys:String>
+    
+    <!--
+    ____________________ DependencyDownloadWindow ____________________
+    -->
+    
+    <sys:String x:Key="DependencyDownloadWindowTitle">Abhängigkeiten zum Download auswählen</sys:String>
+    
+    <!-- checkboxes -->
+    <sys:String x:Key="ShowOptionalCheckBox">Optionale Abhängigkeiten anzeigen</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="IsOptionalToolTip">Optional</sys:String>
 
 </ResourceDictionary>
