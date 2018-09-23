@@ -104,6 +104,9 @@
     
     <sys:String x:Key="Information.DependencyUnavailable.Message">The dependency {0} version {1} was not found on the mod portal.&#x0a;Contact the mod author for information on how to aquire the dependency.</sys:String>
     <sys:String x:Key="Information.DependencyUnavailable.Title">Dependency unavailable</sys:String>
+    
+    <sys:String x:Key="Question.Dependencies.Message">Some of your active mods require dependencies that are not active. Do you want to start the game anyway?</sys:String>
+    <sys:String x:Key="Question.Dependencies.Title">Required dependencies not active</sys:String>
 
     
     <!-- file type descriptions -->
@@ -302,6 +305,9 @@
     <!-- group headers -->
     <sys:String x:Key="ManagerModeGroupHeader">Manager mode</sys:String>
     <sys:String x:Key="MiscGroupHeader">Miscellaneous</sys:String>
+    <sys:String x:Key="UpdateGroupHeader">Update</sys:String>
+    <sys:String x:Key="ModUpdateGroupHeader">Mod updates</sys:String>
+    <sys:String x:Key="DependenciesGroupHeader">Mod dependencies</sys:String>
     <sys:String x:Key="CredentialsGroupHeader">Login credentials</sys:String>
     
     <sys:String x:Key="FactorioDirectoryGroupHeader">Factorio location</sys:String>
@@ -319,6 +325,8 @@
     <sys:String x:Key="KeepZippedModVersionsGroupItem">Keep old versions of zipped mods</sys:String>
     <sys:String x:Key="KeepOldWhenNewFactorioGroupItem">Keep old mod versions when updating to a new Factorio version</sys:String>
     <sys:String x:Key="UpdateIntermediateGroupItem">Also download mod updates for older Factorio versions</sys:String>
+    <sys:String x:Key="ActivateDependenciesGroupItem">When activating a mod also activate its dependencies</sys:String>
+    <sys:String x:Key="ActivateOptionalDependenciesGroupItem">Also activate optional dependencies</sys:String>
     <sys:String x:Key="GlobalGroupItem">Global</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Application directory</sys:String>

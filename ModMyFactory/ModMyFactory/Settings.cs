@@ -54,6 +54,8 @@ namespace ModMyFactory
                 DownloadIntermediateUpdates = false,
 
                 ShowOptionalDependencies = false,
+                ActivateDependencies = true,
+                ActivateOptionalDependencies = false,
             };
             return defaultSettings;
         }
@@ -137,6 +139,11 @@ namespace ModMyFactory
         public bool DownloadIntermediateUpdates;
 
         public bool ShowOptionalDependencies;
+
+        [DefaultValue(true)]
+        public bool ActivateDependencies;
+
+        public bool ActivateOptionalDependencies;
 
         [JsonConstructor]
         private Settings()

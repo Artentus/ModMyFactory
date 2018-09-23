@@ -37,6 +37,15 @@ namespace ModMyFactory.Models
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
 
                     ModManager.SetActive(Name, FactorioVersion, value);
+                    
+                    if (active && App.Instance.Settings.ActivateDependencies)
+                    {
+                        foreach (var dependency in Dependencies)
+                        {
+                            if (!dependency.IsOptional || App.Instance.Settings.ActivateOptionalDependencies)
+                                dependency.Activate(parentCollection, FactorioVersion);
+                        }
+                    }
                 }
             }
         }
@@ -147,7 +156,7 @@ namespace ModMyFactory.Models
         }
 
         /// <summary>
-        /// Indicates if all of this mods dependencies are active.
+        /// Indicates if all of this mods required dependencies are active.
         /// </summary>
         public bool DependenciesActive
         {
@@ -155,8 +164,11 @@ namespace ModMyFactory.Models
             {
                 foreach (var dependency in Dependencies)
                 {
-                    if (!dependency.IsActive(parentCollection, FactorioVersion))
-                        return false;
+                    if (!dependency.IsOptional)
+                    {
+                        if (!dependency.IsActive(parentCollection, FactorioVersion))
+                            return false;
+                    }
                 }
                 return true;
             }

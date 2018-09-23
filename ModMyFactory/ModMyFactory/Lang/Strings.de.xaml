@@ -104,6 +104,9 @@
     
     <sys:String x:Key="Information.DependencyUnavailable.Message">Die Abhängigkeit {0} Version {1} konnte nicht auf dem Mod-Portal gefunden werden.&#x0a;Kontaktieren sie den Mod-Autor für Informationen.</sys:String>
     <sys:String x:Key="Information.DependencyUnavailable.Title">Abhängigkeit nicht verfügbar</sys:String>
+    
+    <sys:String x:Key="Question.Dependencies.Message">Einige Ihrer aktiven Mods erfordern Abhängigkeiten, die nicht aktiv sind. Möchten Sie das Spiel dennoch starten?</sys:String>
+    <sys:String x:Key="Question.Dependencies.Title">Erforderliche Abhängigkeiten nicht aktiv</sys:String>
 
 
     <!-- file type descriptions -->
@@ -293,6 +296,9 @@
     <!-- group headers -->
     <sys:String x:Key="ManagerModeGroupHeader">Managermodus</sys:String>
     <sys:String x:Key="MiscGroupHeader">Sonstiges</sys:String>
+    <sys:String x:Key="UpdateGroupHeader">Updates</sys:String>
+    <sys:String x:Key="ModUpdateGroupHeader">Mod-Updates</sys:String>
+    <sys:String x:Key="DependenciesGroupHeader">Mod-Abhängigkeiten</sys:String>
     <sys:String x:Key="CredentialsGroupHeader">Anmeldedaten</sys:String>
     
     <sys:String x:Key="FactorioDirectoryGroupHeader">Speicherort für Factorio</sys:String>
@@ -310,6 +316,8 @@
     <sys:String x:Key="KeepZippedModVersionsGroupItem">Alte Versionen von gepackten Mods behalten</sys:String>
     <sys:String x:Key="KeepOldWhenNewFactorioGroupItem">Alte Mod-Versionen behalten, wenn Factorio-Version verschieden</sys:String>
     <sys:String x:Key="UpdateIntermediateGroupItem">Auch Mod-Updates für ältere Factorio-Versionen herunterladen</sys:String>
+    <sys:String x:Key="ActivateDependenciesGroupItem">Beim Aktivieren einer Mod auch alle Abhängigkeiten aktivieren</sys:String>
+    <sys:String x:Key="ActivateOptionalDependenciesGroupItem">Auch optionale Abhängigkeiten aktivieren</sys:String>
     <sys:String x:Key="GlobalGroupItem">Global</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Anwendungsverzeichnis</sys:String>

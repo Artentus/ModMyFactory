@@ -949,6 +949,25 @@ namespace ModMyFactory.ViewModels
 
         private void StartGame()
         {
+            foreach (var mod in Mods)
+            {
+                if (mod.Active && !mod.DependenciesActive)
+                {
+                    if (MessageBox.Show(Window,
+                            App.Instance.GetLocalizedMessage("Dependencies", MessageType.Question),
+                            App.Instance.GetLocalizedMessageTitle("Dependencies", MessageType.Question),
+                            MessageBoxButton.YesNo, MessageBoxImage.Question)
+                            == MessageBoxResult.Yes)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
+
             Process.Start(SelectedFactorioVersion.ExecutablePath);
         }
 
@@ -1102,6 +1121,10 @@ namespace ModMyFactory.ViewModels
             settings.KeepOldZippedModVersions = settingsViewModel.KeepZipped;
             settings.KeepOldModVersionsWhenNewFactorioVersion = settingsViewModel.KeepWhenNewFactorioVersion;
             settings.DownloadIntermediateUpdates = settingsViewModel.UpdateIntermediate;
+
+            // Mod dependencies
+            settings.ActivateDependencies = settingsViewModel.ActivateDependencies;
+            settings.ActivateOptionalDependencies = settingsViewModel.ActivateOptionalDependencies;
 
             // Factorio location
             settings.FactorioDirectoryOption = settingsViewModel.FactorioDirectoryOption;

@@ -173,6 +173,42 @@ namespace ModMyFactory.ViewModels
 
         #endregion
 
+        #region ModDependencies
+
+        bool activateDependencies;
+        bool activateOptionalDependencies;
+
+        public bool ActivateDependencies
+        {
+            get => activateDependencies;
+            set
+            {
+                if (value != activateDependencies)
+                {
+                    activateDependencies = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActivateDependencies)));
+
+                    if (!activateDependencies)
+                        ActivateOptionalDependencies = false;
+                }
+            }
+        }
+
+        public bool ActivateOptionalDependencies
+        {
+            get => activateOptionalDependencies;
+            set
+            {
+                if (value != activateOptionalDependencies)
+                {
+                    activateOptionalDependencies = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActivateOptionalDependencies)));
+                }
+            }
+        }
+
+        #endregion
+
         #region FactorioDirectory
 
         bool factorioDirectoryIsAppData;
@@ -541,6 +577,9 @@ namespace ModMyFactory.ViewModels
             KeepWhenNewFactorioVersion = settings.KeepOldModVersionsWhenNewFactorioVersion;
             KeepOldModVersions = settings.KeepOldModVersions;
             UpdateIntermediate = settings.DownloadIntermediateUpdates;
+
+            ActivateOptionalDependencies = settings.ActivateOptionalDependencies;
+            ActivateDependencies = settings.ActivateDependencies;
 
             FactorioDirectoryIsAppData = false;
             FactorioDirectoryIsAppDirectory = false;
