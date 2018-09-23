@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
@@ -148,6 +147,22 @@ namespace ModMyFactory.Models
         }
 
         /// <summary>
+        /// Indicates if all of this mods dependencies are active.
+        /// </summary>
+        public bool DependenciesActive
+        {
+            get
+            {
+                foreach (var dependency in Dependencies)
+                {
+                    if (!dependency.IsActive(parentCollection, FactorioVersion))
+                        return false;
+                }
+                return true;
+            }
+        }
+
+        /// <summary>
         /// A command that deletes this mod from the list and the filesystem.
         /// </summary>
         public RelayCommand<bool?> DeleteCommand { get; }
@@ -198,7 +213,7 @@ namespace ModMyFactory.Models
 
             foreach (var dependency in Dependencies)
             {
-                if (!dependency.IsOptional && !dependency.IsMet(parentCollection))
+                if (!dependency.IsOptional && !dependency.IsMet(parentCollection, FactorioVersion))
                 {
                     HasUnsatisfiedDependencies = true;
                     return;
@@ -272,6 +287,9 @@ namespace ModMyFactory.Models
                 ModManager.RemoveTemplate(Name, FactorioVersion);
                 ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
                 ModpackTemplateList.Instance.Save();
+
+                if (showPrompt)
+                    parentCollection.EvaluateDependencies();
             }
         }
         

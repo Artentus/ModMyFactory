@@ -1295,6 +1295,8 @@ namespace ModMyFactory.ViewModels
             {
                 foreach (Mod mod in deletionList)
                     mod.Delete(false);
+
+                Mods.EvaluateDependencies();
             }
         }
 

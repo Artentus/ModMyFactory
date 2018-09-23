@@ -54,7 +54,7 @@ namespace ModMyFactory.Models
         /// <summary>
         /// Checks if a collection of mods satisfies this dependency.
         /// </summary>
-        public bool IsMet(ModCollection mods)
+        public bool IsMet(ModCollection mods, Version factorioVersion)
         {
             if (IsBase)
             {
@@ -62,15 +62,27 @@ namespace ModMyFactory.Models
             }
             else
             {
-                foreach (Mod mod in mods)
-                {
-                    if ((mod.Name == ModName) &&
-                        (!HasVersionRestriction || (mod.Version >= ModVersion)))
-                        return true;
-                }
+                var mod = mods.FindByFactorioVersion(ModName, factorioVersion);
+                if (mod == null) return false;
+                return mod.Version >= ModVersion;
             }
+        }
 
-            return false;
+        /// <summary>
+        /// Checks if a collection of mods satisfies this dependency and the dependency is active.
+        /// </summary>
+        public bool IsActive(ModCollection mods, Version factorioVersion)
+        {
+            if (IsBase)
+            {
+                return true;
+            }
+            else
+            {
+                var mod = mods.FindByFactorioVersion(ModName, factorioVersion);
+                if (mod == null) return false;
+                return (mod.Version >= ModVersion) && mod.Active;
+            }
         }
 
         private void ThrowIfInvalid(string[] parts, int index)
@@ -114,6 +126,20 @@ namespace ModMyFactory.Models
                     throw new ArgumentException("Invalid dependency string.");
                 }
             }
+        }
+
+        /// <summary>
+        /// Activates this dependency if possible.
+        /// </summary>
+        public void Activate(ModCollection mods, Version factorioVersion)
+        {
+            if (IsBase) return;
+
+            var mod = mods.FindByFactorioVersion(ModName, factorioVersion);
+            if (mod == null) return;
+
+            if (mod.Version >= ModVersion)
+                mod.Active = true;
         }
 
         public override string ToString()

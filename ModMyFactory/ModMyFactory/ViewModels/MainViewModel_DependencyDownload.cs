@@ -49,7 +49,7 @@ namespace ModMyFactory.ViewModels
         {
             foreach (var dependency in mod.Dependencies)
             {
-                if (!dependency.IsBase && !dependency.IsMet(Mods))
+                if (!dependency.IsBase && !dependency.IsMet(Mods, mod.FactorioVersion))
                     AddDependency(dict, dependency, mod.FactorioVersion);
             }
         }
@@ -149,6 +149,8 @@ namespace ModMyFactory.ViewModels
                         {
                             if (closeWindowTask != null) await closeWindowTask;
                         }
+
+                        Mods.EvaluateDependencies();
                     }
                     catch (WebException)
                     {
