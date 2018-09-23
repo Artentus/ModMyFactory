@@ -101,6 +101,9 @@
     
     <sys:String x:Key="Information.FMPv1.Message">This modpack file was created in ModMyFactory version 1.5 or earlier. Support for old files has been dropped as of version 1.7 of ModMyFactory.&#x0a;The file can be imported in ModMyFactory 1.6 and then re-exported in the new format.</sys:String>
     <sys:String x:Key="Information.FMPv1.Title">Import not possible</sys:String>
+    
+    <sys:String x:Key="Information.DependencyUnavailable.Message">The dependency {0} version {1} was not found on the mod portal.&#x0a;Contact the mod author for information on how to aquire the dependency.</sys:String>
+    <sys:String x:Key="Information.DependencyUnavailable.Title">Dependency unavailable</sys:String>
 
     
     <!-- file type descriptions -->

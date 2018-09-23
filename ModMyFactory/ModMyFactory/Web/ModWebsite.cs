@@ -138,7 +138,6 @@ namespace ModMyFactory.Web
             if (!modDirectory.Exists) modDirectory.Create();
 
             var downloadUrl = BuildUrl(release, username, token);
-            Debug.Print(token);
             var file = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
 
             try
@@ -182,7 +181,6 @@ namespace ModMyFactory.Web
             if (!modDirectory.Exists) modDirectory.Create();
 
             var downloadUrl = BuildUrl(release, username, token);
-            Debug.Print(token);
             var modFile = new FileInfo(fileName);
 
             try

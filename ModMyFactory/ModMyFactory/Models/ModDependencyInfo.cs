@@ -47,6 +47,7 @@ namespace ModMyFactory.Models
             FactorioVersion = factorioVersion;
             Version = version;
             IsOptional = isOptional;
+            IsSelected = !isOptional;
         }
     }
 }

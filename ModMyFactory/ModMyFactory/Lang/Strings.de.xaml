@@ -101,6 +101,9 @@
     
     <sys:String x:Key="Information.FMPv1.Message">Diese Modpack-Datei wurde in ModMyFactory 1.5 oder früher erstellt. Die Unterstützung für alte Dateien wurde in Version 1.7 von ModMyFactory eingestellt.&#x0a;Die Datei kann in ModMyFactory 1.6 importiert und dann im neuen Format wieder exportiert werden.</sys:String>
     <sys:String x:Key="Information.FMPv1.Title">Import nicht möglich</sys:String>
+    
+    <sys:String x:Key="Information.DependencyUnavailable.Message">Die Abhängigkeit {0} Version {1} konnte nicht auf dem Mod-Portal gefunden werden.&#x0a;Kontaktieren sie den Mod-Autor für Informationen.</sys:String>
+    <sys:String x:Key="Information.DependencyUnavailable.Title">Abhängigkeit nicht verfügbar</sys:String>
 
 
     <!-- file type descriptions -->
