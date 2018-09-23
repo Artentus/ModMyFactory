@@ -85,46 +85,30 @@ namespace ModMyFactory.Models
             }
         }
 
-        private void ThrowIfInvalid(string[] parts, int index)
-        {
-            if (parts.GetUpperBound(0) < index)
-                throw new ArgumentException("Invalid dependency string.");
-        }
-        
         public ModDependency(string value)
         {
             if (string.IsNullOrWhiteSpace(value)) throw new ArgumentNullException(nameof(value));
+            value = value.Trim();
 
-            string[] parts = value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length > 4) throw new ArgumentException("Invalid dependency string.");
-
-            int index = 0;
-
-            if (parts[index] == "?")
+            if (value.StartsWith("?"))
             {
                 IsOptional = true;
-                index++;
+                value = value.Substring(1).TrimStart();
             }
 
-            ThrowIfInvalid(parts, index);
-            ModName = parts[index];
-            index++;
+            string[] parts = value.Split(new[] { ">=" }, StringSplitOptions.None);
+            if ((parts.Length == 0) || (parts.Length > 2)) throw new ArgumentException("Invalid dependency string.");
 
-            if (parts.GetUpperBound(0) >= index)
+            string name = parts[0].TrimEnd();
+            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid dependency string.");
+            ModName = name;
+
+            if (parts.Length == 2)
             {
-                if (parts[index] == ">=")
-                {
-                    index++;
-
-                    ThrowIfInvalid(parts, index);
-                    if (!Version.TryParse(parts[index], out Version version))
-                        throw new ArgumentException("Invalid dependency string.");
-                    ModVersion = version;
-                }
-                else
-                {
-                    throw new ArgumentException("Invalid dependency string.");
-                }
+                string versionString = parts[1].TrimStart();
+                if (!Version.TryParse(versionString, out var version)) throw new ArgumentException("Invalid dependency string.");
+                ModVersion = version;
+                HasVersionRestriction = true;
             }
         }
 
