@@ -96,6 +96,7 @@ namespace ModMyFactory
         public string ScenarioDirectory;
 
         [DefaultValue("en")]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public string SelectedLanguage;
 
         public WindowInfo MainWindowInfo;
@@ -119,21 +120,25 @@ namespace ModMyFactory
         public bool ShowExperimentalDownloads;
 
         [DefaultValue(true)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool UpdateSearchOnStartup;
 
         public bool IncludePreReleasesForUpdate;
 
         [DefaultValue(true)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool AlwaysUpdateZipped;
 
         public bool KeepOldModVersions;
 
         [DefaultValue(true)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool KeepOldExtractedModVersions;
 
         public bool KeepOldZippedModVersions;
 
         [DefaultValue(true)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool KeepOldModVersionsWhenNewFactorioVersion;
 
         public bool DownloadIntermediateUpdates;
@@ -141,6 +146,7 @@ namespace ModMyFactory
         public bool ShowOptionalDependencies;
 
         [DefaultValue(true)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool ActivateDependencies;
 
         public bool ActivateOptionalDependencies;

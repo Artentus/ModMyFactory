@@ -37,8 +37,11 @@ namespace ModMyFactory.ViewModels
             }
             else
             {
-                if (dependency.ModVersion > info.Version)
-                    info.Version = dependency.ModVersion;
+                if (dependency.HasVersionRestriction)
+                {
+                    if ((info.Version == null) || (dependency.ModVersion > info.Version))
+                        info.Version = dependency.ModVersion;
+                }
 
                 if (!dependency.IsOptional)
                     info.IsOptional = false;
@@ -71,7 +74,7 @@ namespace ModMyFactory.ViewModels
             var info = await ModWebsite.GetExtendedInfoAsync(dependency.Name);
             var latestRelease = info.LatestRelease(dependency.FactorioVersion);
 
-            if (latestRelease.Version < dependency.Version)
+            if ((dependency.Version != null) && (latestRelease.Version < dependency.Version))
             {
                 MessageBox.Show(Window,
                     string.Format(App.Instance.GetLocalizedMessage("DependencyUnavailable", MessageType.Information), dependency.Name, dependency.Version),

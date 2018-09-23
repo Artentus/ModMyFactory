@@ -68,7 +68,7 @@ namespace ModMyFactory.Models
             FriendlyName = friendlyName;
             Author = author;
             Description = description;
-            Dependencies = dependencies;
+            Dependencies = dependencies ?? new ModDependency[0];
         }
 
         /// <summary>

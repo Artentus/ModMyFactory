@@ -64,7 +64,11 @@ namespace ModMyFactory.Models
             {
                 var mod = mods.FindByFactorioVersion(ModName, factorioVersion);
                 if (mod == null) return false;
-                return mod.Version >= ModVersion;
+
+                if (HasVersionRestriction)
+                    return mod.Version >= ModVersion;
+                else
+                    return true;
             }
         }
 
@@ -81,7 +85,11 @@ namespace ModMyFactory.Models
             {
                 var mod = mods.FindByFactorioVersion(ModName, factorioVersion);
                 if (mod == null) return false;
-                return (mod.Version >= ModVersion) && mod.Active;
+
+                if (HasVersionRestriction)
+                    return (mod.Version >= ModVersion) && mod.Active;
+                else
+                    return mod.Active;
             }
         }
 
@@ -122,7 +130,7 @@ namespace ModMyFactory.Models
             var mod = mods.FindByFactorioVersion(ModName, factorioVersion);
             if (mod == null) return;
 
-            if (mod.Version >= ModVersion)
+            if (!HasVersionRestriction || (mod.Version >= ModVersion))
                 mod.Active = true;
         }
 
