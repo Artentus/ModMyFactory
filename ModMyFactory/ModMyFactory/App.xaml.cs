@@ -18,7 +18,7 @@ namespace ModMyFactory
 {
     public partial class App : Application
     {
-        private const int PreReleaseVersion = 3;
+        private const int PreReleaseVersion = -1;
 
         /// <summary>
         /// The current application instance.
@@ -45,6 +45,7 @@ namespace ModMyFactory
         }
 
         UpdateSearchResult searchResult;
+        bool includePreReleases;
 
         /// <summary>
         /// The applications settings.
@@ -233,8 +234,10 @@ namespace ModMyFactory
         /// <returns>Returns an update-search result.</returns>
         internal async Task<UpdateSearchResult> SearchForUpdateAsync(bool includePreReleases)
         {
-            if (searchResult == null || !searchResult.UpdateAvailable)
+            if (searchResult == null || !searchResult.UpdateAvailable || (includePreReleases != this.includePreReleases))
             {
+                this.includePreReleases = includePreReleases;
+
                 var client = new GitHubClient(new ProductHeaderValue("ModMyFactory"));
                 var latestRelease = await client.GetLatestReleaseAsync("Artentus", "ModMyFactory", includePreReleases);
 

@@ -67,6 +67,8 @@ namespace ModMyFactory
                 Kernel32.AllocConsole();
             }
 
+            Console.WriteLine($"ModMyFactory v{App.Version}");
+            Console.WriteLine();
             Console.WriteLine(@"Usage:");
             Console.WriteLine(@"  modmyfactory.exe -h | --help");
             Console.WriteLine(@"  modmyfactory.exe [options] [<modpack-file>...]");
