@@ -6,6 +6,8 @@
         xmlns:vm="clr-namespace:ModMyFactory.ViewModels"
         xmlns:modApi="clr-namespace:ModMyFactory.Web.ModApi"
         xmlns:controls="clr-namespace:ModMyFactory.Controls"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:convert="clr-namespace:ModMyFactory.MVVM.Converters"
         mc:Ignorable="d"
         Title="{DynamicResource OnlineModsWindowTitle}"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
@@ -66,6 +68,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             
             <Border Grid.Column="0" Background="{StaticResource SelectionBrush}">
@@ -82,7 +85,17 @@
                     <Button Grid.Column="1" Margin="4,0" VerticalAlignment="Center" Style="{StaticResource SmallCloseButton}" ToolTip="{DynamicResource ClearFilterToolTip}" Command="{Binding ClearFilterCommand}"/>
                 </Grid>
             </Border>
-            <Button Grid.Column="2" Margin="4,0,0,0" MinWidth="0" MinHeight="0" Height="24" Command="{Binding RefreshCommand}">
+            <ComboBox Grid.Column="2" Margin="4,0" ItemsSource="{Binding VersionFilterView}" SelectedItem="{Binding SelectedVersionFilter, Mode=TwoWay}" MinWidth="120" ToolTip="{DynamicResource FactorioFilterToolTip}">
+                <ComboBox.Resources>
+                    <convert:FactorioVersionConverter x:Key="FactorioVersionConverter"/>
+                </ComboBox.Resources>
+                <ComboBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type system:Version}">
+                        <TextBlock Margin="4,1" VerticalAlignment="Center" Text="{Binding Converter={StaticResource FactorioVersionConverter}}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button Grid.Column="3" MinWidth="0" MinHeight="0" Height="24" Command="{Binding RefreshCommand}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" MinWidth="16"/>

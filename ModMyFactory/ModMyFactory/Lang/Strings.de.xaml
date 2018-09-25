@@ -393,11 +393,13 @@
 
     <!-- format strings -->
     <sys:String x:Key="ByFormat">von {0}</sys:String>
+    <sys:String x:Key="EmptyVersionFormat">Alle Versionen</sys:String>
 
     <!-- tooltips -->
     <sys:String x:Key="ViewsToolTip">Aufrufe</sys:String>
     <sys:String x:Key="DownloadsToolTip">Downloads</sys:String>
     <sys:String x:Key="InstalledToolTip">Installiert</sys:String>
+    <sys:String x:Key="FactorioFilterToolTip">Nach neustem Release filtern</sys:String>
     
     <!-- labels -->
     <sys:String x:Key="LicenseLabel">Lizenz:</sys:String>

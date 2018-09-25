@@ -6,7 +6,7 @@ using WPFCore;
 
 namespace ModMyFactory.Web.ModApi
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     sealed class ModRelease : NotifyPropertyChangedBase
     {
         [JsonProperty("version")]

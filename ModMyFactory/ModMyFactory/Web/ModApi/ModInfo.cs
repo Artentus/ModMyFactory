@@ -19,5 +19,8 @@ namespace ModMyFactory.Web.ModApi
 
         [JsonProperty("owner")]
         public string Author { get; set; }
+
+        [JsonProperty("latest_release")]
+        public ModRelease LatestRelease { get; set; }
     }
 }

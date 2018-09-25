@@ -27,12 +27,16 @@ namespace ModMyFactory.ViewModels
         static readonly string[] ModBlacklist = { "[Abandoned]", "[Deprecated]", "[Discontinued]", "[Outdated]" };
 
         static OnlineModsViewModel instance;
+        static Version emptyVersion;
 
         public static OnlineModsViewModel Instance => instance ?? (instance = new OnlineModsViewModel());
 
-        public OnlineModsWindow Window => (OnlineModsWindow)View;
+        public static Version EmptyVersion => emptyVersion ?? (emptyVersion = new Version(0, 0));
 
-        ListCollectionView modsView;
+        public OnlineModsWindow Window => (OnlineModsWindow)View;
+        
+        List<Version> versionFilterList;
+        Version selectedVersionFilter;
         List<ModInfo> mods;
         string filter;
         ModRelease selectedRelease;
@@ -51,18 +55,41 @@ namespace ModMyFactory.ViewModels
         string selectedModHomepage;
         string selectedModGitHubUrl;
 
-        public ListCollectionView ModsView
+        public ListCollectionView VersionFilterView { get; private set; }
+
+        public List<Version> VersionFilterList
         {
-            get { return modsView; }
+            get => versionFilterList;
             private set
             {
-                if (value != modsView)
+                if (value != versionFilterList)
                 {
-                    modsView = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModsView)));
+                    versionFilterList = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(VersionFilterList)));
+
+                    VersionFilterView = (ListCollectionView)(new CollectionViewSource() { Source = versionFilterList }).View;
+                    VersionFilterView.CustomSort = new VersionComparer();
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(VersionFilterView)));
                 }
             }
         }
+
+        public Version SelectedVersionFilter
+        {
+            get => selectedVersionFilter;
+            set
+            {
+                if (value != selectedVersionFilter)
+                {
+                    selectedVersionFilter = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedVersionFilter)));
+
+                    ModsView.Refresh();
+                }
+            }
+        }
+
+        public ListCollectionView ModsView { get; private set; }
 
         public List<ModInfo> Mods
         {
@@ -74,9 +101,20 @@ namespace ModMyFactory.ViewModels
                     mods = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Mods)));
 
-                    ModsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Mods);
+                    ModsView = (ListCollectionView)(new CollectionViewSource() { Source = mods }).View;
                     ModsView.Filter = ModFilter;
                     ModsView.CustomSort = new ModInfoSorter();
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModsView)));
+
+                    var versions = new List<Version>() { EmptyVersion };
+                    foreach (var mod in mods)
+                    {
+                        var version = mod.LatestRelease?.InfoFile?.FactorioVersion;
+                        if ((version != null) && (!versions.Contains(version)))
+                            versions.Add(version);
+                    }
+                    VersionFilterList = versions;
+                    SelectedVersionFilter = versions[0];
                 }
             }
         }
@@ -359,14 +397,28 @@ namespace ModMyFactory.ViewModels
             return ModBlacklist.Any(keyword => mod.Title.StartsWith(keyword, StringComparison.InvariantCultureIgnoreCase));
         }
 
+        private bool FilterName(ModInfo mod)
+        {
+            if (string.IsNullOrWhiteSpace(filter)) return true;
+
+            return StringHelper.FilterIsContained(filter, $"{mod.Title} {mod.Author}");
+        }
+
+        private bool FilterVersion(ModInfo mod)
+        {
+            if (SelectedVersionFilter == EmptyVersion) return true;
+
+            return mod.LatestRelease.InfoFile.FactorioVersion == SelectedVersionFilter;
+        }
+
         private bool ModFilter(object item)
         {
             ModInfo mod = item as ModInfo;
             if ((mod == null) || (string.IsNullOrWhiteSpace(mod.Title) || (mod.Title.Length < ModTitleMinLength) || ModIsBlacklisted(mod))) return false;
 
-            if (string.IsNullOrWhiteSpace(filter)) return true;
-
-            return StringHelper.FilterIsContained(filter, $"{mod.Title} {mod.Author}");
+            if (!FilterName(mod)) return false;
+            if (!FilterVersion(mod)) return false;
+            return true;
         }
 
         private OnlineModsViewModel()

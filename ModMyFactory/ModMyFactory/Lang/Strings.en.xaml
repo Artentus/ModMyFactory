@@ -402,11 +402,13 @@
     
     <!-- format strings -->
     <sys:String x:Key="ByFormat">by {0}</sys:String>
+    <sys:String x:Key="EmptyVersionFormat">All versions</sys:String>
     
     <!-- tooltips -->
     <sys:String x:Key="ViewsToolTip">Views</sys:String>
     <sys:String x:Key="DownloadsToolTip">Downloads</sys:String>
     <sys:String x:Key="InstalledToolTip">Installed</sys:String>
+    <sys:String x:Key="FactorioFilterToolTip">Filter by latest release</sys:String>
     
     <!-- labels -->
     <sys:String x:Key="LicenseLabel">License:</sys:String>
