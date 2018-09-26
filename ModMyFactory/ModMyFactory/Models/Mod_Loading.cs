@@ -52,6 +52,7 @@ namespace ModMyFactory.Models
         public static void LoadMods(ModCollection parentCollection, ModpackCollection modpackCollection)
         {
             var modDirectory = App.Instance.Settings.GetModDirectory();
+            if (!modDirectory.Exists) modDirectory.Create();
 
             if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
             {
