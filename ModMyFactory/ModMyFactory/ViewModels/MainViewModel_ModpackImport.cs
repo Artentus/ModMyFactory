@@ -149,7 +149,7 @@ namespace ModMyFactory.ViewModels
             {
                 if (ModFile.TryLoadFromFile(file, out var modFile, true))
                 {
-                    Mod mod = await Mod.Add(file, Mods, Modpacks, false, true);
+                    Mod mod = await Mod.Add(modFile, Mods, Modpacks, false, true);
                     modTemplate.Mod = mod;
                     return;
                 }
@@ -164,7 +164,7 @@ namespace ModMyFactory.ViewModels
             {
                 if (ModFile.TryLoadFromDirectory(directory, out var modFile, true))
                 {
-                    Mod mod = await Mod.Add(file, Mods, Modpacks, false, true);
+                    Mod mod = await Mod.Add(modFile, Mods, Modpacks, false, true);
                     modTemplate.Mod = mod;
                     return;
                 }
