@@ -836,18 +836,13 @@ namespace ModMyFactory.ViewModels
         }
 
         #endregion
-
-        private bool ContainsModpack(string name)
-        {
-            return Modpacks.Any(item => item.Name == name);
-        }
-
+        
         public void CreateNewModpack(ICollection<Mod> mods)
         {
             string name = App.Instance.GetLocalizedResourceString("NewModpackName");
             string newName = name;
             int counter = 0;
-            while (ContainsModpack(newName))
+            while (Modpacks.Contains(newName))
             {
                 counter++;
                 newName = $"{name} {counter}";
