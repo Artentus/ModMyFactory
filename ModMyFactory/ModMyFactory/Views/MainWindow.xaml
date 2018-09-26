@@ -380,8 +380,8 @@
             </Grid>
             <controls:DragDropReadyListBox x:Name="ModsListBox" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding ModsView}"
                                        IsSynchronizedWithCurrentItem="False" SelectionMode="Extended" ScrollViewer.VerticalScrollBarVisibility="Visible"
-                                       PreviewMouseDown="ModsListBoxPreviewMouseDownHandler" PreviewMouseMove="ModsListBoxPreviewMouseMoveHandler"
-                                       PreviewMouseUp="ModsListBoxPreviewMouseUpHandler">
+                                       PreviewMouseDown="ModsListBoxPreviewMouseDownHandler" PreviewMouseMove="ModsListBoxPreviewMouseMoveHandler" PreviewMouseUp="ModsListBoxPreviewMouseUpHandler"
+                                       AllowDrop="True" DragOver="ModsListBoxDragOverHandler" Drop="ModsListBoxDropHandler">
                 <controls:DragDropReadyListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type controls:DragDropReadyListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                         <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
@@ -532,9 +532,9 @@
                 </ToggleButton>
             </Grid>
             <controls:DragDropReadyListBox x:Name="ModpacksListBox" Grid.Row="1" Grid.Column="2" ItemsSource="{Binding ModpacksView}"
-                                       IsSynchronizedWithCurrentItem="False" SelectionMode="Extended" AllowDrop="True" ScrollViewer.VerticalScrollBarVisibility="Visible"
-                      PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler" MouseMove="ModpackListBoxMouseMoveHandler"
-                      PreviewMouseUp="ModpackListBoxPreviewMouseUpHandler" Drop="ModpackListBoxDropHandler" DragOver="ModpackListBoxDragOverHandler">
+                      IsSynchronizedWithCurrentItem="False" SelectionMode="Extended" ScrollViewer.VerticalScrollBarVisibility="Visible"
+                      PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler" MouseMove="ModpackListBoxMouseMoveHandler" PreviewMouseUp="ModpackListBoxPreviewMouseUpHandler"
+                      AllowDrop="True" Drop="ModpackListBoxDropHandler" DragOver="ModpackListBoxDragOverHandler">
                 <controls:DragDropReadyListBox.Resources>
                     <DataTemplate x:Key="SubitemTemplate" DataType="{x:Type model:IModReference}">
                         <Border BorderBrush="Transparent" BorderThickness="1" Background="Transparent">

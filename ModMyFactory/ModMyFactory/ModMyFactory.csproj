@@ -108,6 +108,7 @@
     <Compile Include="Helpers\CollectionExtensions.cs" />
     <Compile Include="Helpers\DirectoryInfoExtensions.cs" />
     <Compile Include="Helpers\EnumarableExtensions.cs" />
+    <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\FileInfoExtensions.cs" />
     <Compile Include="Helpers\FileSystemInfoExtensions.cs" />
     <Compile Include="Helpers\GitHubClientExtensions.cs" />

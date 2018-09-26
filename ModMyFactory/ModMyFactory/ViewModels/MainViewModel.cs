@@ -777,8 +777,8 @@ namespace ModMyFactory.ViewModels
 
                 progress.Report(new Tuple<double, string>((double)counter / fileCount, Path.GetFileName(fileName)));
 
-                var archiveFile = new FileInfo(fileName);
-                await Mod.Add(archiveFile, Mods, Modpacks, !move);
+                var file = FileHelper.CreateFileOrDirectory(fileName);
+                await Mod.Add(file, Mods, Modpacks, !move);
 
                 counter++;
             }
@@ -786,6 +786,31 @@ namespace ModMyFactory.ViewModels
             progress.Report(new Tuple<double, string>(1, string.Empty));
 
             Mods.EvaluateDependencies();
+        }
+
+        public async Task AddModsFromFiles(string[] fileNames, bool move)
+        {
+            var progressWindow = new ProgressWindow() { Owner = Window };
+            var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+            progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModsAction");
+
+            var cancellationSource = new CancellationTokenSource();
+            progressViewModel.CanCancel = true;
+            progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+
+            var progress = new Progress<Tuple<double, string>>(info =>
+            {
+                progressViewModel.Progress = info.Item1;
+                progressViewModel.ProgressDescription = info.Item2;
+            });
+
+            Task processModsTask = AddModsFromFilesInner(fileNames, move, progress, cancellationSource.Token);
+
+            Task closeWindowTask = processModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+            progressWindow.ShowDialog();
+            
+            await processModsTask;
+            await closeWindowTask;
         }
 
         private async Task AddModsFromFiles()
@@ -801,27 +826,7 @@ namespace ModMyFactory.ViewModels
                 result = copyOrMoveWindow.ShowDialog();
                 if (result.HasValue && result.Value)
                 {
-                    var progressWindow = new ProgressWindow() { Owner = Window };
-                    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-                    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModsAction");
-
-                    var cancellationSource = new CancellationTokenSource();
-                    progressViewModel.CanCancel = true;
-                    progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
-
-                    var progress = new Progress<Tuple<double, string>>(info =>
-                    {
-                        progressViewModel.Progress = info.Item1;
-                        progressViewModel.ProgressDescription = info.Item2;
-                    });
-
-                    Task processModsTask = AddModsFromFilesInner(dialog.FileNames, copyOrMoveWindow.Move, progress, cancellationSource.Token);
-
-                    Task closeWindowTask = processModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-                    progressWindow.ShowDialog();
-
-                    await processModsTask;
-                    await closeWindowTask;
+                    await AddModsFromFiles(dialog.FileNames, copyOrMoveWindow.Move);
                 }
             }
         }
@@ -837,24 +842,7 @@ namespace ModMyFactory.ViewModels
                 result = copyOrMoveWindow.ShowDialog();
                 if (result.HasValue && result.Value)
                 {
-                    var directory = new DirectoryInfo(dialog.SelectedPath);
-                    var addModTask = Mod.Add(directory, Mods, Modpacks, !copyOrMoveWindow.Move);
-
-                    var progressWindow = new ProgressWindow() { Owner = Window };
-                    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-                    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ProcessingModAction");
-                    progressViewModel.ProgressDescription = directory.Name;
-                    progressViewModel.IsIndeterminate = true;
-
-                    addModTask = addModTask.ContinueWith(t =>
-                    {
-                        progressWindow.Dispatcher.Invoke(progressWindow.Close);
-                        return t.Result;
-                    });
-                    progressWindow.ShowDialog();
-
-                    await addModTask;
-                    Mods.EvaluateDependencies();
+                    await AddModsFromFiles(new[] { dialog.SelectedPath }, copyOrMoveWindow.Move);
                 }
             }
         }

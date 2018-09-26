@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -139,7 +138,7 @@ namespace ModMyFactory.Models
         /// <param name="hasUid">Specifies if the mod file to be added contains a UID in its name.</param>
         /// <param name="silent">Specifies if messages should be displayed.</param>
         /// <returns>Returns the added mod, or an existing mod if the mod that was tried to be added already existed in the managed mod directory.</returns>
-        public static async Task<Mod> Add(FileSystemInfo fileOrDirectory, ModCollection parentCollection, ICollection<Modpack> modpackCollection, bool copy, bool hasUid = false, bool silent = false)
+        public static async Task<Mod> Add(FileSystemInfo fileOrDirectory, ModCollection parentCollection, ModpackCollection modpackCollection, bool copy, bool hasUid = false, bool silent = false)
         {
             FileInfo file = fileOrDirectory as FileInfo;
             if (file != null) return await Add(file, parentCollection, modpackCollection, copy, hasUid, silent);

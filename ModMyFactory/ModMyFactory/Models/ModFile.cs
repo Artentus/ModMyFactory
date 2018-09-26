@@ -227,7 +227,7 @@ namespace ModMyFactory.Models
 
         /// <summary>
         /// Tries to read mod name and mod version from a file name.
-        /// The file name can contain an extension.
+        /// The file name can not contain an extension.
         /// </summary>
         /// <param name="fileName">The file name to parse.</param>
         /// <param name="name">Out. The parsed mod name.</param>
@@ -238,8 +238,7 @@ namespace ModMyFactory.Models
         {
             name = null;
             version = null;
-
-            fileName = Path.GetFileNameWithoutExtension(fileName);
+            
             int index = fileName.LastIndexOf('_');
             if ((index < 1) || (index >= fileName.Length - 1)) return false;
 
@@ -337,7 +336,7 @@ namespace ModMyFactory.Models
 
             string fileName;
             Version fileVersion;
-            if (!TryParseModName(archiveFile.Name, out fileName, out fileVersion, hasUid)) return false;
+            if (!TryParseModName(archiveFile.NameWithoutExtension(), out fileName, out fileVersion, hasUid)) return false;
 
             if (TryReadInfoFileFromArchive(archiveFile, out infoFile))
             {

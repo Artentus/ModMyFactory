@@ -47,6 +47,11 @@ namespace ModMyFactory.Views
             e.Handled = true;
         }
 
+        private Point GetMousePos()
+        {
+            return PointToScreen(Mouse.GetPosition(this));
+        }
+
         private static ListBoxItem GetItem(ListBox listBox, Func<ListBoxItem, Point> positionSelector)
         {
             int itemCount = ((ICollectionView)listBox.ItemsSource).Cast<object>().Count();
@@ -122,13 +127,20 @@ namespace ModMyFactory.Views
             if (listBox == null) return;
 
             e.Effects = DragDropEffects.None;
-            if (e.Data.GetDataPresent(typeof(List<Mod>)) || e.Data.GetDataPresent(typeof(List<Modpack>)))
+            if (e.Data.GetDataPresent(typeof(List<Modpack>)))
             {
                 ListBoxItem item = GetItem(listBox, e.GetPosition);
                 if (item != null) e.Effects = DragDropEffects.Link;
             }
+            else if (e.Data.GetDataPresent(typeof(List<Mod>)))
+            {
+                ListBoxItem item = GetItem(listBox, e.GetPosition);
+                e.Effects = (item == null) ? DragDropEffects.Copy : DragDropEffects.Link;
+            }
+
+            e.Handled = true;
         }
-        
+
         private void ModpackListBoxPreviewMouseDownHandler(object sender, MouseButtonEventArgs e)
         {
             ListBox listBox = sender as ListBox;
@@ -162,9 +174,8 @@ namespace ModMyFactory.Views
             if (e.LeftButton == MouseButtonState.Pressed && dragging &&
                 (Math.Abs(dragDistance.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(dragDistance.Y) > SystemParameters.MinimumVerticalDragDistance))
             {
-                var mods = new List<Modpack>();
-                mods.AddRange(listBox.SelectedItems.Cast<Modpack>());
-                DragDrop.DoDragDrop(listBox, mods, DragDropEffects.Link);
+                var modpacks = new List<Modpack>(listBox.SelectedItems.Cast<Modpack>());
+                DragDrop.DoDragDrop(listBox, modpacks, DragDropEffects.Link);
                 dragging = false;
                 modpacksListBoxDeselectionOmitted = false;
             }
@@ -238,7 +249,7 @@ namespace ModMyFactory.Views
             {
                 var mods = new List<Mod>();
                 mods.AddRange(listBox.SelectedItems.Cast<Mod>());
-                DragDrop.DoDragDrop(listBox, mods, DragDropEffects.All);
+                DragDrop.DoDragDrop(listBox, mods, DragDropEffects.Link | DragDropEffects.Copy);
                 dragging = false;
                 modsListBoxDeselectionOmitted = false;
             }
@@ -291,6 +302,22 @@ namespace ModMyFactory.Views
                 textBox.Focus();
                 textBox.CaretIndex = textBox.Text.Length;
             }
+        }
+        
+        private void ModsListBoxDragOverHandler(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effects = DragDropEffects.Copy;
+            else
+                e.Effects = DragDropEffects.None;
+
+            e.Handled = true;
+        }
+        
+        private async void ModsListBoxDropHandler(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                await MainViewModel.Instance.AddModsFromFiles((string[])e.Data.GetData(DataFormats.FileDrop), false);
         }
     }
 }
