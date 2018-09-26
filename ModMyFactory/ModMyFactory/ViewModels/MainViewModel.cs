@@ -766,7 +766,7 @@ namespace ModMyFactory.ViewModels
             Mods.EvaluateDependencies();
         }
         
-        private async Task AddModsFromFilesInner(string[] fileNames, bool move, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
+        private async Task AddModsFromFilesInner(string[] fileNames, bool copy, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
             int fileCount = fileNames.Length;
             int counter = 0;
@@ -778,7 +778,7 @@ namespace ModMyFactory.ViewModels
                 progress.Report(new Tuple<double, string>((double)counter / fileCount, Path.GetFileName(fileName)));
 
                 var file = FileHelper.CreateFileOrDirectory(fileName);
-                await Mod.Add(file, Mods, Modpacks, !move);
+                await Mod.Add(file, Mods, Modpacks, copy);
 
                 counter++;
             }
@@ -788,7 +788,7 @@ namespace ModMyFactory.ViewModels
             Mods.EvaluateDependencies();
         }
 
-        public async Task AddModsFromFiles(string[] fileNames, bool move)
+        public async Task AddModsFromFiles(string[] fileNames, bool copy)
         {
             var progressWindow = new ProgressWindow() { Owner = Window };
             var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
@@ -804,7 +804,7 @@ namespace ModMyFactory.ViewModels
                 progressViewModel.ProgressDescription = info.Item2;
             });
 
-            Task processModsTask = AddModsFromFilesInner(fileNames, move, progress, cancellationSource.Token);
+            Task processModsTask = AddModsFromFilesInner(fileNames, copy, progress, cancellationSource.Token);
 
             Task closeWindowTask = processModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
             progressWindow.ShowDialog();
@@ -821,13 +821,7 @@ namespace ModMyFactory.ViewModels
             bool? result = dialog.ShowDialog(Window);
             if (result.HasValue && result.Value)
             {
-                var copyOrMoveWindow = new CopyOrMoveMessageWindow() { Owner = Window };
-                ((CopyOrMoveViewModel)copyOrMoveWindow.ViewModel).CopyOrMoveType = CopyOrMoveType.Mods;
-                result = copyOrMoveWindow.ShowDialog();
-                if (result.HasValue && result.Value)
-                {
-                    await AddModsFromFiles(dialog.FileNames, copyOrMoveWindow.Move);
-                }
+                await AddModsFromFiles(dialog.FileNames, true);
             }
         }
 
@@ -837,13 +831,7 @@ namespace ModMyFactory.ViewModels
             bool? result = dialog.ShowDialog(Window);
             if (result.HasValue && result.Value)
             {
-                var copyOrMoveWindow = new CopyOrMoveMessageWindow() { Owner = Window };
-                ((CopyOrMoveViewModel)copyOrMoveWindow.ViewModel).CopyOrMoveType = CopyOrMoveType.Mod;
-                result = copyOrMoveWindow.ShowDialog();
-                if (result.HasValue && result.Value)
-                {
-                    await AddModsFromFiles(new[] { dialog.SelectedPath }, copyOrMoveWindow.Move);
-                }
+                await AddModsFromFiles(new[] { dialog.SelectedPath }, true);
             }
         }
 
