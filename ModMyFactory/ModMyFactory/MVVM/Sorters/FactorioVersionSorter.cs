@@ -9,11 +9,11 @@ namespace ModMyFactory.MVVM.Sorters
     {
         public int Compare(FactorioVersion x, FactorioVersion y)
         {
-            if (x.IsSpecialVersion && y.IsSpecialVersion)
+            if ((x is SpecialFactorioVersion) && (y is SpecialFactorioVersion))
                 return 0;
-            else if (x.IsSpecialVersion)
+            else if (x is SpecialFactorioVersion)
                 return int.MinValue;
-            else if (y.IsSpecialVersion)
+            else if (y is SpecialFactorioVersion)
                 return int.MaxValue;
             else
                 return y.Version.CompareTo(x.Version);

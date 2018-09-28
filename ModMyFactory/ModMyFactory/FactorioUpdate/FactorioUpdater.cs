@@ -52,27 +52,27 @@ namespace ModMyFactory.FactorioUpdate
         public static List<UpdateTarget> GetUpdateTargets(FactorioVersion versionToUpdate, ICollection<FactorioVersion> installedVersions, List<UpdateStep> updateSteps)
         {
             var targets = new List<UpdateTarget>();
-            var groups = updateSteps.GroupBy(step => new Version(step.To.Major, step.To.Minor));
-            foreach (var group in groups)
-            {
-                UpdateStep targetStep = group.MaxBy(step => step.To, new VersionComparer());
-                List<UpdateStep> stepChain = GetStepChain(updateSteps, versionToUpdate.Version, targetStep.To);
-                bool isValid = installedVersions.All(version => version.IsSpecialVersion || !version.IsFileSystemEditable || version.Version != targetStep.To);
-                UpdateTarget target = new UpdateTarget(stepChain, targetStep.To, targetStep.IsStable, isValid);
-                targets.Add(target);
+            //var groups = updateSteps.GroupBy(step => new Version(step.To.Major, step.To.Minor));
+            //foreach (var group in groups)
+            //{
+            //    UpdateStep targetStep = group.MaxBy(step => step.To, new VersionComparer());
+            //    List<UpdateStep> stepChain = GetStepChain(updateSteps, versionToUpdate.Version, targetStep.To);
+            //    bool isValid = installedVersions.All(version => version.IsSpecialVersion || !version.IsFileSystemEditable || version.Version != targetStep.To);
+            //    UpdateTarget target = new UpdateTarget(stepChain, targetStep.To, targetStep.IsStable, isValid);
+            //    targets.Add(target);
 
-                if (!targetStep.IsStable)
-                {
-                    UpdateStep stableStep = group.FirstOrDefault(step => step.IsStable);
-                    if (stableStep != null)
-                    {
-                        stepChain = GetStepChain(updateSteps, versionToUpdate.Version, stableStep.To);
-                        isValid = installedVersions.All(version => version.IsSpecialVersion || !version.IsFileSystemEditable || version.Version != stableStep.To);
-                        target = new UpdateTarget(stepChain, stableStep.To, true, isValid);
-                        targets.Add(target);
-                    }
-                }
-            }
+            //    if (!targetStep.IsStable)
+            //    {
+            //        UpdateStep stableStep = group.FirstOrDefault(step => step.IsStable);
+            //        if (stableStep != null)
+            //        {
+            //            stepChain = GetStepChain(updateSteps, versionToUpdate.Version, stableStep.To);
+            //            isValid = installedVersions.All(version => version.IsSpecialVersion || !version.IsFileSystemEditable || version.Version != stableStep.To);
+            //            target = new UpdateTarget(stepChain, stableStep.To, true, isValid);
+            //            targets.Add(target);
+            //        }
+            //    }
+            //}
             return targets;
         }
 
@@ -305,31 +305,31 @@ namespace ModMyFactory.FactorioUpdate
         public static async Task ApplyUpdateAsync(FactorioVersion versionToUpdate, string username, string token, UpdateTarget target,
             IProgress<double> progress, IProgress<UpdaterStageInfo> stageProgress, CancellationToken cancellationToken)
         {
-            stageProgress.Report(new UpdaterStageInfo(true, App.Instance.GetLocalizedResourceString("UpdatingFactorioStage1Description")));
-            List<FileInfo> packageFiles = await DownloadUpdatePackagesAsync(username, token, target, progress, cancellationToken);
+            //stageProgress.Report(new UpdaterStageInfo(true, App.Instance.GetLocalizedResourceString("UpdatingFactorioStage1Description")));
+            //List<FileInfo> packageFiles = await DownloadUpdatePackagesAsync(username, token, target, progress, cancellationToken);
 
-            try
-            {
-                if ((packageFiles != null) && !cancellationToken.IsCancellationRequested)
-                {
-                    progress.Report(0);
-                    stageProgress.Report(new UpdaterStageInfo(false, App.Instance.GetLocalizedResourceString("UpdatingFactorioStage2Description")));
+            //try
+            //{
+            //    if ((packageFiles != null) && !cancellationToken.IsCancellationRequested)
+            //    {
+            //        progress.Report(0);
+            //        stageProgress.Report(new UpdaterStageInfo(false, App.Instance.GetLocalizedResourceString("UpdatingFactorioStage2Description")));
 
-                    await ApplyUpdatePackagesAsync(versionToUpdate, packageFiles, progress);
-                    versionToUpdate.UpdateVersion(target.TargetVersion);
-                }
-            }
-            finally
-            {
-                if (packageFiles != null)
-                {
-                    foreach (var file in packageFiles)
-                    {
-                        if (file.Exists)
-                            file.Delete();
-                    }
-                }
-            }
+            //        await ApplyUpdatePackagesAsync(versionToUpdate, packageFiles, progress);
+            //        versionToUpdate.UpdateVersion(target.TargetVersion);
+            //    }
+            //}
+            //finally
+            //{
+            //    if (packageFiles != null)
+            //    {
+            //        foreach (var file in packageFiles)
+            //        {
+            //            if (file.Exists)
+            //                file.Delete();
+            //        }
+            //    }
+            //}
         }
     }
 }

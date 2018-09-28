@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.IO.Compression;
-using System.Text.RegularExpressions;
 using ModMyFactory.IO;
 using WPFCore;
 
@@ -14,37 +12,11 @@ namespace ModMyFactory.Models
     /// </summary>
     class FactorioVersion : NotifyPropertyChangedBase
     {
-        const string Win32BinName = "Win32";
-        const string Win64BinName = "x64";
-
-        private static string BinName => Environment.Is64BitOperatingSystem ? Win64BinName : Win32BinName;
-
-
-        public const string LatestKey = "latest";
-
-        /// <summary>
-        /// Special class.
-        /// </summary>
-        private sealed class LatestFactorioVersion : FactorioVersion
-        {
-            public override string VersionString => LatestKey;
-
-            public override string DisplayName => App.Instance.GetLocalizedResourceString("LatestFactorioName");
-        }
-
-        static LatestFactorioVersion latest;
-
-        /// <summary>
-        /// The special 'latest' version.
-        /// </summary>
-        public static FactorioVersion Latest => latest ?? (latest = new LatestFactorioVersion());
-
-
         /// <summary>
         /// Loads all installed versions of Factorio.
         /// </summary>
         /// <returns>Returns a list that contains all installed Factorio versions.</returns>
-        public static List<FactorioVersion> GetInstalledVersions()
+        public static List<FactorioVersion> LoadInstalledVersions()
         {
             var versionList = new List<FactorioVersion>();
 
@@ -53,13 +25,10 @@ namespace ModMyFactory.Models
             {
                 foreach (var directory in factorioDirectory.EnumerateDirectories())
                 {
-                    Version version;
-                    bool result = Version.TryParse(directory.Name, out version);
-
-                    if (result)
+                    if (FactorioFolder.TryLoad(directory, out var folder))
                     {
-                        var factorioVersion = new FactorioVersion(directory, version);
-                        versionList.Add(factorioVersion);
+                        folder.RenameToUnique();
+                        versionList.Add(new FactorioVersion(folder));
                     }
                 }
             }
@@ -67,224 +36,97 @@ namespace ModMyFactory.Models
             return versionList;
         }
 
-        private static bool TryExtractVersion(Stream stream, out Version version)
-        {
-            version = null;
 
-            using (var reader = new StreamReader(stream))
-            {
-                string content = reader.ReadToEnd();
-                MatchCollection matches = Regex.Matches(content, @"[0-9]+\.[0-9]+\.[0-9]+",
-                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                if (matches.Count == 0) return false;
-
-                string versionString = matches[0].Value;
-                version = Version.Parse(versionString);
-                return true;
-            }
-        }
-
-        /// <summary>
-        /// Checks if an archive file contains a valid installation of Factorio.
-        /// </summary>
-        /// <param name="archiveFile">The archive file to check.</param>
-        /// <param name="validVersion">Out. The version of Factorio contained in the archive file.</param>
-        /// <param name="is64Bit">Out. Specifies if the valid installation contains a 64 bit executable.</param>
-        /// <returns>Returns true if the archive file contains a valid Factorio installation, otherwise false.</returns>
-        public static bool ArchiveFileValid(FileInfo archiveFile, out Version validVersion, out bool is64Bit)
-        {
-            validVersion = null;
-            is64Bit = false;
-
-            bool hasValidVersion = false;
-            bool hasValidPlatform = false;
-
-            using (ZipArchive archive = ZipFile.OpenRead(archiveFile.FullName))
-            {
-                foreach (var entry in archive.Entries)
-                {
-                    if (!hasValidVersion && entry.FullName.EndsWith("data/base/info.json", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        using (Stream stream = entry.Open())
-                        {
-                            if (TryExtractVersion(stream, out validVersion)) hasValidVersion = true;
-                        }
-                    }
-                    else if (!hasValidPlatform && entry.FullName.EndsWith($"{Win32BinName}/factorio.exe", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        hasValidPlatform = true;
-                        is64Bit = false;
-                    }
-                    else if (!hasValidPlatform && entry.FullName.EndsWith($"{Win64BinName}/factorio.exe", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        hasValidPlatform = true;
-                        is64Bit = true;
-                    }
-
-                    if (hasValidVersion && hasValidPlatform) break;
-                }
-            }
-
-            return hasValidVersion && hasValidPlatform;
-        }
-
-        /// <summary>
-        /// Checks if a directory contains a valid installation of Factorio.
-        /// </summary>
-        /// <param name="directory">The directory to check.</param>
-        /// <param name="validVersion">Out. The version of Factorio contained in the directory.</param>
-        /// <param name="is64Bit">Out. Specifies if the valid installation contains a 64 bit executable.</param>
-        /// <returns>Returns true if the directory contains a valid Factorio installation, otherwise false.</returns>
-        public static bool LocalInstallationValid(DirectoryInfo directory, out Version validVersion, out bool is64Bit)
-        {
-            validVersion = null;
-            is64Bit = false;
-
-            FileInfo infoFile = new FileInfo(Path.Combine(directory.FullName, @"data\base\info.json"));
-            if (infoFile.Exists)
-            {
-                using (Stream stream = infoFile.OpenRead())
-                {
-                    if (!TryExtractVersion(stream, out validVersion)) return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-
-            DirectoryInfo win32Dir = new DirectoryInfo(Path.Combine(directory.FullName, $@"bin\{Win32BinName}"));
-            DirectoryInfo win64Dir = new DirectoryInfo(Path.Combine(directory.FullName, $@"bin\{Win64BinName}"));
-            if (win32Dir.Exists)
-            {
-                is64Bit = false;
-            }
-            else if (win64Dir.Exists)
-            {
-                is64Bit = true;
-            }
-            else
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        Version version;
-        DirectoryInfo directory;
+        
+        string name;
+        bool hasLinks;
+        bool canMove;
         DirectoryInfo linkDirectory;
 
-        public bool IsSpecialVersion { get; }
+        public bool IsNameEditable { get; }
 
-        public bool IsFileSystemEditable { get; }
+        public bool CanUpdate { get; }
 
-        public Version Version
+        private FactorioFolder Folder { get; }
+
+        public string Name
         {
-            get { return version; }
-            private set
+            get => name;
+            set
             {
-                if (value != version)
+                if (!IsNameEditable)
+                    throw new NotSupportedException();
+
+                if (value != name)
                 {
-                    version = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Version)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(VersionString)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayName)));
+                    name = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Name)));
+
+                    SaveName(name);
                 }
             }
         }
 
-        public virtual string VersionString => Version.ToString(3);
+        public virtual Version Version => Folder?.Version;
 
-        public virtual string DisplayName => "Factorio " + VersionString;
+        public virtual string DisplayName => $"{Name} ({Version ?? new Version(0,0)})";
 
-        public DirectoryInfo Directory
+        public virtual DirectoryInfo Directory => Folder?.Directory;
+
+        public virtual FileInfo Executable => Folder?.Executable;
+
+        public bool Is64Bit => Folder?.Is64Bit ?? false;
+
+        protected FactorioVersion()
         {
-            get { return directory; }
-            private set
-            {
-                directory = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Directory)));
+            hasLinks = false;
+            canMove = false;
+            Folder = null;
+            IsNameEditable = false;
+            CanUpdate = false;
 
-                ExecutablePath = Path.Combine(Directory.FullName, "bin", BinName, "factorio.exe");
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(ExecutablePath)));
-            }
+            name = LoadName();
         }
 
-        public string ExecutablePath { get; private set; }
-
-        private FactorioVersion()
+        protected FactorioVersion(FactorioFolder folder, bool canMove, DirectoryInfo linkDirectory)
         {
-            IsSpecialVersion = true;
-            IsFileSystemEditable = false;
-        }
+            hasLinks = true;
+            this.canMove = canMove;
+            Folder = folder;
+            IsNameEditable = false;
+            CanUpdate = false;
 
-        protected FactorioVersion(bool isFileSystemEditable, DirectoryInfo directory, DirectoryInfo linkDirectory, Version version)
-        {
-            IsSpecialVersion = false;
-            IsFileSystemEditable = isFileSystemEditable;
+            name = LoadName();
 
-            Version = version;
-            Directory = directory;
             this.linkDirectory = linkDirectory;
-
             if (!linkDirectory.Exists) linkDirectory.Create();
             CreateLinks();
         }
 
-        public FactorioVersion(DirectoryInfo directory, Version version)
+        public FactorioVersion(FactorioFolder folder)
         {
-            IsSpecialVersion = false;
-            IsFileSystemEditable = true;
+            hasLinks = true;
+            canMove = true;
+            Folder = folder;
+            IsNameEditable = true;
+            CanUpdate = true;
 
-            Version = version;
-            Directory = directory;
-            linkDirectory = directory;
-
+            name = LoadName();
+            
+            linkDirectory = folder.Directory;
             CreateLinks();
         }
 
-        protected virtual void UpdateDirectoryInternal(DirectoryInfo newDirectory)
+        protected virtual string LoadName()
         {
-            Directory = newDirectory;
+            return "Factorio";
         }
 
-        protected virtual void UpdateLinkDirectoryInternal(DirectoryInfo newDirectory)
+        private void SaveName(string name)
         {
-            linkDirectory = newDirectory;
+
         }
-
-        /// <summary>
-        /// Updates the directory of this version of Factorio.
-        /// </summary>
-        public void UpdateDirectory(DirectoryInfo newDirectory)
-        {
-            if (!IsSpecialVersion)
-            {
-                UpdateDirectoryInternal(newDirectory);
-                UpdateLinkDirectoryInternal(newDirectory);
-            }
-        }
-
-        /// <summary>
-        /// Updates the version of this Factorio installation.
-        /// </summary>
-        public void UpdateVersion(Version newVersion)
-        {
-            if (IsSpecialVersion || !IsFileSystemEditable)
-                throw new InvalidOperationException("The version of this Factorio installation can not be changed.");
-
-            DeleteLinks();
-
-            string newPath = Path.Combine(App.Instance.Settings.GetFactorioDirectory().FullName, newVersion.ToString(3));
-            Directory.MoveTo(newPath);
-            UpdateDirectory(new DirectoryInfo(newPath));
-
-            Version = newVersion;
-
-            CreateLinks();
-        }
-
+        
         /// <summary>
         /// Expands the 'executable', 'read-data' and 'write-data' variables in the specified path.
         /// </summary>
@@ -294,7 +136,7 @@ namespace ModMyFactory.Models
             const string readDataVariable = "__PATH__read-data__";
             const string writeDataVariable = "__PATH__write-data__";
 
-            string executablePath = Path.Combine(Directory.FullName, "bin", BinName).Trim(Path.DirectorySeparatorChar);
+            string executablePath = Path.Combine(Folder.Executable.Directory.FullName).Trim(Path.DirectorySeparatorChar);
             string readDataPath = Path.Combine(Directory.FullName, "data").Trim(Path.DirectorySeparatorChar);
             string writeDataPath = Directory.FullName.Trim(Path.DirectorySeparatorChar);
 
@@ -329,7 +171,7 @@ namespace ModMyFactory.Models
         /// </summary>
         public void CreateSaveDirectoryLink()
         {
-            if (!IsSpecialVersion)
+            if (hasLinks)
             {
                 string localSavePath = Path.Combine(linkDirectory.FullName, "saves");
                 CreateSaveDirectoryLinkInternal(localSavePath);
@@ -360,7 +202,7 @@ namespace ModMyFactory.Models
         /// </summary>
         public void CreateScenarioDirectoryLink()
         {
-            if (!IsSpecialVersion)
+            if (hasLinks)
             {
                 string localScenarioPath = Path.Combine(linkDirectory.FullName, "scenarios");
                 CreateScenarioDirectoryLinkInternal(localScenarioPath);
@@ -391,7 +233,7 @@ namespace ModMyFactory.Models
         /// </summary>
         public void CreateModDirectoryLink()
         {
-            if (!IsSpecialVersion)
+            if (hasLinks)
             {
                 string localModPath = Path.Combine(linkDirectory.FullName, "mods");
                 CreateModDirectoryLinkInternal(localModPath);
@@ -403,7 +245,7 @@ namespace ModMyFactory.Models
         /// </summary>
         public void CreateLinks()
         {
-            if (!IsSpecialVersion)
+            if (hasLinks)
             {
                 CreateSaveDirectoryLink();
                 CreateScenarioDirectoryLink();
@@ -416,7 +258,7 @@ namespace ModMyFactory.Models
         /// </summary>
         public void DeleteLinks()
         {
-            if (!IsSpecialVersion)
+            if (hasLinks)
             {
                 JunctionInfo localSaveJunction = new JunctionInfo(Path.Combine(linkDirectory.FullName, "saves"));
                 if (localSaveJunction.Exists) localSaveJunction.Delete();

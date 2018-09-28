@@ -43,18 +43,19 @@ namespace ModMyFactory.ViewModels
 
         #region FactorioVersions
 
-        ObservableCollection<FactorioVersion> factorioVersions;
+        FactorioCollection factorioVersions;
         CollectionViewSource factorioVersionsSource;
         ListCollectionView factorioVersionsView;
         FactorioVersion selectedFactorioVersion;
 
         private bool FactorioVersionFilter(object item)
         {
-            FactorioVersion factorioVersion = item as FactorioVersion;
-            return factorioVersion?.IsSpecialVersion == false;
+            var factorioVersion = item as FactorioVersion;
+            if (factorioVersion == null) return false;
+            return !(factorioVersion is SpecialFactorioVersion);
         }
 
-        public ObservableCollection<FactorioVersion> FactorioVersions
+        public FactorioCollection FactorioVersions
         {
             get { return factorioVersions; }
             private set
@@ -89,9 +90,9 @@ namespace ModMyFactory.ViewModels
 
         private void SelectedFactorioVersionPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(FactorioVersion.VersionString))
+            if (e.PropertyName == nameof(FactorioVersion.DisplayName))
             {
-                App.Instance.Settings.SelectedVersion = selectedFactorioVersion.VersionString;
+                App.Instance.Settings.SelectedVersion = selectedFactorioVersion.DisplayName;
                 App.Instance.Settings.Save();
             }
         }
@@ -111,7 +112,7 @@ namespace ModMyFactory.ViewModels
 
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedFactorioVersion)));
 
-                    string newVersionString = selectedFactorioVersion?.VersionString ?? string.Empty;
+                    string newVersionString = selectedFactorioVersion?.DisplayName ?? string.Empty;
                     if (newVersionString != App.Instance.Settings.SelectedVersion)
                     {
                         App.Instance.Settings.SelectedVersion = newVersionString;
@@ -563,15 +564,15 @@ namespace ModMyFactory.ViewModels
 
         private void LoadFactorioVersions()
         {
-            var installedVersions = FactorioVersion.GetInstalledVersions();
-            var factorioVersions = new ObservableCollection<FactorioVersion>(installedVersions) { FactorioVersion.Latest };
+            var installedVersions = FactorioVersion.LoadInstalledVersions();
+            var factorioVersions = new FactorioCollection(installedVersions);
 
             FactorioVersion steamVersion;
             if (FactorioSteamVersion.TryLoad(out steamVersion)) factorioVersions.Add(steamVersion);
 
             string versionString = App.Instance.Settings.SelectedVersion;
             FactorioVersions = factorioVersions;
-            SelectedFactorioVersion = string.IsNullOrEmpty(versionString) ? null : FactorioVersions.FirstOrDefault(item => item.VersionString == versionString);
+            SelectedFactorioVersion = string.IsNullOrEmpty(versionString) ? null : FactorioVersions.FirstOrDefault(item => item.DisplayName == versionString);
         }
 
         private void ModpacksCollectionChangedHandler(object sender, NotifyCollectionChangedEventArgs e)
@@ -875,47 +876,47 @@ namespace ModMyFactory.ViewModels
 
         private void CreateLink()
         {
-            var propertiesWindow = new LinkPropertiesWindow() { Owner = Window };
-            var propertiesViewModel = (LinkPropertiesViewModel)propertiesWindow.ViewModel;
-            bool? result = propertiesWindow.ShowDialog();
-            if (result.HasValue && result.Value)
-            {
-                var dialog = new VistaSaveFileDialog();
-                dialog.Filter = App.Instance.GetLocalizedResourceString("LnkDescription") + @" (*.lnk)|*.lnk";
-                dialog.AddExtension = true;
-                dialog.DefaultExt = ".lnk";
-                result = dialog.ShowDialog(Window);
-                if (result.HasValue && result.Value)
-                {
-                    string applicationPath = Path.GetFullPath(Assembly.GetExecutingAssembly().Location);
-                    string iconPath = Path.Combine(App.Instance.ApplicationDirectoryPath, "Factorio_Icon.ico");
-                    string versionString =
-                        (propertiesViewModel.UseExactVersion || propertiesViewModel.SelectedVersion.IsSpecialVersion)
-                        ? propertiesViewModel.SelectedVersion.VersionString
-                        : propertiesViewModel.SelectedVersion.Version.ToString(2);
-                    string modpackName = propertiesViewModel.SelectedModpack?.Name;
-                    string savegameName = propertiesViewModel.SelectedSavegame?.Name;
-                    string customArgs = propertiesViewModel.Arguments?.Replace('"', '\'');
+            //var propertiesWindow = new LinkPropertiesWindow() { Owner = Window };
+            //var propertiesViewModel = (LinkPropertiesViewModel)propertiesWindow.ViewModel;
+            //bool? result = propertiesWindow.ShowDialog();
+            //if (result.HasValue && result.Value)
+            //{
+            //    var dialog = new VistaSaveFileDialog();
+            //    dialog.Filter = App.Instance.GetLocalizedResourceString("LnkDescription") + @" (*.lnk)|*.lnk";
+            //    dialog.AddExtension = true;
+            //    dialog.DefaultExt = ".lnk";
+            //    result = dialog.ShowDialog(Window);
+            //    if (result.HasValue && result.Value)
+            //    {
+            //        string applicationPath = Path.GetFullPath(Assembly.GetExecutingAssembly().Location);
+            //        string iconPath = Path.Combine(App.Instance.ApplicationDirectoryPath, "Factorio_Icon.ico");
+            //        string versionString =
+            //            (propertiesViewModel.UseExactVersion || (propertiesViewModel.SelectedVersion is SpecialFactorioVersion))
+            //            ? propertiesViewModel.SelectedVersion.VersionString
+            //            : propertiesViewModel.SelectedVersion.Version.ToString(2);
+            //        string modpackName = propertiesViewModel.SelectedModpack?.Name;
+            //        string savegameName = propertiesViewModel.SelectedSavegame?.Name;
+            //        string customArgs = propertiesViewModel.Arguments?.Replace('"', '\'');
 
-                    if ((versionString == FactorioSteamVersion.Key) && (propertiesViewModel.LoadGame || propertiesViewModel.UseArguments))
-                    {
-                        if (MessageBox.Show(Window,
-                            App.Instance.GetLocalizedMessage("SteamCustomArgs", MessageType.Question),
-                            App.Instance.GetLocalizedMessageTitle("SteamCustomArgs", MessageType.Question),
-                            MessageBoxButton.YesNo, MessageBoxImage.Question)
-                            == MessageBoxResult.No)
-                        {
-                            return;
-                        }
-                    }
+            //        if ((versionString == FactorioSteamVersion.Key) && (propertiesViewModel.LoadGame || propertiesViewModel.UseArguments))
+            //        {
+            //            if (MessageBox.Show(Window,
+            //                App.Instance.GetLocalizedMessage("SteamCustomArgs", MessageType.Question),
+            //                App.Instance.GetLocalizedMessageTitle("SteamCustomArgs", MessageType.Question),
+            //                MessageBoxButton.YesNo, MessageBoxImage.Question)
+            //                == MessageBoxResult.No)
+            //            {
+            //                return;
+            //            }
+            //        }
 
-                    string arguments = $"--factorio-version=\"{versionString}\"";
-                    if (!string.IsNullOrEmpty(modpackName)) arguments += $" --modpack=\"{modpackName}\"";
-                    if (propertiesViewModel.LoadGame) arguments += $" --savegame=\"{savegameName}\"";
-                    if (propertiesViewModel.UseArguments) arguments += $" {customArgs}";
-                    ShellHelper.CreateShortcut(dialog.FileName, applicationPath, arguments, iconPath);
-                }
-            }
+            //        string arguments = $"--factorio-version=\"{versionString}\"";
+            //        if (!string.IsNullOrEmpty(modpackName)) arguments += $" --modpack=\"{modpackName}\"";
+            //        if (propertiesViewModel.LoadGame) arguments += $" --savegame=\"{savegameName}\"";
+            //        if (propertiesViewModel.UseArguments) arguments += $" {customArgs}";
+            //        ShellHelper.CreateShortcut(dialog.FileName, applicationPath, arguments, iconPath);
+            //    }
+            //}
         }
 
         private void StartGame()
@@ -939,7 +940,7 @@ namespace ModMyFactory.ViewModels
                 }
             }
 
-            Process.Start(SelectedFactorioVersion.ExecutablePath);
+            Process.Start(SelectedFactorioVersion.Executable.FullName);
         }
 
         private void OpenVersionManager()
@@ -952,25 +953,25 @@ namespace ModMyFactory.ViewModels
 
         private async Task MoveFactorioDirectory(DirectoryInfo oldFactorioDirectory, DirectoryInfo newFactorioDirectory)
         {
-            if (oldFactorioDirectory.Exists)
-            {
-                if (!newFactorioDirectory.Exists) newFactorioDirectory.Create();
+            //if (oldFactorioDirectory.Exists)
+            //{
+            //    if (!newFactorioDirectory.Exists) newFactorioDirectory.Create();
 
-                DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
-                foreach (var version in FactorioVersions)
-                {
-                    version.DeleteLinks();
+            //    DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
+            //    foreach (var version in FactorioVersions)
+            //    {
+            //        version.DeleteLinks();
 
-                    if (version.IsFileSystemEditable)
-                    {
-                        var versionDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.VersionString));
-                        await version.Directory.MoveToAsync(versionDirectory.FullName);
-                        version.UpdateDirectory(versionDirectory);
-                    }
-                }
+            //        if (version.IsFileSystemEditable)
+            //        {
+            //            var versionDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.VersionString));
+            //            await version.Directory.MoveToAsync(versionDirectory.FullName);
+            //            version.UpdateDirectory(versionDirectory);
+            //        }
+            //    }
 
-                oldFactorioDirectory.DeleteIfEmpty();
-            }
+            //    oldFactorioDirectory.DeleteIfEmpty();
+            //}
         }
 
         private async Task MoveModDirectory(DirectoryInfo oldModDirectory, DirectoryInfo newModDirectory)
@@ -985,22 +986,22 @@ namespace ModMyFactory.ViewModels
                     if (!dir.Exists) dir.Create();
                     await mod.MoveToAsync(dir.FullName);
                 }
-                foreach (var version in FactorioVersions)
-                {
-                    if (!version.IsSpecialVersion)
-                    {
-                        var dir = new DirectoryInfo(Path.Combine(oldModDirectory.FullName, version.Version.ToString(2)));
-                        if (dir.Exists)
-                        {
-                            var modListFile = new FileInfo(Path.Combine(dir.FullName, "mod-list.json"));
-                            var newDir = new DirectoryInfo(Path.Combine(newModDirectory.FullName, version.Version.ToString(2)));
-                            if (!newDir.Exists) newDir.Create();
-                            if (modListFile.Exists) await modListFile.MoveToAsync(Path.Combine(newDir.FullName, "mod-list.json"));
+                //foreach (var version in FactorioVersions)
+                //{
+                //    if (!version.IsSpecialVersion)
+                //    {
+                //        var dir = new DirectoryInfo(Path.Combine(oldModDirectory.FullName, version.Version.ToString(2)));
+                //        if (dir.Exists)
+                //        {
+                //            var modListFile = new FileInfo(Path.Combine(dir.FullName, "mod-list.json"));
+                //            var newDir = new DirectoryInfo(Path.Combine(newModDirectory.FullName, version.Version.ToString(2)));
+                //            if (!newDir.Exists) newDir.Create();
+                //            if (modListFile.Exists) await modListFile.MoveToAsync(Path.Combine(newDir.FullName, "mod-list.json"));
 
-                            dir.DeleteIfEmpty();
-                        }
-                    }
-                }
+                //            dir.DeleteIfEmpty();
+                //        }
+                //    }
+                //}
 
                 oldModDirectory.DeleteIfEmpty();
             }

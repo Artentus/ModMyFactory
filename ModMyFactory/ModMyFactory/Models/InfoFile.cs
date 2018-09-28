@@ -57,7 +57,7 @@ namespace ModMyFactory.Models
         /// Indicates whether this info file is valid.
         /// To be valid, the <see cref="Name"/>, <see cref="Version"/> and <see cref="FactorioVersion"/> properties must be non-null.
         /// </summary>
-        public bool IsValid => !string.IsNullOrWhiteSpace(Name) && (Version != null) && (FactorioVersion != null);
+        public bool IsValid => !string.IsNullOrWhiteSpace(Name) && (Version != null) && ((Name == "base") || (FactorioVersion != null));
 
         [JsonConstructor]
         private InfoFile(string name, Version version, Version factorioVersion, string friendlyName, string author, string description, ModDependency[] dependencies)

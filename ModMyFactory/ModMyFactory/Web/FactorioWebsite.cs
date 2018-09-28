@@ -138,38 +138,34 @@ namespace ModMyFactory.Web
         }
 
         /// <summary>
-        /// Downloads a Factorio package.
+        /// Downloads Factorio.
         /// </summary>
         /// <param name="version">The version of Factorio to be downloaded.</param>
-        /// <param name="downloadDirectory">The directory the package is downloaded to.</param>
+        /// <param name="downloadDirectory">The directory the file is downloaded to.</param>
         /// <param name="container">The cookie container the session cookie is stored in.</param>
         /// <param name="progress">A progress object used to report the progress of the operation.</param>
         /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
-        public static async Task<FactorioVersion> DownloadFactorioPackageAsync(FactorioOnlineVersion version, DirectoryInfo downloadDirectory, CookieContainer container, IProgress<double> progress, CancellationToken cancellationToken)
+        public static async Task<FactorioVersion> DownloadFactorioAsync(FactorioOnlineVersion version, DirectoryInfo downloadDirectory, CookieContainer container, IProgress<double> progress, CancellationToken cancellationToken)
         {
-            if (!downloadDirectory.Exists) downloadDirectory.Create();
+            //if (!downloadDirectory.Exists) downloadDirectory.Create();
 
-            string filePath = Path.Combine(downloadDirectory.FullName, "package.zip");
-            var file = new FileInfo(filePath);
+            //string filePath = Path.Combine(downloadDirectory.FullName, "package.zip");
+            //var file = new FileInfo(filePath);
 
-            await WebHelper.DownloadFileAsync(version.DownloadUrl, container, file, progress, cancellationToken);
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                progress.Report(2);
-                FactorioVersion factorioVersion = await Task.Run(() =>
-                {
-                    ZipFile.ExtractToDirectory(file.FullName, downloadDirectory.FullName);
+            //await WebHelper.DownloadFileAsync(version.DownloadUrl, container, file, progress, cancellationToken);
+            //if (!cancellationToken.IsCancellationRequested)
+            //{
+            //    progress.Report(2);
+            //    DirectoryInfo dir = await Task.Run(() =>
+            //    {
+            //        ZipFile.ExtractToDirectory(file.FullName, downloadDirectory.FullName);
+            //        file.Delete();
 
-                    string versionString = version.Version.ToString(3);
-                    var versionDirectory = downloadDirectory.EnumerateDirectories($"Factorio_{versionString}*").First();
-                    versionDirectory.MoveTo(Path.Combine(downloadDirectory.FullName, versionString));
-                    file.Delete();
+            //        return downloadDirectory.EnumerateDirectories($"Factorio_{version.Version}*").First();
+            //    });
 
-                    return new FactorioVersion(versionDirectory, version.Version);
-                });
 
-                return factorioVersion;
-            }
+            //}
 
             return null;
         }

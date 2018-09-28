@@ -359,17 +359,24 @@ namespace ModMyFactory.Models
         {
             infoFile = null;
 
-            string fileName;
-            Version fileVersion;
-            if (!TryParseModName(directory.Name, out fileName, out fileVersion, hasUid)) return false;
-
-            if (TryReadInfoFileFromDirectory(directory, out infoFile))
+            if (directory.Name == "base")
             {
-                return (infoFile.Name == fileName) && (infoFile.Version == fileVersion);
+                return TryReadInfoFileFromDirectory(directory, out infoFile);
             }
             else
             {
-                return false;
+                string fileName;
+                Version fileVersion;
+                if (!TryParseModName(directory.Name, out fileName, out fileVersion, hasUid)) return false;
+
+                if (TryReadInfoFileFromDirectory(directory, out infoFile))
+                {
+                    return (infoFile.Name == fileName) && (infoFile.Version == fileVersion);
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
     }

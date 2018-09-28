@@ -75,7 +75,7 @@ namespace ModMyFactory.ViewModels
                 FactorioVersions = MainViewModel.Instance.FactorioVersions;
                 FactorioVersionsView = (ListCollectionView)(new CollectionViewSource() { Source = FactorioVersions }).View;
                 FactorioVersionsView.CustomSort = new FactorioVersionSorter();
-                FactorioVersionsView.Filter = item => !((FactorioVersion)item).IsSpecialVersion;
+                FactorioVersionsView.Filter = item => !(item is SpecialFactorioVersion);
 
                 Mods = MainViewModel.Instance.Mods;
 
@@ -84,8 +84,8 @@ namespace ModMyFactory.ViewModels
                 AddFromFolderCommand = new RelayCommand(async () => await AddLocalVersion());
                 SelectSteamCommand = new RelayCommand(async () => await SelectSteamVersion(), () => string.IsNullOrEmpty(App.Instance.Settings.SteamVersionPath));
                 OpenFolderCommand = new RelayCommand(OpenFolder, () => SelectedVersion != null);
-                UpdateCommand = new RelayCommand(async () => await UpdateSelectedVersion(), () => SelectedVersion != null && SelectedVersion.IsFileSystemEditable);
-                RemoveCommand = new RelayCommand(async () => await RemoveSelectedVersion(), () => SelectedVersion != null && SelectedVersion.IsFileSystemEditable);
+                UpdateCommand = new RelayCommand(async () => await UpdateSelectedVersion(), () => SelectedVersion != null && SelectedVersion.CanUpdate);
+                RemoveCommand = new RelayCommand(async () => await RemoveSelectedVersion(), () => SelectedVersion != null);
             }
         }
 
@@ -102,11 +102,11 @@ namespace ModMyFactory.ViewModels
 
         private bool GetVersionDownloadable(FactorioOnlineVersion version)
         {
-            foreach (var localVersion in FactorioVersions)
-            {
-                if ((version.Version == localVersion.Version) && localVersion.IsFileSystemEditable)
-                    return false;
-            }
+            //foreach (var localVersion in FactorioVersions)
+            //{
+            //    if ((version.Version == localVersion.Version) && localVersion.IsFileSystemEditable)
+            //        return false;
+            //}
 
             return true;
         }
@@ -168,7 +168,7 @@ namespace ModMyFactory.ViewModels
                         try
                         {
                             DirectoryInfo directory = App.Instance.Settings.GetFactorioDirectory();
-                            Task<FactorioVersion> downloadTask = FactorioWebsite.DownloadFactorioPackageAsync(selectedVersion, directory, container, new Progress<double>(p =>
+                            Task<FactorioVersion> downloadTask = FactorioWebsite.DownloadFactorioAsync(selectedVersion, directory, container, new Progress<double>(p =>
                             {
                                 if (p > 1)
                                 {
@@ -208,118 +208,118 @@ namespace ModMyFactory.ViewModels
 
         private async Task AddZippedVersion()
         {
-            var dialog = new VistaOpenFileDialog();
-            dialog.Filter = App.Instance.GetLocalizedResourceString("ZipDescription") + @" (*.zip)|*.zip";
-            bool? result = dialog.ShowDialog(Window);
-            if (result.HasValue && result.Value)
-            {
-                var archiveFile = new FileInfo(dialog.FileName);
-                Version version = null;
-                DirectoryInfo versionDirectory = null;
+            //var dialog = new VistaOpenFileDialog();
+            //dialog.Filter = App.Instance.GetLocalizedResourceString("ZipDescription") + @" (*.zip)|*.zip";
+            //bool? result = dialog.ShowDialog(Window);
+            //if (result.HasValue && result.Value)
+            //{
+            //    var archiveFile = new FileInfo(dialog.FileName);
+            //    Version version = null;
+            //    DirectoryInfo versionDirectory = null;
 
-                var progressWindow = new ProgressWindow() { Owner = Window };
-                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingFromZipAction");
-                progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("CheckingValidityDescription");
-                progressViewModel.IsIndeterminate = true;
+            //    var progressWindow = new ProgressWindow() { Owner = Window };
+            //    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+            //    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingFromZipAction");
+            //    progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("CheckingValidityDescription");
+            //    progressViewModel.IsIndeterminate = true;
 
-                bool invalidArchiveFile = false;
-                bool invalidPlatform = false;
-                bool versionInstalled = false;
-                IProgress<int> progress = new Progress<int>(stage =>
-                {
-                    switch (stage)
-                    {
-                        case 1:
-                            progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
-                            break;
-                        case -1:
-                            invalidArchiveFile = true;
-                            break;
-                        case -2:
-                            invalidPlatform = true;
-                            break;
-                        case -3:
-                            versionInstalled = true;
-                            break;
-                    }
-                });
+            //    bool invalidArchiveFile = false;
+            //    bool invalidPlatform = false;
+            //    bool versionInstalled = false;
+            //    IProgress<int> progress = new Progress<int>(stage =>
+            //    {
+            //        switch (stage)
+            //        {
+            //            case 1:
+            //                progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
+            //                break;
+            //            case -1:
+            //                invalidArchiveFile = true;
+            //                break;
+            //            case -2:
+            //                invalidPlatform = true;
+            //                break;
+            //            case -3:
+            //                versionInstalled = true;
+            //                break;
+            //        }
+            //    });
 
-                Task extractTask = Task.Run(() =>
-                {
-                    bool is64Bit;
-                    if (FactorioVersion.ArchiveFileValid(archiveFile, out version, out is64Bit))
-                    {
-                        if (is64Bit == Environment.Is64BitOperatingSystem)
-                        {
-                            if (FactorioVersions.All(factorioVersion => factorioVersion.Version != version))
-                            {
-                                progress.Report(1);
+            //    Task extractTask = Task.Run(() =>
+            //    {
+            //        bool is64Bit;
+            //        if (FactorioVersion.ArchiveFileValid(archiveFile, out version, out is64Bit))
+            //        {
+            //            if (is64Bit == Environment.Is64BitOperatingSystem)
+            //            {
+            //                if (FactorioVersions.All(factorioVersion => factorioVersion.Version != version))
+            //                {
+            //                    progress.Report(1);
 
-                                DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
-                                ZipFile.ExtractToDirectory(archiveFile.FullName, factorioDirectory.FullName);
+            //                    DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
+            //                    ZipFile.ExtractToDirectory(archiveFile.FullName, factorioDirectory.FullName);
 
-                                string versionString = version.ToString(3);
-                                versionDirectory = factorioDirectory.EnumerateDirectories($"Factorio_{versionString}*").First();
-                                versionDirectory.MoveTo(Path.Combine(factorioDirectory.FullName, versionString));
-                            }
-                            else
-                            {
-                                progress.Report(-3);
-                            }
-                        }
-                        else
-                        {
-                            progress.Report(-2);
-                        }
-                    }
-                    else
-                    {
-                        progress.Report(-1);
-                    }
-                });
+            //                    string versionString = version.ToString(3);
+            //                    versionDirectory = factorioDirectory.EnumerateDirectories($"Factorio_{versionString}*").First();
+            //                    versionDirectory.MoveTo(Path.Combine(factorioDirectory.FullName, versionString));
+            //                }
+            //                else
+            //                {
+            //                    progress.Report(-3);
+            //                }
+            //            }
+            //            else
+            //            {
+            //                progress.Report(-2);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            progress.Report(-1);
+            //        }
+            //    });
 
-                Task closeWindowTask =
-                    extractTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-                progressWindow.ShowDialog();
+            //    Task closeWindowTask =
+            //        extractTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+            //    progressWindow.ShowDialog();
 
-                await extractTask;
-                await closeWindowTask;
+            //    await extractTask;
+            //    await closeWindowTask;
 
-                if (invalidArchiveFile)
-                {
-                    MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("InvalidFactorioArchive", MessageType.Error),
-                        App.Instance.GetLocalizedMessageTitle("InvalidFactorioArchive", MessageType.Error),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                else if (invalidPlatform)
-                {
-                    MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
-                        App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                else if (versionInstalled)
-                {
-                    MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("FactorioVersionInstalled", MessageType.Error),
-                        App.Instance.GetLocalizedMessageTitle("FactorioVersionInstalled", MessageType.Error),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                else
-                {
-                    FactorioVersions.Add(new FactorioVersion(versionDirectory, version));
+            //    if (invalidArchiveFile)
+            //    {
+            //        MessageBox.Show(Window,
+            //            App.Instance.GetLocalizedMessage("InvalidFactorioArchive", MessageType.Error),
+            //            App.Instance.GetLocalizedMessageTitle("InvalidFactorioArchive", MessageType.Error),
+            //            MessageBoxButton.OK, MessageBoxImage.Error);
+            //    }
+            //    else if (invalidPlatform)
+            //    {
+            //        MessageBox.Show(Window,
+            //            App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
+            //            App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
+            //            MessageBoxButton.OK, MessageBoxImage.Error);
+            //    }
+            //    else if (versionInstalled)
+            //    {
+            //        MessageBox.Show(Window,
+            //            App.Instance.GetLocalizedMessage("FactorioVersionInstalled", MessageType.Error),
+            //            App.Instance.GetLocalizedMessageTitle("FactorioVersionInstalled", MessageType.Error),
+            //            MessageBoxButton.OK, MessageBoxImage.Error);
+            //    }
+            //    else
+            //    {
+            //        FactorioVersions.Add(new FactorioVersion(versionDirectory, version));
 
-                    if (MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("DeleteFactorioArchive", MessageType.Question),
-                        App.Instance.GetLocalizedMessageTitle("DeleteFactorioArchive", MessageType.Question),
-                        MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                    {
-                        archiveFile.Delete();
-                    }
-                }
-            }
+            //        if (MessageBox.Show(Window,
+            //            App.Instance.GetLocalizedMessage("DeleteFactorioArchive", MessageType.Question),
+            //            App.Instance.GetLocalizedMessageTitle("DeleteFactorioArchive", MessageType.Question),
+            //            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            //        {
+            //            archiveFile.Delete();
+            //        }
+            //    }
+            //}
         }
 
         #region PreserveContents
@@ -445,125 +445,125 @@ namespace ModMyFactory.ViewModels
 
         private async Task AddLocalVersion()
         {
-            var dialog = new VistaFolderBrowserDialog();
-            bool? result = dialog.ShowDialog(Window);
-            if (result.HasValue && result.Value)
-            {
-                var installationDirectory = new DirectoryInfo(dialog.SelectedPath);
-                Version version;
+            //var dialog = new VistaFolderBrowserDialog();
+            //bool? result = dialog.ShowDialog(Window);
+            //if (result.HasValue && result.Value)
+            //{
+            //    var installationDirectory = new DirectoryInfo(dialog.SelectedPath);
+            //    Version version;
 
-                bool is64Bit;
-                if (!FactorioVersion.LocalInstallationValid(installationDirectory, out version, out is64Bit))
-                {
-                    MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("InvalidFactorioFolder", MessageType.Error),
-                        App.Instance.GetLocalizedMessageTitle("InvalidFactorioFolder", MessageType.Error),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-                if (is64Bit != Environment.Is64BitOperatingSystem)
-                {
-                    MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
-                        App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-                if (FactorioVersions.Any(factorioVersion => factorioVersion.Version == version))
-                {
-                    MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("FactorioVersionInstalled", MessageType.Error),
-                        App.Instance.GetLocalizedMessageTitle("FactorioVersionInstalled", MessageType.Error),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
+            //    bool is64Bit;
+            //    if (!FactorioVersion.LocalInstallationValid(installationDirectory, out version, out is64Bit))
+            //    {
+            //        MessageBox.Show(Window,
+            //            App.Instance.GetLocalizedMessage("InvalidFactorioFolder", MessageType.Error),
+            //            App.Instance.GetLocalizedMessageTitle("InvalidFactorioFolder", MessageType.Error),
+            //            MessageBoxButton.OK, MessageBoxImage.Error);
+            //        return;
+            //    }
+            //    if (is64Bit != Environment.Is64BitOperatingSystem)
+            //    {
+            //        MessageBox.Show(Window,
+            //            App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
+            //            App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
+            //            MessageBoxButton.OK, MessageBoxImage.Error);
+            //        return;
+            //    }
+            //    if (FactorioVersions.Any(factorioVersion => factorioVersion.Version == version))
+            //    {
+            //        MessageBox.Show(Window,
+            //            App.Instance.GetLocalizedMessage("FactorioVersionInstalled", MessageType.Error),
+            //            App.Instance.GetLocalizedMessageTitle("FactorioVersionInstalled", MessageType.Error),
+            //            MessageBoxButton.OK, MessageBoxImage.Error);
+            //        return;
+            //    }
 
 
-                var copyOrMoveWindow = new CopyOrMoveMessageWindow() { Owner = Window };
-                ((CopyOrMoveViewModel)copyOrMoveWindow.ViewModel).CopyOrMoveType = CopyOrMoveType.Factorio;
-                result = copyOrMoveWindow.ShowDialog();
-                if (result.HasValue && result.Value)
-                {
-                    bool move = copyOrMoveWindow.Move;
+            //    var copyOrMoveWindow = new CopyOrMoveMessageWindow() { Owner = Window };
+            //    ((CopyOrMoveViewModel)copyOrMoveWindow.ViewModel).CopyOrMoveType = CopyOrMoveType.Factorio;
+            //    result = copyOrMoveWindow.ShowDialog();
+            //    if (result.HasValue && result.Value)
+            //    {
+            //        bool move = copyOrMoveWindow.Move;
 
-                    DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
-                    if (!factorioDirectory.Exists) factorioDirectory.Create();
-                    DirectoryInfo destinationDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.ToString(3)));
+            //        DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
+            //        if (!factorioDirectory.Exists) factorioDirectory.Create();
+            //        DirectoryInfo destinationDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.ToString(3)));
 
-                    var progressWindow = new ProgressWindow() { Owner = Window };
-                    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-                    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingLocalInstallationAction");
-                    progressViewModel.ProgressDescription = move ? App.Instance.GetLocalizedResourceString("MovingFilesDescription") : App.Instance.GetLocalizedResourceString("CopyingFilesDescription");
-                    progressViewModel.IsIndeterminate = true;
+            //        var progressWindow = new ProgressWindow() { Owner = Window };
+            //        var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+            //        progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingLocalInstallationAction");
+            //        progressViewModel.ProgressDescription = move ? App.Instance.GetLocalizedResourceString("MovingFilesDescription") : App.Instance.GetLocalizedResourceString("CopyingFilesDescription");
+            //        progressViewModel.IsIndeterminate = true;
 
-                    Task addTask = move
-                        ? MoveFactorioInstallationAsync(installationDirectory, destinationDirectory)
-                        : CopyFactorioInstallationAsync(installationDirectory, destinationDirectory);
+            //        Task addTask = move
+            //            ? MoveFactorioInstallationAsync(installationDirectory, destinationDirectory)
+            //            : CopyFactorioInstallationAsync(installationDirectory, destinationDirectory);
 
-                    Task closeWindowTask = addTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-                    progressWindow.ShowDialog();
+            //        Task closeWindowTask = addTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+            //        progressWindow.ShowDialog();
 
-                    await addTask;
-                    await closeWindowTask;
+            //        await addTask;
+            //        await closeWindowTask;
 
-                    FactorioVersions.Add(new FactorioVersion(destinationDirectory, version));
-                }
-            }
+            //        FactorioVersions.Add(new FactorioVersion(destinationDirectory, version));
+            //    }
+            //}
         }
 
         private async Task SelectSteamVersion()
         {
-            var dialog = new VistaFolderBrowserDialog();
-            bool? result = dialog.ShowDialog(Window);
+            //var dialog = new VistaFolderBrowserDialog();
+            //bool? result = dialog.ShowDialog(Window);
 
-            if (result.HasValue && result.Value)
-            {
-                var selectedDirectory = new DirectoryInfo(dialog.SelectedPath);
-                Version version;
+            //if (result.HasValue && result.Value)
+            //{
+            //    var selectedDirectory = new DirectoryInfo(dialog.SelectedPath);
+            //    Version version;
 
-                bool is64Bit;
-                if (!FactorioVersion.LocalInstallationValid(selectedDirectory, out version, out is64Bit))
-                {
-                    MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("InvalidFactorioFolder", MessageType.Error),
-                        App.Instance.GetLocalizedMessageTitle("InvalidFactorioFolder", MessageType.Error),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-                if (is64Bit != Environment.Is64BitOperatingSystem)
-                {
-                    MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
-                        App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
+            //    bool is64Bit;
+            //    if (!FactorioVersion.LocalInstallationValid(selectedDirectory, out version, out is64Bit))
+            //    {
+            //        MessageBox.Show(Window,
+            //            App.Instance.GetLocalizedMessage("InvalidFactorioFolder", MessageType.Error),
+            //            App.Instance.GetLocalizedMessageTitle("InvalidFactorioFolder", MessageType.Error),
+            //            MessageBoxButton.OK, MessageBoxImage.Error);
+            //        return;
+            //    }
+            //    if (is64Bit != Environment.Is64BitOperatingSystem)
+            //    {
+            //        MessageBox.Show(Window,
+            //            App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
+            //            App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
+            //            MessageBoxButton.OK, MessageBoxImage.Error);
+            //        return;
+            //    }
 
-                if (MessageBox.Show(Window,
-                    App.Instance.GetLocalizedMessage("MoveSteamFactorio", MessageType.Warning),
-                    App.Instance.GetLocalizedMessageTitle("MoveSteamFactorio", MessageType.Warning),
-                    MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-                {
-                    App.Instance.Settings.SteamVersionPath = selectedDirectory.FullName;
-                    App.Instance.Settings.Save();
+            //    if (MessageBox.Show(Window,
+            //        App.Instance.GetLocalizedMessage("MoveSteamFactorio", MessageType.Warning),
+            //        App.Instance.GetLocalizedMessageTitle("MoveSteamFactorio", MessageType.Warning),
+            //        MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            //    {
+            //        App.Instance.Settings.SteamVersionPath = selectedDirectory.FullName;
+            //        App.Instance.Settings.Save();
 
-                    var progressWindow = new ProgressWindow() { Owner = Window };
-                    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-                    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingSteamVersionAction");
-                    progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
-                    progressViewModel.IsIndeterminate = true;
+            //        var progressWindow = new ProgressWindow() { Owner = Window };
+            //        var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+            //        progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingSteamVersionAction");
+            //        progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
+            //        progressViewModel.IsIndeterminate = true;
 
-                    var steamAppDataDirectory = new DirectoryInfo(FactorioSteamVersion.SteamAppDataPath);
-                    Task moveTask = PreserveContentsAsync(steamAppDataDirectory, true);
+            //        var steamAppDataDirectory = new DirectoryInfo(FactorioSteamVersion.SteamAppDataPath);
+            //        Task moveTask = PreserveContentsAsync(steamAppDataDirectory, true);
 
-                    Task closeWindowTask = moveTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-                    progressWindow.ShowDialog();
-                    await moveTask;
-                    await closeWindowTask;
+            //        Task closeWindowTask = moveTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+            //        progressWindow.ShowDialog();
+            //        await moveTask;
+            //        await closeWindowTask;
 
-                    FactorioVersions.Add(new FactorioSteamVersion(selectedDirectory, version));
-                }
-            }
+            //        FactorioVersions.Add(new FactorioSteamVersion(selectedDirectory, version));
+            //    }
+            //}
         }
 
         private void OpenFolder()

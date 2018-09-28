@@ -8,7 +8,7 @@ namespace ModMyFactory.Models
     /// </summary>
     sealed class FactorioSteamVersion : FactorioVersion
     {
-        public const string Key = "steam";
+        public static string SteamAppDataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Factorio");
 
         /// <summary>
         /// Tries to load the Steam version of Factorio specified in the settings.
@@ -23,44 +23,26 @@ namespace ModMyFactory.Models
                 return false;
             }
 
-            var steamVersionDirectory = new DirectoryInfo(App.Instance.Settings.SteamVersionPath);
-            Version version;
-            bool is64Bit;
-            if (steamVersionDirectory.Exists && FactorioVersion.LocalInstallationValid(steamVersionDirectory, out version, out is64Bit))
+            var directory = new DirectoryInfo(App.Instance.Settings.SteamVersionPath);
+            if (FactorioFolder.TryLoad(directory, out var folder))
             {
-                if (is64Bit != Environment.Is64BitOperatingSystem)
-                {
-                    // This should be impossible.
-                    steamVersion = null;
-                    return false;
-                }
-
-                steamVersion = new FactorioSteamVersion(steamVersionDirectory, version);
+                steamVersion = new FactorioSteamVersion(folder);
                 return true;
             }
             else
             {
-                App.Instance.Settings.SteamVersionPath = string.Empty;
-                App.Instance.Settings.Save();
-
                 steamVersion = null;
                 return false;
             }
         }
 
-        public static string SteamAppDataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Factorio");
-
-        public override string VersionString => Key;
-
-        public override string DisplayName => $"Steam ({Version.ToString(3)})";
-
-        public FactorioSteamVersion(DirectoryInfo directory, Version version)
-            : base(false, directory, new DirectoryInfo(SteamAppDataPath), version)
-        { }
-
-        protected override void UpdateLinkDirectoryInternal(DirectoryInfo newDirectory)
+        protected override string LoadName()
         {
-            base.UpdateLinkDirectoryInternal(new DirectoryInfo(SteamAppDataPath));
+            return "Steam";
         }
+
+        private FactorioSteamVersion(FactorioFolder folder)
+            : base(folder, false, new DirectoryInfo(SteamAppDataPath))
+        { }
     }
 }

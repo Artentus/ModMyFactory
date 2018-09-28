@@ -97,6 +97,7 @@
     <Compile Include="CommandLine.cs" />
     <Compile Include="Export\ExportMode.cs" />
     <Compile Include="ExtendedVersion.cs" />
+    <Compile Include="FactorioCollection.cs" />
     <Compile Include="FactorioUpdate\CriticalUpdaterException.cs" />
     <Compile Include="Export\ExportTemplate.cs" />
     <Compile Include="Export\ModpackExport.cs" />
@@ -126,8 +127,11 @@
     <Compile Include="MessageType.cs" />
     <Compile Include="ModCollection.cs" />
     <Compile Include="Models\CopyOrMoveType.cs" />
+    <Compile Include="Models\FactorioFile.cs" />
+    <Compile Include="Models\FactorioFolder.cs" />
     <Compile Include="Models\FactorioSteamVersion.cs" />
     <Compile Include="Models\InfoFile.cs" />
+    <Compile Include="Models\LatestFactorioVersion.cs" />
     <Compile Include="Models\ModDependency.cs" />
     <Compile Include="Models\ModDependencyInfo.cs" />
     <Compile Include="Models\ModFile.cs" />
@@ -138,6 +142,7 @@
     <Compile Include="Export\ModExportTemplate.cs" />
     <Compile Include="Models\Mod_Adding.cs" />
     <Compile Include="Models\Mod_Loading.cs" />
+    <Compile Include="Models\SpecialFactorioVersion.cs" />
     <Compile Include="Models\UpdateTarget.cs" />
     <Compile Include="ModManager.cs" />
     <Compile Include="Export\ModpackExportTemplate.cs" />

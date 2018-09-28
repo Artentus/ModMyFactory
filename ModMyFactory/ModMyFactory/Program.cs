@@ -126,91 +126,91 @@ namespace ModMyFactory
         /// <returns>Returns true if the game was started, otherwise false.</returns>
         private static bool StartGameIfSpecified(CommandLine commandLine, bool createApp)
         {
-            string versionString;
-            if (commandLine.TryGetArgument('f', "factorio-version", out versionString))
-            {
-                // Variable not used but sets 'Application.Current'.
-                App app = null;
-                if (createApp) app = CreateApp(commandLine);
+            //string versionString;
+            //if (commandLine.TryGetArgument('f', "factorio-version", out versionString))
+            //{
+            //    // Variable not used but sets 'Application.Current'.
+            //    App app = null;
+            //    if (createApp) app = CreateApp(commandLine);
 
-                var versions = FactorioVersion.GetInstalledVersions();
-                FactorioVersion steamVersion;
-                if (FactorioSteamVersion.TryLoad(out steamVersion)) versions.Add(steamVersion);
+            //    var versions = FactorioVersion.LoadInstalledVersions();
+            //    FactorioVersion steamVersion;
+            //    if (FactorioSteamVersion.TryLoad(out steamVersion)) versions.Add(steamVersion);
 
-                FactorioVersion factorioVersion = null;
-                if (Regex.IsMatch(versionString, @"^[0-9]+\.[0-9]+$")) // Search for main version
-                {
-                    var v = Version.Parse(versionString);
-                    factorioVersion = versions.Where(item => !item.IsSpecialVersion && item.Version.Major == v.Major && item.Version.Minor == v.Minor).MaxBy(item => item.Version, new VersionComparer());
-                }
-                else // Search for specific version
-                {
-                    if (string.Equals(versionString, FactorioVersion.LatestKey, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        factorioVersion = versions.MaxBy(item => item.Version, new VersionComparer());
-                    }
-                    else
-                    {
-                        factorioVersion = versions.Find(item => string.Equals(item.VersionString, versionString, StringComparison.InvariantCultureIgnoreCase));
-                    }
-                }
+            //    FactorioVersion factorioVersion = null;
+            //    if (Regex.IsMatch(versionString, @"^[0-9]+\.[0-9]+$")) // Search for main version
+            //    {
+            //        var v = Version.Parse(versionString);
+            //        factorioVersion = versions.Where(item => !item.IsSpecialVersion && item.Version.Major == v.Major && item.Version.Minor == v.Minor).MaxBy(item => item.Version, new VersionComparer());
+            //    }
+            //    else // Search for specific version
+            //    {
+            //        if (string.Equals(versionString, FactorioVersion.LatestKey, StringComparison.InvariantCultureIgnoreCase))
+            //        {
+            //            factorioVersion = versions.MaxBy(item => item.Version, new VersionComparer());
+            //        }
+            //        else
+            //        {
+            //            factorioVersion = versions.Find(item => string.Equals(item.VersionString, versionString, StringComparison.InvariantCultureIgnoreCase));
+            //        }
+            //    }
 
-                if (factorioVersion != null)
-                {
-                    var startInfo = new ProcessStartInfo(factorioVersion.ExecutablePath);
+            //    if (factorioVersion != null)
+            //    {
+            //        var startInfo = new ProcessStartInfo(factorioVersion.Executable.FullName);
 
-                    var mods = new ModCollection();
-                    var modpacks = new ModpackCollection();
+            //        var mods = new ModCollection();
+            //        var modpacks = new ModpackCollection();
 
-                    ModManager.BeginUpdateTemplates();
-                    Mod.LoadMods(mods, modpacks);
-                    ModpackTemplateList.Instance.PopulateModpackList(mods, modpacks, null);
+            //        ModManager.BeginUpdateTemplates();
+            //        Mod.LoadMods(mods, modpacks);
+            //        ModpackTemplateList.Instance.PopulateModpackList(mods, modpacks, null);
 
-                    mods.ForEach(mod => mod.Active = false);
+            //        mods.ForEach(mod => mod.Active = false);
 
-                    string modpackName;
-                    if (commandLine.TryGetArgument('p', "modpack", out modpackName))
-                    {
-                        Modpack modpack = modpacks.FirstOrDefault(item => item.Name == modpackName);
-                        if (modpack != null)
-                        {
-                            modpack.Active = true;
-                        }
-                        else
-                        {
-                            MessageBox.Show(
-                                $"No modpack named '{modpackName}' found.\nThe game will be launched without any mods enabled.",
-                                "Error loading modpack!", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        }
-                    }
+            //        string modpackName;
+            //        if (commandLine.TryGetArgument('p', "modpack", out modpackName))
+            //        {
+            //            Modpack modpack = modpacks.FirstOrDefault(item => item.Name == modpackName);
+            //            if (modpack != null)
+            //            {
+            //                modpack.Active = true;
+            //            }
+            //            else
+            //            {
+            //                MessageBox.Show(
+            //                    $"No modpack named '{modpackName}' found.\nThe game will be launched without any mods enabled.",
+            //                    "Error loading modpack!", MessageBoxButton.OK, MessageBoxImage.Warning);
+            //            }
+            //        }
 
-                    string savegameName;
-                    if (commandLine.TryGetArgument('s', "savegame", out savegameName))
-                    {
-                        startInfo.Arguments = $"--load-game \"{savegameName}\"";
-                    }
+            //        string savegameName;
+            //        if (commandLine.TryGetArgument('s', "savegame", out savegameName))
+            //        {
+            //            startInfo.Arguments = $"--load-game \"{savegameName}\"";
+            //        }
 
-                    string factorioCommandline;
-                    if (commandLine.TryGetArgument('c', "commands", out factorioCommandline))
-                    {
-                        if (!string.IsNullOrEmpty(startInfo.Arguments)) startInfo.Arguments += " ";
-                        startInfo.Arguments += factorioCommandline.Replace('\'', '"');
-                    }
+            //        string factorioCommandline;
+            //        if (commandLine.TryGetArgument('c', "commands", out factorioCommandline))
+            //        {
+            //            if (!string.IsNullOrEmpty(startInfo.Arguments)) startInfo.Arguments += " ";
+            //            startInfo.Arguments += factorioCommandline.Replace('\'', '"');
+            //        }
 
-                    ModManager.EndUpdateTemplates(true);
-                    ModManager.SaveTemplates();
+            //        ModManager.EndUpdateTemplates(true);
+            //        ModManager.SaveTemplates();
                     
-                    Process.Start(startInfo);
-                }
-                else
-                {
-                    MessageBox.Show(
-                        $"Factorio version {versionString} is not available.\nCheck your installed Factorio versions.",
-                        "Error starting game!", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+            //        Process.Start(startInfo);
+            //    }
+            //    else
+            //    {
+            //        MessageBox.Show(
+            //            $"Factorio version {versionString} is not available.\nCheck your installed Factorio versions.",
+            //            "Error starting game!", MessageBoxButton.OK, MessageBoxImage.Error);
+            //    }
 
-                return true;
-            }
+            //    return true;
+            //}
 
             return false;
         }
