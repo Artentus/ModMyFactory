@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModMyFactory.Helpers;
+using System;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
@@ -7,6 +8,9 @@ namespace ModMyFactory.Models
 {
     sealed class FactorioFolder
     {
+        const string Win32BinName = "Win32";
+        const string Win64BinName = "x64";
+
         public DirectoryInfo Directory { get; }
 
         public FileInfo Executable { get; }
@@ -25,6 +29,23 @@ namespace ModMyFactory.Models
                 string newPath = Path.Combine(Directory.Parent.FullName, GenerateUniqueName());
                 Directory.MoveTo(newPath);
             }
+        }
+
+        /// <summary>
+        /// Copies this Factorio folder to a new directory.
+        /// </summary>
+        public async Task<FactorioFolder> CopyToAsync(DirectoryInfo destination)
+        {
+            if (!destination.Exists) destination.Create();
+
+            var dir = new DirectoryInfo(Directory.FullName);
+            await dir.CopyToAsync(destination.FullName);
+
+            var newDir = new DirectoryInfo(Path.Combine(destination.FullName, dir.Name));
+            string executablePath = Is64Bit ? $@"bin\{Win64BinName}\factorio.exe" : $@"bin\{Win32BinName}\factorio.exe";
+            var executable = new FileInfo(Path.Combine(newDir.FullName, executablePath));
+
+            return new FactorioFolder(newDir, executable, Version, Is64Bit);
         }
 
         private FactorioFolder(DirectoryInfo directory, FileInfo executable, Version version, bool is64Bit)
@@ -74,10 +95,8 @@ namespace ModMyFactory.Models
 
         private static bool TryLoadBitness(DirectoryInfo directory, out bool is64Bit, out FileInfo executable)
         {
-            const string win32BinName = "Win32";
-            const string win64BinName = "x64";
-            var win32Dir = new DirectoryInfo(Path.Combine(directory.FullName, $@"bin\{win32BinName}"));
-            var win64Dir = new DirectoryInfo(Path.Combine(directory.FullName, $@"bin\{win64BinName}"));
+            var win32Dir = new DirectoryInfo(Path.Combine(directory.FullName, $@"bin\{Win32BinName}"));
+            var win64Dir = new DirectoryInfo(Path.Combine(directory.FullName, $@"bin\{Win64BinName}"));
 
             if (win64Dir.Exists && TryLoadExecutable(win64Dir, out executable))
             {
@@ -109,16 +128,18 @@ namespace ModMyFactory.Models
             return true;
         }
 
-        //public static async Task<FactorioFolder> FromFileAsync(FactorioFile file, DirectoryInfo destination)
-        //{
-        //    if (!destination.Exists) destination.Create();
-        //    await Task.Run(() => ZipFile.ExtractToDirectory(file.ArchiveFile.FullName, destination.FullName));
+        public static async Task<FactorioFolder> FromFileAsync(FactorioFile file, DirectoryInfo destination)
+        {
+            if (!destination.Exists) destination.Create();
+            await Task.Run(() => ZipFile.ExtractToDirectory(file.ArchiveFile.FullName, destination.FullName));
 
-        //    var dir = new DirectoryInfo(Path.Combine(destination.FullName, $"Factorio_{file.Version}"));
-        //    if (!dir.Exists) throw new InvalidOperationException("The given file contained invalid data.");
-        //    dir.MoveTo(Path.Combine(destination.FullName, FactorioVersion.GenerateUniqueName()));
+            var dir = new DirectoryInfo(Path.Combine(destination.FullName, $"Factorio_{file.Version}"));
+            if (!dir.Exists) throw new InvalidOperationException("The given file contained invalid data.");
+            dir.MoveTo(Path.Combine(destination.FullName, GenerateUniqueName()));
 
-        //    return new FactorioFolder(dir, file.Version, file.Is64Bit);
-        //}
+            string executablePath = file.Is64Bit ? $@"bin\{Win64BinName}\factorio.exe" : $@"bin\{Win32BinName}\factorio.exe";
+            var executable = new FileInfo(Path.Combine(dir.FullName, executablePath));
+            return new FactorioFolder(dir, executable, file.Version, file.Is64Bit);
+        }
     }
 }
