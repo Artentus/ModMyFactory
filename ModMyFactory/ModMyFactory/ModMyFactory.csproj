@@ -513,6 +513,7 @@
     <Resource Include="Images\DependencyWarning.png" />
     <Resource Include="Images\Dependency.png" />
     <Resource Include="Images\Optional.png" />
+    <Resource Include="Images\Warning.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>
