@@ -1,11 +1,22 @@
-﻿using ModMyFactory.Models;
+﻿using ModMyFactory.Helpers;
+using ModMyFactory.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace ModMyFactory
 {
     sealed class FactorioCollection : ObservableCollection<FactorioVersion>
     {
+        public static FactorioCollection Load()
+        {
+            var installedVersions = FactorioVersion.LoadInstalledVersions();
+            if (FactorioSteamVersion.TryLoad(out var steamVersion)) installedVersions.Add(steamVersion);
+
+            return new FactorioCollection(installedVersions);
+        }
+
         public FactorioCollection()
             : base()
         {
@@ -22,6 +33,24 @@ namespace ModMyFactory
             : base(list)
         {
             this.Add(new LatestFactorioVersion(this));
+        }
+
+        public FactorioVersion Find(string name)
+        {
+            return this.FirstOrDefault(item => item.Name == name);
+        }
+
+        public FactorioVersion Find(Version version, bool exact = true)
+        {
+            if (exact)
+            {
+                return this.FirstOrDefault(item => item.Version == version);
+            }
+            else
+            {
+                return this.Where(item => (item.Version.Major == version.Major) && (item.Version.Minor == version.Minor))
+                           .MaxBy(item => item.Version, new VersionComparer());
+            }
         }
     }
 }

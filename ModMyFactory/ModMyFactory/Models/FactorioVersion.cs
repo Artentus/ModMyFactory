@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Threading.Tasks;
 using ModMyFactory.IO;
 using WPFCore;
 
@@ -39,8 +40,8 @@ namespace ModMyFactory.Models
 
         
         string name;
-        bool hasLinks;
-        bool canMove;
+        readonly bool hasLinks;
+        readonly bool canMove;
         DirectoryInfo linkDirectory;
 
         public bool IsNameEditable { get; }
@@ -125,6 +126,18 @@ namespace ModMyFactory.Models
         private void SaveName(string name)
         {
 
+        }
+
+        /// <summary>
+        /// Moves this Factorio installation to a different location if possible.
+        /// </summary>
+        public async Task MoveToAsync(DirectoryInfo destination)
+        {
+            if (canMove)
+            {
+                await Folder.MoveToAsync(destination);
+                linkDirectory = Folder.Directory;
+            }
         }
         
         /// <summary>

@@ -8,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -80,7 +79,8 @@ namespace ModMyFactory
             Console.WriteLine(@"  -l, --no-logs                              Don't create crash logs.");
             Console.WriteLine(@"  -a PATH, --appdata-path=PATH               Override the default application data path.");
             Console.WriteLine(@"  -u, --no-update                            Don't search for update on startup.");
-            Console.WriteLine(@"  -f VERSION, --factorio-version=VERSION     Start the specified version of Factorio.");
+            Console.WriteLine(@"  -n NAME, --factorio-name=NAME              Start the specified Factorio installation.");
+            Console.WriteLine(@"  -f VERSION, --factorio-version=VERSION     Start a Factorio installation that matches this version.");
             Console.WriteLine(@"  -p NAME, --modpack=NAME                    Enable the specified modpack.");
             Console.WriteLine(@"  -s NAME, --savegame=NAME                   Load the specified savegame.");
             Console.WriteLine(@"  -c COMMANDLINE, --commands=COMMANDLINE     Start Factorio with the specified command line.");
@@ -118,6 +118,72 @@ namespace ModMyFactory
                 return new App(createCrashLog);
         }
 
+        private static bool TryGetFactorioVersion(string name, bool isVersion, out FactorioVersion factorioVersion)
+        {
+            factorioVersion = null;
+            var factorioVersions = FactorioCollection.Load();
+
+            if (isVersion)
+            {
+                if (!Version.TryParse(name, out var version)) return false;
+                bool exact = name.IndexOf('.') != name.LastIndexOf('.');
+                factorioVersion = factorioVersions.Find(version, exact);
+            }
+            else
+            {
+                factorioVersion = factorioVersions.Find(name);
+            }
+
+            return factorioVersion != null;
+        }
+
+        private static void ActivateMods(CommandLine commandLine)
+        {
+            var mods = new ModCollection();
+            var modpacks = new ModpackCollection();
+
+            ModManager.BeginUpdateTemplates();
+            Mod.LoadMods(mods, modpacks);
+            ModpackTemplateList.Instance.PopulateModpackList(mods, modpacks, null);
+
+            mods.ForEach(mod => mod.Active = false);
+
+            string modpackName;
+            if (commandLine.TryGetArgument('p', "modpack", out modpackName))
+            {
+                Modpack modpack = modpacks.Find(modpackName);
+                if (modpack != null)
+                {
+                    modpack.Active = true;
+                }
+                else
+                {
+                    MessageBox.Show(
+                        $"No modpack named '{modpackName}' found.\nThe game will be launched without any mods enabled.",
+                        "Error loading modpack!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+
+            ModManager.EndUpdateTemplates(true);
+            ModManager.SaveTemplates();
+        }
+
+        private static string BuildArguments(CommandLine commandLine)
+        {
+            var sb = new StringBuilder();
+            
+            if (commandLine.TryGetArgument('s', "savegame", out string savegameName))
+                sb.Append($"--load-game \"{savegameName}\"");
+            
+            if (commandLine.TryGetArgument('c', "commands", out string factorioCommandline))
+            {
+                if (sb.Length > 0) sb.Append(' ');
+                sb.Append(factorioCommandline.Replace('\'', '"'));
+            }
+
+            return sb.ToString();
+        }
+
         /// <summary>
         /// Starts Factorio if the command line specifies to do so.
         /// </summary>
@@ -126,93 +192,46 @@ namespace ModMyFactory
         /// <returns>Returns true if the game was started, otherwise false.</returns>
         private static bool StartGameIfSpecified(CommandLine commandLine, bool createApp)
         {
-            //string versionString;
-            //if (commandLine.TryGetArgument('f', "factorio-version", out versionString))
-            //{
-            //    // Variable not used but sets 'Application.Current'.
-            //    App app = null;
-            //    if (createApp) app = CreateApp(commandLine);
+            FactorioVersion factorioVersion;
+            if (commandLine.TryGetArgument('n', "factorio-name", out string name))
+            {
+                // Sets 'Application.Current'
+                if (createApp) CreateApp(commandLine);
 
-            //    var versions = FactorioVersion.LoadInstalledVersions();
-            //    FactorioVersion steamVersion;
-            //    if (FactorioSteamVersion.TryLoad(out steamVersion)) versions.Add(steamVersion);
+                if (!TryGetFactorioVersion(name, false, out factorioVersion))
+                {
+                    MessageBox.Show(
+                        $"A Factorio installation named '{name}' was not found.",
+                        "Error starting game!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return true;
+                }
+            }
+            else if (commandLine.TryGetArgument('f', "factorio-version", out string versionString))
+            {
+                // Sets 'Application.Current'
+                if (createApp) CreateApp(commandLine);
 
-            //    FactorioVersion factorioVersion = null;
-            //    if (Regex.IsMatch(versionString, @"^[0-9]+\.[0-9]+$")) // Search for main version
-            //    {
-            //        var v = Version.Parse(versionString);
-            //        factorioVersion = versions.Where(item => !item.IsSpecialVersion && item.Version.Major == v.Major && item.Version.Minor == v.Minor).MaxBy(item => item.Version, new VersionComparer());
-            //    }
-            //    else // Search for specific version
-            //    {
-            //        if (string.Equals(versionString, FactorioVersion.LatestKey, StringComparison.InvariantCultureIgnoreCase))
-            //        {
-            //            factorioVersion = versions.MaxBy(item => item.Version, new VersionComparer());
-            //        }
-            //        else
-            //        {
-            //            factorioVersion = versions.Find(item => string.Equals(item.VersionString, versionString, StringComparison.InvariantCultureIgnoreCase));
-            //        }
-            //    }
+                if (!TryGetFactorioVersion(name, false, out factorioVersion))
+                {
+                    MessageBox.Show(
+                        $"A Factorio installation with version {versionString} was not found.",
+                        "Error starting game!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+            if (factorioVersion == null) return true;
 
-            //    if (factorioVersion != null)
-            //    {
-            //        var startInfo = new ProcessStartInfo(factorioVersion.Executable.FullName);
 
-            //        var mods = new ModCollection();
-            //        var modpacks = new ModpackCollection();
-
-            //        ModManager.BeginUpdateTemplates();
-            //        Mod.LoadMods(mods, modpacks);
-            //        ModpackTemplateList.Instance.PopulateModpackList(mods, modpacks, null);
-
-            //        mods.ForEach(mod => mod.Active = false);
-
-            //        string modpackName;
-            //        if (commandLine.TryGetArgument('p', "modpack", out modpackName))
-            //        {
-            //            Modpack modpack = modpacks.FirstOrDefault(item => item.Name == modpackName);
-            //            if (modpack != null)
-            //            {
-            //                modpack.Active = true;
-            //            }
-            //            else
-            //            {
-            //                MessageBox.Show(
-            //                    $"No modpack named '{modpackName}' found.\nThe game will be launched without any mods enabled.",
-            //                    "Error loading modpack!", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //            }
-            //        }
-
-            //        string savegameName;
-            //        if (commandLine.TryGetArgument('s', "savegame", out savegameName))
-            //        {
-            //            startInfo.Arguments = $"--load-game \"{savegameName}\"";
-            //        }
-
-            //        string factorioCommandline;
-            //        if (commandLine.TryGetArgument('c', "commands", out factorioCommandline))
-            //        {
-            //            if (!string.IsNullOrEmpty(startInfo.Arguments)) startInfo.Arguments += " ";
-            //            startInfo.Arguments += factorioCommandline.Replace('\'', '"');
-            //        }
-
-            //        ModManager.EndUpdateTemplates(true);
-            //        ModManager.SaveTemplates();
-                    
-            //        Process.Start(startInfo);
-            //    }
-            //    else
-            //    {
-            //        MessageBox.Show(
-            //            $"Factorio version {versionString} is not available.\nCheck your installed Factorio versions.",
-            //            "Error starting game!", MessageBoxButton.OK, MessageBoxImage.Error);
-            //    }
-
-            //    return true;
-            //}
-
-            return false;
+            ActivateMods(commandLine);
+            var startInfo = new ProcessStartInfo(factorioVersion.Executable.FullName);
+            startInfo.Arguments = BuildArguments(commandLine);
+            
+            Process.Start(startInfo);
+            return true;
         }
 
         /// <summary>

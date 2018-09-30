@@ -11,7 +11,6 @@ namespace ModMyFactory.ViewModels
     sealed class LinkPropertiesViewModel : ViewModelBase
     {
         FactorioVersion selectedVersion;
-        bool useExactVersion;
 
         Modpack selectedModpack;
 
@@ -41,20 +40,7 @@ namespace ModMyFactory.ViewModels
                 }
             }
         }
-
-        public bool UseExactVersion
-        {
-            get { return useExactVersion; }
-            set
-            {
-                if (value != useExactVersion)
-                {
-                    useExactVersion = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(UseExactVersion)));
-                }
-            }
-        }
-
+        
         public ListCollectionView ModpacksView { get; }
 
         public ObservableCollection<Modpack> Modpacks { get; }

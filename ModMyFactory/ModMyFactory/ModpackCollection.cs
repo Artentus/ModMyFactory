@@ -14,5 +14,15 @@ namespace ModMyFactory
             }
             return false;
         }
+
+        public Modpack Find(string name)
+        {
+            foreach (var modpack in this)
+            {
+                if (modpack.Name == name)
+                    return modpack;
+            }
+            return null;
+        }
     }
 }

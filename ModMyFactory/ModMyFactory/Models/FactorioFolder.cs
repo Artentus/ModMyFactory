@@ -11,9 +11,9 @@ namespace ModMyFactory.Models
         const string Win32BinName = "Win32";
         const string Win64BinName = "x64";
 
-        public DirectoryInfo Directory { get; }
+        public DirectoryInfo Directory { get; private set; }
 
-        public FileInfo Executable { get; }
+        public FileInfo Executable { get; private set; }
 
         public Version Version { get; }
 
@@ -46,6 +46,21 @@ namespace ModMyFactory.Models
             var executable = new FileInfo(Path.Combine(newDir.FullName, executablePath));
 
             return new FactorioFolder(newDir, executable, Version, Is64Bit);
+        }
+
+        /// <summary>
+        /// Moves this Factorio folder to a new directory.
+        /// </summary>
+        public async Task MoveToAsync(DirectoryInfo destination)
+        {
+            if (!destination.Exists) destination.Create();
+
+            var newDir = new DirectoryInfo(Path.Combine(destination.FullName, Directory.Name));
+            await Directory.MoveToAsync(destination.FullName);
+            Directory = newDir;
+
+            string executablePath = Is64Bit ? $@"bin\{Win64BinName}\factorio.exe" : $@"bin\{Win32BinName}\factorio.exe";
+            Executable = new FileInfo(Path.Combine(newDir.FullName, executablePath));
         }
 
         private FactorioFolder(DirectoryInfo directory, FileInfo executable, Version version, bool is64Bit)

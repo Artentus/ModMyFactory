@@ -85,5 +85,13 @@ namespace ModMyFactory.Helpers
             }
             return false;
         }
+
+        public static IEnumerable<T> Append<T>(this IEnumerable<T> source, T item)
+        {
+            foreach (var sourceItem in source)
+                yield return sourceItem;
+
+            yield return item;
+        }
     }
 }
