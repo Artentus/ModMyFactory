@@ -365,11 +365,20 @@
                                IsOpen="{Binding IsChecked, ElementName=ModsToggleButton, Mode=TwoWay}">
                             <Border Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
                                 <Menu IsMainMenu="False">
+                                    <MenuItem Header="{DynamicResource DownloadModsContextMenuItem}" Icon="{StaticResource DownloadIcon}"
+                                              InputGestureText="{DynamicResource DownloadModsHotkey}" Command="{Binding DownloadModsCommand}"/>
+                                    <MenuItem Header="{DynamicResource AddModFilesContextMenuItem}" Icon="{StaticResource AddDocumentIcon}"
+                                              InputGestureText="{DynamicResource AddModFilesHotkey}" Command="{Binding AddModsFromFilesCommand}"/>
+                                    <MenuItem Header="{DynamicResource DeleteSelectedModsMenuItem}" Icon="{StaticResource DeleteIcon}"
+                                              InputGestureText="{StaticResource DeleteHotkey}" Command="{Binding DeleteSelectedModsCommand}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{DynamicResource UpdateModsMenuItem}" Icon="{StaticResource UpdateIcon}"
+                                              InputGestureText="{DynamicResource UpdateModsHotkey}" Command="{Binding UpdateModsCommand}"/>
+                                    <MenuItem Header="{DynamicResource DependenciesMenuItem}" Icon="{StaticResource DependencyIcon}"
+                                              InputGestureText="{DynamicResource DependenciesHotkey}" Command="{Binding DownloadDependenciesCommand}"/>
+                                    <Separator/>
                                     <MenuItem Header="{DynamicResource ActivateSelectedModsMenuItem}" Command="{Binding ActivateSelectedModsCommand}"/>
                                     <MenuItem Header="{DynamicResource DeactivateSelectedModsMenuItem}" Command="{Binding DeactivateSelectedModsCommand}"/>
-                                    <Separator/>
-                                    <MenuItem Header="{DynamicResource DeleteSelectedModsMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
-                                              Command="{Binding DeleteSelectedModsCommand}"/>
                                     <Separator/>
                                     <MenuItem Header="{DynamicResource SelectActiveModsMenuItem}" Command="{Binding SelectActiveModsCommand}"/>
                                     <MenuItem Header="{DynamicResource SelectInactiveModsMenuItem}" Command="{Binding SelectInactiveModsCommand}"/>
@@ -459,11 +468,20 @@
 
                 <controls:DragDropReadyListBox.ContextMenu>
                     <ContextMenu>
+                        <MenuItem Header="{DynamicResource DownloadModsContextMenuItem}" Icon="{StaticResource DownloadIcon}"
+                                              InputGestureText="{DynamicResource DownloadModsHotkey}" Command="{Binding DownloadModsCommand}"/>
+                        <MenuItem Header="{DynamicResource AddModFilesContextMenuItem}" Icon="{StaticResource AddDocumentIcon}"
+                                              InputGestureText="{DynamicResource AddModFilesHotkey}" Command="{Binding AddModsFromFilesCommand}"/>
+                        <MenuItem Header="{DynamicResource DeleteSelectedModsMenuItem}" Icon="{StaticResource DeleteIcon}"
+                                              InputGestureText="{StaticResource DeleteHotkey}" Command="{Binding DeleteSelectedModsCommand}"/>
+                        <Separator/>
+                        <MenuItem Header="{DynamicResource UpdateModsMenuItem}" Icon="{StaticResource UpdateIcon}"
+                                              InputGestureText="{DynamicResource UpdateModsHotkey}" Command="{Binding UpdateModsCommand}"/>
+                        <MenuItem Header="{DynamicResource DependenciesMenuItem}" Icon="{StaticResource DependencyIcon}"
+                                              InputGestureText="{DynamicResource DependenciesHotkey}" Command="{Binding DownloadDependenciesCommand}"/>
+                        <Separator/>
                         <MenuItem Header="{DynamicResource ActivateSelectedModsMenuItem}" Command="{Binding ActivateSelectedModsCommand}"/>
                         <MenuItem Header="{DynamicResource DeactivateSelectedModsMenuItem}" Command="{Binding DeactivateSelectedModsCommand}"/>
-                        <Separator/>
-                        <MenuItem Header="{DynamicResource DeleteSelectedModsMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
-                                  Command="{Binding DeleteSelectedModsCommand}"/>
                         <Separator/>
                         <MenuItem Header="{DynamicResource SelectActiveModsMenuItem}" Command="{Binding SelectActiveModsCommand}"/>
                         <MenuItem Header="{DynamicResource SelectInactiveModsMenuItem}" Command="{Binding SelectInactiveModsCommand}"/>
@@ -516,13 +534,13 @@
                                IsOpen="{Binding IsChecked, ElementName=ModpacksToggleButton, Mode=TwoWay}">
                             <Border Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
                                 <Menu IsMainMenu="False">
-                                    <MenuItem Header="{DynamicResource ActivateSelectedModpacksMenuItem}" Command="{Binding ActivateSelectedModpacksCommand}"/>
-                                    <MenuItem Header="{DynamicResource DeactivateSelectedModpacksMenuItem}" Command="{Binding DeactivateSelectedModpacksCommand}"/>
-                                    <Separator/>
                                     <MenuItem Header="{DynamicResource NewModpackMenuItem}" Icon="{StaticResource NewPackageIcon}" InputGestureText="{DynamicResource NewModpackHotkey}"
                                               Command="{Binding CreateModpackCommand}"/>
                                     <MenuItem Header="{DynamicResource DeleteSelectedModpacksMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
                                               Command="{Binding DeleteSelectedModpacksCommand}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{DynamicResource ActivateSelectedModpacksMenuItem}" Command="{Binding ActivateSelectedModpacksCommand}"/>
+                                    <MenuItem Header="{DynamicResource DeactivateSelectedModpacksMenuItem}" Command="{Binding DeactivateSelectedModpacksCommand}"/>
                                     <Separator/>
                                     <MenuItem Header="{DynamicResource SelectActiveModpacksMenuItem}" Command="{Binding SelectActiveModpacksCommand}"/>
                                     <MenuItem Header="{DynamicResource SelectInactiveModpacksMenuItem}" Command="{Binding SelectInactiveModpacksCommand}"/>
@@ -655,13 +673,13 @@
 
                 <controls:DragDropReadyListBox.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="{DynamicResource ActivateSelectedModpacksMenuItem}" Command="{Binding ActivateSelectedModpacksCommand}"/>
-                        <MenuItem Header="{DynamicResource DeactivateSelectedModpacksMenuItem}" Command="{Binding DeactivateSelectedModpacksCommand}"/>
-                        <Separator/>
                         <MenuItem Header="{DynamicResource NewModpackMenuItem}" Icon="{StaticResource NewPackageIcon}" InputGestureText="{DynamicResource NewModpackHotkey}"
                                   Command="{Binding CreateModpackCommand}"/>
                         <MenuItem Header="{DynamicResource DeleteSelectedModpacksMenuItem}" Icon="{StaticResource DeleteIcon}" InputGestureText="{StaticResource DeleteHotkey}"
                                   Command="{Binding DeleteSelectedModpacksCommand}"/>
+                        <Separator/>
+                        <MenuItem Header="{DynamicResource ActivateSelectedModpacksMenuItem}" Command="{Binding ActivateSelectedModpacksCommand}"/>
+                        <MenuItem Header="{DynamicResource DeactivateSelectedModpacksMenuItem}" Command="{Binding DeactivateSelectedModpacksCommand}"/>
                         <Separator/>
                         <MenuItem Header="{DynamicResource SelectActiveModpacksMenuItem}" Command="{Binding SelectActiveModpacksCommand}"/>
                         <MenuItem Header="{DynamicResource SelectInactiveModpacksMenuItem}" Command="{Binding SelectInactiveModpacksCommand}"/>

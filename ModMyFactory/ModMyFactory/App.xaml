@@ -551,7 +551,6 @@
 
             <Style TargetType="ContextMenu">
                 <Setter Property="OverridesDefaultStyle" Value="True"/>
-                <Setter Property="Grid.IsSharedSizeScope" Value="true"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ContextMenu">
