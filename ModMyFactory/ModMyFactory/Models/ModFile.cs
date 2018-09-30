@@ -284,7 +284,7 @@ namespace ModMyFactory.Models
             {
                 using (var archive = ZipFile.OpenRead(archiveFile.FullName))
                 {
-                    var entry = archive.Entries.FirstOrDefault(e => e.Name == "info.json");
+                    var entry = archive.Entries.FirstOrDefault(e => (e.Name == "info.json") && (e.FullName.Count(c => c == '/') == 1));
                     if (entry == null) return false;
 
                     using (var stream = entry.Open())

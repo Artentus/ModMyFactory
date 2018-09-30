@@ -105,6 +105,7 @@ namespace ModMyFactory.Models
             }
 
             string[] parts = value.Split(new[] { ">=" }, StringSplitOptions.None);
+            if (parts.Length == 1) parts = value.Split(new[] { '=' }, StringSplitOptions.None);
             if ((parts.Length == 0) || (parts.Length > 2)) throw new ArgumentException("Invalid dependency string.");
 
             string name = parts[0].TrimEnd();
