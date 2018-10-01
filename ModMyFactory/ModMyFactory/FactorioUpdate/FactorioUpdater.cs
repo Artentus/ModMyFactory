@@ -5,7 +5,6 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.Web;
@@ -46,33 +45,30 @@ namespace ModMyFactory.FactorioUpdate
         /// Gets all valid target versions for a specified version of Factorio.
         /// </summary>
         /// <param name="versionToUpdate">The version of Factorio that is to be updated.</param>
-        /// <param name="installedVersions">A collection that contains all installed versions of Factorio.</param>
         /// <param name="updateSteps">The available update steps provided by the API.</param>
         /// <returns>Returns a list of valid update targets for the specified version of Factorio.</returns>
-        public static List<UpdateTarget> GetUpdateTargets(FactorioVersion versionToUpdate, ICollection<FactorioVersion> installedVersions, List<UpdateStep> updateSteps)
+        public static List<UpdateTarget> GetUpdateTargets(FactorioVersion versionToUpdate, List<UpdateStep> updateSteps)
         {
             var targets = new List<UpdateTarget>();
-            //var groups = updateSteps.GroupBy(step => new Version(step.To.Major, step.To.Minor));
-            //foreach (var group in groups)
-            //{
-            //    UpdateStep targetStep = group.MaxBy(step => step.To, new VersionComparer());
-            //    List<UpdateStep> stepChain = GetStepChain(updateSteps, versionToUpdate.Version, targetStep.To);
-            //    bool isValid = installedVersions.All(version => version.IsSpecialVersion || !version.IsFileSystemEditable || version.Version != targetStep.To);
-            //    UpdateTarget target = new UpdateTarget(stepChain, targetStep.To, targetStep.IsStable, isValid);
-            //    targets.Add(target);
+            var groups = updateSteps.GroupBy(step => new Version(step.To.Major, step.To.Minor));
+            foreach (var group in groups)
+            {
+                UpdateStep targetStep = group.MaxBy(step => step.To, new VersionComparer());
+                List<UpdateStep> stepChain = GetStepChain(updateSteps, versionToUpdate.Version, targetStep.To);
+                UpdateTarget target = new UpdateTarget(stepChain, targetStep.To, targetStep.IsStable);
+                targets.Add(target);
 
-            //    if (!targetStep.IsStable)
-            //    {
-            //        UpdateStep stableStep = group.FirstOrDefault(step => step.IsStable);
-            //        if (stableStep != null)
-            //        {
-            //            stepChain = GetStepChain(updateSteps, versionToUpdate.Version, stableStep.To);
-            //            isValid = installedVersions.All(version => version.IsSpecialVersion || !version.IsFileSystemEditable || version.Version != stableStep.To);
-            //            target = new UpdateTarget(stepChain, stableStep.To, true, isValid);
-            //            targets.Add(target);
-            //        }
-            //    }
-            //}
+                if (!targetStep.IsStable)
+                {
+                    UpdateStep stableStep = group.Where(step => step.IsStable).MaxBy(step => step.To, new VersionComparer());
+                    if (stableStep != null)
+                    {
+                        stepChain = GetStepChain(updateSteps, versionToUpdate.Version, stableStep.To);
+                        target = new UpdateTarget(stepChain, stableStep.To, true);
+                        targets.Add(target);
+                    }
+                }
+            }
             return targets;
         }
 
@@ -85,7 +81,7 @@ namespace ModMyFactory.FactorioUpdate
         /// <param name="progress">A progress object used to report the progress of the operation.</param>
         /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
         /// <returns>Returns a list of update package files.</returns>
-        private static async Task<List<FileInfo>> DownloadUpdatePackagesAsync(string username, string token, UpdateTarget target, IProgress<double> progress, CancellationToken cancellationToken)
+        public static async Task<List<FileInfo>> DownloadUpdatePackagesAsync(string username, string token, UpdateTarget target, IProgress<double> progress, CancellationToken cancellationToken)
         {
             var packageFiles = new List<FileInfo>();
 
@@ -98,7 +94,7 @@ namespace ModMyFactory.FactorioUpdate
                     if (cancellationToken.IsCancellationRequested) break;
 
                     var subProgress = new Progress<double>(value => progress.Report((1.0 / stepCount) * counter + (value / stepCount)));
-                    var packageFile = await UpdateWebsite.DownloadUpdateStepAsync(username, token, step, subProgress, cancellationToken);
+                    var packageFile = await UpdateWebsite.DownloadUpdatePackageAsync(username, token, step, subProgress, cancellationToken);
                     if (packageFile != null) packageFiles.Add(packageFile);
 
                     counter++;
@@ -275,7 +271,17 @@ namespace ModMyFactory.FactorioUpdate
             }
         }
 
-        private static async Task ApplyUpdatePackagesAsync(FactorioVersion versionToUpdate, List<FileInfo> packageFiles, IProgress<double> progress)
+        /// <summary>
+        /// Downloads and applies an update target to a specified version of Factorio.
+        /// </summary>
+        /// <param name="versionToUpdate">The version of Factorio that is going to be updated.</param>
+        /// <param name="username">The username.</param>
+        /// <param name="token">The login token.</param>
+        /// <param name="target">The update target.</param>
+        /// <param name="progress">A progress object used to report the progress of the operation.</param>
+        /// <param name="stageProgress">A progress object used to report the stage of the operation.</param>
+        /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
+        public static async Task ApplyUpdatePackagesAsync(FactorioVersion versionToUpdate, List<FileInfo> packageFiles, IProgress<double> progress)
         {
             int packageCount = packageFiles.Count;
             int counter = 0;
@@ -290,46 +296,6 @@ namespace ModMyFactory.FactorioUpdate
             }
 
             progress.Report(1);
-        }
-
-        /// <summary>
-        /// Downloads and applies an update target to a specified version of Factorio.
-        /// </summary>
-        /// <param name="versionToUpdate">The version of Factorio that is going to be updated.</param>
-        /// <param name="username">The username.</param>
-        /// <param name="token">The login token.</param>
-        /// <param name="target">The update target.</param>
-        /// <param name="progress">A progress object used to report the progress of the operation.</param>
-        /// <param name="stageProgress">A progress object used to report the stage of the operation.</param>
-        /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
-        public static async Task ApplyUpdateAsync(FactorioVersion versionToUpdate, string username, string token, UpdateTarget target,
-            IProgress<double> progress, IProgress<UpdaterStageInfo> stageProgress, CancellationToken cancellationToken)
-        {
-            //stageProgress.Report(new UpdaterStageInfo(true, App.Instance.GetLocalizedResourceString("UpdatingFactorioStage1Description")));
-            //List<FileInfo> packageFiles = await DownloadUpdatePackagesAsync(username, token, target, progress, cancellationToken);
-
-            //try
-            //{
-            //    if ((packageFiles != null) && !cancellationToken.IsCancellationRequested)
-            //    {
-            //        progress.Report(0);
-            //        stageProgress.Report(new UpdaterStageInfo(false, App.Instance.GetLocalizedResourceString("UpdatingFactorioStage2Description")));
-
-            //        await ApplyUpdatePackagesAsync(versionToUpdate, packageFiles, progress);
-            //        versionToUpdate.UpdateVersion(target.TargetVersion);
-            //    }
-            //}
-            //finally
-            //{
-            //    if (packageFiles != null)
-            //    {
-            //        foreach (var file in packageFiles)
-            //        {
-            //            if (file.Exists)
-            //                file.Delete();
-            //        }
-            //    }
-            //}
         }
     }
 }

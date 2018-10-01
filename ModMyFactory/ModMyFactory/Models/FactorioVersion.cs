@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using ModMyFactory.FactorioUpdate;
 using ModMyFactory.IO;
 using WPFCore;
 
@@ -41,7 +42,8 @@ namespace ModMyFactory.Models
         }
 
 
-        
+
+        FactorioFolder folder;
         string name;
         readonly bool hasLinks;
         readonly bool canMove;
@@ -51,7 +53,21 @@ namespace ModMyFactory.Models
 
         public bool CanUpdate { get; }
 
-        private FactorioFolder Folder { get; }
+        private FactorioFolder Folder
+        {
+            get => folder;
+            set
+            {
+                if (value != folder)
+                {
+                    folder = value;
+
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Version)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayName)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Directory)));
+                }
+            }
+        }
 
         public string Name
         {
@@ -83,7 +99,7 @@ namespace ModMyFactory.Models
         {
             hasLinks = false;
             canMove = false;
-            Folder = null;
+            folder = null;
             IsNameEditable = false;
             CanUpdate = false;
 
@@ -94,7 +110,7 @@ namespace ModMyFactory.Models
         {
             hasLinks = true;
             this.canMove = canMove;
-            Folder = folder;
+            this.folder = folder;
             IsNameEditable = false;
             CanUpdate = false;
 
@@ -109,7 +125,7 @@ namespace ModMyFactory.Models
         {
             hasLinks = true;
             canMove = true;
-            Folder = folder;
+            this.folder = folder;
             IsNameEditable = true;
             CanUpdate = true;
 
@@ -190,6 +206,18 @@ namespace ModMyFactory.Models
                 Process.Start(Folder.Executable.FullName);
             else
                 Process.Start(Folder.Executable.FullName, args);
+        }
+
+        public async Task UpdateAsync(List<FileInfo> packageFiles, IProgress<double> progress)
+        {
+            if (!CanUpdate)
+                throw new NotSupportedException();
+            
+            await FactorioUpdater.ApplyUpdatePackagesAsync(this, packageFiles, progress);
+
+            if (!FactorioFolder.TryLoad(Directory, out var newFolder))
+                throw new CriticalUpdaterException(UpdaterErrorType.InstallationCorrupt);
+            Folder = newFolder;
         }
         
         /// <summary>

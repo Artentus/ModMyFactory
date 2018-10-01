@@ -75,8 +75,7 @@ namespace ModMyFactory
             var appDataDirectory = new DirectoryInfo(AppDataPath);
             if (!appDataDirectory.Exists) appDataDirectory.Create();
 
-            var tempDirectory = new DirectoryInfo(TempPath);
-            if (tempDirectory.Exists) tempDirectory.Delete(true);
+            CleanUpTempDir();
 
             string settingsFile = Path.Combine(appDataDirectory.FullName, "settings.json");
             Settings = Settings.Load(settingsFile, true);
@@ -109,6 +108,15 @@ namespace ModMyFactory
         public App(bool createCrashLog = true)
             : this(createCrashLog, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ModMyFactory"))
         { }
+
+        /// <summary>
+        /// Cleans up the apps temporary directory.
+        /// </summary>
+        internal void CleanUpTempDir()
+        {
+            var tempDir = new DirectoryInfo(TempPath);
+            if (tempDir.Exists) tempDir.Delete(true);
+        }
 
         /// <summary>
         /// Deletes the default log file if it exists.

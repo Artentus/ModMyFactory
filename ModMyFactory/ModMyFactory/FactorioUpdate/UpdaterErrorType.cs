@@ -19,5 +19,10 @@
         /// A file has a different CRC32 checksum than provided by the update package.
         /// </summary>
         ChecksumMismatch,
+
+        /// <summary>
+        /// The resulting Factorio installation is corrupt.
+        /// </summary>
+        InstallationCorrupt,
     }
 }

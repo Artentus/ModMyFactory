@@ -104,7 +104,6 @@
     <Compile Include="FactorioUpdate\FactorioUpdater.cs" />
     <Compile Include="FactorioUpdate\FileUpdateAction.cs" />
     <Compile Include="FactorioUpdate\FileUpdateInfo.cs" />
-    <Compile Include="FactorioUpdate\UpdaterStageInfo.cs" />
     <Compile Include="GlobalCredentials.cs" />
     <Compile Include="Helpers\CollectionExtensions.cs" />
     <Compile Include="Helpers\DirectoryInfoExtensions.cs" />

@@ -17,7 +17,13 @@ namespace ModMyFactory.Models
             {
                 if (value != wrappedVersion)
                 {
+                    if (wrappedVersion != null)
+                        wrappedVersion.PropertyChanged -= WrappedVersionPropertyChangedHandler;
+
                     wrappedVersion = value;
+
+                    if (wrappedVersion != null)
+                        wrappedVersion.PropertyChanged += WrappedVersionPropertyChangedHandler;
 
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Version)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Directory)));
@@ -39,6 +45,11 @@ namespace ModMyFactory.Models
         protected SpecialFactorioVersion(FactorioVersion wrappedVersion)
         {
             WrappedVersion = wrappedVersion;
+        }
+
+        private void WrappedVersionPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
+        {
+            OnPropertyChanged(e);
         }
     }
 }

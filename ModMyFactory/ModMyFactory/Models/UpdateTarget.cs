@@ -13,14 +13,11 @@ namespace ModMyFactory.Models
 
         public bool IsLatestStable { get; }
 
-        public bool IsValid { get; }
-
-        public UpdateTarget(IList<UpdateStep> steps, Version targetVersion, bool isLatestStable, bool isValid)
+        public UpdateTarget(IList<UpdateStep> steps, Version targetVersion, bool isLatestStable)
         {
             Steps = new ReadOnlyCollection<UpdateStep>(steps);
             TargetVersion = targetVersion;
             IsLatestStable = isLatestStable;
-            IsValid = isValid;
         }
     }
 }

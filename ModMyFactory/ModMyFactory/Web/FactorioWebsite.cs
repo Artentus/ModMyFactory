@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Security;
@@ -141,33 +140,31 @@ namespace ModMyFactory.Web
         /// Downloads Factorio.
         /// </summary>
         /// <param name="version">The version of Factorio to be downloaded.</param>
-        /// <param name="downloadDirectory">The directory the file is downloaded to.</param>
         /// <param name="container">The cookie container the session cookie is stored in.</param>
         /// <param name="progress">A progress object used to report the progress of the operation.</param>
         /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
-        public static async Task<FactorioVersion> DownloadFactorioAsync(FactorioOnlineVersion version, DirectoryInfo downloadDirectory, CookieContainer container, IProgress<double> progress, CancellationToken cancellationToken)
+        public static async Task<FactorioVersion> DownloadFactorioAsync(FactorioOnlineVersion version, CookieContainer container, IProgress<double> progress, CancellationToken cancellationToken)
         {
-            //if (!downloadDirectory.Exists) downloadDirectory.Create();
+            var factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
+            if (!factorioDirectory.Exists) factorioDirectory.Create();
+            
+            var file = new FileInfo(Path.Combine(factorioDirectory.FullName, "package.zip"));
+            await WebHelper.DownloadFileAsync(version.DownloadUrl, container, file, progress, cancellationToken);
 
-            //string filePath = Path.Combine(downloadDirectory.FullName, "package.zip");
-            //var file = new FileInfo(filePath);
+            try
+            {
+                if (cancellationToken.IsCancellationRequested) return null;
+                progress.Report(2);
 
-            //await WebHelper.DownloadFileAsync(version.DownloadUrl, container, file, progress, cancellationToken);
-            //if (!cancellationToken.IsCancellationRequested)
-            //{
-            //    progress.Report(2);
-            //    DirectoryInfo dir = await Task.Run(() =>
-            //    {
-            //        ZipFile.ExtractToDirectory(file.FullName, downloadDirectory.FullName);
-            //        file.Delete();
-
-            //        return downloadDirectory.EnumerateDirectories($"Factorio_{version.Version}*").First();
-            //    });
-
-
-            //}
-
-            return null;
+                if (!FactorioFile.TryLoad(file, out var factorioFile)) return null;
+                var factorioFolder = await FactorioFolder.FromFileAsync(factorioFile, factorioDirectory);
+                return new FactorioVersion(factorioFolder);
+            }
+            finally
+            {
+                if (file.Exists)
+                    file.Delete();
+            }
         }
     }
 }
