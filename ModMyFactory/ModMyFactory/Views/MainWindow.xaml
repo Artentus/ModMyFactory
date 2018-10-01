@@ -376,6 +376,8 @@
                                               InputGestureText="{DynamicResource UpdateModsHotkey}" Command="{Binding UpdateModsCommand}"/>
                                     <MenuItem Header="{DynamicResource DependenciesMenuItem}" Icon="{StaticResource DependencyIcon}"
                                               InputGestureText="{DynamicResource DependenciesHotkey}" Command="{Binding DownloadDependenciesCommand}"/>
+                                    <MenuItem Header="{DynamicResource BrowseModsOnlineMenuItem}" Icon="{StaticResource WebDestinationIcon}"
+                                              Command="{Binding BrowseModsOnlineCommand}"/>
                                     <Separator/>
                                     <MenuItem Header="{DynamicResource ActivateSelectedModsMenuItem}" Command="{Binding ActivateSelectedModsCommand}"/>
                                     <MenuItem Header="{DynamicResource DeactivateSelectedModsMenuItem}" Command="{Binding DeactivateSelectedModsCommand}"/>
@@ -479,6 +481,8 @@
                                               InputGestureText="{DynamicResource UpdateModsHotkey}" Command="{Binding UpdateModsCommand}"/>
                         <MenuItem Header="{DynamicResource DependenciesMenuItem}" Icon="{StaticResource DependencyIcon}"
                                               InputGestureText="{DynamicResource DependenciesHotkey}" Command="{Binding DownloadDependenciesCommand}"/>
+                        <MenuItem Header="{DynamicResource BrowseModsOnlineMenuItem}" Icon="{StaticResource WebDestinationIcon}"
+                                              Command="{Binding BrowseModsOnlineCommand}"/>
                         <Separator/>
                         <MenuItem Header="{DynamicResource ActivateSelectedModsMenuItem}" Command="{Binding ActivateSelectedModsCommand}"/>
                         <MenuItem Header="{DynamicResource DeactivateSelectedModsMenuItem}" Command="{Binding DeactivateSelectedModsCommand}"/>

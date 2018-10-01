@@ -220,5 +220,17 @@ namespace ModMyFactory.Web
                 throw new InvalidOperationException("The server sent an invalid mod file.");
             return modFile;
         }
+
+        /// <summary>
+        /// Opens a mods page in the default web browser.
+        /// </summary>
+        /// <param name="mod">The mod to navigate to.</param>
+        public static void OpenModInBrowser(Mod mod)
+        {
+            if (mod == null) return;
+
+            string url = $"{BaseUrl}/mod/{mod.Name}";
+            Process.Start(url);
+        }
     }
 }

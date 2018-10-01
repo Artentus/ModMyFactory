@@ -220,6 +220,7 @@
     <sys:String x:Key="DownloadModsContextMenuItem">Download mods</sys:String>
     <sys:String x:Key="AddModFilesContextMenuItem">Add mods</sys:String>
     <sys:String x:Key="DeleteSelectedModsMenuItem">Delete selected mods</sys:String>
+    <sys:String x:Key="BrowseModsOnlineMenuItem">View mods online</sys:String>
     <sys:String x:Key="ActivateSelectedModsMenuItem">Activate selected mods</sys:String>
     <sys:String x:Key="DeactivateSelectedModsMenuItem">Deactivate selected mods</sys:String>
     <sys:String x:Key="SelectActiveModsMenuItem">Select all active mods</sys:String>

@@ -21,6 +21,7 @@ using ModMyFactory.Views;
 using ModMyFactory.Web.ModApi;
 using WPFCore;
 using WPFCore.Commands;
+using ModMyFactory.Web;
 
 namespace ModMyFactory.ViewModels
 {
@@ -556,6 +557,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand RefreshCommand { get; }
 
+        public RelayCommand BrowseModsOnlineCommand { get; }
+
         #endregion
 
         volatile bool modpacksLoading;
@@ -703,6 +706,7 @@ namespace ModMyFactory.ViewModels
                 DeleteSelectedModsCommand = new RelayCommand(DeleteSelectedMods, () => Mods.Any(mod => mod.IsSelected));
                 SelectActiveModsCommand = new RelayCommand(SelectActiveMods);
                 SelectInactiveModsCommand = new RelayCommand(SelectInactiveMods);
+                BrowseModsOnlineCommand = new RelayCommand(BrowseModsOnline, () => Mods.Any(mod => mod.IsSelected));
 
                 ActivateSelectedModpacksCommand = new RelayCommand(ActivateSelectedModpacks, () => Modpacks.Any(modpack => modpack.IsSelected));
                 DeactivateSelectedModpacksCommand = new RelayCommand(DeactivateSelectedModpacks, () => Modpacks.Any(modpack => modpack.IsSelected));
@@ -719,6 +723,12 @@ namespace ModMyFactory.ViewModels
                 // New ModMyFactory instance started.
                 Program.NewInstanceStarted += NewInstanceStartedHandler;
             }
+        }
+
+        private void BrowseModsOnline()
+        {
+            foreach (var mod in Mods.Where(m => m.IsSelected))
+                ModWebsite.OpenModInBrowser(mod);
         }
 
         #region AddMods
