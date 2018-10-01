@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using ModMyFactory.IO;
@@ -74,8 +75,6 @@ namespace ModMyFactory.Models
 
         public virtual DirectoryInfo Directory => Folder?.Directory;
 
-        public virtual FileInfo Executable => Folder?.Executable;
-
         public bool Is64Bit => Folder?.Is64Bit ?? false;
 
         protected FactorioVersion()
@@ -138,6 +137,18 @@ namespace ModMyFactory.Models
                 await Folder.MoveToAsync(destination);
                 linkDirectory = Folder.Directory;
             }
+        }
+
+        /// <summary>
+        /// Runs Factorio.
+        /// </summary>
+        /// <param name="args">Optional. Command line args.</param>
+        public virtual void Run(string args = null)
+        {
+            if (string.IsNullOrWhiteSpace(args))
+                Process.Start(Folder.Executable.FullName);
+            else
+                Process.Start(Folder.Executable.FullName, args);
         }
         
         /// <summary>

@@ -21,7 +21,6 @@ namespace ModMyFactory.Models
 
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Version)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Directory)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Executable)));
                 }
             }
         }
@@ -30,9 +29,12 @@ namespace ModMyFactory.Models
 
         public override DirectoryInfo Directory => WrappedVersion?.Directory;
 
-        public override FileInfo Executable => WrappedVersion?.Executable;
-
         protected override abstract string LoadName();
+
+        public override void Run(string args = null)
+        {
+            WrappedVersion?.Run(args);
+        }
 
         protected SpecialFactorioVersion(FactorioVersion wrappedVersion)
         {

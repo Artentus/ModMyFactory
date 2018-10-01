@@ -931,7 +931,7 @@ namespace ModMyFactory.ViewModels
                 }
             }
 
-            Process.Start(SelectedFactorioVersion.Executable.FullName);
+            SelectedFactorioVersion.Run();
         }
 
         private void OpenVersionManager()

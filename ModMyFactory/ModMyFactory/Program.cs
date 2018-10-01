@@ -227,10 +227,9 @@ namespace ModMyFactory
 
 
             ActivateMods(commandLine);
-            var startInfo = new ProcessStartInfo(factorioVersion.Executable.FullName);
-            startInfo.Arguments = BuildArguments(commandLine);
-            
-            Process.Start(startInfo);
+            string args = BuildArguments(commandLine);
+            factorioVersion.Run(args);
+
             return true;
         }
 
