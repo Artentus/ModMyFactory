@@ -15,7 +15,14 @@ namespace ModMyFactory
             if (App.Instance.Settings.LoadSteamVersion)
             {
                 if (FactorioSteamVersion.TryLoad(out var steamVersion))
+                {
                     installedVersions.Add(steamVersion);
+                }
+                else
+                {
+                    App.Instance.Settings.LoadSteamVersion = false;
+                    App.Instance.Settings.Save();
+                }
             }
 
             return new FactorioCollection(installedVersions);

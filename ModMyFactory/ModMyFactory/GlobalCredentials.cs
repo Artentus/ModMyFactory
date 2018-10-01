@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
-using System.Net;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
@@ -50,7 +49,6 @@ namespace ModMyFactory
         string username;
         SecureString password;
         string token;
-        CookieContainer container;
 
         public string Username
         {
@@ -61,7 +59,6 @@ namespace ModMyFactory
                 {
                     username = value;
                     token = null;
-                    container = null;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Username)));
                 }
             }
@@ -74,7 +71,6 @@ namespace ModMyFactory
             {
                 password = value;
                 token = null;
-                container = null;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(Password)));
             }
         }
@@ -104,7 +100,6 @@ namespace ModMyFactory
         private GlobalCredentials()
         {
             token = null;
-            container = null;
 
             if (App.Instance.Settings.SaveCredentials)
             {
@@ -151,7 +146,6 @@ namespace ModMyFactory
             if (failed)
             {
                 token = null;
-                container = null;
             }
 
             while (!IsLoggedInWithToken())
@@ -175,7 +169,6 @@ namespace ModMyFactory
                 if (failed)
                 {
                     token = null;
-                    container = null;
                 }
                 else
                 {
@@ -186,68 +179,6 @@ namespace ModMyFactory
             }
 
             loginToken = token;
-            return true;
-        }
-
-        private bool IsLoggedInWithCookie() => IsLoggedIn() && (container != null);
-
-        public bool LogIn(Window owner, out CookieContainer sessionContainer)
-        {
-            sessionContainer = null;
-
-            bool failed = false;
-            if (IsLoggedInWithCookie()) // Credentials and cookie available.
-            {
-                failed = !FactorioWebsite.EnsureLoggedIn(container);
-
-                if (failed)
-                {
-                    container = new CookieContainer();
-                    failed = !FactorioWebsite.LogIn(container, Username, Password);
-                }
-            }
-            else if (IsLoggedIn()) // Only credentials available.
-            {
-                container = new CookieContainer();
-                failed = !FactorioWebsite.LogIn(container, Username, Password);
-            }
-
-            if (failed)
-            {
-                token = null;
-                container = null;
-            }
-
-            while (!IsLoggedInWithCookie())
-            {
-                var loginWindow = new LoginWindow
-                {
-                    Owner = owner,
-                    SaveCredentialsBox = { IsChecked = App.Instance.Settings.SaveCredentials },
-                    FailedText = { Visibility = failed ? Visibility.Visible : Visibility.Collapsed },
-                };
-                bool? loginResult = loginWindow.ShowDialog();
-                if (loginResult == null || loginResult == false) return false;
-                username = loginWindow.UsernameBox.Text;
-                password = loginWindow.PasswordBox.SecurePassword;
-
-                bool saveCredentials = loginWindow.SaveCredentialsBox.IsChecked ?? false;
-                App.Instance.Settings.SaveCredentials = saveCredentials;
-
-                container = new CookieContainer();
-                failed = !FactorioWebsite.LogIn(container, Username, Password);
-                if (failed)
-                {
-                    token = null;
-                    container = null;
-                }
-                else if (saveCredentials)
-                {
-                    Save();
-                }
-            }
-
-            sessionContainer = container;
             return true;
         }
 
