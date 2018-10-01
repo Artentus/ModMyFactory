@@ -12,7 +12,11 @@ namespace ModMyFactory
         public static FactorioCollection Load()
         {
             var installedVersions = FactorioVersion.LoadInstalledVersions();
-            if (FactorioSteamVersion.TryLoad(out var steamVersion)) installedVersions.Add(steamVersion);
+            if (App.Instance.Settings.LoadSteamVersion)
+            {
+                if (FactorioSteamVersion.TryLoad(out var steamVersion))
+                    installedVersions.Add(steamVersion);
+            }
 
             return new FactorioCollection(installedVersions);
         }

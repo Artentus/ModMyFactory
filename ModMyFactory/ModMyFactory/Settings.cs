@@ -37,8 +37,6 @@ namespace ModMyFactory
                 OnlineModsWindowInfo = WindowInfo.Empty,
                 ModpackExportWindowInfo = WindowInfo.Empty,
 
-                SteamVersionPath = string.Empty,
-
                 SaveCredentials = false,
                 WarningShown = false,
                 ShowExperimentalDownloads = false,
@@ -56,6 +54,8 @@ namespace ModMyFactory
                 ShowOptionalDependencies = false,
                 ActivateDependencies = true,
                 ActivateOptionalDependencies = false,
+
+                LoadSteamVersion = false,
             };
             return defaultSettings;
         }
@@ -111,8 +111,6 @@ namespace ModMyFactory
 
         public WindowInfo ModpackExportWindowInfo;
 
-        public string SteamVersionPath;
-
         public bool SaveCredentials;
 
         public bool WarningShown;
@@ -150,6 +148,8 @@ namespace ModMyFactory
         public bool ActivateDependencies;
 
         public bool ActivateOptionalDependencies;
+
+        public bool LoadSteamVersion;
 
         [JsonConstructor]
         private Settings()

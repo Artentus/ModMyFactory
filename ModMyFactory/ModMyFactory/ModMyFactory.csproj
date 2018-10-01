@@ -118,6 +118,7 @@
     <Compile Include="Helpers\ProcessExtensions.cs" />
     <Compile Include="Helpers\RegistryHelper.cs" />
     <Compile Include="Helpers\SecureStringHelper.cs" />
+    <Compile Include="Helpers\SteamHelper.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Helpers\WindowExtensions.cs" />
     <Compile Include="InstanceStartedEventArgs.cs" />

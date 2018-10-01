@@ -1,7 +1,8 @@
-﻿using Microsoft.Win32;
+﻿using ModMyFactory.Helpers;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace ModMyFactory.Models
 {
@@ -11,74 +12,35 @@ namespace ModMyFactory.Models
     sealed class FactorioSteamVersion : FactorioVersion
     {
         const int AppId = 427520;
-
+        
         public static string SteamAppDataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Factorio");
-
+        
         /// <summary>
-        /// Tries to ready the Steam installation path from the Registry.
-        /// </summary>
-        /// <param name="path">Out. If the action was sucessful, the full path to the Steam installation directory.</param>
-        /// <returns>Return true if the path was found in the Registry, otherwise false.</returns>
-        public static bool TryGetSteamInstallPath(out string path)
-        {
-            RegistryKey softwareKey = null;
-            try
-            {
-                string softwarePath = Environment.Is64BitProcess ? @"SOFTWARE\WOW6432Node" : "SOFTWARE";
-                softwareKey = Registry.LocalMachine.OpenSubKey(softwarePath, false);
-
-                using (var key = softwareKey.OpenSubKey(@"Valve\Steam"))
-                {
-                    var obj = key.GetValue("InstallPath");
-                    path = obj as string;
-                    return !string.IsNullOrWhiteSpace(path);
-                }
-            }
-            catch
-            {
-                path = null;
-                return false;
-            }
-            finally
-            {
-                if (softwareKey != null)
-                    softwareKey.Close();
-            }
-        }
-
-        /// <summary>
-        /// Checks if Steam is installed on the system.
-        /// </summary>
-        /// <returns>Returns true if Steam is installed on the system, otherwise false.</returns>
-        public static bool IsSteamInstalled()
-        {
-            return TryGetSteamInstallPath(out var path);
-        }
-
-        /// <summary>
-        /// Tries to load the Steam version of Factorio specified in the settings.
+        /// Tries to load the Steam version of Factorio.
         /// </summary>
         /// <param name="steamVersion">Out. The Steam version.</param>
         /// <returns>Returns true if the Steam version has been loaded sucessfully, otherwise false.</returns>
         public static bool TryLoad(out FactorioVersion steamVersion)
         {
-            if (string.IsNullOrEmpty(App.Instance.Settings.SteamVersionPath))
+            steamVersion = null;
+
+            var steamLibraries = SteamHelper.ListSteamLibraries();
+            if ((steamLibraries == null) || (steamLibraries.Count == 0)) return false;
+
+            foreach (var library in steamLibraries)
             {
-                steamVersion = null;
-                return false;
+                var factorioDir = library.EnumerateDirectories("Factorio").FirstOrDefault();
+                if (factorioDir != null)
+                {
+                    if (FactorioFolder.TryLoad(factorioDir, out var folder))
+                    {
+                        steamVersion = new FactorioSteamVersion(folder);
+                        return true;
+                    }
+                }
             }
 
-            var directory = new DirectoryInfo(App.Instance.Settings.SteamVersionPath);
-            if (FactorioFolder.TryLoad(directory, out var folder))
-            {
-                steamVersion = new FactorioSteamVersion(folder);
-                return true;
-            }
-            else
-            {
-                steamVersion = null;
-                return false;
-            }
+            return false;
         }
 
         protected override string LoadName()
@@ -86,10 +48,14 @@ namespace ModMyFactory.Models
             return "Steam";
         }
 
+        /// <summary>
+        /// Runs Factorio.
+        /// </summary>
+        /// <param name="args">Optional. Command line args.</param>
         public override void Run(string args = null)
         {
             string steamPath;
-            if (!TryGetSteamInstallPath(out steamPath)) return;
+            if (!SteamHelper.TryGetSteamInstallPath(out steamPath)) return;
 
             var startInfo = new ProcessStartInfo(Path.Combine(steamPath, "Steam.exe"));
             startInfo.Arguments = $"-applaunch {AppId}";
