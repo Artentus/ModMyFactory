@@ -14,6 +14,8 @@ namespace ModMyFactory.Models
     /// </summary>
     class FactorioVersion : NotifyPropertyChangedBase
     {
+        private static int counter = 0;
+
         /// <summary>
         /// Loads all installed versions of Factorio.
         /// </summary>
@@ -117,14 +119,53 @@ namespace ModMyFactory.Models
             CreateLinks();
         }
 
+        private FileInfo GetNameFile()
+        {
+            if (Directory == null) return null;
+            return new FileInfo(Path.Combine(Directory.FullName, "name.cfg"));
+        }
+
         protected virtual string LoadName()
         {
-            return "Factorio";
+            var file = GetNameFile();
+            if (file == null)
+            {
+                string name = (counter == 0) ? "Factorio" : $"Factorio {counter}";
+                counter++;
+                return name;
+            }
+            else if (!file.Exists)
+            {
+                string name = (counter == 0) ? "Factorio" : $"Factorio {counter}";
+                counter++;
+                SaveName(name);
+                return name;
+            }
+            else
+            {
+                using (var stream = file.OpenRead())
+                {
+                    using (var reader = new StreamReader(stream))
+                    {
+                        return reader.ReadToEnd();
+                    }
+                }
+            }
         }
 
         private void SaveName(string name)
         {
-
+            var file = GetNameFile();
+            if (file != null)
+            {
+                using (var stream = file.Open(FileMode.Create, FileAccess.Write))
+                {
+                    using (var writer = new StreamWriter(stream))
+                    {
+                        writer.Write(name);
+                    }
+                }
+            }
         }
 
         /// <summary>

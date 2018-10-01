@@ -282,7 +282,7 @@
 
             <Separator/>
 
-            <ComboBox Margin="2,0" Width="120" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedFactorioVersion}">
+            <ComboBox Margin="2,0" Width="200" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedFactorioVersion}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type model:FactorioVersion}">
                         <TextBlock Margin="4,1" VerticalAlignment="Center" Text="{Binding DisplayName}"/>
