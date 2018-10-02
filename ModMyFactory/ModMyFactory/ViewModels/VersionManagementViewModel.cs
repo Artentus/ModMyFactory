@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -250,8 +249,11 @@ namespace ModMyFactory.ViewModels
 
         #region PreserveContents
 
-        private void PreserveSavegames(DirectoryInfo localSaveDirectory, DirectoryInfo globalSaveDirectory, bool move)
+        private async Task PreserveSavegames(DirectoryInfo localSaveDirectory)
         {
+            var globalSaveDirectory = App.Instance.Settings.GetSavegameDirectory();
+            if (!globalSaveDirectory.Exists) globalSaveDirectory.Create();
+
             foreach (var saveFile in localSaveDirectory.GetFiles())
             {
                 if (!saveFile.Name.StartsWith("_autosave"))
@@ -267,19 +269,17 @@ namespace ModMyFactory.ViewModels
                             count++;
                         } while (File.Exists(newPath));
                     }
-
-                    if (move)
-                        saveFile.MoveTo(newPath);
-                    else
-                        saveFile.CopyTo(newPath);
+                    
+                    await Task.Run(() => saveFile.CopyTo(newPath));
                 }
             }
-
-            if (move) localSaveDirectory.Delete(true);
         }
 
-        private void PreserveScenarios(DirectoryInfo localScenarioDirectory, DirectoryInfo globalScenarioDirectory, bool move)
+        private async Task PreserveScenarios(DirectoryInfo localScenarioDirectory)
         {
+            var globalScenarioDirectory = App.Instance.Settings.GetScenarioDirectory();
+            if (!globalScenarioDirectory.Exists) globalScenarioDirectory.Create();
+
             foreach (var scenarioFile in localScenarioDirectory.GetFiles())
             {
                 string newPath = Path.Combine(globalScenarioDirectory.FullName, scenarioFile.Name);
@@ -293,148 +293,107 @@ namespace ModMyFactory.ViewModels
                         count++;
                     } while (File.Exists(newPath));
                 }
-
-                if (move)
-                    scenarioFile.MoveTo(newPath);
-                else
-                    scenarioFile.CopyTo(newPath);
+                
+                await Task.Run(() => scenarioFile.CopyTo(newPath));
             }
-
-            if (move) localScenarioDirectory.Delete(true);
         }
 
-        private async Task PreserveMods(DirectoryInfo localModDirectory, bool move)
+        private async Task PreserveMods(DirectoryInfo localModDirectory)
         {
             foreach (var file in localModDirectory.GetFiles("*.zip"))
             {
                 if (ModFile.TryLoadFromFile(file, out var modFile))
-                    await Mod.Add(modFile, Mods, MainViewModel.Instance.Modpacks, !move, true);
+                    await Mod.Add(modFile, Mods, MainViewModel.Instance.Modpacks, true, true);
             }
 
             foreach (var directory in localModDirectory.GetDirectories())
             {
                 if (ModFile.TryLoadFromDirectory(directory, out var modFile))
-                    await Mod.Add(modFile, Mods, MainViewModel.Instance.Modpacks, !move, true);
+                    await Mod.Add(modFile, Mods, MainViewModel.Instance.Modpacks, true, true);
             }
-
-            if (move) localModDirectory.Delete(true);
         }
 
-        private async Task PreserveContentsAsync(DirectoryInfo sourceDirectory, bool move)
+        private async Task PreserveContentsAsync(DirectoryInfo sourceDirectory)
         {
-            await Task.Run(() =>
-            {
-                // Savegames
-                var localSaveDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "saves"));
-                if (localSaveDirectory.Exists)
-                {
-                    DirectoryInfo globalSaveDirectory = App.Instance.Settings.GetSavegameDirectory();
-                    if (!globalSaveDirectory.Exists) globalSaveDirectory.Create();
-
-                    PreserveSavegames(localSaveDirectory, globalSaveDirectory, move);
-                }
-
-
-                // Scenarios
-                var localScenarioDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "scenarios"));
-                if (localScenarioDirectory.Exists)
-                {
-                    DirectoryInfo globalScenarioDirectory = App.Instance.Settings.GetScenarioDirectory();
-                    if (!globalScenarioDirectory.Exists) globalScenarioDirectory.Create();
-
-                    PreserveScenarios(localScenarioDirectory, globalScenarioDirectory, move);
-                }
-            });
+            // Savegames
+            var localSaveDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "saves"));
+            if (localSaveDirectory.Exists) await PreserveSavegames(localSaveDirectory);
+            
+            // Scenarios
+            var localScenarioDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "scenarios"));
+            if (localScenarioDirectory.Exists) await PreserveScenarios(localScenarioDirectory);
 
             // Mods
             var localModDirectory = new DirectoryInfo(Path.Combine(sourceDirectory.FullName, "mods"));
-            if (localModDirectory.Exists)
-            {
-                await PreserveMods(localModDirectory, move);
-            }
-            
+            if (localModDirectory.Exists) await PreserveMods(localModDirectory);
         }
 
         #endregion
-
-        private async Task MoveFactorioInstallationAsync(DirectoryInfo installationDirectory, DirectoryInfo destinationDirectory)
+        
+        private async Task AddFactorioInstallation(FactorioFolder folder)
         {
-            await PreserveContentsAsync(installationDirectory, true);
-            await installationDirectory.MoveToAsync(destinationDirectory.FullName);
-        }
+            await PreserveContentsAsync(folder.Directory);
 
-        private async Task CopyFactorioInstallationAsync(DirectoryInfo installationDirectory, DirectoryInfo destinationDirectory)
-        {
-            await PreserveContentsAsync(installationDirectory, false);
-            await installationDirectory.CopyToAsync(destinationDirectory.FullName);
+            var factorioDir = App.Instance.Settings.GetFactorioDirectory();
+            if (!factorioDir.Exists) factorioDir.Create();
+
+            var newFolder = await folder.CopyToAsync(factorioDir);
+            newFolder.RenameToUnique();
+
+            var factorioVersion = new FactorioVersion(newFolder);
+            FactorioVersions.Add(factorioVersion);
         }
 
         private async Task AddLocalVersion()
         {
-            //var dialog = new VistaFolderBrowserDialog();
-            //bool? result = dialog.ShowDialog(Window);
-            //if (result.HasValue && result.Value)
-            //{
-            //    var installationDirectory = new DirectoryInfo(dialog.SelectedPath);
-            //    Version version;
+            var dialog = new VistaFolderBrowserDialog();
+            bool? result = dialog.ShowDialog(Window);
+            if (result.HasValue && result.Value)
+            {
+                var directory = new DirectoryInfo(dialog.SelectedPath);
+                if (FactorioFolder.TryLoad(directory, out var folder))
+                {
+                    if (folder.Is64Bit == Environment.Is64BitOperatingSystem)
+                    {
+                        var progressWindow = new ProgressWindow() { Owner = Window };
+                        var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                        progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingLocalInstallationAction");
+                        progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("CopyingFilesDescription");
+                        progressViewModel.IsIndeterminate = true;
 
-            //    bool is64Bit;
-            //    if (!FactorioVersion.LocalInstallationValid(installationDirectory, out version, out is64Bit))
-            //    {
-            //        MessageBox.Show(Window,
-            //            App.Instance.GetLocalizedMessage("InvalidFactorioFolder", MessageType.Error),
-            //            App.Instance.GetLocalizedMessageTitle("InvalidFactorioFolder", MessageType.Error),
-            //            MessageBoxButton.OK, MessageBoxImage.Error);
-            //        return;
-            //    }
-            //    if (is64Bit != Environment.Is64BitOperatingSystem)
-            //    {
-            //        MessageBox.Show(Window,
-            //            App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
-            //            App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
-            //            MessageBoxButton.OK, MessageBoxImage.Error);
-            //        return;
-            //    }
-            //    if (FactorioVersions.Any(factorioVersion => factorioVersion.Version == version))
-            //    {
-            //        MessageBox.Show(Window,
-            //            App.Instance.GetLocalizedMessage("FactorioVersionInstalled", MessageType.Error),
-            //            App.Instance.GetLocalizedMessageTitle("FactorioVersionInstalled", MessageType.Error),
-            //            MessageBoxButton.OK, MessageBoxImage.Error);
-            //        return;
-            //    }
+                        Task closeWindowTask = null;
+                        try
+                        {
+                            Task addTask = AddFactorioInstallation(folder);
 
+                            closeWindowTask = addTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                            progressWindow.ShowDialog();
 
-            //    var copyOrMoveWindow = new CopyOrMoveMessageWindow() { Owner = Window };
-            //    ((CopyOrMoveViewModel)copyOrMoveWindow.ViewModel).CopyOrMoveType = CopyOrMoveType.Factorio;
-            //    result = copyOrMoveWindow.ShowDialog();
-            //    if (result.HasValue && result.Value)
-            //    {
-            //        bool move = copyOrMoveWindow.Move;
-
-            //        DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
-            //        if (!factorioDirectory.Exists) factorioDirectory.Create();
-            //        DirectoryInfo destinationDirectory = new DirectoryInfo(Path.Combine(factorioDirectory.FullName, version.ToString(3)));
-
-            //        var progressWindow = new ProgressWindow() { Owner = Window };
-            //        var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-            //        progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingLocalInstallationAction");
-            //        progressViewModel.ProgressDescription = move ? App.Instance.GetLocalizedResourceString("MovingFilesDescription") : App.Instance.GetLocalizedResourceString("CopyingFilesDescription");
-            //        progressViewModel.IsIndeterminate = true;
-
-            //        Task addTask = move
-            //            ? MoveFactorioInstallationAsync(installationDirectory, destinationDirectory)
-            //            : CopyFactorioInstallationAsync(installationDirectory, destinationDirectory);
-
-            //        Task closeWindowTask = addTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-            //        progressWindow.ShowDialog();
-
-            //        await addTask;
-            //        await closeWindowTask;
-
-            //        FactorioVersions.Add(new FactorioVersion(destinationDirectory, version));
-            //    }
-            //}
+                            await addTask;
+                        }
+                        finally
+                        {
+                            if (closeWindowTask != null)
+                                await closeWindowTask;
+                        }
+                        
+                    }
+                    else
+                    {
+                        MessageBox.Show(Window,
+                            App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
+                            App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("InvalidFactorioFolder", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("InvalidFactorioFolder", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         private async Task SelectSteamVersion()
