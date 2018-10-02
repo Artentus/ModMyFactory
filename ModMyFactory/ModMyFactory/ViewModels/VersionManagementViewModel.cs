@@ -85,7 +85,7 @@ namespace ModMyFactory.ViewModels
                 SelectSteamCommand = new RelayCommand(async () => await SelectSteamVersion(), () => !App.Instance.Settings.LoadSteamVersion);
                 OpenFolderCommand = new RelayCommand(OpenFolder, () => SelectedVersion != null);
                 UpdateCommand = new RelayCommand(async () => await UpdateSelectedVersion(), () => SelectedVersion != null && SelectedVersion.CanUpdate);
-                RemoveCommand = new RelayCommand(async () => await RemoveSelectedVersion(), () => SelectedVersion != null);
+                RemoveCommand = new RelayCommand(RemoveSelectedVersion, () => SelectedVersion != null);
             }
         }
 
@@ -184,120 +184,68 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        private async Task<FactorioFolder> ExtractToFolder(FactorioFile file)
+        {
+            var progressWindow = new ProgressWindow() { Owner = Window };
+            var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+            progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingFromZipAction");
+            progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
+            progressViewModel.IsIndeterminate = true;
+
+            FactorioFolder result = null;
+            Task<FactorioFolder> extractTask;
+            Task closeWindowTask = null;
+            try
+            {
+                extractTask = FactorioFolder.FromFileAsync(file, App.Instance.Settings.GetFactorioDirectory());
+
+                closeWindowTask = extractTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                progressWindow.ShowDialog();
+
+                result = await extractTask;
+            }
+            finally
+            {
+                if (closeWindowTask != null)
+                    await closeWindowTask;
+            }
+            
+            return result;
+        }
+
         private async Task AddZippedVersion()
         {
-            //var dialog = new VistaOpenFileDialog();
-            //dialog.Filter = App.Instance.GetLocalizedResourceString("ZipDescription") + @" (*.zip)|*.zip";
-            //bool? result = dialog.ShowDialog(Window);
-            //if (result.HasValue && result.Value)
-            //{
-            //    var archiveFile = new FileInfo(dialog.FileName);
-            //    Version version = null;
-            //    DirectoryInfo versionDirectory = null;
+            var dialog = new VistaOpenFileDialog();
+            dialog.Filter = App.Instance.GetLocalizedResourceString("ZipDescription") + @" (*.zip)|*.zip";
+            bool? result = dialog.ShowDialog(Window);
+            if (result.HasValue && result.Value)
+            {
+                var archiveFile = new FileInfo(dialog.FileName);
+                if (FactorioFile.TryLoad(archiveFile, out var file))
+                {
+                    if (file.Is64Bit == Environment.Is64BitOperatingSystem)
+                    {
+                        var folder = await ExtractToFolder(file);
 
-            //    var progressWindow = new ProgressWindow() { Owner = Window };
-            //    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-            //    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingFromZipAction");
-            //    progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("CheckingValidityDescription");
-            //    progressViewModel.IsIndeterminate = true;
-
-            //    bool invalidArchiveFile = false;
-            //    bool invalidPlatform = false;
-            //    bool versionInstalled = false;
-            //    IProgress<int> progress = new Progress<int>(stage =>
-            //    {
-            //        switch (stage)
-            //        {
-            //            case 1:
-            //                progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ExtractingDescription");
-            //                break;
-            //            case -1:
-            //                invalidArchiveFile = true;
-            //                break;
-            //            case -2:
-            //                invalidPlatform = true;
-            //                break;
-            //            case -3:
-            //                versionInstalled = true;
-            //                break;
-            //        }
-            //    });
-
-            //    Task extractTask = Task.Run(() =>
-            //    {
-            //        bool is64Bit;
-            //        if (FactorioVersion.ArchiveFileValid(archiveFile, out version, out is64Bit))
-            //        {
-            //            if (is64Bit == Environment.Is64BitOperatingSystem)
-            //            {
-            //                if (FactorioVersions.All(factorioVersion => factorioVersion.Version != version))
-            //                {
-            //                    progress.Report(1);
-
-            //                    DirectoryInfo factorioDirectory = App.Instance.Settings.GetFactorioDirectory();
-            //                    ZipFile.ExtractToDirectory(archiveFile.FullName, factorioDirectory.FullName);
-
-            //                    string versionString = version.ToString(3);
-            //                    versionDirectory = factorioDirectory.EnumerateDirectories($"Factorio_{versionString}*").First();
-            //                    versionDirectory.MoveTo(Path.Combine(factorioDirectory.FullName, versionString));
-            //                }
-            //                else
-            //                {
-            //                    progress.Report(-3);
-            //                }
-            //            }
-            //            else
-            //            {
-            //                progress.Report(-2);
-            //            }
-            //        }
-            //        else
-            //        {
-            //            progress.Report(-1);
-            //        }
-            //    });
-
-            //    Task closeWindowTask =
-            //        extractTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-            //    progressWindow.ShowDialog();
-
-            //    await extractTask;
-            //    await closeWindowTask;
-
-            //    if (invalidArchiveFile)
-            //    {
-            //        MessageBox.Show(Window,
-            //            App.Instance.GetLocalizedMessage("InvalidFactorioArchive", MessageType.Error),
-            //            App.Instance.GetLocalizedMessageTitle("InvalidFactorioArchive", MessageType.Error),
-            //            MessageBoxButton.OK, MessageBoxImage.Error);
-            //    }
-            //    else if (invalidPlatform)
-            //    {
-            //        MessageBox.Show(Window,
-            //            App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
-            //            App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
-            //            MessageBoxButton.OK, MessageBoxImage.Error);
-            //    }
-            //    else if (versionInstalled)
-            //    {
-            //        MessageBox.Show(Window,
-            //            App.Instance.GetLocalizedMessage("FactorioVersionInstalled", MessageType.Error),
-            //            App.Instance.GetLocalizedMessageTitle("FactorioVersionInstalled", MessageType.Error),
-            //            MessageBoxButton.OK, MessageBoxImage.Error);
-            //    }
-            //    else
-            //    {
-            //        FactorioVersions.Add(new FactorioVersion(versionDirectory, version));
-
-            //        if (MessageBox.Show(Window,
-            //            App.Instance.GetLocalizedMessage("DeleteFactorioArchive", MessageType.Question),
-            //            App.Instance.GetLocalizedMessageTitle("DeleteFactorioArchive", MessageType.Question),
-            //            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            //        {
-            //            archiveFile.Delete();
-            //        }
-            //    }
-            //}
+                        var factorioVersion = new FactorioVersion(folder);
+                        FactorioVersions.Add(factorioVersion);
+                    }
+                    else
+                    {
+                        MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("InvalidFactorioArchive", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("InvalidFactorioArchive", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         #region PreserveContents
@@ -550,112 +498,128 @@ namespace ModMyFactory.ViewModels
                 Process.Start(SelectedVersion.Directory.FullName);
         }
 
-        private async Task UpdateSelectedVersion()
+        private async Task<List<UpdateStep>> GetUpdateSteps(string token)
         {
-            //string token;
-            //if (GlobalCredentials.Instance.LogIn(Window, out token))
-            //{
-            //    UpdateInfo updateInfo = UpdateWebsite.GetUpdateInfo(GlobalCredentials.Instance.Username, token);
-            //    List<UpdateStep> updateSteps = updateInfo.Package.Where(step => step.From >= SelectedVersion.Version).ToList();
-
-            //    if (updateSteps.Count > 0)
-            //    {
-            //        List<UpdateTarget> targets = FactorioUpdater.GetUpdateTargets(SelectedVersion, FactorioVersions, updateSteps);
-
-            //        var updateListWindow = new UpdateListWindow() { Owner = Window };
-            //        var updateListViewModel = (UpdateListViewModel)updateListWindow.ViewModel;
-            //        updateListViewModel.UpdateTargets = targets;
-            //        bool? result = updateListWindow.ShowDialog();
-            //        if (result.HasValue && result.Value)
-            //        {
-            //            UpdateTarget target = updateListViewModel.SelectedTarget;
-
-            //            var progressWindow = new ProgressWindow { Owner = Window };
-            //            var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-            //            progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("UpdatingFactorioAction");
-
-            //            var cancellationSource = new CancellationTokenSource();
-            //            progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
-
-            //            var progress = new Progress<double>(value => progressViewModel.Progress = value );
-            //            var stageProgress = new Progress<UpdaterStageInfo>(value =>
-            //            {
-            //                progressViewModel.CanCancel = value.CanCancel;
-            //                progressViewModel.ProgressDescription = value.Description;
-            //            });
-
-            //            try
-            //            {
-            //                Task closeWindowTask = null;
-            //                try
-            //                {
-            //                    Task updateTask = FactorioUpdater.ApplyUpdateAsync(SelectedVersion,
-            //                        GlobalCredentials.Instance.Username, token, target,
-            //                        progress, stageProgress, cancellationSource.Token);
-
-            //                    closeWindowTask = updateTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-            //                    progressWindow.ShowDialog();
-
-            //                    await updateTask;
-            //                }
-            //                finally
-            //                {
-            //                    if (closeWindowTask != null) await closeWindowTask;
-            //                }
-            //            }
-            //            catch (HttpRequestException)
-            //            {
-            //                MessageBox.Show(Window,
-            //                    App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
-            //                    App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
-            //                    MessageBoxButton.OK, MessageBoxImage.Error);
-            //            }
-            //            catch (CriticalUpdaterException)
-            //            {
-            //                MessageBox.Show(Window,
-            //                    App.Instance.GetLocalizedMessage("FactorioUpdaterCritical", MessageType.Error),
-            //                    App.Instance.GetLocalizedMessageTitle("FactorioUpdaterCritical", MessageType.Error),
-            //                    MessageBoxButton.OK, MessageBoxImage.Error);
-            //            }
-            //        }
-            //    }
-            //    else
-            //    {
-            //        MessageBox.Show(Window,
-            //            App.Instance.GetLocalizedMessage("NoFactorioUpdate", MessageType.Information),
-            //            App.Instance.GetLocalizedMessageTitle("NoFactorioUpdate", MessageType.Information),
-            //            MessageBoxButton.OK, MessageBoxImage.Information);
-            //    }
-            //}
+            var updateInfo = await UpdateWebsite.GetUpdateInfoAsync(GlobalCredentials.Instance.Username, token);
+            return updateInfo.Package.Where(step => step.From >= SelectedVersion.Version).ToList();
         }
 
-        private async Task RemoveSelectedVersion()
+        private bool ShowUpdateWindow(List<UpdateTarget> targets, out UpdateTarget target)
         {
-            //if (MessageBox.Show(Window,
-            //        App.Instance.GetLocalizedMessage("RemoveFactorioVersion", MessageType.Question),
-            //        App.Instance.GetLocalizedMessageTitle("RemoveFactorioVersion", MessageType.Question),
-            //        MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            //{
-            //    var progressWindow = new ProgressWindow() { Owner = Window };
-            //    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-            //    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("RemovingFactorioVersionAction");
-            //    progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("DeletingFilesDescription");
-            //    progressViewModel.IsIndeterminate = true;
+            var updateListWindow = new UpdateListWindow() { Owner = Window };
+            var updateListViewModel = (UpdateListViewModel)updateListWindow.ViewModel;
+            updateListViewModel.UpdateTargets = targets;
+            bool? result = updateListWindow.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                target = updateListViewModel.SelectedTarget;
+                return target != null;
+            }
+            else
+            {
+                target = null;
+                return false;
+            }
+        }
 
-            //    Task deleteTask = Task.Run(() =>
-            //    {
-            //        SelectedVersion.DeleteLinks();
-            //        SelectedVersion.Directory.Delete(true);
-            //    });
+        private async Task ApplyUpdate(string token, UpdateTarget target, IProgress<double> progress, IProgress<bool> canCancel, IProgress<string> description, CancellationToken cancellationToken)
+        {
+            canCancel.Report(true);
+            description.Report(App.Instance.GetLocalizedResourceString("UpdatingFactorioStage1Description"));
+            var files = await FactorioUpdater.DownloadUpdatePackagesAsync(GlobalCredentials.Instance.Username, token, target, progress, cancellationToken);
 
-            //    Task closeWindowTask = deleteTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-            //    progressWindow.ShowDialog();
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                progress.Report(0);
+                canCancel.Report(false);
+                description.Report(App.Instance.GetLocalizedResourceString("UpdatingFactorioStage2Description"));
+                await SelectedVersion.UpdateAsync(files, progress);
+            }
+        }
+        
+        private async Task UpdateSelectedVersionInternal(string token, UpdateTarget target)
+        {
+            var progressWindow = new ProgressWindow { Owner = Window };
+            var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+            progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("UpdatingFactorioAction");
 
-            //    await deleteTask;
-            //    await closeWindowTask;
+            var cancellationSource = new CancellationTokenSource();
+            progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
 
-            //    FactorioVersions.Remove(SelectedVersion);
-            //}
+            var progress = new Progress<double>(value => progressViewModel.Progress = value);
+            var canCancel = new Progress<bool>(value => progressViewModel.CanCancel = value);
+            var description = new Progress<string>(value => progressViewModel.ProgressDescription = value);
+            
+            try
+            {
+                Task closeWindowTask = null;
+                try
+                {
+                    Task updateTask = ApplyUpdate(token, target, progress, canCancel, description, cancellationSource.Token);
+
+                    closeWindowTask = updateTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                    progressWindow.ShowDialog();
+
+                    await updateTask;
+                }
+                finally
+                {
+                    if (closeWindowTask != null) await closeWindowTask;
+                }
+            }
+            catch (HttpRequestException)
+            {
+                MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
+                    App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (CriticalUpdaterException)
+            {
+                MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("FactorioUpdaterCritical", MessageType.Error),
+                    App.Instance.GetLocalizedMessageTitle("FactorioUpdaterCritical", MessageType.Error),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async Task UpdateSelectedVersion()
+        {
+            if ((SelectedVersion == null) || !SelectedVersion.CanUpdate) return;
+            
+            if (GlobalCredentials.Instance.LogIn(Window, out string token))
+            {
+                var updateSteps = await GetUpdateSteps(token);
+                if (updateSteps.Count > 0)
+                {
+                    var targets = FactorioUpdater.GetUpdateTargets(SelectedVersion, updateSteps);
+                    if (ShowUpdateWindow(targets, out var target))
+                    {
+                        await UpdateSelectedVersionInternal(token, target);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(Window,
+                        App.Instance.GetLocalizedMessage("NoFactorioUpdate", MessageType.Information),
+                        App.Instance.GetLocalizedMessageTitle("NoFactorioUpdate", MessageType.Information),
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+        }
+
+        private void RemoveSelectedVersion()
+        {
+            if (SelectedVersion == null) return;
+
+            if (MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("RemoveFactorioVersion", MessageType.Question),
+                    App.Instance.GetLocalizedMessageTitle("RemoveFactorioVersion", MessageType.Question),
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                SelectedVersion.Delete();
+                FactorioVersions.Remove(SelectedVersion);
+            }
         }
     }
 }

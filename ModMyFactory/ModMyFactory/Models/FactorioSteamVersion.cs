@@ -64,6 +64,17 @@ namespace ModMyFactory.Models
             Process.Start(startInfo);
         }
 
+        /// <summary>
+        /// Deletes this Factorio installation.
+        /// </summary>
+        public override void Delete()
+        {
+            DeleteLinks();
+
+            App.Instance.Settings.LoadSteamVersion = false;
+            App.Instance.Settings.Save();
+        }
+
         private FactorioSteamVersion(FactorioFolder folder)
             : base(folder, false, new DirectoryInfo(SteamAppDataPath))
         { }

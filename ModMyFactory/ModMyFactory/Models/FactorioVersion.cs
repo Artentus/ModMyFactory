@@ -32,8 +32,11 @@ namespace ModMyFactory.Models
                 {
                     if (FactorioFolder.TryLoad(directory, out var folder))
                     {
-                        folder.RenameToUnique();
-                        versionList.Add(new FactorioVersion(folder));
+                        if (folder.Is64Bit == Environment.Is64BitOperatingSystem)
+                        {
+                            folder.RenameToUnique();
+                            versionList.Add(new FactorioVersion(folder));
+                        }
                     }
                 }
             }
@@ -208,6 +211,10 @@ namespace ModMyFactory.Models
                 Process.Start(Folder.Executable.FullName, args);
         }
 
+        /// <summary>
+        /// Updates this Factorio installation.
+        /// </summary>
+        /// <param name="packageFiles">A list of update packages to apply, in order.</param>
         public async Task UpdateAsync(List<FileInfo> packageFiles, IProgress<double> progress)
         {
             if (!CanUpdate)
@@ -218,6 +225,21 @@ namespace ModMyFactory.Models
             if (!FactorioFolder.TryLoad(Directory, out var newFolder))
                 throw new CriticalUpdaterException(UpdaterErrorType.InstallationCorrupt);
             Folder = newFolder;
+        }
+
+        /// <summary>
+        /// Deletes this Factorio installation.
+        /// </summary>
+        public virtual void Delete()
+        {
+            if (canMove)
+            {
+                if (hasLinks && (linkDirectory != null))
+                    DeleteLinks();
+
+                if ((Directory != null) && Directory.Exists)
+                    Directory.Delete(true);
+            }
         }
         
         /// <summary>
