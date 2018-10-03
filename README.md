@@ -1,35 +1,44 @@
 ## ModMyFactory
 
-![alt tag](http://i.imgur.com/VFnFzyM.png)
+![alt tag](https://i.imgur.com/DyKg7m7.png)
 
 ModMyFactory is a Factorio mod manager with lots of extra features.
 These include:
 
 #### Access to mods.factorio.com
-Download mods from the official mod portal.
-Update your mods manually or automatically.
+Download mods from the official mod portal. Update your mods automatically.  
+Full search functionality as well as complete descriptions and links to the portal included.
 
 #### Modpacks
 Create custom modpacks that can contain as many mods _and_ modpacks as you wish.  
-Modpacks are resolved recursively, so feel free to go as deep as you like.
+Modpacks are resolved recursively, so feel free to nest as many as you like.
 
 #### Factorio version management
 Add and manage all factorio versions you like to play on at the same time.  
-New versions can be added from existing local installations or downloaded directly from the factorio.com website (requires login).
+New versions can be added from existing local installations or downloaded directly from the factorio.com website (requires login). The Steam version is also fully supported.  
+Each version can be custom named and updated individually so you can keep track of which version you use for which modpack.
 
 #### Mod version detection
 ModMyFactory will detect to which version of Factorio a mod belongs, place it in the correct mod directory and group them by version in the overview.
 
 #### Link creation
 Create shortcuts that automatically enable specific modpacks and start specific versions of the game.  
-Playing on multiple different configurations is now as easy as playing on just one.
+Loading directly into a specific savegame and custom arguments are also supported.
 
-#### Folder selection
+#### Modpack export and import
+ModMyFactory allows sharing of arbitrarily complex modpacks with ease. You can export the modpacks you create and others can import them with a few clicks.  
+Exported modpacks support a plethora of settings on a per-mod basis, as well as the ability to directly include mod files so mods don't have to be downloaded on import.
+
+#### Mod dependency handling
+Automatically download and enable dependenciey of your mods. Optional dependencies are also supported.  
+If you are missing dependencies for some of your mods ModMyFactory will tell you in an obvious but unintrusive manner.
+
+#### Disk location selection
 Select where Factorio and mods are stored on your local hard drives - without editing any configuration files.  
 Available locations are AppData, the ModMyFactory installation directory and completely custom locations.
 
 #### Localization
-ModMyFactory has full support of localization.  
+ModMyFactory has full localization support.  
 Currently available languages are: English, German, Russian, Portuguese, Chinese, Korean (hopefully more to come).
 
 ### Download
