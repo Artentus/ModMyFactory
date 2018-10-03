@@ -400,8 +400,24 @@ namespace ModMyFactory.ViewModels
             var appDataDir = new DirectoryInfo(FactorioSteamVersion.SteamAppDataPath);
             await PreserveContentsAsync(appDataDir);
 
-            if (appDataDir.Exists) appDataDir.MoveTo(Path.Combine(appDataDir.Parent.FullName, appDataDir.Name + "-old"));
-            Directory.CreateDirectory(FactorioSteamVersion.SteamAppDataPath);
+            if (appDataDir.Exists)
+            {
+                var oldDir = new DirectoryInfo(Path.Combine(appDataDir.Parent.FullName, appDataDir.Name + "-old"));
+                oldDir.Create();
+
+                var savesDir = new DirectoryInfo(Path.Combine(appDataDir.FullName, "saves"));
+                if (savesDir.Exists) savesDir.MoveTo(Path.Combine(oldDir.FullName, "saves"));
+
+                var scenariosDir = new DirectoryInfo(Path.Combine(appDataDir.FullName, "scenarios"));
+                if (scenariosDir.Exists) scenariosDir.MoveTo(Path.Combine(oldDir.FullName, "scenarios"));
+
+                var modsDir = new DirectoryInfo(Path.Combine(appDataDir.FullName, "mods"));
+                if (modsDir.Exists) modsDir.MoveTo(Path.Combine(oldDir.FullName, "mods"));
+            }
+            else
+            {
+                appDataDir.Create();
+            }
         }
 
         private async Task SelectSteamVersion()
