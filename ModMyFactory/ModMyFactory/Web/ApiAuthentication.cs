@@ -32,10 +32,11 @@ namespace ModMyFactory.Web
             try
             {
                 string document = WebHelper.GetDocument(loginPage, null, content);
+                if (string.IsNullOrWhiteSpace(document)) return false;
+
                 info = JsonHelper.Deserialize<AuthenticationInfo>(document);
-                
-                if (string.IsNullOrWhiteSpace(info.Token) || string.IsNullOrWhiteSpace(info.Username)) return false;
-                
+                if ((info == null) || string.IsNullOrWhiteSpace(info.Token) || string.IsNullOrWhiteSpace(info.Username)) return false;
+
                 return true;
             }
             catch (WebException ex)

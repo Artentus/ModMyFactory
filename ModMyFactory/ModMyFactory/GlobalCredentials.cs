@@ -135,10 +135,10 @@ namespace ModMyFactory
             {
                 AuthenticationInfo info;
                 failed = !ApiAuthentication.LogIn(Username, Password, out info);
-                token = info.Token;
                 if (!failed)
                 {
                     username = info.Username;
+                    token = info.Token;
                     if (App.Instance.Settings.SaveCredentials) Save();
                 }
             }
