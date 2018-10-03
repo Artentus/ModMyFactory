@@ -6,14 +6,16 @@ using System.IO;
 using System.Threading.Tasks;
 using ModMyFactory.FactorioUpdate;
 using ModMyFactory.IO;
+using ModMyFactory.ViewModels;
 using WPFCore;
+using WPFCore.Commands;
 
 namespace ModMyFactory.Models
 {
     /// <summary>
     /// Represents a version of Factorio.
     /// </summary>
-    class FactorioVersion : NotifyPropertyChangedBase
+    class FactorioVersion : NotifyPropertyChangedBase, IEditableObject
     {
         private static int counter = 0;
 
@@ -48,9 +50,11 @@ namespace ModMyFactory.Models
 
         FactorioFolder folder;
         string name;
+        string editingName;
         readonly bool hasLinks;
         readonly bool canMove;
         DirectoryInfo linkDirectory;
+        bool editing;
 
         public bool IsNameEditable { get; }
 
@@ -72,6 +76,20 @@ namespace ModMyFactory.Models
             }
         }
 
+        private string GetUniqueName(string baseName)
+        {
+            int counter = 0;
+            string candidateName = baseName;
+
+            while (MainViewModel.Instance.FactorioVersions.Contains(candidateName))
+            {
+                counter++;
+                candidateName = $"{baseName} ({counter})";
+            }
+
+            return candidateName;
+        }
+
         public string Name
         {
             get => name;
@@ -82,10 +100,26 @@ namespace ModMyFactory.Models
 
                 if (value != name)
                 {
-                    name = value;
+                    string newName = GetUniqueName(value);
+                    name = newName;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Name)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayName)));
 
+                    EditingName = newName;
                     SaveName(name);
+                }
+            }
+        }
+
+        public string EditingName
+        {
+            get { return editingName; }
+            set
+            {
+                if (value != editingName)
+                {
+                    editingName = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(EditingName)));
                 }
             }
         }
@@ -98,6 +132,37 @@ namespace ModMyFactory.Models
 
         public bool Is64Bit => Folder?.Is64Bit ?? false;
 
+        /// <summary>
+        /// Indicates whether the user currently edits the name of this Factorio version.
+        /// </summary>
+        public bool Editing
+        {
+            get { return editing; }
+            set
+            {
+                if (value != editing)
+                {
+                    editing = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Editing)));
+
+                    if (editing)
+                    {
+                        VersionManagementViewModel.Instance.FactorioVersionsView.EditItem(this);
+                    }
+                    else
+                    {
+                        Name = EditingName;
+                        VersionManagementViewModel.Instance.FactorioVersionsView.CommitEdit();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// A command that finishes renaming this Factorio version.
+        /// </summary>
+        public RelayCommand EndEditCommand { get; }
+
         protected FactorioVersion()
         {
             hasLinks = false;
@@ -107,6 +172,8 @@ namespace ModMyFactory.Models
             CanUpdate = false;
 
             name = LoadName();
+            editingName = name;
+            EndEditCommand = new RelayCommand(EndEdit, () => Editing);
         }
 
         protected FactorioVersion(FactorioFolder folder, bool canMove, DirectoryInfo linkDirectory)
@@ -118,6 +185,8 @@ namespace ModMyFactory.Models
             CanUpdate = false;
 
             name = LoadName();
+            editingName = name;
+            EndEditCommand = new RelayCommand(EndEdit, () => Editing);
 
             this.linkDirectory = linkDirectory;
             if (!linkDirectory.Exists) linkDirectory.Create();
@@ -133,7 +202,9 @@ namespace ModMyFactory.Models
             CanUpdate = true;
 
             name = LoadName();
-            
+            editingName = name;
+            EndEditCommand = new RelayCommand(EndEdit, () => Editing);
+
             linkDirectory = folder.Directory;
             CreateLinks();
         }
@@ -187,6 +258,21 @@ namespace ModMyFactory.Models
             }
         }
 
+        public void BeginEdit()
+        {
+            Editing = true;
+        }
+
+        public void EndEdit()
+        {
+            Editing = false;
+        }
+
+        public void CancelEdit()
+        {
+            throw new NotSupportedException();
+        }
+
         /// <summary>
         /// Moves this Factorio installation to a different location if possible.
         /// </summary>
@@ -205,10 +291,10 @@ namespace ModMyFactory.Models
         /// <param name="args">Optional. Command line args.</param>
         public virtual void Run(string args = null)
         {
-            if (string.IsNullOrWhiteSpace(args))
-                Process.Start(Folder.Executable.FullName);
-            else
-                Process.Start(Folder.Executable.FullName, args);
+            var startInfo = new ProcessStartInfo(Folder.Executable.FullName);
+            if (!string.IsNullOrWhiteSpace(args)) startInfo.Arguments = args;
+            startInfo.WorkingDirectory = Folder.Executable.Directory.FullName;
+            Process.Start(startInfo);
         }
 
         /// <summary>

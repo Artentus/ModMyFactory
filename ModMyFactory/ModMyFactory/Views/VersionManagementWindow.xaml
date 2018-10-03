@@ -25,9 +25,46 @@
 
         <ListBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" IsSynchronizedWithCurrentItem="False" PreviewMouseDown="VersionListBoxPreviewMouseDownHandler"
                  ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}">
+            <ListBox.Resources>
+                <BitmapImage x:Key="RenameActiveIcon" UriSource="../Images/RenameActive.png"/>
+                <BitmapImage x:Key="RenameInactiveIcon" UriSource="../Images/RenameInactive.png"/>
+
+                <ControlTemplate x:Key="RenameButtonTemplate" TargetType="{x:Type ToggleButton}">
+                    <Image x:Name="Image" Source="{DynamicResource RenameInactiveIcon}" Stretch="None" VerticalAlignment="Center"/>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Trigger.Setters>
+                                <Setter TargetName="Image" Property="Source" Value="{DynamicResource RenameActiveIcon}"/>
+                            </Trigger.Setters>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </ListBox.Resources>
+            
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type model:FactorioVersion}">
-                    <TextBlock Margin="4,2" IsHitTestVisible="False" Text="{Binding DisplayName}"/>
+                    <Grid Margin="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <ToggleButton x:Name="RenameButton" Grid.Column="0" Margin="3" ToolTip="{DynamicResource RenameToolTip}" Template="{StaticResource RenameButtonTemplate}"
+                                      IsChecked="{Binding Editing, Mode=TwoWay}" Visibility="{Binding IsNameEditable, Converter={StaticResource VisibilityConverter}}" Focusable="False"/>
+                        <TextBlock Grid.Column="1" Margin="2,0" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Name, Mode=OneWay}"/>
+                        <TextBox Grid.Column="1" Margin="2,0" Padding="2" VerticalAlignment="Center" MaxLines="1"
+                                             LostFocus="RenameTextBoxLostFocusHandler" IsVisibleChanged="RenameTextBoxVisibilityChangedHandler"
+                                             Text="{Binding EditingName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                             Visibility="{Binding Editing, Converter={StaticResource VisibilityConverter}, Mode=TwoWay}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Return" Command="{Binding EndEditCommand}"/>
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <TextBlock Grid.Column="2" Margin="2" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Version, StringFormat=({0})}" Foreground="Gray"/>
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
@@ -45,6 +82,6 @@
             <Button Margin="0,2" Content="{DynamicResource RemoveButton}" Command="{Binding RemoveCommand}"/>
         </StackPanel>
         
-        <Button Grid.Column="1" Grid.Row="1" Margin="4,0,0,0" IsDefault="True" IsCancel="True" Content="{DynamicResource CloseButton}"/>
+        <Button Grid.Column="1" Grid.Row="1" Margin="4,0,0,0" IsCancel="True" Content="{DynamicResource CloseButton}"/>
     </Grid>
 </controls:LayoutRoundingWindow>

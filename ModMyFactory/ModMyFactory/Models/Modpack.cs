@@ -69,7 +69,7 @@ namespace ModMyFactory.Models
                 if (value != editingName)
                 {
                     editingName = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Editing)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(EditingName)));
                 }
             }
         }

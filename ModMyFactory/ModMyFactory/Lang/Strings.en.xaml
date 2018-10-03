@@ -107,6 +107,9 @@
     
     <sys:String x:Key="Question.Dependencies.Message">Some of your active mods require dependencies that are not active. Do you want to start the game anyway?</sys:String>
     <sys:String x:Key="Question.Dependencies.Title">Required dependencies not active</sys:String>
+    
+    <sys:String x:Key="Information.NoSteam.Message">The Steam version of Factorio was not found on your computer.</sys:String>
+    <sys:String x:Key="Information.NoSteam.Title">Steam version not found</sys:String>
 
     
     <!-- file type descriptions -->

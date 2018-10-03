@@ -1,5 +1,7 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -43,6 +45,22 @@ namespace ModMyFactory.Views
             }
 
             if (item == null) listBox.SelectedItem = null;
+        }
+
+        private void RenameTextBoxLostFocusHandler(object sender, EventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            textBox.Visibility = Visibility.Collapsed;
+        }
+
+        private void RenameTextBoxVisibilityChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            if ((bool)e.NewValue)
+            {
+                textBox.Focus();
+                textBox.CaretIndex = textBox.Text.Length;
+            }
         }
     }
 }

@@ -36,7 +36,7 @@ namespace ModMyFactory.ViewModels
 
         public ListCollectionView FactorioVersionsView { get; }
 
-        public ObservableCollection<FactorioVersion> FactorioVersions { get; }
+        public FactorioCollection FactorioVersions { get; }
 
         public ModCollection Mods { get; set; }
 
@@ -376,7 +376,6 @@ namespace ModMyFactory.ViewModels
                             if (closeWindowTask != null)
                                 await closeWindowTask;
                         }
-                        
                     }
                     else
                     {
@@ -396,59 +395,53 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        private async Task MoveSteamVersionContents()
+        {
+            var appDataDir = new DirectoryInfo(FactorioSteamVersion.SteamAppDataPath);
+            await PreserveContentsAsync(appDataDir);
+
+            if (appDataDir.Exists) appDataDir.MoveTo(Path.Combine(appDataDir.Parent.FullName, appDataDir.Name + "-old"));
+            Directory.CreateDirectory(FactorioSteamVersion.SteamAppDataPath);
+        }
+
         private async Task SelectSteamVersion()
         {
-            //var dialog = new VistaFolderBrowserDialog();
-            //bool? result = dialog.ShowDialog(Window);
+            if (!FactorioSteamVersion.IsPresent())
+            {
+                MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("NoSteam", MessageType.Information),
+                    App.Instance.GetLocalizedMessageTitle("NoSteam", MessageType.Information),
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
 
-            //if (result.HasValue && result.Value)
-            //{
-            //    var selectedDirectory = new DirectoryInfo(dialog.SelectedPath);
-            //    Version version;
+            var progressWindow = new ProgressWindow() { Owner = Window };
+            var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+            progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingSteamVersionAction");
+            progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("CopyingFilesDescription");
+            progressViewModel.IsIndeterminate = true;
 
-            //    bool is64Bit;
-            //    if (!FactorioVersion.LocalInstallationValid(selectedDirectory, out version, out is64Bit))
-            //    {
-            //        MessageBox.Show(Window,
-            //            App.Instance.GetLocalizedMessage("InvalidFactorioFolder", MessageType.Error),
-            //            App.Instance.GetLocalizedMessageTitle("InvalidFactorioFolder", MessageType.Error),
-            //            MessageBoxButton.OK, MessageBoxImage.Error);
-            //        return;
-            //    }
-            //    if (is64Bit != Environment.Is64BitOperatingSystem)
-            //    {
-            //        MessageBox.Show(Window,
-            //            App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
-            //            App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
-            //            MessageBoxButton.OK, MessageBoxImage.Error);
-            //        return;
-            //    }
+            Task closeWindowTask = null;
+            try
+            {
+                Task moveTask = MoveSteamVersionContents();
 
-            //    if (MessageBox.Show(Window,
-            //        App.Instance.GetLocalizedMessage("MoveSteamFactorio", MessageType.Warning),
-            //        App.Instance.GetLocalizedMessageTitle("MoveSteamFactorio", MessageType.Warning),
-            //        MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-            //    {
-            //        App.Instance.Settings.SteamVersionPath = selectedDirectory.FullName;
-            //        App.Instance.Settings.Save();
+                closeWindowTask = moveTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                progressWindow.ShowDialog();
 
-            //        var progressWindow = new ProgressWindow() { Owner = Window };
-            //        var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-            //        progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("AddingSteamVersionAction");
-            //        progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
-            //        progressViewModel.IsIndeterminate = true;
+                await moveTask;
+            }
+            finally
+            {
+                if (closeWindowTask != null)
+                    await closeWindowTask;
+            }
 
-            //        var steamAppDataDirectory = new DirectoryInfo(FactorioSteamVersion.SteamAppDataPath);
-            //        Task moveTask = PreserveContentsAsync(steamAppDataDirectory, true);
+            App.Instance.Settings.LoadSteamVersion = true;
+            App.Instance.Settings.Save();
 
-            //        Task closeWindowTask = moveTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
-            //        progressWindow.ShowDialog();
-            //        await moveTask;
-            //        await closeWindowTask;
-
-            //        FactorioVersions.Add(new FactorioSteamVersion(selectedDirectory, version));
-            //    }
-            //}
+            FactorioSteamVersion.TryLoad(out var steamVersion);
+            FactorioVersions.Add(steamVersion);
         }
 
         private void OpenFolder()

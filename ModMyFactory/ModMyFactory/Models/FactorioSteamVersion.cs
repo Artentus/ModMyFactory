@@ -24,7 +24,7 @@ namespace ModMyFactory.Models
         {
             steamVersion = null;
 
-            var steamLibraries = SteamHelper.ListSteamLibraries();
+            var steamLibraries = SteamHelper.ListSteamLibraries(true);
             if ((steamLibraries == null) || (steamLibraries.Count == 0)) return false;
 
             foreach (var library in steamLibraries)
@@ -34,8 +34,36 @@ namespace ModMyFactory.Models
                 {
                     if (FactorioFolder.TryLoad(factorioDir, out var folder))
                     {
-                        steamVersion = new FactorioSteamVersion(folder);
-                        return true;
+                        if (folder.Is64Bit == Environment.Is64BitOperatingSystem)
+                        {
+                            steamVersion = new FactorioSteamVersion(folder);
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if the Factorio Steam version is present on the system.
+        /// </summary>
+        /// <returns>Returns true if the Factorio Steam version is present on the system, otherwise false.</returns>
+        public static bool IsPresent()
+        {
+            var steamLibraries = SteamHelper.ListSteamLibraries(false);
+            if ((steamLibraries == null) || (steamLibraries.Count == 0)) return false;
+
+            foreach (var library in steamLibraries)
+            {
+                var factorioDir = library.EnumerateDirectories("Factorio").FirstOrDefault();
+                if (factorioDir != null)
+                {
+                    if (FactorioFolder.TryLoad(factorioDir, out var folder))
+                    {
+                        if (folder.Is64Bit == Environment.Is64BitOperatingSystem)
+                            return true;
                     }
                 }
             }

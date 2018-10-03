@@ -46,6 +46,11 @@ namespace ModMyFactory
             this.Add(new LatestFactorioVersion(this));
         }
 
+        public bool Contains(string name)
+        {
+            return this.Any(item => item.Name == name);
+        }
+
         public FactorioVersion Find(string name)
         {
             return this.FirstOrDefault(item => item.Name == name);
