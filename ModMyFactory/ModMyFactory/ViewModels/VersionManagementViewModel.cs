@@ -577,21 +577,52 @@ namespace ModMyFactory.ViewModels
             
             if (GlobalCredentials.Instance.LogIn(Window, out string token))
             {
-                var updateSteps = await GetUpdateSteps(token);
-                if (updateSteps.Count > 0)
+                try
                 {
-                    var targets = FactorioUpdater.GetUpdateTargets(SelectedVersion, updateSteps);
-                    if (ShowUpdateWindow(targets, out var target))
+                    var progressWindow = new ProgressWindow { Owner = Window };
+                    var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                    progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("FetchingVersionsAction");
+                    progressViewModel.IsIndeterminate = true;
+                    progressViewModel.CanCancel = false;
+
+                    List<UpdateStep> updateSteps = null;
+                    Task closeWindowTask = null;
+                    try
                     {
-                        await UpdateSelectedVersionInternal(token, target);
+                        var getUpdateStepsTask = GetUpdateSteps(token);
+
+                        closeWindowTask = getUpdateStepsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                        progressWindow.ShowDialog();
+
+                        updateSteps = await getUpdateStepsTask;
+                    }
+                    finally
+                    {
+                        if (closeWindowTask != null) await closeWindowTask;
+                    }
+                    
+                    if (updateSteps.Count > 0)
+                    {
+                        var targets = FactorioUpdater.GetUpdateTargets(SelectedVersion, updateSteps);
+                        if (ShowUpdateWindow(targets, out var target))
+                        {
+                            await UpdateSelectedVersionInternal(token, target);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show(Window,
+                            App.Instance.GetLocalizedMessage("NoFactorioUpdate", MessageType.Information),
+                            App.Instance.GetLocalizedMessageTitle("NoFactorioUpdate", MessageType.Information),
+                            MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
-                else
+                catch (WebException)
                 {
                     MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("NoFactorioUpdate", MessageType.Information),
-                        App.Instance.GetLocalizedMessageTitle("NoFactorioUpdate", MessageType.Information),
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                        App.Instance.GetLocalizedMessage("RetrievingVersions", MessageType.Error),
+                        App.Instance.GetLocalizedMessageTitle("RetrievingVersions", MessageType.Error),
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
