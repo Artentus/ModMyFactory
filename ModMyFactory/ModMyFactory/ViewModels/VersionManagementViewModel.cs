@@ -198,7 +198,11 @@ namespace ModMyFactory.ViewModels
                         return;
                     }
 
-                    if (newVersion != null) FactorioVersions.Add(newVersion);
+                    if (newVersion != null)
+                    {
+                        FactorioVersions.Add(newVersion);
+                        newVersion.BeginEdit();
+                    }
                 }
             }
         }
@@ -248,6 +252,7 @@ namespace ModMyFactory.ViewModels
 
                         var factorioVersion = new FactorioVersion(folder);
                         FactorioVersions.Add(factorioVersion);
+                        factorioVersion.BeginEdit();
                     }
                     else
                     {
@@ -362,6 +367,7 @@ namespace ModMyFactory.ViewModels
 
             var factorioVersion = new FactorioVersion(newFolder);
             FactorioVersions.Add(factorioVersion);
+            factorioVersion.BeginEdit();
         }
 
         private async Task AddLocalVersion()

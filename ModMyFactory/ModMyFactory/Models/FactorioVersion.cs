@@ -153,6 +153,8 @@ namespace ModMyFactory.Models
                     {
                         Name = EditingName;
                         VersionManagementViewModel.Instance.FactorioVersionsView.CommitEdit();
+
+                        VersionManagementViewModel.Instance.Window.FactorioVersionsListBox.ScrollIntoView(this);
                     }
                 }
             }
