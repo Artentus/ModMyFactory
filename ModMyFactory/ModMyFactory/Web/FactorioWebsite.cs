@@ -1,9 +1,9 @@
-﻿using ModMyFactory.Models;
+﻿using ModMyFactory.Helpers;
+using ModMyFactory.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,70 +14,34 @@ namespace ModMyFactory.Web
     /// </summary>
     static class FactorioWebsite
     {
-        private static bool VersionCompatibleWithPlatform(Version version)
-        {
-            if (Environment.Is64BitOperatingSystem)
-            {
-                return true;
-            }
-            else
-            {
-                // 32 bit no longer supported as of version 0.15.
-                return version < new Version(0, 15);
-            }
-        }
-
         /// <summary>
         /// Reads the Factorio version list.
         /// </summary>
         /// <returns>Returns the list of available Factorio versions or null if the operation was unsucessful.</returns>
-        public static async Task<List<FactorioOnlineVersion>> GetVersionsAsync()
+        public static async Task<List<FactorioOnlineVersion>> GetVersionsAsync(string username, string token)
         {
-            const string downloadPage = "https://www.factorio.com/download-demo";
-            const string experimentalDownloadPage = "https://www.factorio.com/download-demo/experimental";
-            const string pattern = @"<h3> *(?<version>[0-9]+\.[0-9]+\.[0-9]+) *\(.+\) *</h3>";
+            var updateInfo = await UpdateWebsite.GetUpdateInfoAsync(username, token);
+            if (updateInfo == null) return null;
 
             var versions = new List<FactorioOnlineVersion>();
 
-            try
+            var groups = updateInfo.Package.GroupBy(item => new Version(item.To.Major, item.To.Minor));
+            var latestMainVersion = groups.Select(group => group.Key).Max();
+            foreach (var group in groups)
             {
-                // Get stable versions.
-                string document = await Task.Run(() => WebHelper.GetDocument(downloadPage, null));
-                MatchCollection matches = Regex.Matches(document, pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                foreach (Match match in matches)
+                if (group.Key == latestMainVersion)
                 {
-                    string versionString = match.Groups["version"].Value;
-                    Version version = Version.Parse(versionString);
+                    var latestStable = group.Where(item => item.IsStable).MaxBy(item => item.To);
+                    if (latestStable != null) versions.Add(new FactorioOnlineVersion(latestStable.To, false));
 
-                    if (VersionCompatibleWithPlatform(version))
-                    {
-                        var factorioVersion = new FactorioOnlineVersion(version, false);
-                        versions.Add(factorioVersion);
-                    }
+                    var latestExperimental = group.MaxBy(item => item.To);
+                    if ((latestExperimental != null) && (latestExperimental != latestStable)) versions.Add(new FactorioOnlineVersion(latestExperimental.To, true));
                 }
-
-                // Get experimental versions.
-                document = await Task.Run(() => WebHelper.GetDocument(experimentalDownloadPage, null));
-                matches = Regex.Matches(document, pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-                foreach (Match match in matches)
+                else
                 {
-                    string versionString = match.Groups["version"].Value;
-                    Version version = Version.Parse(versionString);
-
-                    if (VersionCompatibleWithPlatform(version))
-                    {
-                        if (versions.All(item => item.Version != version))
-                        {
-                            var factorioVersion = new FactorioOnlineVersion(version, true);
-                            versions.Add(factorioVersion);
-                        }
-                    }
+                    var latestStable = group.MaxBy(item => item.To);
+                    if (latestStable != null) versions.Add(new FactorioOnlineVersion(latestStable.To, false));
                 }
-            }
-            catch (Exception ex)
-            {
-                App.Instance.WriteExceptionLog(ex);
-                return null;
             }
 
             return versions;

@@ -88,7 +88,7 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private async Task<FactorioOnlineVersion> ShowVersionList()
+        private async Task<FactorioOnlineVersion> ShowVersionList(string token)
         {
             List<FactorioOnlineVersion> versions = null;
             try
@@ -102,7 +102,7 @@ namespace ModMyFactory.ViewModels
                 Task closeWindowTask = null;
                 try
                 {
-                    var getVersionsTask = FactorioWebsite.GetVersionsAsync();
+                    var getVersionsTask = FactorioWebsite.GetVersionsAsync(GlobalCredentials.Instance.Username, token);
 
                     closeWindowTask = getVersionsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                     progressWindow.ShowDialog();
@@ -146,7 +146,7 @@ namespace ModMyFactory.ViewModels
             string token;
             if (GlobalCredentials.Instance.LogIn(Window, out token))
             {
-                var selectedVersion = await ShowVersionList();
+                var selectedVersion = await ShowVersionList(token);
                 if (selectedVersion != null)
                 {
                     var cancellationSource = new CancellationTokenSource();
