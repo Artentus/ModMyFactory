@@ -119,6 +119,7 @@
     <Compile Include="Helpers\SecureStringHelper.cs" />
     <Compile Include="Helpers\SteamHelper.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />
+    <Compile Include="Helpers\TaskHelper.cs" />
     <Compile Include="Helpers\WindowExtensions.cs" />
     <Compile Include="InstanceStartedEventArgs.cs" />
     <Compile Include="IO\Junction.cs" />

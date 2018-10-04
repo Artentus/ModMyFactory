@@ -137,6 +137,7 @@
     
     <sys:String x:Key="MovingDirectoriesAction">Moving directories</sys:String>
 
+    <sys:String x:Key="FetchingVersionsAction">Fetching available versions</sys:String>
     <sys:String x:Key="DownloadingAction">Downloading</sys:String>
     <sys:String x:Key="DownloadingDescription">Downloading {0}</sys:String>
 
@@ -144,7 +145,6 @@
     <sys:String x:Key="CheckingValidityDescription">Checking validity...</sys:String>
     
     <sys:String x:Key="AddingLocalInstallationAction">Adding local installation</sys:String>
-    
     <sys:String x:Key="AddingSteamVersionAction">Adding Steam version</sys:String>
 
     <sys:String x:Key="RemovingFactorioVersionAction">Removing Factorio version</sys:String>

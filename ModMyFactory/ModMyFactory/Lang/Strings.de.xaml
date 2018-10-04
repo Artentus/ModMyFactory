@@ -137,6 +137,7 @@
 
     <sys:String x:Key="MovingDirectoriesAction">Ordner werden verschoben</sys:String>
 
+    <sys:String x:Key="FetchingVersionsAction">Verfügbare Versionen werden abgerufen</sys:String>
     <sys:String x:Key="DownloadingAction">Herunterladen</sys:String>
     <sys:String x:Key="DownloadingDescription">{0} wird heruntergeladen.</sys:String>
 
@@ -144,7 +145,6 @@
     <sys:String x:Key="CheckingValidityDescription">Gültigkeit wird überprüft...</sys:String>
 
     <sys:String x:Key="AddingLocalInstallationAction">Lokale Installation wird hinzugefügt</sys:String>
-
     <sys:String x:Key="AddingSteamVersionAction">Steam-Version wird hinzugefügt</sys:String>
 
     <sys:String x:Key="RemovingFactorioVersionAction">Factorio-Version wird entfernt</sys:String>

@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ModMyFactory.Models
 {
@@ -95,12 +96,14 @@ namespace ModMyFactory.Models
         /// <summary>
         /// Deletes this Factorio installation.
         /// </summary>
-        public override void Delete()
+        public override async Task DeleteAsync()
         {
             DeleteLinks();
 
             App.Instance.Settings.LoadSteamVersion = false;
             App.Instance.Settings.Save();
+
+            await TaskHelper.CompletedTask;
         }
 
         private FactorioSteamVersion(FactorioFolder folder)

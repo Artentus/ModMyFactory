@@ -84,23 +84,34 @@ namespace ModMyFactory.ViewModels
                 SelectSteamCommand = new RelayCommand(async () => await SelectSteamVersion(), () => !App.Instance.Settings.LoadSteamVersion);
                 OpenFolderCommand = new RelayCommand(OpenFolder, () => SelectedVersion != null);
                 UpdateCommand = new RelayCommand(async () => await UpdateSelectedVersion(), () => SelectedVersion != null && SelectedVersion.CanUpdate);
-                RemoveCommand = new RelayCommand(RemoveSelectedVersion, () => SelectedVersion != null);
+                RemoveCommand = new RelayCommand(async () => await RemoveSelectedVersion(), () => SelectedVersion != null);
             }
         }
 
-        private bool ShowVersionList(out FactorioOnlineVersion selectedVersion)
+        private async Task<FactorioOnlineVersion> ShowVersionList()
         {
-            selectedVersion = null;
-            List<FactorioOnlineVersion> versions;
+            List<FactorioOnlineVersion> versions = null;
             try
             {
-                if (!FactorioWebsite.TryGetVersions(out versions))
+                var progressWindow = new ProgressWindow { Owner = Window };
+                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("FetchingVersionsAction");
+                progressViewModel.IsIndeterminate = true;
+                progressViewModel.CanCancel = false;
+
+                Task closeWindowTask = null;
+                try
                 {
-                    MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("RetrievingVersions", MessageType.Error),
-                        App.Instance.GetLocalizedMessageTitle("RetrievingVersions", MessageType.Error),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
+                    var getVersionsTask = FactorioWebsite.GetVersionsAsync();
+
+                    closeWindowTask = getVersionsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                    progressWindow.ShowDialog();
+
+                    versions = await getVersionsTask;
+                }
+                finally
+                {
+                    if (closeWindowTask != null) await closeWindowTask;
                 }
             }
             catch (WebException)
@@ -109,7 +120,16 @@ namespace ModMyFactory.ViewModels
                     App.Instance.GetLocalizedMessage("RetrievingVersions", MessageType.Error),
                     App.Instance.GetLocalizedMessageTitle("RetrievingVersions", MessageType.Error),
                     MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
+                return null;
+            }
+
+            if (versions == null)
+            {
+                MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("RetrievingVersions", MessageType.Error),
+                    App.Instance.GetLocalizedMessageTitle("RetrievingVersions", MessageType.Error),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return null;
             }
 
             var versionListWindow = new VersionListWindow { Owner = Window };
@@ -117,8 +137,8 @@ namespace ModMyFactory.ViewModels
             versions.ForEach(item => versionListViewModel.FactorioVersions.Add(item));
 
             bool? versionResult = versionListWindow.ShowDialog();
-            selectedVersion = versionListViewModel.SelectedVersion;
-            return versionResult.HasValue && versionResult.Value;
+            if (!(versionResult.HasValue && versionResult.Value)) return null;
+            return versionListViewModel.SelectedVersion;
         }
 
         private async Task DownloadOnlineVersion()
@@ -126,8 +146,8 @@ namespace ModMyFactory.ViewModels
             string token;
             if (GlobalCredentials.Instance.LogIn(Window, out token))
             {
-                FactorioOnlineVersion selectedVersion;
-                if (ShowVersionList(out selectedVersion))
+                var selectedVersion = await ShowVersionList();
+                if (selectedVersion != null)
                 {
                     var cancellationSource = new CancellationTokenSource();
                     var progressWindow = new ProgressWindow { Owner = Window };
@@ -576,7 +596,7 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        private void RemoveSelectedVersion()
+        private async Task RemoveSelectedVersion()
         {
             if (SelectedVersion == null) return;
 
@@ -585,7 +605,29 @@ namespace ModMyFactory.ViewModels
                     App.Instance.GetLocalizedMessageTitle("RemoveFactorioVersion", MessageType.Question),
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                SelectedVersion.Delete();
+                var progressWindow = new ProgressWindow { Owner = Window };
+                var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+                progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("RemovingFactorioVersionAction");
+                progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("DeletingFilesDescription");
+                progressViewModel.IsIndeterminate = true;
+                progressViewModel.CanCancel = false;
+
+                Task closeWindowTask = null;
+                try
+                {
+                    Task deleteTask = SelectedVersion.DeleteAsync();
+
+                    closeWindowTask = deleteTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                    progressWindow.ShowDialog();
+
+                    await deleteTask;
+                }
+                finally
+                {
+                    if (closeWindowTask != null)
+                        await closeWindowTask;
+                }
+
                 FactorioVersions.Remove(SelectedVersion);
             }
         }

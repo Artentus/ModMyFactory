@@ -316,7 +316,7 @@ namespace ModMyFactory.Models
         /// <summary>
         /// Deletes this Factorio installation.
         /// </summary>
-        public virtual void Delete()
+        public virtual async Task DeleteAsync()
         {
             if (canMove)
             {
@@ -324,7 +324,7 @@ namespace ModMyFactory.Models
                     DeleteLinks();
 
                 if ((Directory != null) && Directory.Exists)
-                    Directory.Delete(true);
+                    await Task.Run(() => Directory.Delete(true));
             }
         }
         

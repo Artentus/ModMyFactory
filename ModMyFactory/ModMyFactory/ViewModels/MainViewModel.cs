@@ -90,9 +90,9 @@ namespace ModMyFactory.ViewModels
 
         private void SelectedFactorioVersionPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(FactorioVersion.DisplayName))
+            if (e.PropertyName == nameof(FactorioVersion.Name))
             {
-                App.Instance.Settings.SelectedVersion = selectedFactorioVersion.DisplayName;
+                App.Instance.Settings.SelectedVersion = selectedFactorioVersion.Name;
                 App.Instance.Settings.Save();
             }
         }
@@ -112,7 +112,7 @@ namespace ModMyFactory.ViewModels
 
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedFactorioVersion)));
 
-                    string newVersionString = selectedFactorioVersion?.DisplayName ?? string.Empty;
+                    string newVersionString = selectedFactorioVersion?.Name ?? string.Empty;
                     if (newVersionString != App.Instance.Settings.SelectedVersion)
                     {
                         App.Instance.Settings.SelectedVersion = newVersionString;
@@ -569,7 +569,7 @@ namespace ModMyFactory.ViewModels
             FactorioVersions = FactorioCollection.Load();
 
             string versionString = App.Instance.Settings.SelectedVersion;
-            SelectedFactorioVersion = string.IsNullOrEmpty(versionString) ? null : FactorioVersions.FirstOrDefault(item => item.DisplayName == versionString);
+            SelectedFactorioVersion = string.IsNullOrEmpty(versionString) ? null : FactorioVersions.FirstOrDefault(item => item.Name == versionString);
         }
 
         private void ModpacksCollectionChangedHandler(object sender, NotifyCollectionChangedEventArgs e)

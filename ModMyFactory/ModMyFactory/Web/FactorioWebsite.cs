@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,19 +14,6 @@ namespace ModMyFactory.Web
     /// </summary>
     static class FactorioWebsite
     {
-        /// <summary>
-        /// Ensures a session is logged in at the website.
-        /// </summary>
-        /// <param name="container">The cookie container the session cookie is stored in.</param>
-        /// <returns>Returns true if the session is logged in, otherwise false.</returns>
-        public static bool EnsureLoggedIn(CookieContainer container)
-        {
-            const string mainPage = "https://www.factorio.com";
-
-            string document = WebHelper.GetDocument(mainPage, container);
-            return document.Contains("logout");
-        }
-
         private static bool VersionCompatibleWithPlatform(Version version)
         {
             if (Environment.Is64BitOperatingSystem)
@@ -44,21 +30,19 @@ namespace ModMyFactory.Web
         /// <summary>
         /// Reads the Factorio version list.
         /// </summary>
-        /// <param name="container">The cookie container the session cookie is stored in.</param>
-        /// <param name="versions">Out. The list of available Factorio versions.</param>
-        /// <returns>Returns false if the version list could not be retrieved, otherwise true.</returns>
-        public static bool TryGetVersions(out List<FactorioOnlineVersion> versions)
+        /// <returns>Returns the list of available Factorio versions or null if the operation was unsucessful.</returns>
+        public static async Task<List<FactorioOnlineVersion>> GetVersionsAsync()
         {
             const string downloadPage = "https://www.factorio.com/download-demo";
             const string experimentalDownloadPage = "https://www.factorio.com/download-demo/experimental";
             const string pattern = @"<h3> *(?<version>[0-9]+\.[0-9]+\.[0-9]+) *\(.+\) *</h3>";
 
-            versions = new List<FactorioOnlineVersion>();
+            var versions = new List<FactorioOnlineVersion>();
 
             try
             {
                 // Get stable versions.
-                string document = WebHelper.GetDocument(downloadPage, null);
+                string document = await Task.Run(() => WebHelper.GetDocument(downloadPage, null));
                 MatchCollection matches = Regex.Matches(document, pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
                 foreach (Match match in matches)
                 {
@@ -73,7 +57,7 @@ namespace ModMyFactory.Web
                 }
 
                 // Get experimental versions.
-                document = WebHelper.GetDocument(experimentalDownloadPage, null);
+                document = await Task.Run(() => WebHelper.GetDocument(experimentalDownloadPage, null));
                 matches = Regex.Matches(document, pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
                 foreach (Match match in matches)
                 {
@@ -93,10 +77,10 @@ namespace ModMyFactory.Web
             catch (Exception ex)
             {
                 App.Instance.WriteExceptionLog(ex);
-                return false;
+                return null;
             }
 
-            return true;
+            return versions;
         }
 
         /// <summary>

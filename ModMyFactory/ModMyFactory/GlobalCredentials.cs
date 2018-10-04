@@ -129,7 +129,7 @@ namespace ModMyFactory
             bool failed = false;
             if (IsLoggedInWithToken()) // Credentials and token available.
             {
-                // ToDo: check if token is still valid (does it actually expire?).
+                // Token only expires on user request, best to not check and save bandwidth.
             }
             else if (IsLoggedIn()) // Only credentials available.
             {
