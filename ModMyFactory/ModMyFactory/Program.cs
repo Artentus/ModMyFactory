@@ -211,7 +211,7 @@ namespace ModMyFactory
                 // Sets 'Application.Current'
                 if (createApp) CreateApp(commandLine);
 
-                if (!TryGetFactorioVersion(name, false, out factorioVersion))
+                if (!TryGetFactorioVersion(versionString, true, out factorioVersion))
                 {
                     MessageBox.Show(
                         $"A Factorio installation with version {versionString} was not found.",
