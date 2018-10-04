@@ -8,8 +8,6 @@ namespace ModMyFactory.Models
     {
         FactorioVersion wrappedVersion;
 
-        public override string DisplayName => Name;
-
         protected FactorioVersion WrappedVersion
         {
             get => wrappedVersion;

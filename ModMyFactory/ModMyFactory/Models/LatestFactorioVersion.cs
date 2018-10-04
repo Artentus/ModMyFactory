@@ -9,9 +9,11 @@ namespace ModMyFactory.Models
     {
         readonly FactorioCollection collection;
 
+        public override string DisplayName => App.Instance.GetLocalizedResourceString("LatestFactorioName");
+
         protected override string LoadName()
         {
-            return App.Instance.GetLocalizedResourceString("LatestFactorioName");
+            return "Latest";
         }
 
         private void SetWrappedVersion()

@@ -17,7 +17,7 @@ namespace ModMyFactory.Models
     /// </summary>
     class FactorioVersion : NotifyPropertyChangedBase, IEditableObject
     {
-        private static int counter = 0;
+        protected static List<string> uniqueNames = new List<string>() { "Latest", "Steam" };
 
         /// <summary>
         /// Loads all installed versions of Factorio.
@@ -81,7 +81,7 @@ namespace ModMyFactory.Models
             int counter = 0;
             string candidateName = baseName;
 
-            while (MainViewModel.Instance.FactorioVersions.Contains(candidateName))
+            while (uniqueNames.Contains(candidateName))
             {
                 counter++;
                 candidateName = $"{baseName} ({counter})";
@@ -100,8 +100,11 @@ namespace ModMyFactory.Models
 
                 if (value != name)
                 {
+                    uniqueNames.Remove(name);
                     string newName = GetUniqueName(value);
                     name = newName;
+                    uniqueNames.Add(name);
+
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Name)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayName)));
 
@@ -217,32 +220,30 @@ namespace ModMyFactory.Models
             return new FileInfo(Path.Combine(Directory.FullName, "name.cfg"));
         }
 
+        private string ReadName(FileInfo file)
+        {
+            using (var stream = file.OpenRead())
+            {
+                using (var reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
+        }
+
         protected virtual string LoadName()
         {
             var file = GetNameFile();
-            if (file == null)
-            {
-                string name = (counter == 0) ? "Factorio" : $"Factorio {counter}";
-                counter++;
-                return name;
-            }
-            else if (!file.Exists)
-            {
-                string name = (counter == 0) ? "Factorio" : $"Factorio {counter}";
-                counter++;
-                SaveName(name);
-                return name;
-            }
-            else
-            {
-                using (var stream = file.OpenRead())
-                {
-                    using (var reader = new StreamReader(stream))
-                    {
-                        return reader.ReadToEnd();
-                    }
-                }
-            }
+
+            string name = "Factorio";
+            if (file?.Exists == true) name = ReadName(file);
+
+            var uniqueName = GetUniqueName(name);
+            if ((uniqueName != name) || (file?.Exists == false)) SaveName(uniqueName);
+            name = uniqueName;
+
+            uniqueNames.Add(name);
+            return name;
         }
 
         private void SaveName(string name)
