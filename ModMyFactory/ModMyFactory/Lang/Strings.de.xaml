@@ -224,6 +224,8 @@
     <sys:String x:Key="AddModFilesContextMenuItem">Mods hinzufügen</sys:String>
     <sys:String x:Key="DeleteSelectedModsMenuItem">Ausgewählte Mods löschen</sys:String>
     <sys:String x:Key="BrowseModsOnlineMenuItem">Mods online ansehen</sys:String>
+    <sys:String x:Key="ActivateDependenciesMenuItem">Abhängigkeiten aktivieren</sys:String>
+    <sys:String x:Key="ActivateOptionalDependenciesMenuItem">Optionale Abhängigkeiten aktivieren</sys:String>
     <sys:String x:Key="ActivateSelectedModsMenuItem">Ausgewählte Mods aktivieren</sys:String>
     <sys:String x:Key="DeactivateSelectedModsMenuItem">Ausgewählte Mods deaktivieren</sys:String>
     <sys:String x:Key="SelectActiveModsMenuItem">Alle aktivierten Mods auswählen</sys:String>

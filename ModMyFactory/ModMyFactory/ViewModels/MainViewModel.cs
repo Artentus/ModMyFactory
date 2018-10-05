@@ -559,6 +559,8 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand BrowseModsOnlineCommand { get; }
 
+        public RelayCommand<bool> ActivateDependenciesCommand { get; }
+
         #endregion
 
         volatile bool modpacksLoading;
@@ -617,6 +619,10 @@ namespace ModMyFactory.ViewModels
             LoadFactorioVersions();
             LoadModsAndModpacks();
         }
+
+        private bool ModsSelected() => Mods.Any(mod => mod.IsSelected);
+
+        private bool ModpacksSelected() => Modpacks.Any(modpack => modpack.IsSelected);
 
         private MainViewModel()
         {
@@ -701,20 +707,21 @@ namespace ModMyFactory.ViewModels
                 BrowseWikiCommand = new RelayCommand(() => Process.Start("https://github.com/Artentus/ModMyFactory/wiki"));
 
                 // context menu
-                ActivateSelectedModsCommand = new RelayCommand(ActivateSelectedMods, () => Mods.Any(mod => mod.IsSelected));
-                DeactivateSelectedModsCommand = new RelayCommand(DeactivateSelectedMods, () => Mods.Any(mod => mod.IsSelected));
-                DeleteSelectedModsCommand = new RelayCommand(DeleteSelectedMods, () => Mods.Any(mod => mod.IsSelected));
+                ActivateSelectedModsCommand = new RelayCommand(ActivateSelectedMods, ModsSelected);
+                DeactivateSelectedModsCommand = new RelayCommand(DeactivateSelectedMods, ModsSelected);
+                DeleteSelectedModsCommand = new RelayCommand(DeleteSelectedMods, ModsSelected);
                 SelectActiveModsCommand = new RelayCommand(SelectActiveMods);
                 SelectInactiveModsCommand = new RelayCommand(SelectInactiveMods);
-                BrowseModsOnlineCommand = new RelayCommand(BrowseModsOnline, () => Mods.Any(mod => mod.IsSelected));
+                BrowseModsOnlineCommand = new RelayCommand(BrowseModsOnline, ModsSelected);
+                ActivateDependenciesCommand = new RelayCommand<bool>(ActivateDependencies, ModsSelected);
 
-                ActivateSelectedModpacksCommand = new RelayCommand(ActivateSelectedModpacks, () => Modpacks.Any(modpack => modpack.IsSelected));
-                DeactivateSelectedModpacksCommand = new RelayCommand(DeactivateSelectedModpacks, () => Modpacks.Any(modpack => modpack.IsSelected));
-                DeleteSelectedModpacksCommand = new RelayCommand(DeleteSelectedModpacks, () => Modpacks.Any(modpack => modpack.IsSelected));
+                ActivateSelectedModpacksCommand = new RelayCommand(ActivateSelectedModpacks, ModpacksSelected);
+                DeactivateSelectedModpacksCommand = new RelayCommand(DeactivateSelectedModpacks, ModpacksSelected);
+                DeleteSelectedModpacksCommand = new RelayCommand(DeleteSelectedModpacks, ModpacksSelected);
                 SelectActiveModpacksCommand = new RelayCommand(SelectActiveModpacks);
                 SelectInactiveModpacksCommand = new RelayCommand(SelectInactiveModpacks);
 
-                DeleteSelectedModsAndModpacksCommand = new RelayCommand(DeleteSelectedModsAndModpacks, () => Mods.Any(mod => mod.IsSelected) || Modpacks.Any(modpack => modpack.IsSelected));
+                DeleteSelectedModsAndModpacksCommand = new RelayCommand(DeleteSelectedModsAndModpacks, () => ModsSelected() || ModpacksSelected());
 
                 ClearModFilterCommand = new RelayCommand(() => ModFilterPattern = string.Empty);
                 ClearModpackFilterCommand = new RelayCommand(() => ModpackFilterPattern = string.Empty);
@@ -729,6 +736,15 @@ namespace ModMyFactory.ViewModels
         {
             foreach (var mod in Mods.Where(m => m.IsSelected))
                 ModWebsite.OpenModInBrowser(mod);
+        }
+
+        private void ActivateDependencies(bool optional)
+        {
+            foreach (var mod in Mods)
+            {
+                if (mod.IsSelected)
+                    mod.ActivateDependencies(optional);
+            }
         }
 
         #region AddMods

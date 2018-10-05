@@ -379,6 +379,9 @@
                                     <MenuItem Header="{DynamicResource BrowseModsOnlineMenuItem}" Icon="{StaticResource WebDestinationIcon}"
                                               Command="{Binding BrowseModsOnlineCommand}"/>
                                     <Separator/>
+                                    <MenuItem Header="{DynamicResource ActivateDependenciesMenuItem}" CommandParameter="{StaticResource False}" Command="{Binding ActivateDependenciesCommand}"/>
+                                    <MenuItem Header="{DynamicResource ActivateOptionalDependenciesMenuItem}" CommandParameter="{StaticResource True}" Command="{Binding ActivateDependenciesCommand}"/>
+                                    <Separator/>
                                     <MenuItem Header="{DynamicResource ActivateSelectedModsMenuItem}" Command="{Binding ActivateSelectedModsCommand}"/>
                                     <MenuItem Header="{DynamicResource DeactivateSelectedModsMenuItem}" Command="{Binding DeactivateSelectedModsCommand}"/>
                                     <Separator/>
@@ -483,6 +486,9 @@
                                               InputGestureText="{DynamicResource DependenciesHotkey}" Command="{Binding DownloadDependenciesCommand}"/>
                         <MenuItem Header="{DynamicResource BrowseModsOnlineMenuItem}" Icon="{StaticResource WebDestinationIcon}"
                                               Command="{Binding BrowseModsOnlineCommand}"/>
+                        <Separator/>
+                        <MenuItem Header="{DynamicResource ActivateDependenciesMenuItem}" CommandParameter="{StaticResource False}" Command="{Binding ActivateDependenciesCommand}"/>
+                        <MenuItem Header="{DynamicResource ActivateOptionalDependenciesMenuItem}" CommandParameter="{StaticResource True}" Command="{Binding ActivateDependenciesCommand}"/>
                         <Separator/>
                         <MenuItem Header="{DynamicResource ActivateSelectedModsMenuItem}" Command="{Binding ActivateSelectedModsCommand}"/>
                         <MenuItem Header="{DynamicResource DeactivateSelectedModsMenuItem}" Command="{Binding DeactivateSelectedModsCommand}"/>

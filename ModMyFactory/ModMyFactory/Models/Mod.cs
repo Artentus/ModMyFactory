@@ -39,13 +39,7 @@ namespace ModMyFactory.Models
                     ModManager.SetActive(Name, FactorioVersion, value);
                     
                     if (active && App.Instance.Settings.ActivateDependencies)
-                    {
-                        foreach (var dependency in Dependencies)
-                        {
-                            if (!dependency.IsOptional || App.Instance.Settings.ActivateOptionalDependencies)
-                                dependency.Activate(parentCollection, FactorioVersion);
-                        }
-                    }
+                        ActivateDependencies(App.Instance.Settings.ActivateOptionalDependencies);
                 }
             }
         }
@@ -210,6 +204,19 @@ namespace ModMyFactory.Models
             oldVersions = new ModFileCollection();
 
             active = ModManager.GetActive(Name, FactorioVersion);
+        }
+
+        /// <summary>
+        /// ACtivates this mods dependencies.
+        /// </summary>
+        /// <param name="optional">Indicates whether optional dependencies should also be activated.</param>
+        public void ActivateDependencies(bool optional)
+        {
+            foreach (var dependency in Dependencies)
+            {
+                if (optional || !dependency.IsOptional)
+                    dependency.Activate(parentCollection, FactorioVersion);
+            }
         }
         
         /// <summary>
