@@ -7,12 +7,15 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace ModMyFactory.Views
 {
     partial class VersionManagementWindow
     {
         const int DefaultWidth = 500, DefaultHeight = 400;
+        DispatcherTimer dropTimer;
+        string droppedFile = null;
 
         public VersionManagementWindow()
             : base(App.Instance.Settings.VersionManagerWindowInfo, DefaultWidth, DefaultHeight)
@@ -20,6 +23,10 @@ namespace ModMyFactory.Views
             InitializeComponent();
 
             Closing += ClosingHandler;
+
+            dropTimer = new DispatcherTimer(DispatcherPriority.Input);
+            dropTimer.Interval = TimeSpan.FromMilliseconds(1);
+            dropTimer.Tick += DropTimerCallback;
         }
 
         private void ClosingHandler(object sender, CancelEventArgs e)
@@ -59,13 +66,27 @@ namespace ModMyFactory.Views
             e.Handled = true;
         }
 
-        private async void VersionListBoxDropHandler(object sender, DragEventArgs e)
+        private void VersionListBoxDropHandler(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string path = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
                 if (File.Exists(path))
-                    await VersionManagementViewModel.Instance.AddZippedVersion(path);
+                {
+                    droppedFile = path;
+                    dropTimer.Start();
+                }
+            }
+        }
+        
+        private async void DropTimerCallback(object sender, EventArgs e)
+        {
+            dropTimer.Stop();
+
+            if (!string.IsNullOrEmpty(droppedFile))
+            {
+                await VersionManagementViewModel.Instance.AddZippedVersion(droppedFile);
+                droppedFile = null;
             }
         }
 
