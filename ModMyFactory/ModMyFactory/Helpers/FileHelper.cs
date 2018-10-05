@@ -28,5 +28,15 @@ namespace ModMyFactory.Helpers
             else
                 return new FileInfo(path);
         }
+
+        /// <summary>
+        /// Checks if a path exists.
+        /// </summary>
+        public static bool PathExists(string path)
+        {
+            if (File.Exists(path)) return true;
+            if (Directory.Exists(path)) return true;
+            return false;
+        }
     }
 }

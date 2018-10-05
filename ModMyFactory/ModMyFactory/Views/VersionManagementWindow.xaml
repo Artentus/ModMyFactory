@@ -24,7 +24,8 @@
         </Grid.RowDefinitions>
 
         <ListBox x:Name="FactorioVersionsListBox" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" IsSynchronizedWithCurrentItem="False"
-                 PreviewMouseDown="VersionListBoxPreviewMouseDownHandler" ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}">
+                 PreviewMouseDown="VersionListBoxPreviewMouseDownHandler" ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}"
+                 AllowDrop="True" DragOver="VersionListBoxDragOverHandler" Drop="VersionListBoxDropHandler">
             <ListBox.Resources>
                 <BitmapImage x:Key="RenameActiveIcon" UriSource="../Images/RenameActive.png"/>
                 <BitmapImage x:Key="RenameInactiveIcon" UriSource="../Images/RenameInactive.png"/>

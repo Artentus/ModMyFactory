@@ -782,8 +782,11 @@ namespace ModMyFactory.ViewModels
 
                 progress.Report(new Tuple<double, string>((double)counter / fileCount, Path.GetFileName(fileName)));
 
-                var file = FileHelper.CreateFileOrDirectory(fileName);
-                await Mod.Add(file, Mods, Modpacks, copy);
+                if (FileHelper.PathExists(fileName))
+                {
+                    var file = FileHelper.CreateFileOrDirectory(fileName);
+                    await Mod.Add(file, Mods, Modpacks, copy);
+                }
 
                 counter++;
             }

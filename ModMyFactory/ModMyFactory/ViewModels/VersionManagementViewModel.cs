@@ -235,6 +235,36 @@ namespace ModMyFactory.ViewModels
             return result;
         }
 
+        public async Task AddZippedVersion(string path)
+        {
+            var archiveFile = new FileInfo(path);
+            if (FactorioFile.TryLoad(archiveFile, out var file))
+            {
+                if (file.Is64Bit == Environment.Is64BitOperatingSystem)
+                {
+                    var folder = await ExtractToFolder(file);
+
+                    var factorioVersion = new FactorioVersion(folder);
+                    FactorioVersions.Add(factorioVersion);
+                    factorioVersion.BeginEdit();
+                }
+                else
+                {
+                    MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
+                    App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("InvalidFactorioArchive", MessageType.Error),
+                    App.Instance.GetLocalizedMessageTitle("InvalidFactorioArchive", MessageType.Error),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private async Task AddZippedVersion()
         {
             var dialog = new VistaOpenFileDialog();
@@ -242,32 +272,7 @@ namespace ModMyFactory.ViewModels
             bool? result = dialog.ShowDialog(Window);
             if (result.HasValue && result.Value)
             {
-                var archiveFile = new FileInfo(dialog.FileName);
-                if (FactorioFile.TryLoad(archiveFile, out var file))
-                {
-                    if (file.Is64Bit == Environment.Is64BitOperatingSystem)
-                    {
-                        var folder = await ExtractToFolder(file);
-
-                        var factorioVersion = new FactorioVersion(folder);
-                        FactorioVersions.Add(factorioVersion);
-                        factorioVersion.BeginEdit();
-                    }
-                    else
-                    {
-                        MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("IncompatiblePlatform", MessageType.Error),
-                        App.Instance.GetLocalizedMessageTitle("IncompatiblePlatform", MessageType.Error),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show(Window,
-                        App.Instance.GetLocalizedMessage("InvalidFactorioArchive", MessageType.Error),
-                        App.Instance.GetLocalizedMessageTitle("InvalidFactorioArchive", MessageType.Error),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                await AddZippedVersion(dialog.FileName);
             }
         }
 

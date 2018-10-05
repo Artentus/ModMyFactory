@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ModMyFactory.ViewModels;
+using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -45,6 +47,26 @@ namespace ModMyFactory.Views
             }
 
             if (item == null) listBox.SelectedItem = null;
+        }
+
+        private void VersionListBoxDragOverHandler(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) && (((string[])e.Data.GetData(DataFormats.FileDrop)).Length == 1))
+                e.Effects = DragDropEffects.Copy;
+            else
+                e.Effects = DragDropEffects.None;
+
+            e.Handled = true;
+        }
+
+        private async void VersionListBoxDropHandler(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string path = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
+                if (File.Exists(path))
+                    await VersionManagementViewModel.Instance.AddZippedVersion(path);
+            }
         }
 
         private void RenameTextBoxLostFocusHandler(object sender, EventArgs e)
