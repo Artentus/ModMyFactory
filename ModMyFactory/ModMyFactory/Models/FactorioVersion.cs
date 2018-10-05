@@ -329,6 +329,9 @@ namespace ModMyFactory.Models
                 if ((Directory != null) && Directory.Exists)
                     await Task.Run(() => Directory.Delete(true));
             }
+
+            if (!(this is SpecialFactorioVersion))
+                uniqueNames.Remove(name);
         }
         
         /// <summary>
