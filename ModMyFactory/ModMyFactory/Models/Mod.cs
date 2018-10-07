@@ -244,26 +244,28 @@ namespace ModMyFactory.Models
         /// </summary>
         public void EvaluateDependencies()
         {
+            bool result = false;
+
             if ((Dependencies == null) || (Dependencies.Length == 0))
             {
-                HasUnsatisfiedDependencies = false;
-                return;
+                result = false;
             }
-
-            foreach (var dependency in Dependencies)
+            else
             {
-                if (!dependency.IsOptional && !dependency.IsMet(parentCollection, FactorioVersion))
+                foreach (var dependency in Dependencies)
                 {
-                    HasUnsatisfiedDependencies = true;
-                    return;
-                }
-                else if (dependency.IsOptional)
-                {
-                    dependency.IsMet(parentCollection, FactorioVersion);
+                    if (!dependency.IsOptional && !dependency.IsMet(parentCollection, FactorioVersion))
+                    {
+                        result = true;
+                    }
+                    else if (dependency.IsOptional)
+                    {
+                        dependency.IsMet(parentCollection, FactorioVersion);
+                    }
                 }
             }
 
-            HasUnsatisfiedDependencies = false;
+            HasUnsatisfiedDependencies = result;
         }
         
         private bool KeepOldFile(ModFile newFile)
