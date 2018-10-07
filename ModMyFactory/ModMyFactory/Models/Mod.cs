@@ -2,7 +2,9 @@
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using ModMyFactory.Helpers;
+using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.ViewModels;
 using WPFCore;
 using WPFCore.Commands;
@@ -88,12 +90,25 @@ namespace ModMyFactory.Models
                 {
                     file = value;
 
+                    if (Dependencies != null)
+                    {
+                        var source = new CollectionViewSource() { Source = Dependencies };
+                        var dependenciesView = (ListCollectionView)source.View;
+                        dependenciesView.CustomSort = new ModDependencySorter();
+                        DependenciesView = dependenciesView;
+                    }
+                    else
+                    {
+                        DependenciesView = null;
+                    }
+
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Version)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(FactorioVersion)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(FriendlyName)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Author)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Description)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Dependencies)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DependenciesView)));
                 }
             }
         }
@@ -134,6 +149,11 @@ namespace ModMyFactory.Models
         /// This mods dependencies.
         /// </summary>
         public ModDependency[] Dependencies => InfoFile.Dependencies;
+
+        /// <summary>
+        /// A view containing this mods dependencies.
+        /// </summary>
+        public ICollectionView DependenciesView { get; private set; }
 
         /// <summary>
         /// Additional information about this mod to be displayed in a tooltip.
@@ -187,7 +207,7 @@ namespace ModMyFactory.Models
         private Mod(ModFileCollection files, ModCollection parentCollection, ModpackCollection modpackCollection)
             : this(parentCollection, modpackCollection)
         {
-            file = files.Latest;
+            File = files.Latest;
             files.Remove(file);
             oldVersions = files;
 
@@ -200,14 +220,14 @@ namespace ModMyFactory.Models
         private Mod(ModFile file, ModCollection parentCollection, ModpackCollection modpackCollection)
             : this(parentCollection, modpackCollection)
         {
-            this.file = file;
+            File = file;
             oldVersions = new ModFileCollection();
 
             active = ModManager.GetActive(Name, FactorioVersion);
         }
 
         /// <summary>
-        /// ACtivates this mods dependencies.
+        /// Activates this mods dependencies.
         /// </summary>
         /// <param name="optional">Indicates whether optional dependencies should also be activated.</param>
         public void ActivateDependencies(bool optional)
@@ -236,6 +256,10 @@ namespace ModMyFactory.Models
                 {
                     HasUnsatisfiedDependencies = true;
                     return;
+                }
+                else if (dependency.IsOptional)
+                {
+                    dependency.IsMet(parentCollection, FactorioVersion);
                 }
             }
 

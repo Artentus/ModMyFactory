@@ -1,9 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Text;
+using WPFCore;
 
 namespace ModMyFactory.Models
 {
-    sealed class ModDependency
+    sealed class ModDependency : NotifyPropertyChangedBase
     {
         /// <summary>
         /// Indicates whether this dependency is optional.
@@ -52,24 +54,41 @@ namespace ModMyFactory.Models
         }
 
         /// <summary>
+        /// Indicates whether this dependency is unsatisfied.
+        /// </summary>
+        public bool Unsatisfied { get; private set; }
+
+        /// <summary>
         /// Checks if a collection of mods satisfies this dependency.
         /// </summary>
         public bool IsMet(ModCollection mods, Version factorioVersion)
         {
+            bool result;
+
             if (IsBase)
             {
-                return true;
+                result = true;
             }
             else
             {
                 var mod = mods.FindByFactorioVersion(ModName, factorioVersion);
-                if (mod == null) return false;
-
-                if (HasVersionRestriction)
-                    return mod.Version >= ModVersion;
+                if (mod == null)
+                {
+                    result = false;
+                }
                 else
-                    return true;
+                {
+                    if (HasVersionRestriction)
+                        result = mod.Version >= ModVersion;
+                    else
+                        result = true;
+                }
             }
+
+            Unsatisfied = !result;
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Unsatisfied)));
+
+            return result;
         }
 
         /// <summary>
