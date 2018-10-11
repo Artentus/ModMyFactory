@@ -31,11 +31,24 @@ namespace ModMyFactory.ViewModels
 
         private async Task<ExtendedModInfo> GetInfoAsync(Dictionary<string, ExtendedModInfo> infos, string modName)
         {
-            ExtendedModInfo info;
+            ExtendedModInfo info = null;
             if (!infos.TryGetValue(modName, out info))
             {
-                info = await ModWebsite.GetExtendedInfoAsync(modName);
-                infos.Add(modName, info);
+                try
+                {
+                    info = await ModWebsite.GetExtendedInfoAsync(modName);
+                    infos.Add(modName, info);
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        var response = ex.Response as HttpWebResponse;
+                        if ((response != null) && (response.StatusCode == HttpStatusCode.NotFound)) return null;
+                    }
+
+                    throw;
+                }
             }
 
             return info;
@@ -59,9 +72,12 @@ namespace ModMyFactory.ViewModels
                     SetLatestInstalledVersion(latestInstalledVersions, mod);
                     ExtendedModInfo info = await GetInfoAsync(infos, mod.Name);
 
-                    var release = info.LatestRelease(mod.FactorioVersion);
-                    if ((release != null) && (release.Version > mod.Version))
+                    if (info != null)
+                    {
+                        var release = info.LatestRelease(mod.FactorioVersion);
+                        if ((release != null) && (release.Version > mod.Version))
                             result.Add(new ModUpdateInfo(mod, release, false));
+                    }
 
                     index++;
                 }
@@ -69,11 +85,12 @@ namespace ModMyFactory.ViewModels
                 foreach (var kvp in latestInstalledVersions)
                 {
                     var mod = kvp.Value;
-                    var info = infos[kvp.Key];
-
-                    var latestRelease = info.LatestRelease();
-                    if (latestRelease.InfoFile.FactorioVersion > mod.FactorioVersion)
-                        result.Add(new ModUpdateInfo(mod, latestRelease, true));
+                    if (infos.TryGetValue(kvp.Key, out var info))
+                    {
+                        var latestRelease = info.LatestRelease();
+                        if (latestRelease.InfoFile.FactorioVersion > mod.FactorioVersion)
+                            result.Add(new ModUpdateInfo(mod, latestRelease, true));
+                    }
                 }
             }
             else
@@ -84,10 +101,30 @@ namespace ModMyFactory.ViewModels
                 {
                     progress.Report(new Tuple<double, string>((double)index / modCount, mod.FriendlyName));
 
-                    var info = await ModWebsite.GetExtendedInfoAsync(mod.Name);
-                    var latestRelease = info.LatestRelease();
-                    if ((latestRelease != null) && (latestRelease.Version > mod.Version))
-                        result.Add(new ModUpdateInfo(mod, latestRelease, false));
+                    ExtendedModInfo info = null;
+                    try
+                    {
+                        info = await ModWebsite.GetExtendedInfoAsync(mod.Name);
+                    }
+                    catch (WebException ex)
+                    {
+                        bool throwEx = true;
+
+                        if (ex.Status == WebExceptionStatus.ProtocolError)
+                        {
+                            var response = ex.Response as HttpWebResponse;
+                            if ((response != null) && (response.StatusCode == HttpStatusCode.NotFound)) throwEx = false;
+                        }
+
+                        if (throwEx) throw;
+                    }
+
+                    if (info != null)
+                    {
+                        var latestRelease = info.LatestRelease();
+                        if ((latestRelease != null) && (latestRelease.Version > mod.Version))
+                            result.Add(new ModUpdateInfo(mod, latestRelease, false));
+                    }
 
                     index++;
                 }

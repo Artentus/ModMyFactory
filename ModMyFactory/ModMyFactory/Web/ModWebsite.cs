@@ -82,8 +82,7 @@ namespace ModMyFactory.Web
         /// <returns>Returns extended information about the specified mod.</returns>
         public static async Task<ExtendedModInfo> GetExtendedInfoAsync(string modName)
         {
-            ExtendedModInfo info = await Task.Run(() => GetExtendedInfoInternal(modName));
-            return info;
+            return await Task.Run(() => GetExtendedInfoInternal(modName));
         }
 
         /// <summary>
