@@ -11,6 +11,8 @@ namespace ModMyFactory
     {
         public static FactorioCollection Load()
         {
+            FactorioVersion.ResetUniqueNames();
+
             var installedVersions = FactorioVersion.LoadInstalledVersions();
             if (App.Instance.Settings.LoadSteamVersion)
             {

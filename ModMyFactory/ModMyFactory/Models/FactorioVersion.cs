@@ -17,7 +17,22 @@ namespace ModMyFactory.Models
     /// </summary>
     class FactorioVersion : NotifyPropertyChangedBase, IEditableObject
     {
-        protected static List<string> uniqueNames = new List<string>() { "Latest", "Steam" };
+        protected static List<string> uniqueNames;
+
+        static FactorioVersion()
+        {
+            ResetUniqueNames();
+        }
+
+        public static void ResetUniqueNames()
+        {
+            if (uniqueNames == null)
+                uniqueNames = new List<string>();
+
+            uniqueNames.Clear();
+            uniqueNames.Add("Latest");
+            uniqueNames.Add("Steam");
+        }
 
         /// <summary>
         /// Loads all installed versions of Factorio.

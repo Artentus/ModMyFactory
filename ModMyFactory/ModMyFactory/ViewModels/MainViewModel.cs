@@ -47,6 +47,7 @@ namespace ModMyFactory.ViewModels
         CollectionViewSource factorioVersionsSource;
         ListCollectionView factorioVersionsView;
         FactorioVersion selectedFactorioVersion;
+        bool refreshing;
 
         private bool FactorioVersionFilter(object item)
         {
@@ -112,11 +113,14 @@ namespace ModMyFactory.ViewModels
 
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedFactorioVersion)));
 
-                    string newVersionString = selectedFactorioVersion?.Name ?? string.Empty;
-                    if (newVersionString != App.Instance.Settings.SelectedVersion)
+                    if (!refreshing)
                     {
-                        App.Instance.Settings.SelectedVersion = newVersionString;
-                        App.Instance.Settings.Save();
+                        string newVersionString = selectedFactorioVersion?.Name ?? string.Empty;
+                        if (newVersionString != App.Instance.Settings.SelectedVersion)
+                        {
+                            App.Instance.Settings.SelectedVersion = newVersionString;
+                            App.Instance.Settings.Save();
+                        }
                     }
                 }
             }
@@ -568,10 +572,14 @@ namespace ModMyFactory.ViewModels
 
         private void LoadFactorioVersions()
         {
+            refreshing = true;
+
             FactorioVersions = FactorioCollection.Load();
 
             string versionString = App.Instance.Settings.SelectedVersion;
             SelectedFactorioVersion = string.IsNullOrEmpty(versionString) ? null : FactorioVersions.FirstOrDefault(item => item.Name == versionString);
+
+            refreshing = false;
         }
 
         private void ModpacksCollectionChangedHandler(object sender, NotifyCollectionChangedEventArgs e)
