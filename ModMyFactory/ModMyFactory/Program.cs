@@ -315,7 +315,7 @@ namespace ModMyFactory
                     if (arguments.Contains(NewInstanceGameStartedSpecifier))
                     {
                         gameStarted = true;
-                        arguments = arguments.Take(arguments.Length - 1).ToArray();
+                        arguments = arguments.Where(arg => arg != NewInstanceGameStartedSpecifier).ToArray();
                     }
                     NewInstanceStarted?.Invoke(null, new InstanceStartedEventArgs(new CommandLine(arguments), gameStarted));
                 }
@@ -403,11 +403,13 @@ namespace ModMyFactory
                     try
                     {
                         hasHandle = mutex.WaitOne(100, false);
-                        if (!hasHandle)
+                        if (!hasHandle) // App already running.
                         {
-                            // App already running.
-                            StartGameIfSpecified(commandLine, true);
-                            SendNewInstanceStartedMessage(args.Concat(new[] { NewInstanceGameStartedSpecifier }).ToArray());
+                            bool gameStarted = StartGameIfSpecified(commandLine, true);
+
+                            var sendArgs = args;
+                            if (gameStarted) sendArgs = sendArgs.Append(NewInstanceGameStartedSpecifier).ToArray();
+                            SendNewInstanceStartedMessage(sendArgs);
 
                             return 0;
                         }
