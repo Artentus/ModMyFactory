@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using ModMyFactory.ViewModels;
+using System.Windows.Threading;
 
 namespace ModMyFactory.Views
 {
@@ -20,6 +21,9 @@ namespace ModMyFactory.Views
         bool modsListBoxDeselectionOmitted;
         bool modpacksListBoxDeselectionOmitted;
 
+        DispatcherTimer dropTimer;
+        string[] droppedFiles = null;
+
         public MainWindow()
             : base(App.Instance.Settings.MainWindowInfo, DefaultWidth, DefaultHeight)
         {
@@ -27,6 +31,10 @@ namespace ModMyFactory.Views
 
             dragging = false;
             Closing += ClosingHandler;
+
+            dropTimer = new DispatcherTimer(DispatcherPriority.Input);
+            dropTimer.Interval = TimeSpan.FromMilliseconds(1);
+            dropTimer.Tick += DropTimerCallback;
         }
 
         private void ClosingHandler(object sender, CancelEventArgs e)
@@ -314,10 +322,24 @@ namespace ModMyFactory.Views
             e.Handled = true;
         }
         
-        private async void ModsListBoxDropHandler(object sender, DragEventArgs e)
+        private void ModsListBoxDropHandler(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                await MainViewModel.Instance.AddModsFromFiles((string[])e.Data.GetData(DataFormats.FileDrop), true);
+            {
+                droppedFiles = ((string[])e.Data.GetData(DataFormats.FileDrop));
+                dropTimer.Start();
+            }
+        }
+
+        private async void DropTimerCallback(object sender, EventArgs e)
+        {
+            dropTimer.Stop();
+
+            if (droppedFiles != null)
+            {
+                await MainViewModel.Instance.AddModsFromFiles(droppedFiles, true);
+                droppedFiles = null;
+            }
         }
     }
 }
