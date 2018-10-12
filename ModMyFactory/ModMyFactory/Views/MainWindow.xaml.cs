@@ -317,7 +317,7 @@ namespace ModMyFactory.Views
         private async void ModsListBoxDropHandler(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                await MainViewModel.Instance.AddModsFromFiles((string[])e.Data.GetData(DataFormats.FileDrop), false);
+                await MainViewModel.Instance.AddModsFromFiles((string[])e.Data.GetData(DataFormats.FileDrop), true);
         }
     }
 }
