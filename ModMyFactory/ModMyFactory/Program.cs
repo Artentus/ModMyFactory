@@ -381,7 +381,7 @@ namespace ModMyFactory
         [STAThread]
         public static int Main(string[] args)
         {
-            var commandLine = new CommandLine(args);
+            var commandLine = new CommandLine(args, 'a', 'n', 'f', 'p', 's', 'c');
 
             // Only display help.
             if (commandLine.IsSet('h', "help"))

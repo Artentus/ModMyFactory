@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace ModMyFactory
 {
@@ -24,7 +25,7 @@ namespace ModMyFactory
             {
                 string[] parts = argument.Split('=');
                 Name = parts[0];
-                Value = parts[1];
+                if (parts.Length >= 2) Value = parts[1];
             }
         }
 
@@ -32,7 +33,7 @@ namespace ModMyFactory
 
         public ReadOnlyCollection<string> Arguments { get; }
 
-        public CommandLine(string[] arguments)
+        public CommandLine(string[] arguments, params char[] argsWithValue)
         {
             options = new List<CommandLineOption>();
             var argumentList = new List<string>();
@@ -52,14 +53,20 @@ namespace ModMyFactory
                     string value = string.Empty;
                     if ((index + 1 < arguments.Length) && !arguments[index + 1].StartsWith("-"))
                     {
-                        index++;
-                        value = arguments[index];
+                        value = arguments[index + 1];
                     }
 
+                    bool valueUsed = false;
                     for (int i = 1; i < argument.Length; i++)
                     {
-                        options.Add(new CommandLineOption(argument[i], value));
+                        char arg = argument[i];
+                        bool hasValue = argsWithValue.Contains(arg);
+
+                        options.Add(new CommandLineOption(arg, hasValue ? value : null));
+                        if (hasValue) valueUsed = true;
                     }
+
+                    if (valueUsed) index++;
                 }
                 else
                 {
@@ -73,7 +80,7 @@ namespace ModMyFactory
         /// <summary>
         /// Checks if a command line option has been set.
         /// </summary>
-        /// <param name="shortName">The options short name;</param>
+        /// <param name="shortName">The options short name.</param>
         /// <param name="longName">The options long name.</param>
         /// <returns>Returns true if the option is set, otherwise false.</returns>
         public bool IsSet(char? shortName, string longName)
