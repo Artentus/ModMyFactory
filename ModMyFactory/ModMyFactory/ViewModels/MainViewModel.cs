@@ -1426,7 +1426,7 @@ namespace ModMyFactory.ViewModels
         {
             base.OnPropertyChanged(e);
 
-            if ((e.PropertyName == nameof(Window)) && (Window != null))
+            if ((e.PropertyName == nameof(View)) && (Window != null))
             {
                 Window.Loaded += async (sender, ea) =>
                 {
