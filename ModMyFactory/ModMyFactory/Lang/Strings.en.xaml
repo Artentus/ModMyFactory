@@ -157,6 +157,8 @@
     <sys:String x:Key="UpdatingFactorioStage2Description">Applying update</sys:String>
     
     <sys:String x:Key="ExportingAction">Exporting modpacks</sys:String>
+    <sys:String x:Key="ImportingAction">Importing modpacks</sys:String>
+    <sys:String x:Key="ImportingDownloadingDescription">Downloading mods</sys:String>
 
     
     

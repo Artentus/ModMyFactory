@@ -149,7 +149,7 @@ namespace ModMyFactory.ViewModels
             {
                 if (ModFile.TryLoadFromFile(file, out var modFile, true))
                 {
-                    Mod mod = await Mod.Add(modFile, Mods, Modpacks, false);
+                    Mod mod = await Mod.Add(modFile, Mods, Modpacks, false, true);
                     modTemplate.Mod = mod;
                     return;
                 }
@@ -164,7 +164,7 @@ namespace ModMyFactory.ViewModels
             {
                 if (ModFile.TryLoadFromDirectory(directory, out var modFile, true))
                 {
-                    Mod mod = await Mod.Add(modFile, Mods, Modpacks, false);
+                    Mod mod = await Mod.Add(modFile, Mods, Modpacks, false, true);
                     modTemplate.Mod = mod;
                     return;
                 }
@@ -204,7 +204,8 @@ namespace ModMyFactory.ViewModels
         {
             var progressWindow = new ProgressWindow() { Owner = Window };
             var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
-            progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
+            progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ImportingAction");
+            progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("Downloading mods");
 
             var progress = new Progress<double>(p => progressViewModel.Progress = p);
 
