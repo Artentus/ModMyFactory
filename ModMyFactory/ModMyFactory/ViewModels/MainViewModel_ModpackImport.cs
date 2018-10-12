@@ -43,6 +43,13 @@ namespace ModMyFactory.ViewModels
 
         private async Task DownloadModRelease(ModExportTemplate modTemplate, ModRelease release, DirectoryInfo fileLocation, IProgress<double> progress, CancellationToken cancellationToken)
         {
+            var installedMod = Mods.FindByFactorioVersion(modTemplate.Name, release.InfoFile.FactorioVersion);
+            if ((installedMod != null) && (installedMod.Version >= release.Version))
+            {
+                modTemplate.Mod = installedMod;
+                return;
+            }
+
             string token;
             GlobalCredentials.Instance.LogIn(Window, out token);
 
@@ -205,7 +212,7 @@ namespace ModMyFactory.ViewModels
             var progressWindow = new ProgressWindow() { Owner = Window };
             var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
             progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("ImportingAction");
-            progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("Downloading mods");
+            progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("ImportingDownloadingDescription");
 
             var progress = new Progress<double>(p => progressViewModel.Progress = p);
 
@@ -251,7 +258,8 @@ namespace ModMyFactory.ViewModels
             {
                 foreach (var modTemplate in template.Mods)
                 {
-                    await AddMod(modTemplate, fileLocation);
+                    if (modTemplate.Mod == null)
+                        await AddMod(modTemplate, fileLocation);
                 }
 
                 foreach (var modpackTemplate in template.Modpacks)
