@@ -3,7 +3,7 @@
 namespace ModMyFactory.Web.ModApi
 {
     [JsonObject(MemberSerialization.OptOut)]
-    sealed class ModInfo
+    class ModInfo
     {
         [JsonProperty("title")]
         public string Title { get; set; }
@@ -21,6 +21,6 @@ namespace ModMyFactory.Web.ModApi
         public string Author { get; set; }
 
         [JsonProperty("latest_release")]
-        public ModRelease LatestRelease { get; set; }
+        public virtual ModRelease LatestRelease { get; set; }
     }
 }

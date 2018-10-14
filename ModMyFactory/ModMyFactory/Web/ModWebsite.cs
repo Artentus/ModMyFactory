@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using ModMyFactory.Helpers;
@@ -55,7 +57,7 @@ namespace ModMyFactory.Web
         /// Gets all mods that are available online.
         /// </summary>
         /// <returns>Returns a list of online available mods.</returns>
-        public static async Task<List<ModInfo>> GetModsAsync(int pageSize = 500)
+        public static async Task<List<ModInfo>> GetModsAsync(ModCollection installedMods, int pageSize = 500)
         {
             List<ModInfo> mods = null;
 
@@ -63,9 +65,25 @@ namespace ModMyFactory.Web
             foreach (var page in pages)
             {
                 if (mods == null)
-                    mods = new List<ModInfo>(page.Info.ModCount);
+                    mods = new List<ModInfo>(page.Info.ModCount + 50);
 
                 mods.AddRange(page.Mods);
+            }
+
+            foreach (var installedMod in installedMods)
+            {
+                if (!mods.Any(mod => mod.Name == installedMod.Name))
+                {
+                    try
+                    {
+                        var info = await GetExtendedInfoAsync(installedMod);
+                        mods.Add(info);
+                    }
+                    catch (WebException ex)
+                    {
+                        if (ex.Status != WebExceptionStatus.ProtocolError) throw;
+                    }
+                }
             }
 
             if (mods == null) mods = new List<ModInfo>();

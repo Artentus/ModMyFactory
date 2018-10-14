@@ -74,7 +74,7 @@ namespace ModMyFactory.ViewModels
 
                     if (info != null)
                     {
-                        var release = info.LatestRelease(mod.FactorioVersion);
+                        var release = info.GetLatestRelease(mod.FactorioVersion);
                         if ((release != null) && (release.Version > mod.Version))
                             result.Add(new ModUpdateInfo(mod, release, false));
                     }
@@ -87,7 +87,7 @@ namespace ModMyFactory.ViewModels
                     var mod = kvp.Value;
                     if (infos.TryGetValue(kvp.Key, out var info))
                     {
-                        var latestRelease = info.LatestRelease();
+                        var latestRelease = info.GetLatestRelease();
                         if (latestRelease.InfoFile.FactorioVersion > mod.FactorioVersion)
                             result.Add(new ModUpdateInfo(mod, latestRelease, true));
                     }
@@ -121,7 +121,7 @@ namespace ModMyFactory.ViewModels
 
                     if (info != null)
                     {
-                        var latestRelease = info.LatestRelease();
+                        var latestRelease = info.GetLatestRelease();
                         if ((latestRelease != null) && (latestRelease.Version > mod.Version))
                             result.Add(new ModUpdateInfo(mod, latestRelease, false));
                     }

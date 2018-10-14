@@ -6,7 +6,7 @@ using System.Linq;
 namespace ModMyFactory.Web.ModApi
 {
     [JsonObject(MemberSerialization.OptIn)]
-    sealed class ExtendedModInfo
+    sealed class ExtendedModInfo : ModInfo
     {
         [JsonProperty("releases")]
         public ModRelease[] Releases { get; set; }
@@ -29,7 +29,9 @@ namespace ModMyFactory.Web.ModApi
         [JsonProperty("faq")]
         public string Faq { get; set; }
 
-        public ModRelease LatestRelease(Version factorioVersion = null)
+        public override ModRelease LatestRelease { get => GetLatestRelease(); set => base.LatestRelease = value; }
+
+        public ModRelease GetLatestRelease(Version factorioVersion = null)
         {
             if (factorioVersion == null)
                 return Releases.MaxBy(release => release.Version, new VersionComparer());

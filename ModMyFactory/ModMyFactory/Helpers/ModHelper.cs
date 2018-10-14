@@ -10,7 +10,7 @@ namespace ModMyFactory.Helpers
 {
     static class ModHelper
     {
-        public static async Task<List<ModInfo>> FetchMods(Window progressOwner)
+        public static async Task<List<ModInfo>> FetchMods(Window progressOwner, ModCollection installedMods)
         {
             var progressWindow = new ProgressWindow() { Owner = progressOwner };
             var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
@@ -18,7 +18,7 @@ namespace ModMyFactory.Helpers
             progressViewModel.CanCancel = false;
             progressViewModel.IsIndeterminate = true;
 
-            Task<List<ModInfo>> fetchModsTask = ModWebsite.GetModsAsync();
+            Task<List<ModInfo>> fetchModsTask = ModWebsite.GetModsAsync(installedMods);
 
             Task closeWindowTask = fetchModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
             progressWindow.ShowDialog();

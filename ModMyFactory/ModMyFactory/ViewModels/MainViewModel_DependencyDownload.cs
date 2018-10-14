@@ -72,7 +72,7 @@ namespace ModMyFactory.ViewModels
         private async Task DownloadDependency(ModDependencyInfo dependency, IProgress<double> progress, CancellationToken cancellationToken, string token)
         {
             var info = await ModWebsite.GetExtendedInfoAsync(dependency.Name);
-            var latestRelease = info.LatestRelease(dependency.FactorioVersion);
+            var latestRelease = info.GetLatestRelease(dependency.FactorioVersion);
 
             if ((dependency.Version != null) && (latestRelease.Version < dependency.Version))
             {

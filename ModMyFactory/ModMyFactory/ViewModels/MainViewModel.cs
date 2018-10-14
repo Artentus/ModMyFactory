@@ -771,7 +771,7 @@ namespace ModMyFactory.ViewModels
                 List<ModInfo> modInfos;
                 try
                 {
-                    modInfos = await ModHelper.FetchMods(Window);
+                    modInfos = await ModHelper.FetchMods(Window, Mods);
                 }
                 catch (WebException)
                 {
