@@ -1227,12 +1227,9 @@ namespace ModMyFactory.ViewModels
                 {
                     if (result.UpdateAvailable)
                     {
-                        string currentVersionString = App.Version.ToString();
-                        string newVersionString = result.Version.ToString();
-                        if (MessageBox.Show(Window,
-                                string.Format(App.Instance.GetLocalizedMessage("Update", MessageType.Question), currentVersionString, newVersionString),
-                                App.Instance.GetLocalizedMessageTitle("Update", MessageType.Question),
-                                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        var notificationWindow = new UpdateNotificationWindow() { Owner = Window };
+                        var dialogResult = notificationWindow.ShowDialog();
+                        if (dialogResult == true)
                         {
                             Process.Start(result.UpdateUrl);
                         }

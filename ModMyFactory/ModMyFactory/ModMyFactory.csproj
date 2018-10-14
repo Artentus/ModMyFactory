@@ -193,6 +193,9 @@
     <Compile Include="Views\UpdateListWindow.xaml.cs">
       <DependentUpon>UpdateListWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\UpdateNotificationWindow.xaml.cs">
+      <DependentUpon>UpdateNotificationWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Web\ApiAuthentication.cs" />
     <Compile Include="Web\AuthenticationApi\AuthenticationInfo.cs" />
     <Compile Include="Web\ModApi\ApiPage.cs" />
@@ -338,6 +341,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\UpdateListWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UpdateNotificationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

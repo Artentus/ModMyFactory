@@ -148,6 +148,7 @@ namespace ModMyFactory.Controls
                     if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
 
                     index += 4;
+                    while (char.IsWhiteSpace(text[index])) index++;
 
                     var span = new Span() { TextDecorations = new TextDecorationCollection(TextDecorations.Underline) };
                     FormatText(text, span.Inlines, ref index, "####", "###", "##", "#", "\r\n", "\r", "\n");
@@ -161,6 +162,7 @@ namespace ModMyFactory.Controls
                     if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
 
                     index += 3;
+                    while (char.IsWhiteSpace(text[index])) index++;
 
                     var span = new Span() { FontWeight = FontWeights.Bold };
                     FormatText(text, span.Inlines, ref index, "###", "##", "#", "\r\n", "\r", "\n");
@@ -174,6 +176,7 @@ namespace ModMyFactory.Controls
                     if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
 
                     index += 2;
+                    while (char.IsWhiteSpace(text[index])) index++;
 
                     var span = new Span() { FontSize = 18 };
                     FormatText(text, span.Inlines, ref index, "##", "#", "\r\n", "\r", "\n");
@@ -187,6 +190,7 @@ namespace ModMyFactory.Controls
                     if (length > 0) inlines.Add(new Run(text.Substring(startIndex, length)));
 
                     index++;
+                    while (char.IsWhiteSpace(text[index])) index++;
 
                     var span = new Span() { FontSize = 20 };
                     FormatText(text, span.Inlines, ref index, "#", "\r\n", "\r", "\n");
