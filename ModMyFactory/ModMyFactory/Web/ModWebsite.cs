@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,47 +19,57 @@ namespace ModMyFactory.Web
         const string BaseUrl = "https://mods.factorio.com";
         const string ModsUrl = BaseUrl + "/api/mods";
 
+        private static ApiPage DownloadPage(int pageSize, int page)
+        {
+            string pageUrl = $"{ModsUrl}?page_size={pageSize}";
+            if (page > 1) pageUrl += $"&page={page}";
+
+            string document = WebHelper.GetDocument(pageUrl, null);
+            return JsonHelper.Deserialize<ApiPage>(document);
+        }
+
+        private static ApiPage DownloadFirstPage(int pageSize)
+        {
+            return DownloadPage(pageSize, 1);
+        }
+
+        private static IEnumerable<ApiPage> DownloadAllPages(int pageSize)
+        {
+            var firstPage = DownloadFirstPage(pageSize);
+            int pageCount = firstPage.Info.PageCount;
+
+            var pages = new ConcurrentBag<ApiPage>();
+            pages.Add(firstPage);
+            if (pageCount == 1) return pages;
+            
+            Parallel.For(2, pageCount, pageIndex =>
+            {
+                var page = DownloadPage(pageSize, pageIndex);
+                pages.Add(page);
+            });
+
+            return pages;
+        }
+
         /// <summary>
         /// Gets all mods that are available online.
         /// </summary>
         /// <returns>Returns a list of online available mods.</returns>
-        public static async Task<List<ModInfo>> GetModsAsync(IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
+        public static async Task<List<ModInfo>> GetModsAsync(int pageSize = 500)
         {
-            var result = new List<ModInfo>();
+            List<ModInfo> mods = null;
 
-            progress.Report(new Tuple<double, string>(0, App.Instance.GetLocalizedResourceString("ParsingFirstPageDescription")));
-
-            string currentPageUrl = ModsUrl + "?page_size=500";
-            while (!string.IsNullOrEmpty(currentPageUrl))
+            var pages = await Task.Run(() => DownloadAllPages(pageSize));
+            foreach (var page in pages)
             {
-                if (cancellationToken.IsCancellationRequested)
-                    return null;
+                if (mods == null)
+                    mods = new List<ModInfo>(page.Info.ModCount);
 
-                ModInfo[] pageResult = await Task.Run(() =>
-                {
-                    string document = WebHelper.GetDocument(currentPageUrl, null);
-                    if (!string.IsNullOrEmpty(document))
-                    {
-                        ApiPage currentPage = JsonHelper.Deserialize<ApiPage>(document);
-
-                        int pageNumber = currentPage.Info.PageNumber;
-                        int pageCount = currentPage.Info.PageCount;
-                        string progressDescription = string.Format(App.Instance.GetLocalizedResourceString("ParsingPageDescription"), pageNumber + 1, pageCount);
-                        progress.Report(new Tuple<double, string>((double)pageNumber / pageCount, progressDescription));
-
-                        currentPageUrl = currentPage.Info.Links.NextPage;
-                        return currentPage.Mods;
-                    }
-
-                    currentPageUrl = null;
-                    return null;
-                });
-                
-                if (pageResult != null)
-                    result.AddRange(pageResult);
+                mods.AddRange(page.Mods);
             }
 
-            return result;
+            if (mods == null) mods = new List<ModInfo>();
+            return mods;
         }
 
         private static ExtendedModInfo GetExtendedInfoInternal(string modName)

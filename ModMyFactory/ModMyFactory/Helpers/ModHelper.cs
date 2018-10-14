@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using ModMyFactory.ViewModels;
@@ -17,17 +15,10 @@ namespace ModMyFactory.Helpers
             var progressWindow = new ProgressWindow() { Owner = progressOwner };
             var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
             progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("FetchingModsAction");
-            progressViewModel.CanCancel = true;
+            progressViewModel.CanCancel = false;
+            progressViewModel.IsIndeterminate = true;
 
-            var progress = new Progress<Tuple<double, string>>(value =>
-            {
-                progressViewModel.Progress = value.Item1;
-                progressViewModel.ProgressDescription = value.Item2;
-            });
-            var cancellationSource = new CancellationTokenSource();
-            progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
-
-            Task<List<ModInfo>> fetchModsTask = ModWebsite.GetModsAsync(progress, cancellationSource.Token);
+            Task<List<ModInfo>> fetchModsTask = ModWebsite.GetModsAsync();
 
             Task closeWindowTask = fetchModsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
             progressWindow.ShowDialog();
@@ -35,7 +26,7 @@ namespace ModMyFactory.Helpers
             List<ModInfo> modInfos = await fetchModsTask;
             await closeWindowTask;
 
-            return cancellationSource.IsCancellationRequested ? null : modInfos;
+            return modInfos;
         }
     }
 }
