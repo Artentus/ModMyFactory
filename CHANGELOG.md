@@ -1,3 +1,8 @@
+#### 1.8.6
+* Improved the update notification to include the changelog.
+* Optimized loading of the online mod list.
+* Installed deprecated mods are now shown in the online list.
+
 #### 1.8.5
 * Improved the behaviour when importing modpacks: mods that are already installed will no longer be downloaded and will also not cause warning messages.
 * Improved behaviour of dragging and dropping mods from Windows Explorer to ModMyFactory: the Explorer will no longer be blocked until the operation is complete and mods are now copied, not moved.
