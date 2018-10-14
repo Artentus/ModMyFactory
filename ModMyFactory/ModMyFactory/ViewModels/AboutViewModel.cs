@@ -6,7 +6,7 @@ namespace ModMyFactory.ViewModels
 {
     sealed class AboutViewModel : ViewModelBase
     {
-        public string VersionString => $"v{App.Version}";
+        public string VersionString => $"v{App.Version} portable";
 
         public RelayCommand Url1Command { get; }
 

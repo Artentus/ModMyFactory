@@ -67,13 +67,11 @@ namespace ModMyFactory
         /// </summary>
         internal string ApplicationDirectoryPath { get; }
 
-        public App(bool createCrashLog, string appDataPath)
+        public App(bool createCrashLog = false)
         {
-            AppDataPath = appDataPath;
             ApplicationDirectoryPath = Path.GetFullPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-
+            AppDataPath = ApplicationDirectoryPath;
             var appDataDirectory = new DirectoryInfo(AppDataPath);
-            if (!appDataDirectory.Exists) appDataDirectory.Create();
 
             CleanUpTempDir();
 
@@ -104,11 +102,7 @@ namespace ModMyFactory
                 };
             }
         }
-
-        public App(bool createCrashLog = true)
-            : this(createCrashLog, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ModMyFactory"))
-        { }
-
+        
         /// <summary>
         /// Cleans up the apps temporary directory.
         /// </summary>
