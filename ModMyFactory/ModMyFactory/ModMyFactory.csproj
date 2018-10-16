@@ -138,6 +138,9 @@
     <Compile Include="Models\ModFile.cs" />
     <Compile Include="Models\ModFileCollection.cs" />
     <Compile Include="Models\ModpackTemplate.cs" />
+    <Compile Include="ModSettings\LoadTime.cs" />
+    <Compile Include="ModSettings\LoadTimeJsonConverter.cs" />
+    <Compile Include="ModSettings\ModSetting.cs" />
     <Compile Include="Models\ModTemplate.cs" />
     <Compile Include="Models\ModUpdateInfo.cs" />
     <Compile Include="Export\ModExportTemplate.cs" />
@@ -148,6 +151,11 @@
     <Compile Include="ModManager.cs" />
     <Compile Include="Export\ModpackExportTemplate.cs" />
     <Compile Include="ModpackCollection.cs" />
+    <Compile Include="ModSettings\SettingType.cs" />
+    <Compile Include="ModSettings\SettingTypeJsonConverter.cs" />
+    <Compile Include="ModSettings\SettingValue.cs" />
+    <Compile Include="ModSettings\SettingValueArrayJsonConverter.cs" />
+    <Compile Include="ModSettings\SettingValueJsonConverter.cs" />
     <Compile Include="MVVM\Converters\FactorioVersionConverter.cs" />
     <Compile Include="MVVM\Converters\RemoveFileExtensionConverter.cs" />
     <Compile Include="MVVM\Converters\SystemIconConverter.cs" />
