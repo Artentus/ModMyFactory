@@ -398,6 +398,7 @@
     <sys:String x:Key="GitHubLabel">GitHub API:</sys:String>
     <sys:String x:Key="ZlibLabel">CRC32 implementation:</sys:String>
     <sys:String x:Key="XdeltaLabel">VCDIFF implementation:</sys:String>
+    <sys:String x:Key="INIparserLabel">INI parser:</sys:String>
     
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Contributors</sys:String>
