@@ -115,6 +115,7 @@
     <Compile Include="Helpers\FileInfoExtensions.cs" />
     <Compile Include="Helpers\FileSystemInfoExtensions.cs" />
     <Compile Include="Helpers\GitHubClientExtensions.cs" />
+    <Compile Include="Helpers\INIHelper.cs" />
     <Compile Include="Helpers\ModHelper.cs" />
     <Compile Include="Helpers\PercievedFileType.cs" />
     <Compile Include="Helpers\ProcessExtensions.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="Models\ModDependencyInfo.cs" />
     <Compile Include="Models\ModFile.cs" />
     <Compile Include="Models\ModFileCollection.cs" />
+    <Compile Include="Models\ModLocale.cs" />
     <Compile Include="Models\ModpackTemplate.cs" />
     <Compile Include="ModSettings\LoadTime.cs" />
     <Compile Include="ModSettings\LoadTimeJsonConverter.cs" />

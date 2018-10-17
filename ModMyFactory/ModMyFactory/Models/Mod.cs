@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -224,6 +225,12 @@ namespace ModMyFactory.Models
             oldVersions = new ModFileCollection();
 
             active = ModManager.GetActive(Name, FactorioVersion);
+        }
+
+        public ModLocale GetLocale(CultureInfo culture)
+        {
+            if (File == null) return new ModLocale(culture);
+            return File.GetLocale(culture);
         }
 
         /// <summary>
