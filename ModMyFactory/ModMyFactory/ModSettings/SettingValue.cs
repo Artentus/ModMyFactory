@@ -55,8 +55,12 @@ namespace ModMyFactory.ModSettings
 
         public double GetFloatingPoint()
         {
-            if (Type != SettingType.FloatingPoint) throw new InvalidOperationException("Wrong value type.");
-            return (double)Value;
+            if (Type == SettingType.FloatingPoint)
+                return (double)Value;
+            else if (Type == SettingType.Integer)
+                return (double)(long)Value;
+            else
+                throw new InvalidOperationException("Wrong value type.");
         }
 
         public string GetString()

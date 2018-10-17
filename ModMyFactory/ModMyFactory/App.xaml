@@ -4,6 +4,7 @@
              xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
              xmlns:controls="clr-namespace:ModMyFactory.Controls"
              xmlns:converter="clr-namespace:ModMyFactory.MVVM.Converters"
+             xmlns:modsettings="clr-namespace:ModMyFactory.Models.ModSettings"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
@@ -31,6 +32,34 @@
             <converter:MultiplyConverter x:Key="MultiplyConverter"/>
             <converter:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
             <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
+
+            <DataTemplate x:Key="BooleanModSettingTemplate" DataType="{x:Type modsettings:BooleanModSetting}">
+                
+            </DataTemplate>
+
+            <DataTemplate x:Key="IntegerModSettingTemplate" DataType="{x:Type modsettings:IntegerModSetting}">
+
+            </DataTemplate>
+
+            <DataTemplate x:Key="IntegerListModSettingTemplate" DataType="{x:Type modsettings:IntegerListModSetting}">
+
+            </DataTemplate>
+
+            <DataTemplate x:Key="FloatingPointModSettingTemplate" DataType="{x:Type modsettings:FloatingPointModSetting}">
+
+            </DataTemplate>
+
+            <DataTemplate x:Key="FloatingPointListModSettingTemplate" DataType="{x:Type modsettings:FloatingPointListModSetting}">
+
+            </DataTemplate>
+
+            <DataTemplate x:Key="StringModSettingTemplate" DataType="{x:Type modsettings:StringModSetting}">
+
+            </DataTemplate>
+
+            <DataTemplate x:Key="StringListModSettingTemplate" DataType="{x:Type modsettings:StringListModSetting}">
+
+            </DataTemplate>
 
             <Style x:Key="{x:Type Image}" TargetType="{x:Type Image}">
                 <Style.Setters>

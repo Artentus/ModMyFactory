@@ -1,4 +1,5 @@
 ﻿using ModMyFactory.Helpers;
+using ModMyFactory.ModSettings;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,6 +21,7 @@ namespace ModMyFactory.Models
         private readonly bool isFile;
         private FileSystemInfo file;
         private Dictionary<string, ModLocale> locales;
+        private ModSettingInfo[] settings;
         
         /// <summary>
         /// The mods info file.
@@ -158,6 +160,85 @@ namespace ModMyFactory.Models
             this.isFile = isFile;
         }
 
+        private static ModSettingInfo[] ParseSettingsFile(Stream stream)
+        {
+            string content = string.Empty;
+            using (var reader = new StreamReader(stream))
+            {
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    if (!line.TrimStart().StartsWith("--")) content += line;
+                }
+            }
+
+            content = content.Trim();
+            content = content.Substring(12, content.Length - 13); // Remove data:extend and brackets
+            content = content.Trim();
+            content = content.Substring(1, content.Length - 2); // Remove outer {} brackets
+            content = content.Trim();
+            content = content.Substring(0, content.Length - 1); // Remove last ,
+            content = content.Replace('=', ':'); // Replace assignment char
+            content = '[' + content + ']'; // Add array brackets
+
+            return JsonHelper.Deserialize<ModSettingInfo[]>(content);
+        }
+
+        private static bool TryLoadSettingsFromFile(FileInfo archiveFile, out ModSettingInfo[] settings)
+        {
+            using (var archive = ZipFile.OpenRead(archiveFile.FullName))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    if ((entry.Name == "locale.lua") && (entry.FullName.Count(c => c == '/') == 1))
+                    {
+                        using (var stream = entry.Open())
+                        {
+                            settings = ParseSettingsFile(stream);
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            settings = null;
+            return false;
+        }
+
+        private static bool TryLoadSettingsFromDirectory(DirectoryInfo directory, out ModSettingInfo[] settings)
+        {
+            var settingsFile = directory.EnumerateFiles("settings.lua").FirstOrDefault();
+            if (settingsFile == null)
+            {
+                settings = null;
+                return false;
+            }
+
+            using (var stream = settingsFile.OpenRead())
+            {
+                settings = ParseSettingsFile(stream);
+                return true;
+            }
+        }
+
+        private bool TryLoadSettings(out ModSettingInfo[] settings)
+        {
+            if (isFile)
+                return TryLoadSettingsFromFile((FileInfo)file, out settings);
+            else
+                return TryLoadSettingsFromDirectory((DirectoryInfo)file, out settings);
+        }
+
+        public ModSettingInfo[] GetSettings()
+        {
+            if (settings != null) return settings;
+
+            if (!TryLoadSettings(out settings))
+                settings = new ModSettingInfo[0];
+
+            return settings;
+        }
+
         private static bool TryLoadLocaleFromFile(FileInfo archiveFile, CultureInfo culture, out ModLocale locale)
         {
             using (var archive = ZipFile.OpenRead(archiveFile.FullName))
@@ -249,6 +330,8 @@ namespace ModMyFactory.Models
 
         public ModLocale GetLocale(CultureInfo culture)
         {
+            if (locales == null) locales = new Dictionary<string, ModLocale>();
+
             if (culture.TwoLetterISOLanguageName == DefaultLocaleString)
                 return GetDefaultLocale();
 
