@@ -10,5 +10,7 @@ namespace ModMyFactory.Models.ModSettings
         public StringListModSetting(string name, string ordering, string defaultValue, IEnumerable<string> allowedValues)
             : base(name, ordering, defaultValue, allowedValues)
         { }
+
+        public override IModSetting Clone() => new StringListModSetting(Name, Ordering, DefaultValue, AllowedValues) { Value = this.Value };
     }
 }

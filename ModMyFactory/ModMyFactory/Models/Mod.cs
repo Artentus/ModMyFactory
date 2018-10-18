@@ -19,7 +19,7 @@ namespace ModMyFactory.Models
     /// <summary>
     /// A mod.
     /// </summary>
-    sealed partial class Mod : NotifyPropertyChangedBase
+    sealed partial class Mod : NotifyPropertyChangedBase, IHasModSettings
     {
         private readonly ModCollection parentCollection;
         private readonly ModpackCollection modpackCollection;
@@ -105,6 +105,7 @@ namespace ModMyFactory.Models
                     source = new CollectionViewSource() { Source = Settings };
                     var settingsView = (ListCollectionView)source.View;
                     settingsView.CustomSort = new ModSettingSorter();
+                    settingsView.GroupDescriptions.Add(new PropertyGroupDescription("LoadType"));
                     SettingsView = settingsView;
 
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Version)));
@@ -209,6 +210,14 @@ namespace ModMyFactory.Models
         /// A command that deletes this mod from the list and the filesystem.
         /// </summary>
         public RelayCommand<bool?> DeleteCommand { get; }
+
+        string IHasModSettings.DisplayName => $"{FriendlyName} ({FactorioVersion})";
+
+        bool IHasModSettings.Override
+        {
+            get => true;
+            set { }
+        }
 
         private Mod(ModCollection parentCollection, ModpackCollection modpackCollection)
         {

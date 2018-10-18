@@ -29,5 +29,7 @@ namespace ModMyFactory.Models.ModSettings
 
             AllowEmptyValue = allowEmptyValue;
         }
+
+        public override IModSetting Clone() => new StringModSetting(Name, Ordering, DefaultValue, AllowEmptyValue) { Value = this.Value };
     }
 }

@@ -10,5 +10,7 @@ namespace ModMyFactory.Models.ModSettings
         public FloatingPointListModSetting(string name, string ordering, double defaultValue, IEnumerable<double> allowedValues)
             : base(name, ordering, defaultValue, allowedValues)
         { }
+
+        public override IModSetting Clone() => new FloatingPointListModSetting(Name, Ordering, DefaultValue, AllowedValues) { Value = this.Value };
     }
 }

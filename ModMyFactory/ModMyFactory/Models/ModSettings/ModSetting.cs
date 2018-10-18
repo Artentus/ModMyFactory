@@ -6,7 +6,7 @@ using WPFCore;
 
 namespace ModMyFactory.Models.ModSettings
 {
-    abstract class ModSetting<T> : NotifyPropertyChangedBase, IModSetting where T : IEquatable<T>
+    abstract class ModSetting<T> : NotifyPropertyChangedBase, IModSetting, ICloneable where T : IEquatable<T>
     {
         T value;
 
@@ -45,5 +45,9 @@ namespace ModMyFactory.Models.ModSettings
         {
             Value = DefaultValue;
         }
+
+        public abstract IModSetting Clone();
+
+        object ICloneable.Clone() => Clone();
     }
 }

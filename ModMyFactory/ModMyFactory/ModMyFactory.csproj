@@ -131,6 +131,7 @@
     <Compile Include="ManagerMode.cs" />
     <Compile Include="MessageType.cs" />
     <Compile Include="ModCollection.cs" />
+    <Compile Include="Models\IHasModSettings.cs" />
     <Compile Include="Models\ModSettings\BooleanModSetting.cs" />
     <Compile Include="Models\CopyOrMoveType.cs" />
     <Compile Include="Models\FactorioFile.cs" />
@@ -199,6 +200,7 @@
     <Compile Include="ViewModels\MainViewModel_ModpackImport.cs" />
     <Compile Include="ViewModels\MainViewModel_ModUpdate.cs" />
     <Compile Include="ViewModels\ModpackExportViewModel.cs" />
+    <Compile Include="ViewModels\ModSettingsViewModel.cs" />
     <Compile Include="ViewModels\ModUpdateViewModel.cs" />
     <Compile Include="ViewModels\OnlineModsViewModel.cs" />
     <Compile Include="ViewModels\UpdateListViewModel.cs" />
@@ -210,6 +212,9 @@
     </Compile>
     <Compile Include="Views\ModpackExportWindow.xaml.cs">
       <DependentUpon>ModpackExportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ModSettingsWindow.xaml.cs">
+      <DependentUpon>ModSettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ModUpdateWindow.xaml.cs">
       <DependentUpon>ModUpdateWindow.xaml</DependentUpon>
@@ -352,6 +357,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ModpackExportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ModSettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -9,5 +9,7 @@ namespace ModMyFactory.Models.ModSettings
         public IntegerModSetting(string name, string ordering, long defaultValue, long minValue, long maxValue)
             : base(name, ordering, defaultValue, minValue, maxValue)
         { }
+
+        public override IModSetting Clone() => new IntegerModSetting(Name, Ordering, DefaultValue, MinValue, MaxValue) { Value = this.Value };
     }
 }

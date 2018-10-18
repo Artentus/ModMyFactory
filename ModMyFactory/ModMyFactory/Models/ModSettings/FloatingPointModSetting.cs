@@ -9,5 +9,7 @@ namespace ModMyFactory.Models.ModSettings
         public FloatingPointModSetting(string name, string ordering, double defaultValue, double minValue, double maxValue)
             : base(name, ordering, defaultValue, minValue, maxValue)
         { }
+
+        public override IModSetting Clone() => new FloatingPointModSetting(Name, Ordering, DefaultValue, MinValue, MaxValue) { Value = this.Value };
     }
 }
