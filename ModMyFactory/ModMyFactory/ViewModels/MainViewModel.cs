@@ -1210,7 +1210,7 @@ namespace ModMyFactory.ViewModels
                 {
                     result = await App.Instance.SearchForUpdateAsync(App.Instance.Settings.IncludePreReleasesForUpdate);
                 }
-                catch (HttpRequestException)
+                catch (Exception ex) when (ex is HttpRequestException || ex is Octokit.ApiException)
                 {
                     if (!silent)
                     {
