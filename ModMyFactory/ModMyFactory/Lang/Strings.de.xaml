@@ -264,6 +264,7 @@
     <sys:String x:Key="SetAllInactiveToolTip">Alle deaktivieren</sys:String>
     <sys:String x:Key="MissingDependenciesModToolTip">Abhängigkeiten dieser Mod fehlen.</sys:String>
     <sys:String x:Key="MissingDependenciesModpackToolTip">Abhängigkeiten von Mods in diesem Modpack fehlen.</sys:String>
+    <sys:String x:Key="ModSettingsToolTip">Mod-Einstellungen</sys:String>
 
 
     <!--

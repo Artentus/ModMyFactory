@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModMyFactory.ModSettings;
+using System;
 using System.Windows;
 
 namespace ModMyFactory.Models.ModSettings
@@ -21,8 +22,8 @@ namespace ModMyFactory.Models.ModSettings
 
         public override DataTemplate Template => (DataTemplate)App.Instance.Resources["StringModSettingTemplate"];
 
-        public StringModSetting(string name, string ordering, string defaultValue, bool allowEmptyValue)
-            : base(name, ordering, defaultValue)
+        public StringModSetting(string name, LoadTime loadTime, string ordering, string defaultValue, bool allowEmptyValue)
+            : base(name, loadTime, ordering, defaultValue)
         {
             if (!allowEmptyValue && string.IsNullOrEmpty(defaultValue))
                 throw new ArgumentException("Value not allowed.", nameof(defaultValue));
@@ -30,6 +31,6 @@ namespace ModMyFactory.Models.ModSettings
             AllowEmptyValue = allowEmptyValue;
         }
 
-        public override IModSetting Clone() => new StringModSetting(Name, Ordering, DefaultValue, AllowEmptyValue) { Value = this.Value };
+        public override IModSetting Clone() => new StringModSetting(Name, LoadTime, Ordering, DefaultValue, AllowEmptyValue) { Value = this.Value };
     }
 }

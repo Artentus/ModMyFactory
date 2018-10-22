@@ -40,6 +40,8 @@
         <BitmapImage x:Key="RenameInactiveIcon" UriSource="../Images/RenameInactive.png"/>
         <BitmapImage x:Key="RunIcon" UriSource="../Images/Run.png"/>
         <BitmapImage x:Key="SettingsIcon" UriSource="../Images/Settings.png"/>
+        <BitmapImage x:Key="SettingsButtonIcon" UriSource="../Images/Settings_gray.png"/>
+        <BitmapImage x:Key="SettingsHoverIcon" UriSource="../Images/Settings_blue.png"/>
         <BitmapImage x:Key="UpdateIcon" UriSource="../Images/Update.png"/>
         <BitmapImage x:Key="WarningIcon" UriSource="../Images/Warning.png"/>
         <BitmapImage x:Key="WebDestinationIcon" UriSource="../Images/WebDestination.png"/>
@@ -93,6 +95,27 @@
                     </Trigger.Setters>
                 </Trigger>
             </Style.Triggers>
+        </Style>
+
+        <ControlTemplate x:Key="SettingsButtonTemplate" TargetType="{x:Type Button}">
+            <Image x:Name="Image" Source="{DynamicResource SettingsButtonIcon}" Stretch="None" VerticalAlignment="Center" UseLayoutRounding="True"/>
+
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Trigger.Setters>
+                        <Setter TargetName="Image" Property="Source" Value="{DynamicResource SettingsHoverIcon}"/>
+                    </Trigger.Setters>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <Style x:Key="SettingsButtonStyle" TargetType="{x:Type Button}">
+            <Style.Setters>
+                <Setter Property="UseLayoutRounding" Value="True"/>
+                <Setter Property="MinWidth" Value="0"/>
+                <Setter Property="MinHeight" Value="0"/>
+                <Setter Property="Template" Value="{StaticResource SettingsButtonTemplate}"/>
+            </Style.Setters>
         </Style>
     </Window.Resources>
 
@@ -483,18 +506,20 @@
                                 <Grid Margin="2">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
                                     <CheckBox Grid.Column="0" Margin="4" Style="{StaticResource ActiveInactiveCheckBoxStyle}" IsChecked="{Binding Active, Mode=TwoWay}"/>
-                                    <TextBlock Grid.Column="1" Margin="2,0" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding FriendlyName}"/>
-                                    <Border Grid.Column="2" Margin="2" Background="Transparent" ToolTip="{DynamicResource MissingDependenciesModToolTip}"
+                                    <Button Grid.Column="1" Margin="2,0" Style="{StaticResource SettingsButtonStyle}" ToolTip="{DynamicResource ModSettingsToolTip}" Command="{Binding ViewSettingsCommand}"/>
+                                    <TextBlock Grid.Column="2" Margin="2,0" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding FriendlyName}"/>
+                                    <Border Grid.Column="3" Margin="2" Background="Transparent" ToolTip="{DynamicResource MissingDependenciesModToolTip}"
                                             Visibility="{Binding HasUnsatisfiedDependencies, Converter={StaticResource VisibilityConverter}}">
                                         <Image Margin="1" Source="{StaticResource DependencyWarningIcon}" Stretch="None"/>
                                     </Border>
-                                    <Button Grid.Column="3" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
+                                    <Button Grid.Column="4" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
                                             CommandParameter="{StaticResource True}" Command="{Binding DeleteCommand}"/>
                                 </Grid>
                             </Expander.Header>
@@ -683,16 +708,18 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     
                                     <CheckBox Grid.Column="0" Margin="4" Style="{StaticResource ActiveInactiveCheckBoxStyle}" IsChecked="{Binding Active, Mode=TwoWay}"/>
-                                    <ToggleButton x:Name="RenameButton" Grid.Column="1" Margin="2,0" ToolTip="{DynamicResource RenameToolTip}" Template="{StaticResource RenameButtonTemplate}"
+                                    <Button Grid.Column="1" Margin="2,0" Style="{StaticResource SettingsButtonStyle}" ToolTip="{DynamicResource ModSettingsToolTip}" Command="{Binding ViewSettingsCommand}"/>
+                                    <ToggleButton x:Name="RenameButton" Grid.Column="2" Margin="2,0" ToolTip="{DynamicResource RenameToolTip}" Template="{StaticResource RenameButtonTemplate}"
                                                   IsChecked="{Binding Editing, Mode=TwoWay}" Focusable="False"/>
-                                    <TextBlock Grid.Column="2" Margin="2,0" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Name, Mode=OneWay}"/>
-                                    <TextBox Grid.Column="2" Margin="2,0" Padding="2" VerticalAlignment="Center" MaxLines="1"
+                                    <TextBlock Grid.Column="3" Margin="2,0" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Name, Mode=OneWay}"/>
+                                    <TextBox Grid.Column="3" Margin="2,0" Padding="2" VerticalAlignment="Center" MaxLines="1"
                                              LostFocus="RenameTextBoxLostFocusHandler" IsVisibleChanged="RenameTextBoxVisibilityChangedHandler"
                                              Text="{Binding EditingName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                              Visibility="{Binding Editing, Converter={StaticResource VisibilityConverter}, Mode=TwoWay}">
@@ -700,11 +727,11 @@
                                             <KeyBinding Key="Return" Command="{Binding EndEditCommand}"/>
                                         </TextBox.InputBindings>
                                     </TextBox>
-                                    <Border Grid.Column="3" Margin="2" Background="Transparent" ToolTip="{DynamicResource MissingDependenciesModpackToolTip}"
+                                    <Border Grid.Column="4" Margin="2" Background="Transparent" ToolTip="{DynamicResource MissingDependenciesModpackToolTip}"
                                             Visibility="{Binding HasUnsatisfiedDependencies, Converter={StaticResource VisibilityConverter}}">
                                         <Image Margin="1" Source="{StaticResource DependencyWarningIcon}" Stretch="None"/>
                                     </Border>
-                                    <Button Grid.Column="4" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
+                                    <Button Grid.Column="5" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
                                             CommandParameter="{StaticResource True}" Command="{Binding DeleteCommand}"/>
                                 </Grid>
                             </Expander.Header>

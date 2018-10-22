@@ -559,6 +559,8 @@
     <Resource Include="Images\Optional.png" />
     <Resource Include="Images\Warning.png" />
     <Resource Include="Images\Optional_small.png" />
+    <Resource Include="Images\Settings_blue.png" />
+    <Resource Include="Images\Settings_gray.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>

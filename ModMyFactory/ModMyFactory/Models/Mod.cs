@@ -7,10 +7,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models.ModSettings;
 using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.ViewModels;
+using ModMyFactory.Views;
 using WPFCore;
 using WPFCore.Commands;
 
@@ -105,7 +107,7 @@ namespace ModMyFactory.Models
                     source = new CollectionViewSource() { Source = Settings };
                     var settingsView = (ListCollectionView)source.View;
                     settingsView.CustomSort = new ModSettingSorter();
-                    settingsView.GroupDescriptions.Add(new PropertyGroupDescription("LoadType"));
+                    settingsView.GroupDescriptions.Add(new PropertyGroupDescription("LoadTime"));
                     SettingsView = settingsView;
 
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Version)));
@@ -219,12 +221,15 @@ namespace ModMyFactory.Models
             set { }
         }
 
+        public ICommand ViewSettingsCommand { get; }
+
         private Mod(ModCollection parentCollection, ModpackCollection modpackCollection)
         {
             this.parentCollection = parentCollection;
             this.modpackCollection = modpackCollection;
 
             DeleteCommand = new RelayCommand<bool?>(showPrompt => Delete(showPrompt ?? true));
+            ViewSettingsCommand = new RelayCommand(ViewSettings);
         }
 
         /// <summary>
@@ -298,6 +303,14 @@ namespace ModMyFactory.Models
             }
 
             HasUnsatisfiedDependencies = result;
+        }
+
+        public void ViewSettings()
+        {
+            var settingsWindow = new ModSettingsWindow() { Owner = App.Instance.MainWindow };
+            var settingsViewModel = (ModSettingsViewModel)settingsWindow.ViewModel;
+            settingsViewModel.SetMod(this);
+            settingsWindow.ShowDialog();
         }
         
         private bool KeepOldFile(ModFile newFile)

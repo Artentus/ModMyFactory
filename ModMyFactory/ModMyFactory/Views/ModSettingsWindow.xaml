@@ -25,19 +25,21 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <ComboBox Margin="2" Grid.Row="0" ItemsSource="{Binding ModsView}">
+        <ComboBox Margin="2" Grid.Row="0" ItemsSource="{Binding ModsView}" Visibility="{Binding MultiSelect, Converter={StaticResource VisibilityConverter}}">
             <ComboBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type model:IHasModSettings}">
                     <TextBlock Margin="2" Text="{Binding DisplayName}"/>
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
-        <CheckBox Margin="2" Grid.Row="1" IsChecked="{Binding SelectedModOverride, Mode=TwoWay}"/>
+        <CheckBox Margin="2" Grid.Row="1" IsChecked="{Binding SelectedModOverride, Mode=TwoWay}" Visibility="{Binding MultiSelect, Converter={StaticResource VisibilityConverter}}"/>
 
         <TabControl Margin="2" Grid.Row="2" ItemsSource="{Binding SelectedModSettingsView.Groups}">
             <TabControl.ContentTemplate>
                 <DataTemplate>
-                    <ListBox ItemsSource="{Binding Items}" ItemTemplateSelector="{StaticResource ModSettingTemplateSelector}"/>
+                    <ScrollViewer>
+                        <ItemsControl ItemsSource="{Binding Items}" ItemTemplateSelector="{StaticResource ModSettingTemplateSelector}"/>
+                    </ScrollViewer>
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>

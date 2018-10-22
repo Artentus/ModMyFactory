@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ModMyFactory.ModSettings;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace ModMyFactory.Models.ModSettings
@@ -7,10 +8,10 @@ namespace ModMyFactory.Models.ModSettings
     {
         public override DataTemplate Template => (DataTemplate)App.Instance.Resources["StringListModSettingTemplate"];
 
-        public StringListModSetting(string name, string ordering, string defaultValue, IEnumerable<string> allowedValues)
-            : base(name, ordering, defaultValue, allowedValues)
+        public StringListModSetting(string name, LoadTime loadTime, string ordering, string defaultValue, IEnumerable<string> allowedValues)
+            : base(name, loadTime, ordering, defaultValue, allowedValues)
         { }
 
-        public override IModSetting Clone() => new StringListModSetting(Name, Ordering, DefaultValue, AllowedValues) { Value = this.Value };
+        public override IModSetting Clone() => new StringListModSetting(Name, LoadTime, Ordering, DefaultValue, AllowedValues) { Value = this.Value };
     }
 }

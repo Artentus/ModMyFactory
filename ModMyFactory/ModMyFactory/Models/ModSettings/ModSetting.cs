@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModMyFactory.ModSettings;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
@@ -11,6 +12,8 @@ namespace ModMyFactory.Models.ModSettings
         T value;
 
         public string Name { get; }
+
+        public LoadTime LoadTime { get; }
 
         public string Ordering { get; }
 
@@ -32,9 +35,10 @@ namespace ModMyFactory.Models.ModSettings
 
         public abstract DataTemplate Template { get; }
 
-        protected ModSetting(string name, string ordering, T defaultValue)
+        protected ModSetting(string name, LoadTime loadTime, string ordering, T defaultValue)
         {
             Name = name;
+            LoadTime = loadTime;
             Ordering = ordering;
 
             Value = defaultValue;

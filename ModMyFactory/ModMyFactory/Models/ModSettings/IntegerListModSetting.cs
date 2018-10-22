@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ModMyFactory.ModSettings;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace ModMyFactory.Models.ModSettings
@@ -7,10 +8,10 @@ namespace ModMyFactory.Models.ModSettings
     {
         public override DataTemplate Template => (DataTemplate)App.Instance.Resources["IntegerListModSettingTemplate"];
 
-        public IntegerListModSetting(string name, string ordering, long defaultValue, IEnumerable<long> allowedValues)
-            : base(name, ordering, defaultValue, allowedValues)
+        public IntegerListModSetting(string name, LoadTime loadTime, string ordering, long defaultValue, IEnumerable<long> allowedValues)
+            : base(name, loadTime, ordering, defaultValue, allowedValues)
         { }
 
-        public override IModSetting Clone() => new IntegerListModSetting(Name, Ordering, DefaultValue, AllowedValues) { Value = this.Value };
+        public override IModSetting Clone() => new IntegerListModSetting(Name, LoadTime, Ordering, DefaultValue, AllowedValues) { Value = this.Value };
     }
 }

@@ -34,7 +34,7 @@
             <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
 
             <DataTemplate x:Key="BooleanModSettingTemplate" DataType="{x:Type modsettings:BooleanModSetting}">
-                
+                <CheckBox Margin="4" IsChecked="{Binding Value, Mode=TwoWay}" Content="{Binding Name}"/>
             </DataTemplate>
 
             <DataTemplate x:Key="IntegerModSettingTemplate" DataType="{x:Type modsettings:IntegerModSetting}">

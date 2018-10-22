@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModMyFactory.ModSettings;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -27,8 +28,8 @@ namespace ModMyFactory.Models.ModSettings
 
         public IReadOnlyCollection<T> AllowedValues { get; }
 
-        protected ListModSetting(string name, string ordering, T defaultValue, IEnumerable<T> allowedValues)
-            : base(name, ordering, defaultValue)
+        protected ListModSetting(string name, LoadTime loadTime, string ordering, T defaultValue, IEnumerable<T> allowedValues)
+            : base(name, loadTime, ordering, defaultValue)
         {
             var comparer = EqualityComparer<T>.Default;
             foreach (var allowedValue in allowedValues)

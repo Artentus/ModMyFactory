@@ -37,8 +37,7 @@ namespace ModMyFactory.ViewModels
                 {
                     selectedMod = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedMod)));
-
-                    SelectedModOverride = selectedMod.Override;
+                    
                     SelectedModSettings = selectedMod.Settings;
                     SelectedModSettingsView = selectedMod.SettingsView;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModOverride)));
@@ -48,7 +47,11 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        public bool SelectedModOverride { get; private set; }
+        public bool SelectedModOverride
+        {
+            get => SelectedMod?.Override ?? false;
+            set { if (SelectedMod != null) SelectedMod.Override = value; }
+        }
 
         public IReadOnlyCollection<IModSetting> SelectedModSettings { get; private set; }
 

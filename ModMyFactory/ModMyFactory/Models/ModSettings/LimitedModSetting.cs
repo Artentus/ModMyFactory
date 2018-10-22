@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModMyFactory.ModSettings;
+using System;
 using System.Collections.Generic;
 
 namespace ModMyFactory.Models.ModSettings
@@ -24,8 +25,8 @@ namespace ModMyFactory.Models.ModSettings
 
         public T MaxValue { get; }
 
-        protected LimitedModSetting(string name, string ordering, T defaultValue, T minValue, T maxValue)
-            : base(name, ordering, defaultValue)
+        protected LimitedModSetting(string name, LoadTime loadTime, string ordering, T defaultValue, T minValue, T maxValue)
+            : base(name, loadTime, ordering, defaultValue)
         {
             var comparer = Comparer<T>.Default;
             if (comparer.Compare(minValue, maxValue) > 0) throw new ArgumentException("Min value cannot be larger than max value.");
