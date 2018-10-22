@@ -113,6 +113,7 @@
                 <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor2Command}">jodli</Hyperlink></TextBlock>
                 <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor3Command}">mpwoz</Hyperlink></TextBlock>
                 <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor4Command}">Credomane Evonguard</Hyperlink></TextBlock>
+                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor5Command}">distantcam</Hyperlink></TextBlock>
             </WrapPanel>
         </Grid>
 
