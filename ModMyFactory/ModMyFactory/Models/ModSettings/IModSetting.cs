@@ -12,5 +12,14 @@ namespace ModMyFactory.Models.ModSettings
         string Ordering { get; }
 
         DataTemplate Template { get; }
+
+        IModSettingProxy CreateProxy();
+    }
+
+    interface IModSetting<T> : IModSetting
+    {
+        T Value { get; set; }
+
+        T DefaultValue { get; }
     }
 }

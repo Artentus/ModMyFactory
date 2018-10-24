@@ -132,6 +132,7 @@
     <Compile Include="MessageType.cs" />
     <Compile Include="ModCollection.cs" />
     <Compile Include="Models\IHasModSettings.cs" />
+    <Compile Include="Models\ModSettingsProxy.cs" />
     <Compile Include="Models\ModSettings\BooleanModSetting.cs" />
     <Compile Include="Models\CopyOrMoveType.cs" />
     <Compile Include="Models\FactorioFile.cs" />
@@ -141,10 +142,15 @@
     <Compile Include="Models\LatestFactorioVersion.cs" />
     <Compile Include="Models\ModSettings\FloatingPointListModSetting.cs" />
     <Compile Include="Models\ModSettings\FloatingPointModSetting.cs" />
+    <Compile Include="Models\ModSettings\ILimitedModSetting.cs" />
+    <Compile Include="Models\ModSettings\IListModSetting.cs" />
     <Compile Include="Models\ModSettings\IModSetting.cs" />
+    <Compile Include="Models\ModSettings\IModSettingProxy.cs" />
     <Compile Include="Models\ModSettings\IntegerListModSetting.cs" />
     <Compile Include="Models\ModSettings\IntegerModSetting.cs" />
+    <Compile Include="Models\ModSettings\IStringModSetting.cs" />
     <Compile Include="Models\ModSettings\LimitedModSetting.cs" />
+    <Compile Include="Models\ModSettings\LimitedModSettingProxy.cs" />
     <Compile Include="Models\ModSettings\ListModSetting.cs" />
     <Compile Include="Models\ModDependency.cs" />
     <Compile Include="Models\ModDependencyInfo.cs" />
@@ -152,7 +158,9 @@
     <Compile Include="Models\ModFileCollection.cs" />
     <Compile Include="Models\ModLocale.cs" />
     <Compile Include="Models\ModpackTemplate.cs" />
+    <Compile Include="Models\ModSettings\ListModSettingProxy.cs" />
     <Compile Include="Models\ModSettings\ModSetting.cs" />
+    <Compile Include="Models\ModSettings\ModSettingProxy.cs" />
     <Compile Include="Models\ModSettings\StringListModSetting.cs" />
     <Compile Include="Models\ModSettings\StringModSetting.cs" />
     <Compile Include="ModSettings\LoadTime.cs" />

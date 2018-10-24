@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ModMyFactory.Models.ModSettings
 {
-    abstract class LimitedModSetting<T> : ModSetting<T> where T : IEquatable<T>, IComparable<T>
+    abstract class LimitedModSetting<T> : ModSetting<T>, ILimitedModSetting<T> where T : IEquatable<T>, IComparable<T>
     {
         public override T Value
         {

@@ -5,7 +5,7 @@ using System.Windows.Input;
 
 namespace ModMyFactory.Models
 {
-    interface IHasModSettings
+    interface IHasModSettings : INotifyPropertyChanged
     {
         string DisplayName { get; }
 

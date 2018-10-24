@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 namespace ModMyFactory.Models.ModSettings
 {
-    abstract class ListModSetting<T> : ModSetting<T> where T : IEquatable<T>
+    abstract class ListModSetting<T> : ModSetting<T>, IListModSetting<T> where T : IEquatable<T>
     {
         public override T Value
         {
