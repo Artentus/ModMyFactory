@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -18,6 +19,10 @@ namespace ModMyFactory.Models
         readonly IHasModSettings baseMod;
         bool @override;
         IReadOnlyCollection<IModSettingProxy> settings;
+
+        public string Name => baseMod.Name;
+
+        public Version Version => baseMod.Version;
 
         public string DisplayName => baseMod.DisplayName;
 

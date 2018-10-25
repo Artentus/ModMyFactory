@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using WPFCore.Commands;
 
@@ -15,6 +16,8 @@ namespace ModMyFactory.Models
         bool? Active { get; set; }
 
         bool HasUnsatisfiedDependencies { get; }
+
+        IEnumerable<IHasModSettings> ModProxies { get; }
 
         RelayCommand RemoveFromParentCommand { get; }
     }

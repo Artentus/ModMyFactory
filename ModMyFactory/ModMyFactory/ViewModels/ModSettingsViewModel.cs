@@ -1,7 +1,10 @@
 ﻿using ModMyFactory.Models;
 using ModMyFactory.Models.ModSettings;
+using ModMyFactory.MVVM.Sorters;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Windows.Data;
 using WPFCore;
 
 namespace ModMyFactory.ViewModels
@@ -61,9 +64,9 @@ namespace ModMyFactory.ViewModels
         {
             MultiSelect = false;
 
-            Mods = null;
-            ModsView = null;
+            Mods = new List<IHasModSettings>() { mod };
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(Mods)));
+            ModsView = CollectionViewSource.GetDefaultView(Mods);
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModsView)));
 
             SelectedMod = mod;
@@ -72,6 +75,17 @@ namespace ModMyFactory.ViewModels
         public void SetMods(IList<IHasModSettings> mods)
         {
             MultiSelect = true;
+
+            Mods = mods;
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Mods)));
+
+            var source = new CollectionViewSource() { Source = Mods };
+            var view = (ListCollectionView)source.View;
+            view.CustomSort = new ModSorter();
+            ModsView = view;
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModsView)));
+
+            SelectedMod = Mods.FirstOrDefault();
         }
     }
 }

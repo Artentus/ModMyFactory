@@ -25,7 +25,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <ComboBox Margin="2" Grid.Row="0" ItemsSource="{Binding ModsView}" Visibility="{Binding MultiSelect, Converter={StaticResource VisibilityConverter}}">
+        <ComboBox Margin="2" Grid.Row="0" ItemsSource="{Binding ModsView}" SelectedItem="{Binding SelectedMod, Mode=TwoWay}" Visibility="{Binding MultiSelect, Converter={StaticResource VisibilityConverter}}">
             <ComboBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type model:IHasModSettings}">
                     <TextBlock Margin="2" Text="{Binding DisplayName}"/>

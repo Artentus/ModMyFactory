@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using WPFCore;
@@ -28,6 +29,8 @@ namespace ModMyFactory.Models
         /// The view this modpack reference is presented in.
         /// </summary>
         public IEditableCollectionView ParentView { get; set; }
+
+        public IEnumerable<IHasModSettings> ModProxies => Modpack.ModProxies;
 
         public RelayCommand RemoveFromParentCommand { get; }
 
