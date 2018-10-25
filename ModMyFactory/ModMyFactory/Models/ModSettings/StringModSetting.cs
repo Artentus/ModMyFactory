@@ -20,7 +20,7 @@ namespace ModMyFactory.Models.ModSettings
                 }
             }
 
-            public bool AllowEmptyValue { get; }
+            public bool AllowEmptyValue { get; } = true;
 
             public StringModSettingProxy(StringModSetting baseSetting)
                 : base(baseSetting)
@@ -52,7 +52,7 @@ namespace ModMyFactory.Models.ModSettings
             }
         }
 
-        public bool AllowEmptyValue { get; }
+        public bool AllowEmptyValue { get; } = true;
 
         public override DataTemplate Template => (DataTemplate)App.Instance.Resources["StringModSettingTemplate"];
 

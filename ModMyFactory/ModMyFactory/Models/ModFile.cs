@@ -1,5 +1,6 @@
 ﻿using ModMyFactory.Helpers;
 using ModMyFactory.ModSettings;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -171,17 +172,27 @@ namespace ModMyFactory.Models
                     if (!line.TrimStart().StartsWith("--")) content += line;
                 }
             }
-
+            
             content = content.Trim();
-            content = content.Substring(12, content.Length - 13); // Remove data:extend and brackets
-            content = content.Trim();
-            content = content.Substring(1, content.Length - 2); // Remove outer {} brackets
-            content = content.Trim();
-            content = content.Substring(0, content.Length - 1); // Remove last ,
+            content = content.Substring(4).TrimStart(); // Remove 'data'
+            content = content.Substring(1).TrimStart(); // Remove ':'
+            content = content.Substring(6).TrimStart(); // Remove 'extend'
+            if (content[0] == '(') content = content.Substring(1).TrimStart(); // Remove '(' if present
+            if (content[content.Length - 1] == ')') content = content.Substring(0, content.Length - 1).TrimEnd(); // Remove ')' if present
+            content = content.Substring(1, content.Length - 2).Trim(); // Remove outer {} brackets
             content = content.Replace('=', ':'); // Replace assignment char
             content = '[' + content + ']'; // Add array brackets
 
-            return JsonHelper.Deserialize<ModSettingInfo[]>(content);
+            // ToDo: add support for 'require' statements
+            
+            try
+            {
+                return JsonHelper.Deserialize<ModSettingInfo[]>(content);
+            }
+            catch (JsonReaderException)
+            {
+                return new ModSettingInfo[0];
+            }
         }
 
         private static bool TryLoadSettingsFromFile(FileInfo archiveFile, out ModSettingInfo[] settings)
@@ -190,7 +201,7 @@ namespace ModMyFactory.Models
             {
                 foreach (var entry in archive.Entries)
                 {
-                    if ((entry.Name == "locale.lua") && (entry.FullName.Count(c => c == '/') == 1))
+                    if ((entry.Name == "settings.lua") && (entry.FullName.Count(c => c == '/') == 1))
                     {
                         using (var stream = entry.Open())
                         {
