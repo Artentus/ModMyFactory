@@ -16,6 +16,8 @@ namespace ModMyFactory.Models
 
         bool Override { get; set; }
 
+        bool HasSettings { get; }
+
         IReadOnlyCollection<IModSetting> Settings { get; }
         
         ICollectionView SettingsView { get; }

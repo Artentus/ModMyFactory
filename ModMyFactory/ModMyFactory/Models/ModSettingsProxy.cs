@@ -46,6 +46,8 @@ namespace ModMyFactory.Models
 
         public ICollectionView SettingsView { get; private set; }
 
+        public bool HasSettings => baseMod.HasSettings;
+
         public ICommand ViewSettingsCommand { get; }
 
         public ModSettingsProxy(IHasModSettings baseMod)

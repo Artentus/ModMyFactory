@@ -214,6 +214,11 @@ namespace ModMyFactory.Models
         /// </summary>
         public RelayCommand EndEditCommand { get; }
 
+        /// <summary>
+        /// Indicates whether any mods in this modpack have settings;
+        /// </summary>
+        public bool HasSettings => ModProxies.Any(proxy => proxy.HasSettings);
+
         public ICommand ViewSettingsCommand { get; }
 
         public void ViewSettings()
@@ -385,6 +390,8 @@ namespace ModMyFactory.Models
                     SetHasUnsatisfiedDependencies();
                     break;
             }
+
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasSettings)));
         }
 
         /// <summary>

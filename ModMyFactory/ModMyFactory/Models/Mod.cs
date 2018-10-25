@@ -119,6 +119,7 @@ namespace ModMyFactory.Models
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DependenciesView)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Settings)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SettingsView)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasSettings)));
                 }
             }
         }
@@ -174,6 +175,11 @@ namespace ModMyFactory.Models
         /// A view containing this mods settings.
         /// </summary>
         public ICollectionView SettingsView { get; private set; }
+
+        /// <summary>
+        /// Indicates whether this mod has any settings.
+        /// </summary>
+        public bool HasSettings => Settings.Count > 0;
 
         /// <summary>
         /// Additional information about this mod to be displayed in a tooltip.

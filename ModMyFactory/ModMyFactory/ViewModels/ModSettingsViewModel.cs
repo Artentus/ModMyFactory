@@ -82,10 +82,18 @@ namespace ModMyFactory.ViewModels
             var source = new CollectionViewSource() { Source = Mods };
             var view = (ListCollectionView)source.View;
             view.CustomSort = new ModSorter();
+            view.Filter = ModFilter;
             ModsView = view;
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModsView)));
 
             SelectedMod = Mods.FirstOrDefault();
+        }
+
+        private bool ModFilter(object item)
+        {
+            var mod = item as IHasModSettings;
+            if (mod == null) return false;
+            return mod.HasSettings;
         }
     }
 }
