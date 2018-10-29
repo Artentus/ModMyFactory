@@ -23,8 +23,8 @@ namespace ModMyFactory.Models.ModSettings
 
         public override DataTemplate Template => (DataTemplate)App.Instance.Resources["FloatingPointModSettingTemplate"];
 
-        public FloatingPointModSetting(string name, LoadTime loadTime, string ordering, double defaultValue, double minValue, double maxValue)
-            : base(name, loadTime, ordering, defaultValue, minValue, maxValue)
+        public FloatingPointModSetting(IHasModSettings owner, string name, LoadTime loadTime, string ordering, double defaultValue, double minValue, double maxValue)
+            : base(owner, name, loadTime, ordering, defaultValue, minValue, maxValue)
         { }
 
         public override IModSettingProxy CreateProxy()

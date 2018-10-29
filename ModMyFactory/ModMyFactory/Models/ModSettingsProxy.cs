@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -93,5 +94,7 @@ namespace ModMyFactory.Models
             settingsViewModel.SetMod(this);
             settingsWindow.ShowDialog();
         }
+
+        public ILocale GetLocale(CultureInfo culture) => baseMod.GetLocale(culture);
     }
 }

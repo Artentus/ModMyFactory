@@ -25,8 +25,8 @@ namespace ModMyFactory.Models.ModSettings
 
         public T MaxValue { get; }
 
-        protected LimitedModSetting(string name, LoadTime loadTime, string ordering, T defaultValue, T minValue, T maxValue)
-            : base(name, loadTime, ordering, defaultValue)
+        protected LimitedModSetting(IHasModSettings owner, string name, LoadTime loadTime, string ordering, T defaultValue, T minValue, T maxValue)
+            : base(owner, name, loadTime, ordering, defaultValue)
         {
             var comparer = Comparer<T>.Default;
             if (comparer.Compare(minValue, maxValue) > 0) throw new ArgumentException("Min value cannot be larger than max value.");

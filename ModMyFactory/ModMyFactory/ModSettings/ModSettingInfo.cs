@@ -1,4 +1,5 @@
-﻿using ModMyFactory.Models.ModSettings;
+﻿using ModMyFactory.Models;
+using ModMyFactory.Models.ModSettings;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -70,27 +71,27 @@ namespace ModMyFactory.ModSettings
             }
         }
 
-        public IModSetting ToSetting()
+        public IModSetting ToSetting(IHasModSettings owner)
         {
             switch (Type)
             {
                 case SettingType.Boolean:
-                    return new BooleanModSetting(Name, LoadTime, Ordering, DefaultValue.GetBoolean());
+                    return new BooleanModSetting(owner, Name, LoadTime, Ordering, DefaultValue.GetBoolean());
                 case SettingType.Integer:
                     if ((AllowedValues == null) || (AllowedValues.Length == 0))
-                        return new IntegerModSetting(Name, LoadTime, Ordering, DefaultValue.GetInteger(), MinValue?.GetInteger() ?? long.MinValue, MaxValue?.GetInteger() ?? long.MaxValue);
+                        return new IntegerModSetting(owner, Name, LoadTime, Ordering, DefaultValue.GetInteger(), MinValue?.GetInteger() ?? long.MinValue, MaxValue?.GetInteger() ?? long.MaxValue);
                     else
-                        return new IntegerListModSetting(Name, LoadTime, Ordering, DefaultValue.GetInteger(), AllowedValues.Select(value => value.GetInteger()));
+                        return new IntegerListModSetting(owner, Name, LoadTime, Ordering, DefaultValue.GetInteger(), AllowedValues.Select(value => value.GetInteger()));
                 case SettingType.FloatingPoint:
                     if ((AllowedValues == null) || (AllowedValues.Length == 0))
-                        return new FloatingPointModSetting(Name, LoadTime, Ordering, DefaultValue.GetFloatingPoint(), MinValue?.GetFloatingPoint() ?? double.NegativeInfinity, MaxValue?.GetFloatingPoint() ?? double.PositiveInfinity);
+                        return new FloatingPointModSetting(owner, Name, LoadTime, Ordering, DefaultValue.GetFloatingPoint(), MinValue?.GetFloatingPoint() ?? double.NegativeInfinity, MaxValue?.GetFloatingPoint() ?? double.PositiveInfinity);
                     else
-                        return new FloatingPointListModSetting(Name, LoadTime, Ordering, DefaultValue.GetFloatingPoint(), AllowedValues.Select(value => value.GetFloatingPoint()));
+                        return new FloatingPointListModSetting(owner, Name, LoadTime, Ordering, DefaultValue.GetFloatingPoint(), AllowedValues.Select(value => value.GetFloatingPoint()));
                 case SettingType.String:
                     if ((AllowedValues == null) || (AllowedValues.Length == 0))
-                        return new StringModSetting(Name, LoadTime, Ordering, DefaultValue.GetString(), AllowEmptyValue);
+                        return new StringModSetting(owner, Name, LoadTime, Ordering, DefaultValue.GetString(), AllowEmptyValue);
                     else
-                        return new StringListModSetting(Name, LoadTime, Ordering, DefaultValue.GetString(), AllowedValues.Select(value => value.GetString()));
+                        return new StringListModSetting(owner, Name, LoadTime, Ordering, DefaultValue.GetString(), AllowedValues.Select(value => value.GetString()));
             }
 
             return null;

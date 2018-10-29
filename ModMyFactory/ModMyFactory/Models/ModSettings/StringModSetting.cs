@@ -56,8 +56,8 @@ namespace ModMyFactory.Models.ModSettings
 
         public override DataTemplate Template => (DataTemplate)App.Instance.Resources["StringModSettingTemplate"];
 
-        public StringModSetting(string name, LoadTime loadTime, string ordering, string defaultValue, bool allowEmptyValue)
-            : base(name, loadTime, ordering, defaultValue)
+        public StringModSetting(IHasModSettings owner, string name, LoadTime loadTime, string ordering, string defaultValue, bool allowEmptyValue)
+            : base(owner, name, loadTime, ordering, defaultValue)
         {
             if (!allowEmptyValue && string.IsNullOrEmpty(defaultValue))
                 throw new ArgumentException("Value not allowed.", nameof(defaultValue));

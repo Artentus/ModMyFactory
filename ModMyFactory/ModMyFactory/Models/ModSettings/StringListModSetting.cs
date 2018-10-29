@@ -24,8 +24,8 @@ namespace ModMyFactory.Models.ModSettings
 
         public override DataTemplate Template => (DataTemplate)App.Instance.Resources["StringListModSettingTemplate"];
 
-        public StringListModSetting(string name, LoadTime loadTime, string ordering, string defaultValue, IEnumerable<string> allowedValues)
-            : base(name, loadTime, ordering, defaultValue, allowedValues)
+        public StringListModSetting(IHasModSettings owner, string name, LoadTime loadTime, string ordering, string defaultValue, IEnumerable<string> allowedValues)
+            : base(owner, name, loadTime, ordering, defaultValue, allowedValues)
         { }
 
         public override IModSettingProxy CreateProxy()

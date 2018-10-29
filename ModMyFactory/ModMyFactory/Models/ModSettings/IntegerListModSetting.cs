@@ -24,8 +24,8 @@ namespace ModMyFactory.Models.ModSettings
 
         public override DataTemplate Template => (DataTemplate)App.Instance.Resources["IntegerListModSettingTemplate"];
 
-        public IntegerListModSetting(string name, LoadTime loadTime, string ordering, long defaultValue, IEnumerable<long> allowedValues)
-            : base(name, loadTime, ordering, defaultValue, allowedValues)
+        public IntegerListModSetting(IHasModSettings owner, string name, LoadTime loadTime, string ordering, long defaultValue, IEnumerable<long> allowedValues)
+            : base(owner, name, loadTime, ordering, defaultValue, allowedValues)
         { }
 
         public override IModSettingProxy CreateProxy()

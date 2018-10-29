@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace ModMyFactory.Models
 {
-    interface IHasModSettings : INotifyPropertyChanged
+    interface IHasModSettings : INotifyPropertyChanged, IHasLocale
     {
         string Name { get; }
 
@@ -21,7 +21,7 @@ namespace ModMyFactory.Models
         IReadOnlyCollection<IModSetting> Settings { get; }
         
         ICollectionView SettingsView { get; }
-
+        
         ICommand ViewSettingsCommand { get; }
 
         void ViewSettings();

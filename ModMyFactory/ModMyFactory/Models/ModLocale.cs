@@ -6,7 +6,7 @@ using System.IO;
 
 namespace ModMyFactory.Models
 {
-    sealed class ModLocale
+    sealed class ModLocale : ILocale
     {
         readonly IniData data;
 
@@ -83,26 +83,16 @@ namespace ModMyFactory.Models
 
         private string GetValue(string section, string key)
         {
-            string completeKey = string.Concat(section, data.SectionKeySeparator, key);
+            string completeKey = key;
+            if (!string.IsNullOrEmpty(section))
+                completeKey = string.Concat(section, data.SectionKeySeparator, key);
+
             return data.TryGetKey(completeKey, out string result) ? result : null;
         }
-
-        public string GetSettingName(string key)
+        
+        public string GetValue(string key, LocaleType type)
         {
-            const string section = "mod-setting-name";
-            return GetValue(section, key);
-        }
-
-        public string GetSettingDescription(string key)
-        {
-            const string section = "mod-setting-description";
-            return GetValue(section, key);
-        }
-
-        public string GetStringSetting(string key)
-        {
-            const string section = "string-mod-setting";
-            return GetValue(section, key);
+            return GetValue(type.Key(), key);
         }
     }
 }

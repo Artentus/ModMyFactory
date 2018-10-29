@@ -11,6 +11,8 @@ namespace ModMyFactory.Models.ModSettings
     {
         T value;
 
+        public IHasModSettings Owner { get; }
+
         public string Name { get; }
 
         public LoadTime LoadTime { get; }
@@ -35,8 +37,9 @@ namespace ModMyFactory.Models.ModSettings
 
         public abstract DataTemplate Template { get; }
 
-        protected ModSetting(string name, LoadTime loadTime, string ordering, T defaultValue)
+        protected ModSetting(IHasModSettings owner, string name, LoadTime loadTime, string ordering, T defaultValue)
         {
+            Owner = owner;
             Name = name;
             LoadTime = loadTime;
             Ordering = ordering;

@@ -491,6 +491,7 @@
     <sys:String x:Key="CopyButton">Kopieren</sys:String>
     <sys:String x:Key="MoveButton">Verschieben</sys:String>
     
+    
     <!--
     ____________________ DependencyDownloadWindow ____________________
     -->
@@ -502,5 +503,14 @@
     
     <!-- tooltips -->
     <sys:String x:Key="IsOptionalToolTip">Optional</sys:String>
+    
+    <!--
+    ____________________ ModSettingsWindow ____________________
+    -->
+    
+    <sys:String x:Key="ModSettingsWindowTitle">Mod-Einstellungen bearbeiten</sys:String>
+    
+    <!-- checkboxes -->
+    <sys:String x:Key="OverrideCheckBox">Einstellungen überschreiben</sys:String>
 
 </ResourceDictionary>

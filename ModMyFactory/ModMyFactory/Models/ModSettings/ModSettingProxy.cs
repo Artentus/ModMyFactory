@@ -44,7 +44,7 @@ namespace ModMyFactory.Models.ModSettings
         public override DataTemplate Template => baseSetting.Template;
 
         protected ModSettingProxy(ModSetting<T> baseSetting)
-            : base(baseSetting.Name, baseSetting.LoadTime, baseSetting.Ordering, baseSetting.DefaultValue)
+            : base(baseSetting.Owner, baseSetting.Name, baseSetting.LoadTime, baseSetting.Ordering, baseSetting.DefaultValue)
         {
             this.baseSetting = baseSetting;
             value = baseSetting.Value;

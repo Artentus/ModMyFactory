@@ -102,7 +102,7 @@ namespace ModMyFactory.Models
                     dependenciesView.CustomSort = new ModDependencySorter();
                     DependenciesView = dependenciesView;
 
-                    var settings = file.GetSettings().Select(info => info.ToSetting()).ToList();
+                    var settings = file.GetSettings().Select(info => info.ToSetting(this)).ToList();
                     Settings = new ReadOnlyCollection<IModSetting>(settings);
                     source = new CollectionViewSource() { Source = Settings };
                     var settingsView = (ListCollectionView)source.View;
@@ -262,8 +262,8 @@ namespace ModMyFactory.Models
 
             active = ModManager.GetActive(Name, FactorioVersion);
         }
-
-        public ModLocale GetLocale(CultureInfo culture)
+        
+        public ILocale GetLocale(CultureInfo culture)
         {
             if (File == null) return new ModLocale(culture);
             return File.GetLocale(culture);

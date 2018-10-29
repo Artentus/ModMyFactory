@@ -28,8 +28,8 @@ namespace ModMyFactory.Models.ModSettings
 
         public IReadOnlyCollection<T> AllowedValues { get; }
 
-        protected ListModSetting(string name, LoadTime loadTime, string ordering, T defaultValue, IEnumerable<T> allowedValues)
-            : base(name, loadTime, ordering, defaultValue)
+        protected ListModSetting(IHasModSettings owner, string name, LoadTime loadTime, string ordering, T defaultValue, IEnumerable<T> allowedValues)
+            : base(owner, name, loadTime, ordering, defaultValue)
         {
             var comparer = EqualityComparer<T>.Default;
             foreach (var allowedValue in allowedValues)

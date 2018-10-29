@@ -24,8 +24,8 @@ namespace ModMyFactory.Models.ModSettings
 
         public override DataTemplate Template => (DataTemplate)App.Instance.Resources["FloatingPointListModSettingTemplate"];
 
-        public FloatingPointListModSetting(string name, LoadTime loadTime, string ordering, double defaultValue, IEnumerable<double> allowedValues)
-            : base(name, loadTime, ordering, defaultValue, allowedValues)
+        public FloatingPointListModSetting(IHasModSettings owner, string name, LoadTime loadTime, string ordering, double defaultValue, IEnumerable<double> allowedValues)
+            : base(owner, name, loadTime, ordering, defaultValue, allowedValues)
         { }
 
         public override IModSettingProxy CreateProxy()

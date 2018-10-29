@@ -98,6 +98,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommandLine.cs" />
+    <Compile Include="Controls\NumericUpDown.xaml.cs">
+      <DependentUpon>NumericUpDown.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Export\ExportMode.cs" />
     <Compile Include="ExtendedVersion.cs" />
     <Compile Include="FactorioCollection.cs" />
@@ -131,7 +134,10 @@
     <Compile Include="ManagerMode.cs" />
     <Compile Include="MessageType.cs" />
     <Compile Include="ModCollection.cs" />
+    <Compile Include="Models\IHasLocale.cs" />
     <Compile Include="Models\IHasModSettings.cs" />
+    <Compile Include="Models\ILocale.cs" />
+    <Compile Include="Models\LocaleType.cs" />
     <Compile Include="Models\ModSettingsProxy.cs" />
     <Compile Include="Models\ModSettings\BooleanModSetting.cs" />
     <Compile Include="Models\CopyOrMoveType.cs" />
@@ -183,6 +189,7 @@
     <Compile Include="ModSettings\SettingValueArrayJsonConverter.cs" />
     <Compile Include="ModSettings\SettingValueJsonConverter.cs" />
     <Compile Include="MVVM\Converters\FactorioVersionConverter.cs" />
+    <Compile Include="MVVM\Converters\LocalizedNameConverter.cs" />
     <Compile Include="MVVM\Converters\RemoveFileExtensionConverter.cs" />
     <Compile Include="MVVM\Converters\SystemIconConverter.cs" />
     <Compile Include="Controls\DefaultExpandedExpander.cs" />
@@ -340,6 +347,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Resource>
+    <Page Include="Controls\NumericUpDown.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Lang\Strings.ko.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

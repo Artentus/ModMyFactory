@@ -19,8 +19,8 @@ namespace ModMyFactory.Models.ModSettings
 
         public override DataTemplate Template => (DataTemplate)App.Instance.Resources["BooleanModSettingTemplate"];
 
-        public BooleanModSetting(string name, LoadTime loadTime, string ordering, bool defaultValue)
-            : base(name, loadTime, ordering, defaultValue)
+        public BooleanModSetting(IHasModSettings owner, string name, LoadTime loadTime, string ordering, bool defaultValue)
+            : base(owner, name, loadTime, ordering, defaultValue)
         { }
         
         public override IModSettingProxy CreateProxy()
