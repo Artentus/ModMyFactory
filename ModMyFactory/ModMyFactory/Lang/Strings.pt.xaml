@@ -117,8 +117,8 @@
     
     <sys:String x:Key="MovingDirectoriesAction">A mover pastas</sys:String>
 
-    <sys:String x:Key="DownloadingAction">Downloading</sys:String>
-    <sys:String x:Key="DownloadingDescription">Downloading {0}</sys:String>
+    <sys:String x:Key="DownloadingAction">A fazer o download</sys:String>
+    <sys:String x:Key="DownloadingDescription">A fazer o download de {0}</sys:String>
 
     <sys:String x:Key="AddingFromZipAction">A adicionar do arquivo ZIP</sys:String>
     <sys:String x:Key="CheckingValidityDescription">A verificar a validade...</sys:String>
@@ -279,7 +279,7 @@
     <sys:String x:Key="KeepExtractedModVersionsGroupItem">Manter as versões antigas dos mods extraídos</sys:String>
     <sys:String x:Key="KeepZippedModVersionsGroupItem">Manter as versões antigas dos mods que estão em arquivos zip</sys:String>
     <sys:String x:Key="KeepOldWhenNewFactorioGroupItem">Manter as versões antigas dos mods quando actualizar para uma nova versão do Factorio</sys:String>
-    <sys:String x:Key="UpdateIntermediateGroupItem">Also download mod updates for older Factorio versions</sys:String>
+    <sys:String x:Key="UpdateIntermediateGroupItem">Também fazer download de updates para mods de versões antigas do Factorio</sys:String>
     <sys:String x:Key="GlobalGroupItem">Global</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Pasta da aplicação</sys:String>
