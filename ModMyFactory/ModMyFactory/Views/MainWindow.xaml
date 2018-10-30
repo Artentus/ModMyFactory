@@ -30,6 +30,7 @@
         <BitmapImage x:Key="HelpIcon" UriSource="../Images/Help.png"/>
         <BitmapImage x:Key="ImportPackageIcon" UriSource="../Images/ImportPackage.png"/>
         <BitmapImage x:Key="InformationIcon" UriSource="../Images/Information.png"/>
+        <BitmapImage x:Key="InvertedIcon" UriSource="../Images/Inverted_small.png"/>
         <BitmapImage x:Key="LinkIcon" UriSource="../Images/Link.png"/>
         <BitmapImage x:Key="MenuIcon" UriSource="../Images/Menu.png"/>
         <BitmapImage x:Key="NewPackageIcon" UriSource="../Images/NewPackage.png"/>
@@ -429,12 +430,14 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
                                 <Image Grid.Column="0" Margin="1" Source="{StaticResource OptionalIcon}" Visibility="{Binding IsOptional, Converter={StaticResource VisibilityConverter}}" Stretch="None" VerticalAlignment="Center" Height="16"/>
-                                <TextBlock Grid.Column="1" Margin="1" VerticalAlignment="Center" Text="{Binding FriendlyDescription}" IsHitTestVisible="False"/>
-                                <Image x:Name="DependencyWarningImage" Grid.Column="2" Margin="4,1" Source="{StaticResource WarningIcon}"
+                                <Image Grid.Column="1" Margin="1" Source="{StaticResource InvertedIcon}" Visibility="{Binding IsInverted, Converter={StaticResource VisibilityConverter}}" Stretch="None" VerticalAlignment="Center" Height="16"/>
+                                <TextBlock Grid.Column="2" Margin="1" VerticalAlignment="Center" Text="{Binding FriendlyDescription}" IsHitTestVisible="False"/>
+                                <Image x:Name="DependencyWarningImage" Grid.Column="3" Margin="4,1" Source="{StaticResource WarningIcon}"
                                        Visibility="{Binding Unsatisfied, Converter={StaticResource VisibilityConverter}}" Stretch="None" VerticalAlignment="Center"/>
                             </Grid>
                         </Border>
