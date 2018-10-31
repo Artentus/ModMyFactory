@@ -125,6 +125,7 @@
     <Compile Include="Helpers\RegistryHelper.cs" />
     <Compile Include="Helpers\SecureStringHelper.cs" />
     <Compile Include="Helpers\SteamHelper.cs" />
+    <Compile Include="Helpers\StreamExtensions.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Helpers\TaskHelper.cs" />
     <Compile Include="Helpers\WindowExtensions.cs" />
@@ -182,6 +183,8 @@
     <Compile Include="ModManager.cs" />
     <Compile Include="Export\ModpackExportTemplate.cs" />
     <Compile Include="ModpackCollection.cs" />
+    <Compile Include="ModSettings\Serialization\BinaryFile.cs" />
+    <Compile Include="ModSettings\Serialization\BinaryVersion.cs" />
     <Compile Include="ModSettings\SettingType.cs" />
     <Compile Include="ModSettings\SettingTypeExtensions.cs" />
     <Compile Include="ModSettings\SettingTypeJsonConverter.cs" />
