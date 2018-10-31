@@ -34,14 +34,14 @@ namespace ModMyFactory.Models
         /// <summary>
         /// Copies this Factorio folder to a new directory.
         /// </summary>
-        public async Task<FactorioFolder> CopyToAsync(DirectoryInfo destination)
+        public async Task<FactorioFolder> CopyToAsync(DirectoryInfo destination, string newName = "__temp__Factorio__")
         {
             if (!destination.Exists) destination.Create();
 
             var dir = new DirectoryInfo(Directory.FullName);
-            await dir.CopyToAsync(destination.FullName);
-
-            var newDir = new DirectoryInfo(Path.Combine(destination.FullName, dir.Name));
+            var newDir = new DirectoryInfo(Path.Combine(destination.FullName, newName));
+            await dir.CopyToAsync(newDir.FullName);
+            
             string executablePath = Is64Bit ? $@"bin\{Win64BinName}\factorio.exe" : $@"bin\{Win32BinName}\factorio.exe";
             var executable = new FileInfo(Path.Combine(newDir.FullName, executablePath));
 
