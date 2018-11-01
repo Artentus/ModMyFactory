@@ -151,6 +151,10 @@ namespace ModMyFactory
 
         public bool LoadSteamVersion;
 
+        [DefaultValue("light")]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        public string Theme;
+
         [JsonConstructor]
         private Settings()
         { }

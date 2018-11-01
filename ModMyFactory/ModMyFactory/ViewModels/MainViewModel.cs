@@ -567,6 +567,8 @@ namespace ModMyFactory.ViewModels
 
         #endregion
 
+        public IReadOnlyCollection<Theme> Themes { get; }
+
         volatile bool modpacksLoading;
         volatile bool updating;
 
@@ -642,6 +644,8 @@ namespace ModMyFactory.ViewModels
                 AvailableCultures.First(entry =>
                     string.Equals(entry.LanguageCode, App.Instance.Settings.SelectedLanguage, StringComparison.InvariantCultureIgnoreCase)).Select();
 
+                Themes = Theme.AvailableThemes;
+
                 if (!Environment.Is64BitOperatingSystem && !App.Instance.Settings.WarningShown)
                 {
                     MessageBox.Show(
@@ -702,7 +706,7 @@ namespace ModMyFactory.ViewModels
                     if (!scenariosDirectory.Exists) scenariosDirectory.Create();
                     Process.Start(scenariosDirectory.FullName);
                 });
-
+                
                 RefreshCommand = new RelayCommand(Refresh);
 
                 // 'Info' menu

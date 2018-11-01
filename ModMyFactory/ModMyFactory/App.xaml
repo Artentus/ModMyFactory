@@ -12,6 +12,7 @@
         <ResourceDictionary>
             <!-- For design time IntelliSense. -->
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Colors_light.xaml"/>
                 <ResourceDictionary Source="Lang/Strings.en.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
@@ -21,18 +22,10 @@
             <ResourceDictionary x:Key="Strings.zh" Source="Lang/Strings.zh.xaml"/>
             <ResourceDictionary x:Key="Strings.ko" Source="Lang/Strings.ko.xaml"/>
 
-            <Color x:Key="BackgroundColor">White</Color>
-            <Color x:Key="BorderColor">LightGray</Color>
-            <Color x:Key="HoverColor">#5087CEFA</Color>
-            <Color x:Key="SelectionColor">LightSkyBlue</Color>
-            <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
-            <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
-            <SolidColorBrush x:Key="HoverBrush" Color="{StaticResource HoverColor}"/>
-            <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource SelectionColor}"/>
-
             <converter:MultiplyConverter x:Key="MultiplyConverter"/>
             <converter:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
             <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
+            <converter:ThemeNameConverter x:Key="ThemeNameConverter"/>
 
             <converter:LocalizedNameConverter x:Key="SettingNameConverter" LocaleType="{x:Static model:LocaleType.SettingName}"/>
             <converter:LocalizedNameConverter x:Key="SettingDescriptionConverter" LocaleType="{x:Static model:LocaleType.SettingDescription}"/>
@@ -111,6 +104,13 @@
                 </StackPanel>
             </DataTemplate>
 
+            <Style x:Key="WindowStyle" TargetType="{x:Type Window}">
+                <Style.Setters>
+                    <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+                </Style.Setters>
+            </Style>
+
             <Style x:Key="{x:Type Image}" TargetType="{x:Type Image}">
                 <Style.Setters>
                     <Setter Property="RenderOptions.EdgeMode" Value="Aliased"/>
@@ -119,6 +119,9 @@
             </Style>
 
             <Style x:Key="{x:Type TextBlock}" TargetType="{x:Type TextBlock}">
+                <Style.Setters>
+                    <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+                </Style.Setters>
                 <Style.Triggers>
                     <Trigger Property="IsEnabled" Value="False">
                         <Setter Property="Foreground" Value="Gray"/>
@@ -130,10 +133,10 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Menu">
-                            <Border Background="{StaticResource BackgroundBrush}">
+                            <Border Background="{DynamicResource BackgroundBrush}">
                                 <StackPanel x:Name="ItemsHost" ClipToBounds="True" Orientation="Horizontal" IsItemsHost="True"/>
                             </Border>
-                            
+
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMainMenu" Value="False">
                                     <Trigger.Setters>
@@ -145,14 +148,14 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-
+            
             <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator">
                 <Setter Property="Height" Value="1"/>
                 <Setter Property="Margin" Value="30,4,10,4"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Separator">
-                            <Border Background="{StaticResource BorderBrush}"/>
+                            <Border Background="{DynamicResource BorderBrush}"/>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -160,14 +163,14 @@
 
             <ControlTemplate x:Key="{x:Static MenuItem.TopLevelHeaderTemplateKey}" TargetType="MenuItem">
                 <ControlTemplate.Resources>
-                    <SolidColorBrush x:Key="AnimatedBackgroundBrush" Color="{StaticResource BackgroundColor}"/>
+                    <SolidColorBrush x:Key="AnimatedBackgroundBrush" Color="{DynamicResource BackgroundColor}"/>
                 </ControlTemplate.Resources>
                 
                 <Border x:Name="Border" Background="Transparent">
                     <Grid>
                         <ContentPresenter Margin="6,3,6,3" ContentSource="Header" RecognizesAccessKey="True" />
                         <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
-                            <Border x:Name="SubmenuBorder" BorderThickness="1" Background="{StaticResource AnimatedBackgroundBrush}" BorderBrush="{StaticResource BorderBrush}">
+                            <Border x:Name="SubmenuBorder" BorderThickness="1" Background="{StaticResource AnimatedBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}">
                                 <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                             </Border>
                         </Popup>
@@ -197,7 +200,7 @@
             </ControlTemplate>
 
             <ControlTemplate x:Key="{x:Static MenuItem.SubmenuItemTemplateKey}" TargetType="MenuItem">
-                <Border x:Name="Border" BorderBrush="{StaticResource BackgroundBrush}" BorderThickness="1" Background="{StaticResource BackgroundBrush}">
+                <Border x:Name="Border" BorderBrush="{DynamicResource BackgroundBrush}" BorderThickness="1" Background="{DynamicResource BackgroundBrush}">
                     <Grid Margin="0,1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" SharedSizeGroup="Icon"/>
@@ -230,7 +233,7 @@
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-                        <Rectangle x:Name="CheckBox" Grid.Column="3" Width="5" Margin="0,-1" Fill="{StaticResource BackgroundBrush}" Visibility="Collapsed"/>
+                        <Rectangle x:Name="CheckBox" Grid.Column="3" Width="5" Margin="0,-1" Fill="{DynamicResource BackgroundBrush}" Visibility="Collapsed"/>
                     </Grid>
                 </Border>
                 
@@ -269,13 +272,13 @@
                         <Setter TargetName="CheckBox" Property="Visibility" Value="Visible"/>
                     </Trigger>
                     <Trigger Property="IsChecked" Value="True">
-                        <Setter TargetName="CheckBox" Property="Fill" Value="{StaticResource SelectionBrush}"/>
+                        <Setter TargetName="CheckBox" Property="Fill" Value="{DynamicResource SelectionBrush}"/>
                     </Trigger>
                 </ControlTemplate.Triggers>
             </ControlTemplate>
 
             <ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}" TargetType="MenuItem">
-                <Border x:Name="Border" BorderBrush="{StaticResource BackgroundBrush}" BorderThickness="1" Background="{StaticResource BackgroundBrush}">
+                <Border x:Name="Border" BorderBrush="{DynamicResource BackgroundBrush}" BorderThickness="1" Background="{DynamicResource BackgroundBrush}">
                     <Grid Margin="0,1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" SharedSizeGroup="Icon"/>
@@ -300,7 +303,7 @@
                         <Popup x:Name="Popup" Placement="Right" HorizontalOffset="1" VerticalOffset="-3"
                                IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
                             <Border x:Name="SubmenuBorder"
-                                    Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
+                                    Background="{DynamicResource BackgroundBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                                 <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
                             </Border>
                         </Popup>
@@ -337,6 +340,7 @@
 
             <Style x:Key="{x:Type MenuItem}" TargetType="MenuItem">
                 <Setter Property="OverridesDefaultStyle" Value="True"/>
+                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
                 <Style.Triggers>
                     <Trigger Property="Role" Value="TopLevelHeader">
                         <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}"/>
@@ -364,7 +368,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListBox}">
-                            <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                                 <ScrollViewer>
                                     <ItemsPresenter Margin="2,1,2,2"/>
                                 </ScrollViewer>
@@ -551,7 +555,7 @@
 
                                 <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
                                     <Grid x:Name="DropDown" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                        <Border x:Name="DropDownBorder" Background="{StaticResource BackgroundBrush}" BorderThickness="1,0,1,1" BorderBrush="{StaticResource BorderBrush}">
+                                        <Border x:Name="DropDownBorder" Background="{DynamicResource BackgroundBrush}" BorderThickness="1,0,1,1" BorderBrush="{DynamicResource BorderBrush}">
                                             <ScrollViewer Margin="1">
                                                 <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
                                             </ScrollViewer>
@@ -633,7 +637,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ContextMenu">
-                            <Border x:Name="Border" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                            <Border x:Name="Border" Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                                 <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
                             </Border>
                         </ControlTemplate>
@@ -648,11 +652,11 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="RepeatButton">
                             <ControlTemplate.Resources>
-                                <SolidColorBrush x:Key="AnimatedBorderBrush" Color="{StaticResource BackgroundColor}"/>
+                                <SolidColorBrush x:Key="AnimatedBorderBrush" Color="{DynamicResource BackgroundColor}"/>
                             </ControlTemplate.Resources>
 
                             <Border x:Name="Border" Margin="1"
-                                    Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource AnimatedBorderBrush}">
+                                    Background="{DynamicResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource AnimatedBorderBrush}">
                                 <Path Fill="Black" SnapsToDevicePixels="True"
                                       HorizontalAlignment="Center" VerticalAlignment="Center"
                                       Data="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}"/>
@@ -703,7 +707,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Thumb">
-                            <Border x:Name="Border" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"/>
+                            <Border x:Name="Border" Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -717,7 +721,7 @@
                         <RowDefinition MaxHeight="18"/>
                     </Grid.RowDefinitions>
 
-                    <Border Grid.Row="0" Grid.RowSpan="3" Background="{StaticResource BackgroundBrush}"/>
+                    <Border Grid.Row="0" Grid.RowSpan="3" Background="{DynamicResource BackgroundBrush}"/>
                     <RepeatButton Grid.Row="0" Style="{StaticResource ScrollBarLineButton}" Height="18" Command="ScrollBar.LineUpCommand" Content="M 0.5 4 L 7.5 4 L 4 0 Z"/>
                     <Track x:Name="PART_Track" Grid.Row="1" IsDirectionReversed="true">
                         <Track.DecreaseRepeatButton>
@@ -743,7 +747,7 @@
                         <ColumnDefinition MaxWidth="18"/>
                     </Grid.ColumnDefinitions>
 
-                    <Border Grid.Column="0" Grid.ColumnSpan="3" Background="{StaticResource BackgroundBrush}"/>
+                    <Border Grid.Column="0" Grid.ColumnSpan="3" Background="{DynamicResource BackgroundBrush}"/>
                     <RepeatButton Grid.Column="0" Style="{StaticResource ScrollBarLineButton}" Width="18" Command="ScrollBar.LineLeftCommand" Content="M 4 0.5 L 4 7.5 L 0.5 4 Z"/>
                     <Track x:Name="PART_Track" Grid.Column="1" IsDirectionReversed="False">
                         <Track.DecreaseRepeatButton>
@@ -784,7 +788,7 @@
                         <ControlTemplate TargetType="ToolTip">
                             <Border Name="Border"
                                 Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
-                                Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
+                                Background="{DynamicResource BackgroundBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                                 <ContentPresenter Margin="6,4" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                             </Border>
                         </ControlTemplate>
@@ -844,7 +848,7 @@
             <Style x:Key="{x:Static ToolBar.RadioButtonStyleKey}" BasedOn="{StaticResource ToolBarButtonBaseStyle}" TargetType="{x:Type RadioButton}"/>
 
             <Style x:Key="{x:Static ToolBar.SeparatorStyleKey}" TargetType="Separator">
-                <Setter Property="Background" Value="{StaticResource BorderBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource BorderBrush}"/>
             </Style>
 
             <Style x:Key="{x:Static ToolBar.TextBoxStyleKey}" TargetType="{x:Type TextBox}">
@@ -855,7 +859,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type TextBox}">
-                            <Border x:Name="Border" Padding="2" Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
+                            <Border x:Name="Border" Padding="2" Background="{DynamicResource BackgroundBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup x:Name="CommonStates">
                                         <VisualState x:Name="Normal"/>
@@ -907,8 +911,8 @@
                                             <ControlTemplate.Resources>
                                                 <SolidColorBrush x:Key="AnimatedSelectionBrush" Color="Transparent"/>
                                             </ControlTemplate.Resources>
-                                            
-                                            <Border Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
+
+                                            <Border Background="{DynamicResource BackgroundBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="*"/>
@@ -916,10 +920,10 @@
                                                         <ColumnDefinition Width="14"/>
                                                     </Grid.ColumnDefinitions>
 
-                                                    <Rectangle Grid.Column="1" Fill="{StaticResource BorderBrush}"/>
+                                                    <Rectangle Grid.Column="1" Fill="{DynamicResource BorderBrush}"/>
 
                                                     <Rectangle x:Name="Rectangle" Grid.Column="2" Margin="-1" Fill="{StaticResource AnimatedSelectionBrush}"/>
-                                                    <Rectangle Grid.Column="2" Margin="-1" Fill="{StaticResource SelectionBrush}"
+                                                    <Rectangle Grid.Column="2" Margin="-1" Fill="{DynamicResource SelectionBrush}"
                                                                Visibility="{TemplateBinding IsChecked, Converter={StaticResource VisibilityConverter}}"/>
 
                                                     <Path Grid.Column="2" Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 3 3 L 6 0 Z"/>
@@ -965,7 +969,7 @@
 
                                 <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
                                     <Grid x:Name="DropDown" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                        <Border x:Name="DropDownBorder" Background="{StaticResource BackgroundBrush}" BorderThickness="1,0,1,1" BorderBrush="{StaticResource BorderBrush}">
+                                        <Border x:Name="DropDownBorder" Background="{DynamicResource BackgroundBrush}" BorderThickness="1,0,1,1" BorderBrush="{DynamicResource BorderBrush}">
                                             <ScrollViewer Margin="1">
                                                 <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
                                             </ScrollViewer>
@@ -990,7 +994,7 @@
                                         <DrawingBrush Viewport="0,0,4,4" ViewportUnits="Absolute" Viewbox="0,0,8,8" ViewboxUnits="Absolute" TileMode="Tile">
                                             <DrawingBrush.Drawing>
                                                 <DrawingGroup>
-                                                    <GeometryDrawing Brush="{StaticResource BorderBrush}" Geometry="M 4 4 L 4 8 L 8 8 L 8 4 z"/>
+                                                    <GeometryDrawing Brush="{DynamicResource BorderBrush}" Geometry="M 4 4 L 4 8 L 8 8 L 8 4 z"/>
                                                 </DrawingGroup>
                                             </DrawingBrush.Drawing>
                                         </DrawingBrush>
@@ -1007,7 +1011,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ToggleButton}">
-                            <Border x:Name="Border" CornerRadius="0,3,3,0" Background="{StaticResource BackgroundBrush}">
+                            <Border x:Name="Border" CornerRadius="0,3,3,0" Background="{DynamicResource BackgroundBrush}">
                                 <Grid>
                                     <!--<Path x:Name="Arrow" Fill="Black" VerticalAlignment="Bottom" Margin="2,3" Data="M -0.5 3 L 5.5 3 L 2.5 6 Z"/>-->
                                     <ContentPresenter/>
@@ -1023,14 +1027,14 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ToolBar}">
-                            <Border x:Name="Border" Background="{StaticResource BackgroundBrush}">
+                            <Border x:Name="Border" Background="{DynamicResource BackgroundBrush}">
                                 <DockPanel>
                                     <ToggleButton DockPanel.Dock="Right" IsEnabled="{TemplateBinding HasOverflowItems}"
                                               Style="{StaticResource ToolBarOverflowButtonStyle}" ClickMode="Press"
                                               IsChecked="{Binding IsOverflowOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                                         <Popup x:Name="OverflowPopup" AllowsTransparency="true" Placement="Bottom" StaysOpen="false" Focusable="false" PopupAnimation="Slide"
                                            IsOpen="{Binding IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}}">
-                                            <Border x:Name="DropDownBorder" Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
+                                            <Border x:Name="DropDownBorder" Background="{DynamicResource BackgroundBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                                                 <ToolBarOverflowPanel x:Name="PART_ToolBarOverflowPanel"
                                                                   Margin="2" WrapWidth="200" Focusable="true"
                                                                   FocusVisualStyle="{x:Null}"
@@ -1057,12 +1061,12 @@
             </Style>
 
             <Style x:Key="{x:Type ToolBarTray}" TargetType="{x:Type ToolBarTray}">
-                <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
             </Style>
 
             <ControlTemplate x:Key="ExpanderToggleButtonTemplate" TargetType="{x:Type ToggleButton}">
                 <Grid Width="20" Height="20" Margin="0,0,4,0">
-                    <Ellipse Stroke="Gray" StrokeThickness="1" Fill="{StaticResource BackgroundBrush}"/>
+                    <Ellipse Stroke="Gray" StrokeThickness="1" Fill="{DynamicResource BackgroundBrush}"/>
                     <Path x:Name="Arrow" Data="M -4 -1.5, 0 2, 4 -1.5" Stroke="Gray" StrokeThickness="2"
                                   HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Path.RenderTransform>
@@ -1320,10 +1324,10 @@
                                     </Grid.ColumnDefinitions>
                                     
                                     <ContentPresenter Grid.Row="0" Grid.Column="0" Margin="2" ContentSource="Header" RecognizesAccessKey="True"/>
-                                    <Rectangle Grid.Row="1" Grid.Column="0" Height="4" Fill="{StaticResource SelectionBrush}"/>
+                                    <Rectangle Grid.Row="1" Grid.Column="0" Height="4" Fill="{DynamicResource SelectionBrush}"/>
                                 </Grid>
 
-                                <Border Grid.Row="1" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
+                                <Border Grid.Row="1" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                                     <ContentPresenter Margin="4" />
                                 </Border>
                             </Grid>
@@ -1343,7 +1347,7 @@
                                 </Grid.RowDefinitions>
 
                                 <TabPanel Grid.Row="0" IsItemsHost="True"/>
-                                <Border Grid.Row="1" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                                <Border Grid.Row="1" Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                                     <ContentPresenter ContentSource="SelectedContent"/>
                                 </Border>
                             </Grid>
@@ -1362,10 +1366,10 @@
                                     <RowDefinition Height="4"/>
                                 </Grid.RowDefinitions>
 
-                                <Border x:Name="Border" Grid.Row="0" Background="{StaticResource BackgroundBrush}">
+                                <Border x:Name="Border" Grid.Row="0" Background="{DynamicResource BackgroundBrush}">
                                     <ContentPresenter x:Name="ContentSite" VerticalAlignment="Center" HorizontalAlignment="Left" ContentSource="Header" Margin="4"/>
                                 </Border>
-                                <Rectangle x:Name="Rectangle" Grid.Row="1" Fill="{StaticResource SelectionBrush}" Opacity="0"/>
+                                <Rectangle x:Name="Rectangle" Grid.Row="1" Fill="{DynamicResource SelectionBrush}" Opacity="0"/>
                             </Grid>
 
                             <ControlTemplate.Triggers>

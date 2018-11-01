@@ -8,13 +8,15 @@
         xmlns:model="clr-namespace:ModMyFactory.Models"
         xmlns:mvvm="clr-namespace:ModMyFactory.MVVM"
         xmlns:controls="clr-namespace:ModMyFactory.Controls"
+        xmlns:local="clr-namespace:ModMyFactory"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="{DynamicResource MainWindowTitle}"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
         Icon="..\Images\MMF_Icon.ico"
         DataContext="{x:Static vm:MainViewModel.Instance}"
-        FocusManager.FocusedElement="{Binding RelativeSource={x:Static RelativeSource.Self}, Mode=OneTime}">
+        FocusManager.FocusedElement="{Binding RelativeSource={x:Static RelativeSource.Self}, Mode=OneTime}"
+        Style="{StaticResource WindowStyle}">
 
     <Window.Resources>
         <BitmapImage x:Key="AddIcon" UriSource="../Images/Add.png"/>
@@ -205,7 +207,24 @@
                           Command="{Binding OpenSavegameFolderCommand}"/>
                 <MenuItem Header="{DynamicResource OpenScenarioFolderMenuItem}" Icon="{StaticResource OpenFolderIcon}"
                           Command="{Binding OpenScenarioFolderCommand}"/>
-                
+
+                <Separator/>
+
+                <MenuItem Header="{DynamicResource ThemeMenuItem}" ItemsSource="{Binding Themes}">
+                    <MenuItem.ItemTemplate>
+                        <DataTemplate DataType="{x:Type local:Theme}">
+                            <TextBlock Margin="0,0,6,0" Text="{Binding Name, Converter={StaticResource ThemeNameConverter}}"/>
+                        </DataTemplate>
+                    </MenuItem.ItemTemplate>
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="{x:Type MenuItem}">
+                            <Setter Property="mvvm:MenuItemProperties.ShowChecked" Value="True"/>
+                            <Setter Property="IsChecked" Value="{Binding Selected, Mode=OneWay}"/>
+                            <Setter Property="Command" Value="{Binding SelectCommand}"/>
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
+
                 <Separator/>
 
                 <MenuItem Header="{DynamicResource RefreshMenuItem}" Icon="{StaticResource RefreshIcon}"
@@ -586,7 +605,7 @@
                 </Border>
             </DockPanel>
 
-            <GridSplitter Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" Background="{StaticResource BackgroundBrush}"/>
+            <GridSplitter Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" Background="{DynamicResource BackgroundBrush}"/>
 
             <!-- Modpacks -->
             <Grid Grid.Row="0" Grid.Column="2">

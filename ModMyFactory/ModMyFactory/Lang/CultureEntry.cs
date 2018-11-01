@@ -71,6 +71,9 @@ namespace ModMyFactory.Lang
                 App.Instance.SelectCulture(culture);
                 App.Instance.Settings.SelectedLanguage = LanguageCode;
                 App.Instance.Settings.Save();
+
+                foreach (var theme in Theme.AvailableThemes)
+                    theme.OnLocalizedNameChanged();
             }
         }
     }

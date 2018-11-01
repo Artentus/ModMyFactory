@@ -207,6 +207,9 @@
     <sys:String x:Key="OpenModFolderMenuItem">Open mod folder</sys:String>
     <sys:String x:Key="OpenSavegameFolderMenuItem">Open savegame folder</sys:String>
     <sys:String x:Key="OpenScenarioFolderMenuItem">Open scenario folder</sys:String>
+    <sys:String x:Key="ThemeMenuItem">Visual theme</sys:String>
+    <sys:String x:Key="__theme__light">Light</sys:String>
+    <sys:String x:Key="__theme__dark">Dark</sys:String>
     <sys:String x:Key="RefreshMenuItem">Refresh</sys:String>
     
     <!-- 'Language' menu -->

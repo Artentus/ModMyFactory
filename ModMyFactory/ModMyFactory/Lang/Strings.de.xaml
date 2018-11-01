@@ -207,6 +207,9 @@
     <sys:String x:Key="OpenModFolderMenuItem">Mod-Ordner öffnen</sys:String>
     <sys:String x:Key="OpenSavegameFolderMenuItem">Spielstand-Ordner öffnen</sys:String>
     <sys:String x:Key="OpenScenarioFolderMenuItem">Szenario-Ordner öffnen</sys:String>
+    <sys:String x:Key="ThemeMenuItem">Erscheinungsbild</sys:String>
+    <sys:String x:Key="__theme__light">Hell</sys:String>
+    <sys:String x:Key="__theme__dark">Dunkel</sys:String>
     <sys:String x:Key="RefreshMenuItem">Aktualisieren</sys:String>
 
     <!-- 'Language' menu -->

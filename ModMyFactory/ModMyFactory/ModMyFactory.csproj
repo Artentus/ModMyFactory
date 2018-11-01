@@ -201,6 +201,7 @@
     <Compile Include="Controls\FormattingTextBlock.cs" />
     <Compile Include="Controls\InlineList.cs" />
     <Compile Include="Controls\LayoutRoundingWindow.cs" />
+    <Compile Include="MVVM\Converters\ThemeNameConverter.cs" />
     <Compile Include="MVVM\Selectors\ModSettingTemplateSelector.cs" />
     <Compile Include="MVVM\Sorters\FactorioOnlineVersionSorter.cs" />
     <Compile Include="MVVM\Sorters\ModDependencySorter.cs" />
@@ -211,6 +212,7 @@
     <Compile Include="MVVM\Sorters\UpdateTargetSorter.cs" />
     <Compile Include="FactorioUpdate\UpdatePackageInfo.cs" />
     <Compile Include="FactorioUpdate\UpdaterErrorType.cs" />
+    <Compile Include="Theme.cs" />
     <Compile Include="TwoPartVersionConverter.cs" />
     <Compile Include="VersionComparer.cs" />
     <Compile Include="ViewModels\CopyOrMoveViewModel.cs" />
@@ -352,6 +354,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Resource>
+    <Page Include="Colors_dark.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Colors_light.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\NumericUpDown.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
