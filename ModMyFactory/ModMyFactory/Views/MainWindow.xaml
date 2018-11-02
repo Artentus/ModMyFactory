@@ -45,6 +45,7 @@
         <BitmapImage x:Key="SettingsIcon" UriSource="../Images/Settings.png"/>
         <BitmapImage x:Key="SettingsButtonIcon" UriSource="../Images/Settings_gray.png"/>
         <BitmapImage x:Key="SettingsHoverIcon" UriSource="../Images/Settings_blue.png"/>
+        <BitmapImage x:Key="ThemesIcon" UriSource="../Images/Themes.png"/>
         <BitmapImage x:Key="UpdateIcon" UriSource="../Images/Update.png"/>
         <BitmapImage x:Key="WarningIcon" UriSource="../Images/Warning.png"/>
         <BitmapImage x:Key="WebDestinationIcon" UriSource="../Images/WebDestination.png"/>
@@ -90,16 +91,6 @@
             </Style.Triggers>
         </Style>
         
-        <Style x:Key="MenuToggleButtonStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}">
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Trigger.Setters>
-                        <Setter Property="Background" Value="{StaticResource SelectionBrush}"/>
-                    </Trigger.Setters>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
         <ControlTemplate x:Key="SettingsButtonTemplate" TargetType="{x:Type Button}">
             <Image x:Name="Image" Source="{DynamicResource SettingsButtonIcon}" Stretch="None" VerticalAlignment="Center" UseLayoutRounding="True"/>
 
@@ -210,7 +201,7 @@
 
                 <Separator/>
 
-                <MenuItem Header="{DynamicResource ThemeMenuItem}" ItemsSource="{Binding Themes}">
+                <MenuItem Header="{DynamicResource ThemeMenuItem}" Icon="{StaticResource ThemesIcon}" ItemsSource="{Binding Themes}">
                     <MenuItem.ItemTemplate>
                         <DataTemplate DataType="{x:Type local:Theme}">
                             <TextBlock Margin="0,0,6,0" Text="{Binding Name, Converter={StaticResource ThemeNameConverter}}"/>
@@ -220,6 +211,7 @@
                         <Style TargetType="{x:Type MenuItem}">
                             <Setter Property="mvvm:MenuItemProperties.ShowChecked" Value="True"/>
                             <Setter Property="IsChecked" Value="{Binding Selected, Mode=OneWay}"/>
+                            <Setter Property="Icon" Value="{Binding Image}"/>
                             <Setter Property="Command" Value="{Binding SelectCommand}"/>
                         </Style>
                     </MenuItem.ItemContainerStyle>
@@ -273,7 +265,7 @@
         </Menu>
 
         <ToolBar Grid.Row="1" Margin="0,4,0,0">
-            <ToggleButton x:Name="AddModsToggleButton" ToolTip="{DynamicResource AddModsMenuItem}" Style="{StaticResource MenuToggleButtonStyle}"
+            <ToggleButton x:Name="AddModsToggleButton" ToolTip="{DynamicResource AddModsMenuItem}"
                           IsEnabled="{Binding IsOpen, ElementName=AddModsToggledPopup, Converter={StaticResource InverseBooleanConverter}}">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -283,12 +275,12 @@
 
                     <Image Grid.Column="0" Margin="1" Stretch="None" Source="{StaticResource AddIcon}"/>
 
-                    <Path Grid.Column="1" Margin="2" VerticalAlignment="Center" Fill="Black" Data="M 0 0 L 3 3 L 6 0 Z"/>
+                    <Path Grid.Column="1" Margin="2" VerticalAlignment="Center" Fill="{DynamicResource ForegroundBrush}" Data="M 0 0 L 3 3 L 6 0 Z"/>
 
                     <Popup x:Name="AddModsToggledPopup" StaysOpen="False" Placement="Bottom" PlacementTarget="{Binding ElementName=AddModsToggleButton}"
                            PopupAnimation="Fade" AllowsTransparency="True" Focusable="False"
                            IsOpen="{Binding IsChecked, ElementName=AddModsToggleButton, Mode=TwoWay}">
-                        <Border Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
+                        <Border Background="{DynamicResource BackgroundBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                             <Menu IsMainMenu="False">
                                 <MenuItem Header="{DynamicResource DownloadModsMenuItem}" Icon="{StaticResource DownloadIcon}" Command="{Binding DownloadModsCommand}"/>
                                 <MenuItem Header="{DynamicResource AddModFilesMenuItem}" Icon="{StaticResource AddDocumentIcon}" Command="{Binding AddModsFromFilesCommand}"/>
@@ -396,9 +388,9 @@
                 </Grid.ColumnDefinitions>
 
                 <CheckBox Grid.Row="1" Grid.Column="0" Margin="2,2,4,2" Content="{DynamicResource ModsHeader}" Style="{StaticResource AllActiveInactiveCheckBoxStyle}" IsChecked="{Binding AllModsActive}"/>
-                <Rectangle Grid.Row="2" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
+                <Rectangle Grid.Row="2" Grid.Column="0" Fill="{DynamicResource SelectionBrush}"/>
 
-                <ToggleButton x:Name="ModsToggleButton" Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" VerticalAlignment="Bottom" Style="{StaticResource MenuToggleButtonStyle}"
+                <ToggleButton x:Name="ModsToggleButton" Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" VerticalAlignment="Bottom" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}"
                               IsEnabled="{Binding IsOpen, ElementName=ModsToggledPopup, Converter={StaticResource InverseBooleanConverter}}">
                     <Grid>
                         <Image Grid.Column="0" Margin="1" Width="18" Height="18" Stretch="None" Source="{StaticResource MenuIcon}"/>
@@ -407,7 +399,7 @@
                                VerticalOffset="{Binding ActualHeight, ElementName=ModsToggleButton}" HorizontalOffset="{Binding ActualWidth, ElementName=ModsToggleButton}"
                                PopupAnimation="Fade" AllowsTransparency="True" Focusable="False"
                                IsOpen="{Binding IsChecked, ElementName=ModsToggleButton, Mode=TwoWay}">
-                            <Border Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
+                            <Border Background="{DynamicResource BackgroundBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                                 <Menu IsMainMenu="False">
                                     <MenuItem Header="{DynamicResource DownloadModsContextMenuItem}" Icon="{StaticResource DownloadIcon}"
                                               InputGestureText="{DynamicResource DownloadModsHotkey}" Command="{Binding DownloadModsCommand}"/>
@@ -506,7 +498,7 @@
                                                             </Grid.ColumnDefinitions>
 
                                                             <TextBlock Grid.Row="0" Grid.Column="0" Margin="8,2" VerticalAlignment="Center" FontSize="14" Text="{Binding Name}"/>
-                                                            <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,-24,-4" Fill="{StaticResource SelectionBrush}"/>
+                                                            <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,-24,-4" Fill="{DynamicResource SelectionBrush}"/>
                                                         </Grid>
                                                     </controls:DefaultExpandedExpander.Header>
                                                     
@@ -548,7 +540,7 @@
                                 </Grid>
                             </Expander.Header>
 
-                            <Border Background="{StaticResource BackgroundBrush}">
+                            <Border Background="{DynamicResource MutedBackgroundBrush}">
                                 <ItemsControl Margin="20,2,4,2" ItemsSource="{Binding DependenciesView}" ItemTemplate="{StaticResource SubitemTemplate}">
                                     <ItemsControl.Template>
                                         <ControlTemplate TargetType="{x:Type ItemsControl}">
@@ -589,10 +581,10 @@
                 </controls:DragDropReadyListBox.ContextMenu>
             </controls:DragDropReadyListBox>
             <DockPanel Grid.Row="2" Grid.Column="0" Margin="0,4,0,0">
-                <Border DockPanel.Dock="Left" Background="{StaticResource SelectionBrush}">
+                <Border DockPanel.Dock="Left" Background="{DynamicResource SelectionBrush}">
                     <Image Margin="1" Width="22" Height="22" Stretch="None" Source="{StaticResource SearchIcon}"/>
                 </Border>
-                <Border DockPanel.Dock="Right" BorderThickness="0,1,1,1" BorderBrush="DarkGray">
+                <Border DockPanel.Dock="Right" BorderThickness="0,1,1,1" BorderBrush="{DynamicResource MutedBorderBrush}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -621,9 +613,9 @@
                 </Grid.ColumnDefinitions>
 
                 <CheckBox Grid.Row="1" Grid.Column="0" Margin="2,2,4,2" Content="{DynamicResource ModpacksHeader}" Style="{StaticResource AllActiveInactiveCheckBoxStyle}" IsChecked="{Binding AllModpacksActive}"/>
-                <Rectangle Grid.Row="2" Grid.Column="0" Fill="{StaticResource SelectionBrush}"/>
+                <Rectangle Grid.Row="2" Grid.Column="0" Fill="{DynamicResource SelectionBrush}"/>
 
-                <ToggleButton x:Name="ModpacksToggleButton" Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" VerticalAlignment="Bottom" Style="{StaticResource MenuToggleButtonStyle}"
+                <ToggleButton x:Name="ModpacksToggleButton" Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" VerticalAlignment="Bottom" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}"
                               IsEnabled="{Binding IsOpen, ElementName=ModpacksToggledPopup, Converter={StaticResource InverseBooleanConverter}}">
                     <Grid>
                         <Image Grid.Column="0" Margin="1" Width="18" Height="18" Stretch="None" Source="{StaticResource MenuIcon}"/>
@@ -632,7 +624,7 @@
                                VerticalOffset="{Binding ActualHeight, ElementName=ModsToggleButton}" HorizontalOffset="{Binding ActualWidth, ElementName=ModsToggleButton}"
                                PopupAnimation="Fade" AllowsTransparency="True" Focusable="False"
                                IsOpen="{Binding IsChecked, ElementName=ModpacksToggleButton, Mode=TwoWay}">
-                            <Border Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
+                            <Border Background="{DynamicResource BackgroundBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                                 <Menu IsMainMenu="False">
                                     <MenuItem Header="{DynamicResource NewModpackMenuItem}" Icon="{StaticResource NewPackageIcon}" InputGestureText="{DynamicResource NewModpackHotkey}"
                                               Command="{Binding CreateModpackCommand}"/>
@@ -762,7 +754,7 @@
                                 </Grid>
                             </Expander.Header>
 
-                            <Border Background="{StaticResource BackgroundBrush}">
+                            <Border Background="{DynamicResource MutedBackgroundBrush}">
                                 <ItemsControl Margin="20,2,4,2" ItemsSource="{Binding ModsView}" ItemTemplate="{StaticResource SubitemTemplate}">
                                     <ItemsControl.Template>
                                         <ControlTemplate TargetType="{x:Type ItemsControl}">
@@ -791,10 +783,10 @@
                 </controls:DragDropReadyListBox.ContextMenu>
             </controls:DragDropReadyListBox>
             <DockPanel Grid.Row="2" Grid.Column="2" Margin="0,4,0,0">
-                <Border DockPanel.Dock="Left" Background="{StaticResource SelectionBrush}">
+                <Border DockPanel.Dock="Left" Background="{DynamicResource SelectionBrush}">
                     <Image Margin="1" Width="22" Height="22" Stretch="None" Source="{StaticResource SearchIcon}"/>
                 </Border>
-                <Border DockPanel.Dock="Right" BorderThickness="0,1,1,1" BorderBrush="DarkGray">
+                <Border DockPanel.Dock="Right" BorderThickness="0,1,1,1" BorderBrush="{DynamicResource MutedBorderBrush}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>

@@ -6,7 +6,8 @@
         xmlns:controls="clr-namespace:ModMyFactory.Controls"
         Title="{DynamicResource ModpackExportWindowTitle}"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
-        Icon="..\Images\MMF_Icon.ico">
+        Icon="..\Images\MMF_Icon.ico"
+        Style="{StaticResource WindowStyle}">
 
     <Window.DataContext>
         <vm:ModpackExportViewModel/>

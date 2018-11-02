@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using WPFCore;
 using WPFCore.Commands;
 
@@ -50,11 +52,14 @@ namespace ModMyFactory
             }
         }
 
+        public BitmapImage Image { get; }
+
         public ICommand SelectCommand { get; }
 
         private Theme(string name)
         {
             Name = name;
+            Image = new BitmapImage(new Uri($"../Images/Themes/{name}.png", UriKind.Relative));
             SelectCommand = new RelayCommand(() => Selected = true);
             themes.Add(this);
 

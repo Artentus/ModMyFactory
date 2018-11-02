@@ -10,7 +10,8 @@
         Title="{DynamicResource VersionManagementWindowTitle}"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
         Icon="..\Images\MMF_Icon.ico"
-        DataContext="{x:Static vm:VersionManagementViewModel.Instance}">
+        DataContext="{x:Static vm:VersionManagementViewModel.Instance}"
+        Style="{StaticResource WindowStyle}">
     
     <Grid Margin="4">
         <Grid.ColumnDefinitions>
@@ -64,7 +65,7 @@
                                 <KeyBinding Key="Return" Command="{Binding EndEditCommand}"/>
                             </TextBox.InputBindings>
                         </TextBox>
-                        <TextBlock Grid.Column="2" Margin="2" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Version, StringFormat=({0})}" Foreground="Gray"/>
+                        <TextBlock Grid.Column="2" Margin="2" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Version, StringFormat=({0})}" Foreground="{DynamicResource MutedForegroundBrush}"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

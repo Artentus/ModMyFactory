@@ -8,7 +8,8 @@
         Title="{DynamicResource Question.Update.Title}" Height="500" Width="600"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Icon="..\Images\MMF_Icon.ico">
+        Icon="..\Images\MMF_Icon.ico"
+        Style="{StaticResource WindowStyle}">
 
     <Grid Margin="4">
         <Grid.RowDefinitions>

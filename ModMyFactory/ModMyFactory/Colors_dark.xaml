@@ -2,13 +2,19 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Color x:Key="BackgroundColor">#2d2d30</Color>
-    <Color x:Key="BorderColor">DimGray</Color>
-    <Color x:Key="HoverColor">#5087CEFA</Color>
-    <Color x:Key="SelectionColor">LightSkyBlue</Color>
-    <Color x:Key="ForegroundColor">LightGray</Color>
+    <Color x:Key="MutedBackgroundColor">#242424</Color>
+    <Color x:Key="BorderColor">#505050</Color>
+    <Color x:Key="MutedBorderColor">#636363</Color>
+    <Color x:Key="HoverColor">#454545</Color>
+    <Color x:Key="SelectionColor">#007acc</Color>
+    <Color x:Key="ForegroundColor">#ECECEC</Color>
+    <Color x:Key="MutedForegroundColor">#B0B0B0</Color>
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
+    <SolidColorBrush x:Key="MutedBackgroundBrush" Color="{StaticResource MutedBackgroundColor}"/>
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
+    <SolidColorBrush x:Key="MutedBorderBrush" Color="{StaticResource MutedBorderColor}"/>
     <SolidColorBrush x:Key="HoverBrush" Color="{StaticResource HoverColor}"/>
     <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource SelectionColor}"/>
     <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource ForegroundColor}"/>
+    <SolidColorBrush x:Key="MutedForegroundBrush" Color="{StaticResource MutedForegroundColor}"/>
 </ResourceDictionary>

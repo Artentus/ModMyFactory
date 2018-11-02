@@ -9,7 +9,8 @@
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon="..\Images\MMF_Icon.ico"
-        FocusManager.FocusedElement="{Binding ElementName=UsernameBox}">
+        FocusManager.FocusedElement="{Binding ElementName=UsernameBox}"
+        Style="{StaticResource WindowStyle}">
     
     <Grid Margin="4">
         <Grid.RowDefinitions>

@@ -11,7 +11,8 @@
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon="..\Images\MMF_Icon.ico"
         DataContext="{x:Static vm:SettingsViewModel.Instance}"
-        Loaded="LoadedHandler">
+        Loaded="LoadedHandler"
+        Style="{StaticResource WindowStyle}">
 
     <Grid Margin="4">
         <Grid.RowDefinitions>

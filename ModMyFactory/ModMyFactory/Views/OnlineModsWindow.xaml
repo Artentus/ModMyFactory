@@ -12,7 +12,8 @@
         Title="{DynamicResource OnlineModsWindowTitle}"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
         Icon="..\Images\MMF_Icon.ico"
-        DataContext="{x:Static vm:OnlineModsViewModel.Instance}">
+        DataContext="{x:Static vm:OnlineModsViewModel.Instance}"
+        Style="{StaticResource WindowStyle}">
 
     <Window.Resources>
         <BitmapImage x:Key="DownloadsIcon" UriSource="../Images/Downloads.png"/>
@@ -71,10 +72,10 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             
-            <Border Grid.Column="0" Background="{StaticResource SelectionBrush}">
+            <Border Grid.Column="0" Background="{DynamicResource SelectionBrush}">
                 <Image Margin="1" Width="22" Height="22" Stretch="None" Source="{StaticResource SearchIcon}"/>
             </Border>
-            <Border Grid.Column="1" BorderThickness="0,1,1,1" BorderBrush="DarkGray">
+            <Border Grid.Column="1" BorderThickness="0,1,1,1" BorderBrush="{DynamicResource MutedBorderBrush}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>

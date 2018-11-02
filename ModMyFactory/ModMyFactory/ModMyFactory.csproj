@@ -596,6 +596,9 @@
     <Resource Include="Images\Settings_blue.png" />
     <Resource Include="Images\Settings_gray.png" />
     <Resource Include="Images\Inverted_small.png" />
+    <Resource Include="Images\Themes\dark.png" />
+    <Resource Include="Images\Themes\light.png" />
+    <Resource Include="Images\Themes.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>
