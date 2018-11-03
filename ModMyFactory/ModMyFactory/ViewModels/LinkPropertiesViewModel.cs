@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows.Data;
 using ModMyFactory.Models;
 using ModMyFactory.MVVM.Sorters;
@@ -158,7 +159,7 @@ namespace ModMyFactory.ViewModels
                 ModpacksView = (ListCollectionView)(new CollectionViewSource() { Source = Modpacks }).View;
                 ModpacksView.CustomSort = new ModpackSorter();
 
-                Savegames = App.Instance.Settings.GetSavegameDirectory().GetFiles();
+                Savegames = App.Instance.Settings.GetSavegameDirectory().EnumerateFiles().Where(file => !file.Name.StartsWith("_autosave")).ToArray();
                 SavegameView = (ListCollectionView)(new CollectionViewSource() { Source = Savegames }).View;
             }
         }

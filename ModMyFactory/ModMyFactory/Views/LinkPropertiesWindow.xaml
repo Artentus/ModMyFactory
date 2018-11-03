@@ -8,6 +8,7 @@
         xmlns:controls="clr-namespace:ModMyFactory.Controls"
         xmlns:io="clr-namespace:System.IO;assembly=mscorlib"
         xmlns:converter="clr-namespace:ModMyFactory.MVVM.Converters"
+        xmlns:selector="clr-namespace:ModMyFactory.MVVM.Selectors"
         mc:Ignorable="d"
         Title="{DynamicResource LinkPropertiesWindowTitle}" Width="400" Height="500"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
@@ -20,7 +21,22 @@
     </Window.DataContext>
 
     <Window.Resources>
+        <DataTemplate x:Key="SelectedFactorioTemplate" DataType="{x:Type model:FactorioVersion}">
+            <TextBlock Margin="4,0" VerticalAlignment="Center" Text="{Binding DisplayName}" Style="{StaticResource TextBlockButtonStyle}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="ListFactorioTemplate" DataType="{x:Type model:FactorioVersion}">
+            <TextBlock Margin="4,2" VerticalAlignment="Center" Text="{Binding DisplayName}"/>
+        </DataTemplate>
+        <selector:ComboBoxTemplateSelector x:Key="FactorioTemplateSelector" SelectedItemTemplate="{StaticResource SelectedFactorioTemplate}" ListItemTemplate="{StaticResource ListFactorioTemplate}"/>
+
         <converter:RemoveFileExtensionConverter x:Key="RemoveFileExtensionConverter"/>
+        <DataTemplate x:Key="SelectedSavegameTemplate" DataType="{x:Type io:FileInfo}">
+            <TextBlock Margin="4,0" VerticalAlignment="Center" Text="{Binding Name, Converter={StaticResource RemoveFileExtensionConverter}}" Style="{StaticResource TextBlockButtonStyle}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="ListSavegameTemplate" DataType="{x:Type io:FileInfo}">
+            <TextBlock Margin="4,2" VerticalAlignment="Center" Text="{Binding Name, Converter={StaticResource RemoveFileExtensionConverter}}"/>
+        </DataTemplate>
+        <selector:ComboBoxTemplateSelector x:Key="SavegameTemplateSelector" SelectedItemTemplate="{StaticResource SelectedSavegameTemplate}" ListItemTemplate="{StaticResource ListSavegameTemplate}"/>
     </Window.Resources>
     
     <Grid Margin="4">
@@ -38,13 +54,8 @@
         </Grid.RowDefinitions>
         
         <TextBlock Grid.Row="0" Margin="4,2" Text="{DynamicResource SelectFactorioHeader}"/>
-        <ComboBox Grid.Row="1" Margin="2" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type model:FactorioVersion}">
-                    <TextBlock Margin="4,2" VerticalAlignment="Center" Text="{Binding DisplayName}"/>
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
+        <ComboBox Grid.Row="1" Margin="2" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding FactorioVersionsView}" SelectedItem="{Binding SelectedVersion}"
+                  ItemTemplateSelector="{StaticResource FactorioTemplateSelector}"/>
 
         <TextBlock Grid.Row="3" Margin="4,6,4,2" Text="{DynamicResource SelectModpackHeader}"/>
         <ListBox Grid.Row="4" Margin="2" IsSynchronizedWithCurrentItem="False" PreviewMouseDown="ModpackListBoxPreviewMouseDownHandler"
@@ -57,20 +68,23 @@
         </ListBox>
 
         <CheckBox Grid.Row="5" Margin="2,6,2,2" Content="{DynamicResource LoadGameCheckBox}" IsChecked="{Binding LoadGame, Mode=TwoWay}"/>
-        <ComboBox Grid.Row="6" Margin="2" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding SavegameView}" SelectedItem="{Binding SelectedSavegame}" IsEnabled="{Binding LoadGame, Mode=OneWay}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type io:FileInfo}">
-                    <TextBlock Margin="4,2" VerticalAlignment="Center" Text="{Binding Name, Converter={StaticResource RemoveFileExtensionConverter}}"/>
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
+        <ComboBox Grid.Row="6" Margin="2" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding SavegameView}" SelectedItem="{Binding SelectedSavegame}"
+                  IsEnabled="{Binding LoadGame, Mode=OneWay}" ItemTemplateSelector="{StaticResource SavegameTemplateSelector}"/>
 
         <CheckBox Grid.Row="7" Margin="2,6,2,2" Content="{DynamicResource UseArgumentsCheckBox}" IsChecked="{Binding UseArguments, Mode=TwoWay}"/>
         <TextBox Grid.Row="8" Margin="2" Padding="2" Text="{Binding Arguments, Mode=TwoWay}" IsEnabled="{Binding UseArguments, Mode=OneWay}"/>
 
         <StackPanel Grid.Row="9" Margin="0,6,0,0" Orientation="Horizontal" FlowDirection="RightToLeft">
-            <Button Margin="2" IsDefault="True" IsEnabled="{Binding CanCreate}" Content="{DynamicResource CreateButton}" Click="CreateButtonClickHandler"/>
-            <Button Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
+            <Button Margin="2" IsDefault="True" IsEnabled="{Binding CanCreate}" Click="CreateButtonClickHandler">
+                <Button.Content>
+                    <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource CreateButton}"/>
+                </Button.Content>
+            </Button>
+            <Button Margin="2" IsCancel="True">
+                <Button.Content>
+                    <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource CancelButton}"/>
+                </Button.Content>
+            </Button>
         </StackPanel>
     </Grid>
 </controls:LayoutRoundingWindow>

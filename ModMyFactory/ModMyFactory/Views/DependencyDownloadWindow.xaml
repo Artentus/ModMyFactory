@@ -71,8 +71,16 @@
         <CheckBox Grid.Row="1" Margin="2,6,2,2" Content="{DynamicResource ShowOptionalCheckBox}" IsChecked="{Binding ShowOptional, Mode=TwoWay}"/>
 
         <StackPanel Grid.Row="2" Margin="0,6,0,0" Orientation="Horizontal" FlowDirection="RightToLeft">
-            <Button Margin="2" IsDefault="True" IsEnabled="{Binding CanDownload}" Content="{DynamicResource DownloadButton}" Click="DownloadButtonClickHandler"/>
-            <Button Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
+            <Button Margin="2" IsDefault="True" IsEnabled="{Binding CanDownload}" Click="DownloadButtonClickHandler">
+                <Button.Content>
+                    <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource DownloadButton}"/>
+                </Button.Content>
+            </Button>
+            <Button Margin="2" IsCancel="True">
+                <Button.Content>
+                    <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource CancelButton}"/>
+                </Button.Content>
+            </Button>
         </StackPanel>
     </Grid>
 </controls:LayoutRoundingWindow>

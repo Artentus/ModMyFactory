@@ -65,8 +65,16 @@
         </Border>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft">
-            <Button Margin="0,4,0,0" IsDefault="True" Content="{DynamicResource UpdateButton}" Click="UpdateButtonClickHandler"/>
-            <Button Margin="4,4,4,0" IsCancel="True" Content="{DynamicResource CancelButton}"/>
+            <Button Margin="0,4,0,0" IsDefault="True" Click="UpdateButtonClickHandler">
+                <Button.Content>
+                    <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource UpdateButton}"/>
+                </Button.Content>
+            </Button>
+            <Button Margin="4,4,4,0" IsCancel="True">
+                <Button.Content>
+                    <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource CancelButton}"/>
+                </Button.Content>
+            </Button>
         </StackPanel>
     </Grid>
 </controls:LayoutRoundingWindow>

@@ -35,7 +35,15 @@
             </ScrollViewer>
         </Border>
 
-        <Button Grid.Row="3" Grid.Column="2" Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
-        <Button Grid.Row="3" Grid.Column="3" Margin="2" IsDefault="True" Content="{DynamicResource UpdateButton}" Click="UpdateButtonClickHandler"/>
+        <Button Grid.Row="3" Grid.Column="2" Margin="2" IsCancel="True">
+            <Button.Content>
+                <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource CancelButton}"/>
+            </Button.Content>
+        </Button>
+        <Button Grid.Row="3" Grid.Column="3" Margin="2" IsDefault="True" Click="UpdateButtonClickHandler">
+            <Button.Content>
+                <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource UpdateButton}"/>
+            </Button.Content>
+        </Button>
     </Grid>
 </controls:LayoutRoundingWindow>
