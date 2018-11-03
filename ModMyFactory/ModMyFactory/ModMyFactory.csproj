@@ -202,6 +202,7 @@
     <Compile Include="Controls\InlineList.cs" />
     <Compile Include="Controls\LayoutRoundingWindow.cs" />
     <Compile Include="MVVM\Converters\ThemeNameConverter.cs" />
+    <Compile Include="MVVM\Selectors\ComboBoxTemplateSelector.cs" />
     <Compile Include="MVVM\Selectors\ModSettingTemplateSelector.cs" />
     <Compile Include="MVVM\Sorters\FactorioOnlineVersionSorter.cs" />
     <Compile Include="MVVM\Sorters\ModDependencySorter.cs" />

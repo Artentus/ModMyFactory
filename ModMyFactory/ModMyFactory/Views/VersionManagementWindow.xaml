@@ -72,18 +72,38 @@
         </ListBox>
 
         <StackPanel Grid.Column="1" Grid.Row="0" Margin="4,0,0,4">
-            <Button Margin="0,0,0,2" Content="{DynamicResource DownloadButton}" Command="{Binding DownloadCommand}"/>
-            <Button Margin="0,2" Content="{DynamicResource AddZipButton}" Command="{Binding AddFromZipCommand}"/>
-            <Button Margin="0,2" Content="{DynamicResource AddFolderButton}" Command="{Binding AddFromFolderCommand}"/>
-            <Button Margin="0,2" Content="{DynamicResource SelectSteamButton}" Command="{Binding SelectSteamCommand}"/>
+            <Button Margin="0,0,0,2" Command="{Binding DownloadCommand}">
+                <Button.Content>
+                    <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource DownloadButton}"/>
+                </Button.Content>
+            </Button>
+            <Button Margin="0,2" Command="{Binding AddFromZipCommand}" Content="{DynamicResource AddZipButton}"/>
+            <Button Margin="0,2" Command="{Binding AddFromFolderCommand}" Content="{DynamicResource AddFolderButton}"/>
+            <Button Margin="0,2" Command="{Binding SelectSteamCommand}" Content="{DynamicResource SelectSteamButton}"/>
 
             <Rectangle Margin="0,4" Height="1" Fill="{StaticResource BorderBrush}"/>
             
-            <Button Margin="0,2" Content="{DynamicResource OpenFolderButton}" Command="{Binding OpenFolderCommand}"/>
-            <Button Margin="0,2" Content="{DynamicResource UpdateButton}" Command="{Binding UpdateCommand}"/>
-            <Button Margin="0,2" Content="{DynamicResource RemoveButton}" Command="{Binding RemoveCommand}"/>
+            <Button Margin="0,2" Command="{Binding OpenFolderCommand}">
+                <Button.Content>
+                    <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource OpenFolderButton}"/>
+                </Button.Content>
+            </Button>
+            <Button Margin="0,2" Command="{Binding UpdateCommand}">
+                <Button.Content>
+                    <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource UpdateButton}"/>
+                </Button.Content>
+            </Button>
+            <Button Margin="0,2" Command="{Binding RemoveCommand}">
+                <Button.Content>
+                    <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource RemoveButton}"/>
+                </Button.Content>
+            </Button>
         </StackPanel>
         
-        <Button Grid.Column="1" Grid.Row="1" Margin="4,0,0,0" IsCancel="True" Content="{DynamicResource CloseButton}"/>
+        <Button Grid.Column="1" Grid.Row="1" Margin="4,0,0,0" IsCancel="True">
+            <Button.Content>
+                <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource CloseButton}"/>
+            </Button.Content>
+        </Button>
     </Grid>
 </controls:LayoutRoundingWindow>

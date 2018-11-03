@@ -2,6 +2,19 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xml:space="preserve">
+    
+    <Style x:Key="TextBlockButtonStyle" TargetType="{x:Type TextBlock}">
+        <Style.Setters>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style.Setters>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="Gray"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    
     <!--
     Newline character: &#x0a;
     -->
@@ -286,9 +299,9 @@
     <sys:String x:Key="VersionManagementWindowTitle">Version manager</sys:String>
 
     <!-- buttons -->
-    <sys:String x:Key="AddZipButton">Add from ZIP</sys:String>
-    <sys:String x:Key="AddFolderButton">Add from folder</sys:String>
-    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center">Select&#x0a;Steam version</TextBlock>
+    <TextBlock x:Key="AddZipButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">Add from ZIP</TextBlock>
+    <TextBlock x:Key="AddFolderButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">Add from folder</TextBlock>
+    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">Select&#x0a;Steam version</TextBlock>
     <sys:String x:Key="OpenFolderButton">Open folder</sys:String>
     <sys:String x:Key="RemoveButton">Remove</sys:String>
 

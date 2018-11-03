@@ -2,6 +2,19 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xml:space="preserve">
+    
+    <Style x:Key="TextBlockButtonStyle" TargetType="{x:Type TextBlock}">
+        <Style.Setters>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style.Setters>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="Gray"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    
     <!--
     Newline character: &#x0a;
     -->
@@ -230,9 +243,9 @@
     <sys:String x:Key="VersionManagementWindowTitle">版本管理器</sys:String>
 
     <!-- buttons -->
-    <sys:String x:Key="AddZipButton">从ZIP压缩包导入</sys:String>
-    <sys:String x:Key="AddFolderButton">从文件夹导入</sys:String>
-    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center">选择&#x0a;Steam版本</TextBlock>
+    <TextBlock x:Key="AddZipButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">从ZIP压缩包导入</TextBlock>
+    <TextBlock x:Key="AddFolderButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">从文件夹导入</TextBlock>
+    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">选择&#x0a;Steam版本</TextBlock>
     <sys:String x:Key="OpenFolderButton">打开文件夹</sys:String>
     <sys:String x:Key="RemoveButton">删除</sys:String>
 

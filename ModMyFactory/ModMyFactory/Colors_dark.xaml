@@ -9,6 +9,8 @@
     <Color x:Key="SelectionColor">#007acc</Color>
     <Color x:Key="ForegroundColor">#ECECEC</Color>
     <Color x:Key="MutedForegroundColor">#B0B0B0</Color>
+    <Color x:Key="LinkColor">LightSkyBlue</Color>
+    <Color x:Key="LinkHoverColor">#ee4650</Color>
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
     <SolidColorBrush x:Key="MutedBackgroundBrush" Color="{StaticResource MutedBackgroundColor}"/>
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
@@ -17,4 +19,6 @@
     <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource SelectionColor}"/>
     <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource ForegroundColor}"/>
     <SolidColorBrush x:Key="MutedForegroundBrush" Color="{StaticResource MutedForegroundColor}"/>
+    <SolidColorBrush x:Key="LinkBrush" Color="{StaticResource LinkColor}"/>
+    <SolidColorBrush x:Key="LinkHoverBrush" Color="{StaticResource LinkHoverColor}"/>
 </ResourceDictionary>

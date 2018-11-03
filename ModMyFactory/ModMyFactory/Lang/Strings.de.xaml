@@ -2,6 +2,19 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xml:space="preserve">
+    
+    <Style x:Key="TextBlockButtonStyle" TargetType="{x:Type TextBlock}">
+        <Style.Setters>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style.Setters>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="Gray"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    
     <!--
     Newline character: &#x0a;
     -->
@@ -277,9 +290,9 @@
     <sys:String x:Key="VersionManagementWindowTitle">Versionsmanager</sys:String>
 
     <!-- buttons -->
-    <TextBlock x:Key="AddZipButton" TextAlignment="Center" xml:space="preserve">Aus ZIP&#x0a;hinzufügen</TextBlock>
-    <TextBlock x:Key="AddFolderButton" TextAlignment="Center" xml:space="preserve">Aus Ordner&#x0a;hinzufügen</TextBlock>
-    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center" xml:space="preserve">Steam-Version&#x0a;auswählen</TextBlock>
+    <TextBlock x:Key="AddZipButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">Aus ZIP&#x0a;hinzufügen</TextBlock>
+    <TextBlock x:Key="AddFolderButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">Aus Ordner&#x0a;hinzufügen</TextBlock>
+    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">Steam-Version&#x0a;auswählen</TextBlock>
     <sys:String x:Key="OpenFolderButton">Ordner öffnen</sys:String>
     <sys:String x:Key="RemoveButton">Entfernen</sys:String>
 

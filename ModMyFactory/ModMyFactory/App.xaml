@@ -129,6 +129,19 @@
                 </Style.Triggers>
             </Style>
 
+            <Style x:Key="TextBlockButtonStyle" TargetType="{x:Type TextBlock}">
+                <Style.Setters>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Style.Setters>
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Foreground" Value="Gray"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="TextBlockDefaultStyle" TargetType="{x:Type TextBlock}"/>
+
             <Style x:Key="{x:Type TextBox}" TargetType="{x:Type TextBox}">
                 <Style.Setters>
                     <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
@@ -1563,7 +1576,23 @@
                     </Setter>
                 </Style.Setters>
             </Style>
-            
+
+            <Style x:Key="{x:Type Hyperlink}" TargetType="{x:Type Hyperlink}">
+                <Setter Property="Foreground" Value="{DynamicResource LinkBrush}"/>
+                <Setter Property="TextDecorations" Value="Underline"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Foreground" Value="{DynamicResource LinkHoverBrush}"/>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Foreground" Value="Gray"/>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="True">
+                        <Setter Property="Cursor" Value="Hand"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
