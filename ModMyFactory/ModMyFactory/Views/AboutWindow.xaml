@@ -9,7 +9,8 @@
         Title="{DynamicResource AboutWindowTitle}" SizeToContent="WidthAndHeight"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Icon="..\Images\MMF_Icon.ico">
+        Icon="..\Images\MMF_Icon.ico"
+        Style="{StaticResource WindowStyle}">
     
     <Window.DataContext>
         <vm:AboutViewModel/>
@@ -43,6 +44,7 @@
 
         <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -91,6 +93,11 @@
             <TextBlock Grid.Row="6" Grid.Column="1">
                 <Hyperlink Command="{Binding Url7Command}">Xdelta-sharp</Hyperlink>
             </TextBlock>
+
+            <TextBlock Grid.Row="7" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource INIparserLabel}"/>
+            <TextBlock Grid.Row="7" Grid.Column="1">
+                <Hyperlink Command="{Binding Url8Command}">INI-parser</Hyperlink>
+            </TextBlock>
         </Grid>
         
         <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="20,0">
@@ -107,6 +114,7 @@
                 <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor2Command}">jodli</Hyperlink></TextBlock>
                 <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor3Command}">mpwoz</Hyperlink></TextBlock>
                 <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor4Command}">Credomane Evonguard</Hyperlink></TextBlock>
+                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor5Command}">distantcam</Hyperlink></TextBlock>
             </WrapPanel>
         </Grid>
 
@@ -120,13 +128,18 @@
             <Rectangle Grid.Row="0" Margin="0,10" Height="1" Fill="{StaticResource BorderBrush}"/>
             <TextBlock Grid.Row="1" Text="{DynamicResource TranslatorsHeader}"/>
             <WrapPanel Grid.Row="2" Margin="-6,2" Orientation="Horizontal">
-                <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator1Command}">Averssem</Hyperlink>, <Hyperlink Command="{Binding Translator3Command}">Corwin616</Hyperlink> (Russian)</TextBlock>
+                <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator1Command}">Averssem</Hyperlink>,
+                    <Hyperlink Command="{Binding Translator3Command}">Corwin616</Hyperlink> (Russian)</TextBlock>
                 <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator2Command}">blackbat24</Hyperlink> (Portuguese)</TextBlock>
                 <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator4Command}">James Y.</Hyperlink> (Chinese)</TextBlock>
                 <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator5Command}">Xagros</Hyperlink> (Korean)</TextBlock>
             </WrapPanel>
         </Grid>
 
-        <Button Grid.Row="7" Grid.Column="2" Margin="2" HorizontalAlignment="Right" Content="{DynamicResource CloseButton}" IsDefault="True" IsCancel="True"/>
+        <Button Grid.Row="7" Grid.Column="2" Margin="2" HorizontalAlignment="Right" IsDefault="True" IsCancel="True">
+            <Button.Content>
+                <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource CloseButton}"/>
+            </Button.Content>
+        </Button>
     </Grid>
 </controls:LayoutRoundingWindow>

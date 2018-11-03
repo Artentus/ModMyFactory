@@ -2,6 +2,19 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xml:space="preserve">
+    
+    <Style x:Key="TextBlockButtonStyle" TargetType="{x:Type TextBlock}">
+        <Style.Setters>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style.Setters>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="Gray"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    
     <!--
     Newline character: &#x0a;
     -->
@@ -207,6 +220,9 @@
     <sys:String x:Key="OpenModFolderMenuItem">Open mod folder</sys:String>
     <sys:String x:Key="OpenSavegameFolderMenuItem">Open savegame folder</sys:String>
     <sys:String x:Key="OpenScenarioFolderMenuItem">Open scenario folder</sys:String>
+    <sys:String x:Key="ThemeMenuItem">Visual theme</sys:String>
+    <sys:String x:Key="__theme__light">Light</sys:String>
+    <sys:String x:Key="__theme__dark">Dark</sys:String>
     <sys:String x:Key="RefreshMenuItem">Refresh</sys:String>
     
     <!-- 'Language' menu -->
@@ -273,6 +289,7 @@
     <sys:String x:Key="SetAllInactiveToolTip">Deactivate all</sys:String>
     <sys:String x:Key="MissingDependenciesModToolTip">Dependencies of this mod are missing.</sys:String>
     <sys:String x:Key="MissingDependenciesModpackToolTip">Dependencies of mods in this modpack are missing.</sys:String>
+    <sys:String x:Key="ModSettingsToolTip">Mod settings</sys:String>
     
     
     <!--
@@ -282,9 +299,9 @@
     <sys:String x:Key="VersionManagementWindowTitle">Version manager</sys:String>
 
     <!-- buttons -->
-    <sys:String x:Key="AddZipButton">Add from ZIP</sys:String>
-    <sys:String x:Key="AddFolderButton">Add from folder</sys:String>
-    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center">Select&#x0a;Steam version</TextBlock>
+    <TextBlock x:Key="AddZipButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">Add from ZIP</TextBlock>
+    <TextBlock x:Key="AddFolderButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">Add from folder</TextBlock>
+    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">Select&#x0a;Steam version</TextBlock>
     <sys:String x:Key="OpenFolderButton">Open folder</sys:String>
     <sys:String x:Key="RemoveButton">Remove</sys:String>
 
@@ -398,6 +415,7 @@
     <sys:String x:Key="GitHubLabel">GitHub API:</sys:String>
     <sys:String x:Key="ZlibLabel">CRC32 implementation:</sys:String>
     <sys:String x:Key="XdeltaLabel">VCDIFF implementation:</sys:String>
+    <sys:String x:Key="INIparserLabel">INI parser:</sys:String>
     
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Contributors</sys:String>
@@ -499,6 +517,7 @@
     <sys:String x:Key="CopyButton">Copy</sys:String>
     <sys:String x:Key="MoveButton">Move</sys:String>
     
+    
     <!--
     ____________________ DependencyDownloadWindow ____________________
     -->
@@ -510,5 +529,15 @@
     
     <!-- tooltips -->
     <sys:String x:Key="IsOptionalToolTip">Optional</sys:String>
+    
+    
+    <!--
+    ____________________ ModSettingsWindow ____________________
+    -->
+    
+    <sys:String x:Key="ModSettingsWindowTitle">Edit mod dependencies</sys:String>
+    
+    <!-- checkboxes -->
+    <sys:String x:Key="OverrideCheckBox">Override settings</sys:String>
 
 </ResourceDictionary>

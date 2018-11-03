@@ -10,7 +10,8 @@
         Title="{DynamicResource CopyOrMoveMessageWindowTitle}" Width="400" SizeToContent="Height"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
-        Icon="..\Images\MMF_Icon.ico">
+        Icon="..\Images\MMF_Icon.ico"
+        Style="{StaticResource WindowStyle}">
     
     <Window.DataContext>
         <vm:CopyOrMoveViewModel/>

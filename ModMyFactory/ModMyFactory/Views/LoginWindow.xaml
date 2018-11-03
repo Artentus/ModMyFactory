@@ -9,7 +9,8 @@
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon="..\Images\MMF_Icon.ico"
-        FocusManager.FocusedElement="{Binding ElementName=UsernameBox}">
+        FocusManager.FocusedElement="{Binding ElementName=UsernameBox}"
+        Style="{StaticResource WindowStyle}">
     
     <Grid Margin="4">
         <Grid.RowDefinitions>
@@ -35,7 +36,15 @@
         <PasswordBox x:Name="PasswordBox" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="2" Padding="2"/>
         <CheckBox x:Name="SaveCredentialsBox" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="2,6" Content="{DynamicResource SaveCredentialsHeader}"/>
 
-        <Button Grid.Row="6" Grid.Column="1" Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
-        <Button Grid.Row="6" Grid.Column="2" Margin="2" IsDefault="True" Content="{DynamicResource OkButton}" Click="OKButtonClickHandler"/>
+        <Button Grid.Row="6" Grid.Column="1" Margin="2" IsCancel="True">
+            <Button.Content>
+                <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource CancelButton}"/>
+            </Button.Content>
+        </Button>
+        <Button Grid.Row="6" Grid.Column="2" Margin="2" IsDefault="True" Click="OKButtonClickHandler">
+            <Button.Content>
+                <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource OkButton}"/>
+            </Button.Content>
+        </Button>
     </Grid>
 </controls:LayoutRoundingWindow>

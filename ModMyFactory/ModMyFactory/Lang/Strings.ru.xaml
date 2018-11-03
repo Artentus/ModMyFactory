@@ -2,6 +2,19 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xml:space="preserve">
+    
+    <Style x:Key="TextBlockButtonStyle" TargetType="{x:Type TextBlock}">
+        <Style.Setters>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style.Setters>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="Gray"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    
     <!--
     Newline character: &#x0a;
     -->
@@ -230,9 +243,9 @@
     <sys:String x:Key="VersionManagementWindowTitle">Менеждер версий</sys:String>
 
     <!-- buttons -->
-    <TextBlock x:Key="AddZipButton" TextAlignment="Center">Добавить&#x0a;из ZIP-архива</TextBlock>
-    <TextBlock x:Key="AddFolderButton" TextAlignment="Center">Добавить&#x0a;из папки</TextBlock>
-    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center">Выбрать&#x0a;Steam версию</TextBlock>
+    <TextBlock x:Key="AddZipButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">Добавить&#x0a;из ZIP-архива</TextBlock>
+    <TextBlock x:Key="AddFolderButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">Добавить&#x0a;из папки</TextBlock>
+    <TextBlock x:Key="SelectSteamButton" TextAlignment="Center" Style="{StaticResource TextBlockButtonStyle}">Выбрать&#x0a;Steam версию</TextBlock>
     <sys:String x:Key="OpenFolderButton">Открыть папку</sys:String>
     <sys:String x:Key="RemoveButton">Удалить</sys:String>
 

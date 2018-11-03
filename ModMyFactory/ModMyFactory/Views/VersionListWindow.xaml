@@ -10,7 +10,8 @@
         Title="{DynamicResource VersionListWindowTitle}" Height="500" Width="400"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Icon="..\Images\MMF_Icon.ico">
+        Icon="..\Images\MMF_Icon.ico"
+        Style="{StaticResource WindowStyle}">
     
     <Window.DataContext>
         <vm:VersionListViewModel/>
@@ -66,7 +67,15 @@
 
         <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="2" Content="{DynamicResource ShowExperimentalCheckBox}" IsChecked="{Binding ShowExperimentalVersions}"/>
 
-        <Button Grid.Row="2" Grid.Column="1" Margin="2" IsCancel="True" Content="{DynamicResource CancelButton}"/>
-        <Button Grid.Row="2" Grid.Column="2" Margin="2" IsDefault="True" IsEnabled="{Binding CanAdd}" Content="{DynamicResource DownloadButton}" Click="DownloadButtonClickHandler"/>
+        <Button Grid.Row="2" Grid.Column="1" Margin="2" IsCancel="True">
+            <Button.Content>
+                <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource CancelButton}"/>
+            </Button.Content>
+        </Button>
+        <Button Grid.Row="2" Grid.Column="2" Margin="2" IsDefault="True" IsEnabled="{Binding CanAdd}" Click="DownloadButtonClickHandler">
+            <Button.Content>
+                <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource DownloadButton}"/>
+            </Button.Content>
+        </Button>
     </Grid>
 </controls:LayoutRoundingWindow>

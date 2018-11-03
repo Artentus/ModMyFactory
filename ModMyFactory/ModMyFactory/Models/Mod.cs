@@ -1,11 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using ModMyFactory.Helpers;
+using ModMyFactory.Models.ModSettings;
 using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.ViewModels;
+using ModMyFactory.Views;
 using WPFCore;
 using WPFCore.Commands;
 
@@ -14,7 +21,7 @@ namespace ModMyFactory.Models
     /// <summary>
     /// A mod.
     /// </summary>
-    sealed partial class Mod : NotifyPropertyChangedBase
+    sealed partial class Mod : NotifyPropertyChangedBase, IHasModSettings
     {
         private readonly ModCollection parentCollection;
         private readonly ModpackCollection modpackCollection;
@@ -90,17 +97,18 @@ namespace ModMyFactory.Models
                 {
                     file = value;
 
-                    if (Dependencies != null)
-                    {
-                        var source = new CollectionViewSource() { Source = Dependencies };
-                        var dependenciesView = (ListCollectionView)source.View;
-                        dependenciesView.CustomSort = new ModDependencySorter();
-                        DependenciesView = dependenciesView;
-                    }
-                    else
-                    {
-                        DependenciesView = null;
-                    }
+                    var source = new CollectionViewSource() { Source = Dependencies };
+                    var dependenciesView = (ListCollectionView)source.View;
+                    dependenciesView.CustomSort = new ModDependencySorter();
+                    DependenciesView = dependenciesView;
+
+                    var settings = file.GetSettings().Select(info => info.ToSetting(this)).ToList();
+                    Settings = new ReadOnlyCollection<IModSetting>(settings);
+                    source = new CollectionViewSource() { Source = Settings };
+                    var settingsView = (ListCollectionView)source.View;
+                    settingsView.CustomSort = new ModSettingSorter();
+                    settingsView.GroupDescriptions.Add(new PropertyGroupDescription("LoadTime"));
+                    SettingsView = settingsView;
 
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Version)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(FactorioVersion)));
@@ -109,6 +117,9 @@ namespace ModMyFactory.Models
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Description)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Dependencies)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DependenciesView)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Settings)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SettingsView)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasSettings)));
                 }
             }
         }
@@ -156,6 +167,21 @@ namespace ModMyFactory.Models
         public ICollectionView DependenciesView { get; private set; }
 
         /// <summary>
+        /// This mods settings.
+        /// </summary>
+        public IReadOnlyCollection<IModSetting> Settings { get; private set; }
+
+        /// <summary>
+        /// A view containing this mods settings.
+        /// </summary>
+        public ICollectionView SettingsView { get; private set; }
+
+        /// <summary>
+        /// Indicates whether this mod has any settings.
+        /// </summary>
+        public bool HasSettings => Settings.Count > 0;
+
+        /// <summary>
         /// Additional information about this mod to be displayed in a tooltip.
         /// </summary>
         public string ToolTip
@@ -193,12 +219,23 @@ namespace ModMyFactory.Models
         /// </summary>
         public RelayCommand<bool?> DeleteCommand { get; }
 
+        string IHasModSettings.DisplayName => $"{FriendlyName} ({FactorioVersion})";
+
+        bool IHasModSettings.Override
+        {
+            get => true;
+            set { }
+        }
+
+        public ICommand ViewSettingsCommand { get; }
+
         private Mod(ModCollection parentCollection, ModpackCollection modpackCollection)
         {
             this.parentCollection = parentCollection;
             this.modpackCollection = modpackCollection;
 
             DeleteCommand = new RelayCommand<bool?>(showPrompt => Delete(showPrompt ?? true));
+            ViewSettingsCommand = new RelayCommand(ViewSettings);
         }
 
         /// <summary>
@@ -224,6 +261,12 @@ namespace ModMyFactory.Models
             oldVersions = new ModFileCollection();
 
             active = ModManager.GetActive(Name, FactorioVersion);
+        }
+        
+        public ILocale GetLocale(CultureInfo culture)
+        {
+            if (File == null) return new ModLocale(culture);
+            return File.GetLocale(culture);
         }
 
         /// <summary>
@@ -266,6 +309,14 @@ namespace ModMyFactory.Models
             }
 
             HasUnsatisfiedDependencies = result;
+        }
+
+        public void ViewSettings()
+        {
+            var settingsWindow = new ModSettingsWindow() { Owner = App.Instance.MainWindow };
+            var settingsViewModel = (ModSettingsViewModel)settingsWindow.ViewModel;
+            settingsViewModel.SetMod(this);
+            settingsWindow.ShowDialog();
         }
         
         private bool KeepOldFile(ModFile newFile)

@@ -1,5 +1,9 @@
 ﻿using ModMyFactory.Helpers;
+using ModMyFactory.ModSettings;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -13,8 +17,12 @@ namespace ModMyFactory.Models
     /// </summary>
     sealed class ModFile : IComparable<ModFile>
     {
+        private const string DefaultLocaleString = "en";
+
         private readonly bool isFile;
         private FileSystemInfo file;
+        private Dictionary<string, ModLocale> locales;
+        private ModSettingInfo[] settings;
         
         /// <summary>
         /// The mods info file.
@@ -151,6 +159,205 @@ namespace ModMyFactory.Models
             this.file = file;
             InfoFile = infoFile;
             this.isFile = isFile;
+        }
+
+        private static ModSettingInfo[] ParseSettingsFile(Stream stream)
+        {
+            string content = string.Empty;
+            using (var reader = new StreamReader(stream))
+            {
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    if (!line.TrimStart().StartsWith("--")) content += line;
+                }
+            }
+            
+            content = content.Trim();
+            content = content.Substring(4).TrimStart(); // Remove 'data'
+            content = content.Substring(1).TrimStart(); // Remove ':'
+            content = content.Substring(6).TrimStart(); // Remove 'extend'
+            if (content[0] == '(') content = content.Substring(1).TrimStart(); // Remove '(' if present
+            if (content[content.Length - 1] == ')') content = content.Substring(0, content.Length - 1).TrimEnd(); // Remove ')' if present
+            content = content.Substring(1, content.Length - 2).Trim(); // Remove outer {} brackets
+            content = content.Replace('=', ':'); // Replace assignment char
+            content = '[' + content + ']'; // Add array brackets
+
+            // ToDo: add support for 'require' statements
+            
+            try
+            {
+                return JsonHelper.Deserialize<ModSettingInfo[]>(content);
+            }
+            catch (JsonReaderException)
+            {
+                return new ModSettingInfo[0];
+            }
+        }
+
+        private static bool TryLoadSettingsFromFile(FileInfo archiveFile, out ModSettingInfo[] settings)
+        {
+            using (var archive = ZipFile.OpenRead(archiveFile.FullName))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    if ((entry.Name == "settings.lua") && (entry.FullName.Count(c => c == '/') == 1))
+                    {
+                        using (var stream = entry.Open())
+                        {
+                            settings = ParseSettingsFile(stream);
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            settings = null;
+            return false;
+        }
+
+        private static bool TryLoadSettingsFromDirectory(DirectoryInfo directory, out ModSettingInfo[] settings)
+        {
+            var settingsFile = directory.EnumerateFiles("settings.lua").FirstOrDefault();
+            if (settingsFile == null)
+            {
+                settings = null;
+                return false;
+            }
+
+            using (var stream = settingsFile.OpenRead())
+            {
+                settings = ParseSettingsFile(stream);
+                return true;
+            }
+        }
+
+        private bool TryLoadSettings(out ModSettingInfo[] settings)
+        {
+            if (isFile)
+                return TryLoadSettingsFromFile((FileInfo)file, out settings);
+            else
+                return TryLoadSettingsFromDirectory((DirectoryInfo)file, out settings);
+        }
+
+        public ModSettingInfo[] GetSettings()
+        {
+            if (settings != null) return settings;
+
+            if (!TryLoadSettings(out settings))
+                settings = new ModSettingInfo[0];
+
+            return settings;
+        }
+
+        private static bool TryLoadLocaleFromFile(FileInfo archiveFile, CultureInfo culture, out ModLocale locale)
+        {
+            using (var archive = ZipFile.OpenRead(archiveFile.FullName))
+            {
+                string localeDir = "/locale/" + culture.TwoLetterISOLanguageName;
+
+                var streamList = new List<Stream>();
+                foreach (var entry in archive.Entries)
+                {
+                    if (entry.FullName.Contains(localeDir) && (entry.FullName.Count(c => c == '/') == 3) && entry.Name.EndsWith(".cfg"))
+                    {
+                        var stream = entry.Open();
+                        streamList.Add(stream);
+                    }
+                }
+
+                if (streamList.Count == 0)
+                {
+                    locale = null;
+                    return false;
+                }
+                else
+                {
+                    try
+                    {
+                        locale = new ModLocale(culture, streamList);
+                        return true;
+                    }
+                    finally
+                    {
+                        streamList?.ForEach(stream => stream?.Close());
+                    }
+                }
+            }
+        }
+
+        private static bool TryLoadLocaleFromDirectory(DirectoryInfo directory, CultureInfo culture, out ModLocale locale)
+        {
+            var localeParentDir = new DirectoryInfo(Path.Combine(directory.FullName, "locale"));
+            var localeDir = localeParentDir.EnumerateDirectories().FirstOrDefault(dir => dir.Name.StartsWith(culture.TwoLetterISOLanguageName));
+            if (localeDir == null)
+            {
+                locale = null;
+                return false;
+            }
+
+            var files = localeDir.EnumerateFiles("*.cfg");
+            if (files.Any())
+            {
+                locale = new ModLocale(culture, files);
+                return true;
+            }
+            else
+            {
+                locale = null;
+                return false;
+            }
+        }
+
+        private bool TryLoadLocale(CultureInfo culture, out ModLocale locale)
+        {
+            if (isFile)
+            {
+                return TryLoadLocaleFromFile((FileInfo)file, culture, out locale);
+            }
+            else
+            {
+                return TryLoadLocaleFromDirectory((DirectoryInfo)file, culture, out locale);
+            }
+        }
+
+        private ModLocale GetDefaultLocale()
+        {
+            
+            if (locales.TryGetValue(DefaultLocaleString, out var storedValue))
+            {
+                return storedValue;
+            }
+            else
+            {
+                var culture = new CultureInfo(DefaultLocaleString);
+                if (!TryLoadLocale(culture, out var locale))
+                    locale = new ModLocale(culture);
+
+                locales.Add(culture.TwoLetterISOLanguageName, locale);
+                return locale;
+            }
+        }
+
+        public ModLocale GetLocale(CultureInfo culture)
+        {
+            if (locales == null) locales = new Dictionary<string, ModLocale>();
+
+            if (culture.TwoLetterISOLanguageName == DefaultLocaleString)
+                return GetDefaultLocale();
+
+            if (locales.TryGetValue(culture.TwoLetterISOLanguageName, out var storedValue))
+            {
+                return storedValue;
+            }
+            else
+            {
+                if (!TryLoadLocale(culture, out var locale))
+                    locale = GetDefaultLocale();
+
+                locales.Add(culture.TwoLetterISOLanguageName, locale);
+                return locale;
+            }
         }
 
         /// <summary>

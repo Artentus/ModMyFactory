@@ -8,6 +8,11 @@ using ModMyFactory.ViewModels;
 using ModMyFactory.MVVM.Sorters;
 using WPFCore;
 using WPFCore.Commands;
+using System.Windows.Input;
+using ModMyFactory.Views;
+using System.Collections.Generic;
+using System.Linq;
+using ModMyFactory.Helpers;
 
 namespace ModMyFactory.Models
 {
@@ -16,8 +21,6 @@ namespace ModMyFactory.Models
     /// </summary>
     class Modpack : NotifyPropertyChangedBase, IEditableObject
     {
-        private 
-
         string name;
         string editingName;
         readonly ModpackCollection parentCollection;
@@ -27,6 +30,7 @@ namespace ModMyFactory.Models
         bool isSelected;
         bool contentsExpanded;
         bool hasUnsatisfiedDependencies;
+        Dictionary<IModReference, IEnumerable<IHasModSettings>> proxyDict;
 
         private string GetUniqueName(string baseName)
         {
@@ -198,6 +202,8 @@ namespace ModMyFactory.Models
         /// </summary>
         public IEditableCollectionView ParentView { get; set; }
 
+        public IEnumerable<IHasModSettings> ModProxies => proxyDict.Values.ConcatAll();
+
         /// <summary>
         /// A command that deletes this modpack from the list.
         /// </summary>
@@ -207,6 +213,21 @@ namespace ModMyFactory.Models
         /// A command that finishes renaming this modpack.
         /// </summary>
         public RelayCommand EndEditCommand { get; }
+
+        /// <summary>
+        /// Indicates whether any mods in this modpack have settings;
+        /// </summary>
+        public bool HasSettings => ModProxies.Any(proxy => proxy.HasSettings);
+
+        public ICommand ViewSettingsCommand { get; }
+
+        public void ViewSettings()
+        {
+            var settingsWindow = new ModSettingsWindow() { Owner = App.Instance.MainWindow };
+            var settingsViewModel = (ModSettingsViewModel)settingsWindow.ViewModel;
+            settingsViewModel.SetMods(ModProxies.ToList());
+            settingsWindow.ShowDialog();
+        }
 
         /// <summary>
         /// Checks if this modpack contains a specified mod.
@@ -338,25 +359,39 @@ namespace ModMyFactory.Models
             {
                 case NotifyCollectionChangedAction.Add:
                     foreach (IModReference mod in e.NewItems)
+                    {
                         mod.PropertyChanged += ModPropertyChanged;
+                        proxyDict.Add(mod, mod.ModProxies.Select(proxy => new ModSettingsProxy(proxy)));
+                    }
                     SetActive();
                     SetHasUnsatisfiedDependencies();
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     foreach (IModReference mod in e.OldItems)
+                    {
                         mod.PropertyChanged -= ModPropertyChanged;
+                        proxyDict.Remove(mod);
+                    }
                     SetActive();
                     SetHasUnsatisfiedDependencies();
                     break;
                 case NotifyCollectionChangedAction.Reset:
                     foreach (IModReference mod in e.NewItems)
+                    {
                         mod.PropertyChanged += ModPropertyChanged;
+                        proxyDict.Add(mod, mod.ModProxies.Select(proxy => new ModSettingsProxy(proxy)));
+                    }
                     foreach (IModReference mod in e.OldItems)
+                    {
                         mod.PropertyChanged -= ModPropertyChanged;
+                        proxyDict.Remove(mod);
+                    }
                     SetActive();
                     SetHasUnsatisfiedDependencies();
                     break;
             }
+
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasSettings)));
         }
 
         /// <summary>
@@ -392,6 +427,8 @@ namespace ModMyFactory.Models
             Name = name;
             active = false;
             activeChanging = false;
+            proxyDict = new Dictionary<IModReference, IEnumerable<IHasModSettings>>();
+
             Mods = new ObservableCollection<IModReference>();
             Mods.CollectionChanged += ModsChangedHandler;
 
@@ -400,6 +437,7 @@ namespace ModMyFactory.Models
 
             DeleteCommand = new RelayCommand<bool?>(showPrompt => Delete(showPrompt ?? true));
             EndEditCommand = new RelayCommand(EndEdit, () => Editing);
+            ViewSettingsCommand = new RelayCommand(ViewSettings);
         }
 
         public void BeginEdit()

@@ -365,7 +365,7 @@ namespace ModMyFactory.ViewModels
 
             var factorioDir = App.Instance.Settings.GetFactorioDirectory();
             if (!factorioDir.Exists) factorioDir.Create();
-
+            
             var newFolder = await folder.CopyToAsync(factorioDir);
             newFolder.RenameToUnique();
 

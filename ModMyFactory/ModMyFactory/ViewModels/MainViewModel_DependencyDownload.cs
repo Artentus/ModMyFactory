@@ -52,7 +52,7 @@ namespace ModMyFactory.ViewModels
         {
             foreach (var dependency in mod.Dependencies)
             {
-                if (!dependency.IsBase && !dependency.IsMet(Mods, mod.FactorioVersion))
+                if (!dependency.IsBase && !dependency.IsInverted && !dependency.IsMet(Mods, mod.FactorioVersion))
                     AddDependency(dict, dependency, mod.FactorioVersion);
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ModMyFactory.Helpers
 {
@@ -92,6 +93,16 @@ namespace ModMyFactory.Helpers
                 yield return sourceItem;
 
             yield return item;
+        }
+
+        public static IEnumerable<T> ConcatAll<T>(this IEnumerable<IEnumerable<T>> source)
+        {
+            return source.SelectMany(collection => collection);
+        }
+
+        public static IEnumerable<T> EnumerateSingle<T>(this T value)
+        {
+            yield return value;
         }
     }
 }

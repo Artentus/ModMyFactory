@@ -18,7 +18,7 @@ namespace ModMyFactory
 {
     public partial class App : Application
     {
-        private const int PreReleaseVersion = -1;
+        private const int PreReleaseVersion = 1;
 
         /// <summary>
         /// The current application instance.
@@ -186,7 +186,7 @@ namespace ModMyFactory
         internal void SelectCulture(CultureInfo culture)
         {
             var mergedDictionaries = Resources.MergedDictionaries;
-            if (mergedDictionaries.Count == 2) mergedDictionaries.RemoveAt(1);
+            if (mergedDictionaries.Count == 3) mergedDictionaries.RemoveAt(2);
             
             string resourceName = "Strings." + culture.TwoLetterISOLanguageName;
             if (culture.TwoLetterISOLanguageName != "en" && Resources.Contains(resourceName))
@@ -194,6 +194,22 @@ namespace ModMyFactory
 
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
+        }
+        
+        /// <summary>
+        /// Applies the specified theme to the UI.
+        /// </summary>
+        /// <param name="name">The themes name.</param>
+        internal void SetTheme(string name)
+        {
+            var dict = new ResourceDictionary() { Source = new Uri($"Colors_{name}.xaml", UriKind.Relative) };
+            Resources.MergedDictionaries[0] = dict;
+
+            if (name != Settings.Theme)
+            {
+                Settings.Theme = name;
+                Settings.Save();
+            }
         }
 
         /// <summary>

@@ -50,6 +50,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="INIFileParser, Version=2.5.2.0, Culture=neutral, PublicKeyToken=79af7b307b65cf3c, processorArchitecture=MSIL">
+      <HintPath>..\packages\ini-parser.2.5.2\lib\net20\INIFileParser.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -95,6 +98,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommandLine.cs" />
+    <Compile Include="Controls\NumericUpDown.xaml.cs">
+      <DependentUpon>NumericUpDown.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Export\ExportMode.cs" />
     <Compile Include="ExtendedVersion.cs" />
     <Compile Include="FactorioCollection.cs" />
@@ -112,12 +118,14 @@
     <Compile Include="Helpers\FileInfoExtensions.cs" />
     <Compile Include="Helpers\FileSystemInfoExtensions.cs" />
     <Compile Include="Helpers\GitHubClientExtensions.cs" />
+    <Compile Include="Helpers\INIHelper.cs" />
     <Compile Include="Helpers\ModHelper.cs" />
     <Compile Include="Helpers\PercievedFileType.cs" />
     <Compile Include="Helpers\ProcessExtensions.cs" />
     <Compile Include="Helpers\RegistryHelper.cs" />
     <Compile Include="Helpers\SecureStringHelper.cs" />
     <Compile Include="Helpers\SteamHelper.cs" />
+    <Compile Include="Helpers\StreamExtensions.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Helpers\TaskHelper.cs" />
     <Compile Include="Helpers\WindowExtensions.cs" />
@@ -127,17 +135,44 @@
     <Compile Include="ManagerMode.cs" />
     <Compile Include="MessageType.cs" />
     <Compile Include="ModCollection.cs" />
+    <Compile Include="Models\IHasLocale.cs" />
+    <Compile Include="Models\IHasModSettings.cs" />
+    <Compile Include="Models\ILocale.cs" />
+    <Compile Include="Models\LocaleType.cs" />
+    <Compile Include="Models\ModSettingsProxy.cs" />
+    <Compile Include="Models\ModSettings\BooleanModSetting.cs" />
     <Compile Include="Models\CopyOrMoveType.cs" />
     <Compile Include="Models\FactorioFile.cs" />
     <Compile Include="Models\FactorioFolder.cs" />
     <Compile Include="Models\FactorioSteamVersion.cs" />
     <Compile Include="Models\InfoFile.cs" />
     <Compile Include="Models\LatestFactorioVersion.cs" />
+    <Compile Include="Models\ModSettings\FloatingPointListModSetting.cs" />
+    <Compile Include="Models\ModSettings\FloatingPointModSetting.cs" />
+    <Compile Include="Models\ModSettings\ILimitedModSetting.cs" />
+    <Compile Include="Models\ModSettings\IListModSetting.cs" />
+    <Compile Include="Models\ModSettings\IModSetting.cs" />
+    <Compile Include="Models\ModSettings\IModSettingProxy.cs" />
+    <Compile Include="Models\ModSettings\IntegerListModSetting.cs" />
+    <Compile Include="Models\ModSettings\IntegerModSetting.cs" />
+    <Compile Include="Models\ModSettings\IStringModSetting.cs" />
+    <Compile Include="Models\ModSettings\LimitedModSetting.cs" />
+    <Compile Include="Models\ModSettings\LimitedModSettingProxy.cs" />
+    <Compile Include="Models\ModSettings\ListModSetting.cs" />
     <Compile Include="Models\ModDependency.cs" />
     <Compile Include="Models\ModDependencyInfo.cs" />
     <Compile Include="Models\ModFile.cs" />
     <Compile Include="Models\ModFileCollection.cs" />
+    <Compile Include="Models\ModLocale.cs" />
     <Compile Include="Models\ModpackTemplate.cs" />
+    <Compile Include="Models\ModSettings\ListModSettingProxy.cs" />
+    <Compile Include="Models\ModSettings\ModSetting.cs" />
+    <Compile Include="Models\ModSettings\ModSettingProxy.cs" />
+    <Compile Include="Models\ModSettings\StringListModSetting.cs" />
+    <Compile Include="Models\ModSettings\StringModSetting.cs" />
+    <Compile Include="ModSettings\LoadTime.cs" />
+    <Compile Include="ModSettings\LoadTimeJsonConverter.cs" />
+    <Compile Include="ModSettings\ModSettingInfo.cs" />
     <Compile Include="Models\ModTemplate.cs" />
     <Compile Include="Models\ModUpdateInfo.cs" />
     <Compile Include="Export\ModExportTemplate.cs" />
@@ -148,21 +183,37 @@
     <Compile Include="ModManager.cs" />
     <Compile Include="Export\ModpackExportTemplate.cs" />
     <Compile Include="ModpackCollection.cs" />
+    <Compile Include="ModSettings\Serialization\BinaryFile.cs" />
+    <Compile Include="ModSettings\Serialization\BinaryVersion.cs" />
+    <Compile Include="ModSettings\Serialization\ModSettingsExportTemplate.cs" />
+    <Compile Include="ModSettings\Serialization\ModSettingValueTemplate.cs" />
+    <Compile Include="ModSettings\SettingType.cs" />
+    <Compile Include="ModSettings\SettingTypeExtensions.cs" />
+    <Compile Include="ModSettings\SettingTypeJsonConverter.cs" />
+    <Compile Include="ModSettings\SettingValue.cs" />
+    <Compile Include="ModSettings\SettingValueArrayJsonConverter.cs" />
+    <Compile Include="ModSettings\SettingValueJsonConverter.cs" />
     <Compile Include="MVVM\Converters\FactorioVersionConverter.cs" />
+    <Compile Include="MVVM\Converters\LocalizedNameConverter.cs" />
     <Compile Include="MVVM\Converters\RemoveFileExtensionConverter.cs" />
     <Compile Include="MVVM\Converters\SystemIconConverter.cs" />
     <Compile Include="Controls\DefaultExpandedExpander.cs" />
     <Compile Include="Controls\FormattingTextBlock.cs" />
     <Compile Include="Controls\InlineList.cs" />
     <Compile Include="Controls\LayoutRoundingWindow.cs" />
+    <Compile Include="MVVM\Converters\ThemeNameConverter.cs" />
+    <Compile Include="MVVM\Selectors\ComboBoxTemplateSelector.cs" />
+    <Compile Include="MVVM\Selectors\ModSettingTemplateSelector.cs" />
     <Compile Include="MVVM\Sorters\FactorioOnlineVersionSorter.cs" />
     <Compile Include="MVVM\Sorters\ModDependencySorter.cs" />
     <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\ModReleaseSorter.cs" />
+    <Compile Include="MVVM\Sorters\ModSettingSorter.cs" />
     <Compile Include="MVVM\Sorters\ModUpdateInfoSorter.cs" />
     <Compile Include="MVVM\Sorters\UpdateTargetSorter.cs" />
     <Compile Include="FactorioUpdate\UpdatePackageInfo.cs" />
     <Compile Include="FactorioUpdate\UpdaterErrorType.cs" />
+    <Compile Include="Theme.cs" />
     <Compile Include="TwoPartVersionConverter.cs" />
     <Compile Include="VersionComparer.cs" />
     <Compile Include="ViewModels\CopyOrMoveViewModel.cs" />
@@ -172,6 +223,7 @@
     <Compile Include="ViewModels\MainViewModel_ModpackImport.cs" />
     <Compile Include="ViewModels\MainViewModel_ModUpdate.cs" />
     <Compile Include="ViewModels\ModpackExportViewModel.cs" />
+    <Compile Include="ViewModels\ModSettingsViewModel.cs" />
     <Compile Include="ViewModels\ModUpdateViewModel.cs" />
     <Compile Include="ViewModels\OnlineModsViewModel.cs" />
     <Compile Include="ViewModels\UpdateListViewModel.cs" />
@@ -183,6 +235,9 @@
     </Compile>
     <Compile Include="Views\ModpackExportWindow.xaml.cs">
       <DependentUpon>ModpackExportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ModSettingsWindow.xaml.cs">
+      <DependentUpon>ModSettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ModUpdateWindow.xaml.cs">
       <DependentUpon>ModUpdateWindow.xaml</DependentUpon>
@@ -300,6 +355,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Resource>
+    <Page Include="Colors_dark.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Colors_light.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\NumericUpDown.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Lang\Strings.ko.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -325,6 +392,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ModpackExportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ModSettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -523,6 +594,12 @@
     <Resource Include="Images\Optional.png" />
     <Resource Include="Images\Warning.png" />
     <Resource Include="Images\Optional_small.png" />
+    <Resource Include="Images\Settings_blue.png" />
+    <Resource Include="Images\Settings_gray.png" />
+    <Resource Include="Images\Inverted_small.png" />
+    <Resource Include="Images\Themes\dark.png" />
+    <Resource Include="Images\Themes\light.png" />
+    <Resource Include="Images\Themes.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>

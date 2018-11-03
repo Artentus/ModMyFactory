@@ -13,6 +13,11 @@ namespace ModMyFactory.Models
         public bool IsOptional { get; }
 
         /// <summary>
+        /// Indicates whether this dependency is inverted.
+        /// </summary>
+        public bool IsInverted { get; }
+
+        /// <summary>
         /// The name of the mod specified by this dependency.
         /// </summary>
         public string ModName { get; }
@@ -65,7 +70,7 @@ namespace ModMyFactory.Models
         {
             bool result;
 
-            if (IsBase)
+            if (IsBase || IsInverted)
             {
                 result = true;
             }
@@ -100,6 +105,16 @@ namespace ModMyFactory.Models
             {
                 return true;
             }
+            else if (IsInverted)
+            {
+                var mod = mods.FindByFactorioVersion(ModName, factorioVersion);
+                if (mod == null) return true;
+
+                if (HasVersionRestriction)
+                    return (mod.Version < ModVersion) || !mod.Active;
+                else
+                    return !mod.Active;
+            }
             else
             {
                 var mod = mods.FindByFactorioVersion(ModName, factorioVersion);
@@ -117,9 +132,14 @@ namespace ModMyFactory.Models
             if (string.IsNullOrWhiteSpace(value)) throw new ArgumentNullException(nameof(value));
             value = value.Trim();
 
-            if (value.StartsWith("?"))
+            if (value[0] == '?')
             {
                 IsOptional = true;
+                value = value.Substring(1).TrimStart();
+            }
+            else if (value[0] == '!')
+            {
+                IsInverted = true;
                 value = value.Substring(1).TrimStart();
             }
 
@@ -151,7 +171,7 @@ namespace ModMyFactory.Models
             if (mod == null) return;
 
             if (!HasVersionRestriction || (mod.Version >= ModVersion))
-                mod.Active = true;
+                mod.Active = !IsInverted;
         }
 
         public override string ToString()
@@ -159,6 +179,8 @@ namespace ModMyFactory.Models
             var result = new StringBuilder();
 
             if (IsOptional) result.Append("? ");
+            else if (IsInverted) result.Append('!');
+
             result.Append(ModName);
             if (HasVersionRestriction)
             {

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
+using ModMyFactory.Helpers;
 using ModMyFactory.ViewModels;
 using WPFCore;
 using WPFCore.Commands;
@@ -28,6 +30,8 @@ namespace ModMyFactory.Models
         }
 
         public bool HasUnsatisfiedDependencies => Mod.HasUnsatisfiedDependencies;
+
+        public IEnumerable<IHasModSettings> ModProxies => Mod.EnumerateSingle();
 
         public RelayCommand RemoveFromParentCommand { get; }
 

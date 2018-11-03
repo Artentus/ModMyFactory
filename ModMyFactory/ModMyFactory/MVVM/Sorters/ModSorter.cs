@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ModMyFactory.MVVM.Sorters
 {
-    sealed class ModSorter : IComparer<Mod>, IComparer<ModTemplate>, IComparer
+    sealed class ModSorter : IComparer<Mod>, IComparer<ModTemplate>, IComparer<IHasModSettings>, IComparer
     {
         public int Compare(Mod x, Mod y)
         {
@@ -20,6 +20,11 @@ namespace ModMyFactory.MVVM.Sorters
             return Compare(x.Mod, y.Mod);
         }
 
+        public int Compare(IHasModSettings x, IHasModSettings y)
+        {
+            return string.Compare(x.DisplayName, y.DisplayName, StringComparison.InvariantCultureIgnoreCase);
+        }
+
         public int Compare(object x, object y)
         {
             if ((x is Mod) && (y is Mod))
@@ -29,6 +34,10 @@ namespace ModMyFactory.MVVM.Sorters
             else if ((x is ModTemplate) && (y is ModTemplate))
             {
                 return Compare((ModTemplate)x, (ModTemplate)y);
+            }
+            if ((x is IHasModSettings) && (y is IHasModSettings))
+            {
+                return Compare((IHasModSettings)x, (IHasModSettings)y);
             }
             else
             {

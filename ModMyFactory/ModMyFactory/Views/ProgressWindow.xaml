@@ -9,7 +9,8 @@
         Title="{Binding ActionName}" Width="500" SizeToContent="Height"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
-        Icon="..\Images\MMF_Icon.ico">
+        Icon="..\Images\MMF_Icon.ico"
+        Style="{StaticResource WindowStyle}">
     
     <Window.DataContext>
         <vm:ProgressViewModel/>
@@ -30,6 +31,10 @@
 
         <ProgressBar Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="2" Height="20" Maximum="1" IsIndeterminate="{Binding IsIndeterminate}" Value="{Binding Progress}"/>
         <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="2" Text="{Binding ProgressDescription}"/>
-        <Button Grid.Row="3" Grid.Column="2" Margin="2" Content="{DynamicResource CancelButton}" Command="{Binding CancelCommand}"/>
+        <Button Grid.Row="3" Grid.Column="2" Margin="2" Command="{Binding CancelCommand}">
+            <Button.Content>
+                <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource CancelButton}"/>
+            </Button.Content>
+        </Button>
     </Grid>
 </controls:LayoutRoundingWindow>

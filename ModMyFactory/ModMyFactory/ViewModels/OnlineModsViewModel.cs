@@ -238,7 +238,7 @@ namespace ModMyFactory.ViewModels
                     }
 
                     SelectedReleases = extendedInfo.Releases;
-                    SelectedRelease = SelectedReleases.MinBy(item => item, new ModReleaseSorter());
+                    SelectedRelease = SelectedReleases.OrderBy(item => item, new ModReleaseSorter()).FirstOrDefault(item => item.IsInstalled || !item.IsVersionInstalled);
                 }
                 else
                 {

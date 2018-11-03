@@ -1,0 +1,24 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="BackgroundColor">White</Color>
+    <Color x:Key="MutedBackgroundColor">White</Color>
+    <Color x:Key="BorderColor">LightGray</Color>
+    <Color x:Key="MutedBorderColor">DarkGray</Color>
+    <Color x:Key="HoverColor">#5087CEFA</Color>
+    <Color x:Key="SelectionColor">LightSkyBlue</Color>
+    <Color x:Key="ForegroundColor">Black</Color>
+    <Color x:Key="MutedForegroundColor">DimGray</Color>
+    <Color x:Key="LinkColor">#007acc</Color>
+    <Color x:Key="LinkHoverColor">Red</Color>
+    <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
+    <SolidColorBrush x:Key="MutedBackgroundBrush" Color="{StaticResource MutedBackgroundColor}"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
+    <SolidColorBrush x:Key="MutedBorderBrush" Color="{StaticResource MutedBorderColor}"/>
+    <SolidColorBrush x:Key="HoverBrush" Color="{StaticResource HoverColor}"/>
+    <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource SelectionColor}"/>
+    <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource ForegroundColor}"/>
+    <SolidColorBrush x:Key="MutedForegroundBrush" Color="{StaticResource MutedForegroundColor}"/>
+    <SolidColorBrush x:Key="LinkBrush" Color="{StaticResource LinkColor}"/>
+    <SolidColorBrush x:Key="LinkHoverBrush" Color="{StaticResource LinkHoverColor}"/>
+</ResourceDictionary>
