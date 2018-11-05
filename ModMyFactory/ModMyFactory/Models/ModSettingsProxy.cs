@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using ModMyFactory.Models.ModSettings;
+using ModMyFactory.ModSettings;
 using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.ViewModels;
 using ModMyFactory.Views;
@@ -18,6 +19,7 @@ namespace ModMyFactory.Models
     sealed class ModSettingsProxy : NotifyPropertyChangedBase, IHasModSettings
     {
         readonly IHasModSettings baseMod;
+        readonly Modpack parent;
         bool @override;
         IReadOnlyCollection<IModSettingProxy> settings;
 
@@ -25,7 +27,13 @@ namespace ModMyFactory.Models
 
         public Version Version => baseMod.Version;
 
+        public Version FactorioVersion => baseMod.FactorioVersion;
+
         public string DisplayName => baseMod.DisplayName;
+
+        string IHasModSettings.UniqueID => $"modpack:{parent.Name}__{Name}_{Version}";
+
+        bool IHasModSettings.UseBinaryFileOverride => false;
 
         public bool Override
         {
@@ -51,13 +59,16 @@ namespace ModMyFactory.Models
 
         public ICommand ViewSettingsCommand { get; }
 
-        public ModSettingsProxy(IHasModSettings baseMod)
+        public ModSettingsProxy(IHasModSettings baseMod, Modpack parent)
         {
             this.baseMod = baseMod;
+            this.parent = parent;
             baseMod.PropertyChanged += PropertyChangedHandler;
 
             CreateView();
             ViewSettingsCommand = new RelayCommand(ViewSettings);
+
+            Override = ModSettingsManager.HasSavedDataPresent(this);
         }
 
         ~ModSettingsProxy()

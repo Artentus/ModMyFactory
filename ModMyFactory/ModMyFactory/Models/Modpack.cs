@@ -361,7 +361,7 @@ namespace ModMyFactory.Models
                     foreach (IModReference mod in e.NewItems)
                     {
                         mod.PropertyChanged += ModPropertyChanged;
-                        proxyDict.Add(mod, mod.ModProxies.Select(proxy => new ModSettingsProxy(proxy)));
+                        proxyDict.Add(mod, mod.ModProxies.Select(proxy => new ModSettingsProxy(proxy, this)));
                     }
                     SetActive();
                     SetHasUnsatisfiedDependencies();
@@ -379,7 +379,7 @@ namespace ModMyFactory.Models
                     foreach (IModReference mod in e.NewItems)
                     {
                         mod.PropertyChanged += ModPropertyChanged;
-                        proxyDict.Add(mod, mod.ModProxies.Select(proxy => new ModSettingsProxy(proxy)));
+                        proxyDict.Add(mod, mod.ModProxies.Select(proxy => new ModSettingsProxy(proxy, this)));
                     }
                     foreach (IModReference mod in e.OldItems)
                     {

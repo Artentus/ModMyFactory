@@ -12,7 +12,13 @@ namespace ModMyFactory.Models
 
         Version Version { get; }
 
+        Version FactorioVersion { get; }
+
         string DisplayName { get; }
+
+        string UniqueID { get; }
+
+        bool UseBinaryFileOverride { get; }
 
         bool Override { get; set; }
 

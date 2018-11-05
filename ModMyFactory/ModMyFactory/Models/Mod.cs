@@ -10,6 +10,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models.ModSettings;
+using ModMyFactory.ModSettings;
 using ModMyFactory.MVVM.Sorters;
 using ModMyFactory.ViewModels;
 using ModMyFactory.Views;
@@ -221,6 +222,10 @@ namespace ModMyFactory.Models
 
         string IHasModSettings.DisplayName => $"{FriendlyName} ({FactorioVersion})";
 
+        string IHasModSettings.UniqueID => $"{Name}_{Version}";
+
+        bool IHasModSettings.UseBinaryFileOverride => true;
+
         bool IHasModSettings.Override
         {
             get => true;
@@ -317,6 +322,8 @@ namespace ModMyFactory.Models
             var settingsViewModel = (ModSettingsViewModel)settingsWindow.ViewModel;
             settingsViewModel.SetMod(this);
             settingsWindow.ShowDialog();
+
+            ModSettingsManager.SaveSettings(this);
         }
         
         private bool KeepOldFile(ModFile newFile)

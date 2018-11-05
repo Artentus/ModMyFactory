@@ -1,4 +1,5 @@
-﻿using ModMyFactory.Models.ModSettings;
+﻿using ModMyFactory.Models;
+using ModMyFactory.Models.ModSettings;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,27 @@ namespace ModMyFactory.ModSettings.Serialization
             StartupTemplates = new Dictionary<string, ModSettingValueTemplate>();
             RuntimeGlobalTemplates = new Dictionary<string, ModSettingValueTemplate>();
             RuntimeUserTemplates = new Dictionary<string, ModSettingValueTemplate>();
+        }
+
+        public ModSettingsExportTemplate(IHasModSettings mod)
+            : this()
+        {
+            foreach (var setting in mod.Settings)
+            {
+                var template = setting.CreateValueTemplate();
+                switch (setting.LoadTime)
+                {
+                    case LoadTime.Startup:
+                        StartupTemplates[setting.Name] = template;
+                        break;
+                    case LoadTime.RuntimeGlobal:
+                        RuntimeGlobalTemplates[setting.Name] = template;
+                        break;
+                    case LoadTime.RuntimeUser:
+                        RuntimeUserTemplates[setting.Name] = template;
+                        break;
+                }
+            }
         }
 
         [JsonConstructor]

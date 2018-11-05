@@ -1,4 +1,5 @@
 ﻿using ModMyFactory.ModSettings;
+using ModMyFactory.ModSettings.Serialization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,6 +38,12 @@ namespace ModMyFactory.Models.ModSettings
 
         public abstract DataTemplate Template { get; }
 
+        private T GetStartValue()
+        {
+            if (ModSettingsManager.TryGetSavedValue(Owner, this, out T value)) return value;
+            return DefaultValue;
+        }
+
         protected ModSetting(IHasModSettings owner, string name, LoadTime loadTime, string ordering, T defaultValue)
         {
             Owner = owner;
@@ -44,8 +51,8 @@ namespace ModMyFactory.Models.ModSettings
             LoadTime = loadTime;
             Ordering = ordering;
 
-            Value = defaultValue;
             DefaultValue = defaultValue;
+            value = GetStartValue();
         }
         
         public virtual void ResetToDefault()
@@ -54,5 +61,7 @@ namespace ModMyFactory.Models.ModSettings
         }
 
         public abstract IModSettingProxy CreateProxy();
+
+        public ModSettingValueTemplate CreateValueTemplate() => new ModSettingValueTemplate(value);
     }
 }
