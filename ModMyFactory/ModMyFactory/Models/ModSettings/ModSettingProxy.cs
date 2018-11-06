@@ -41,7 +41,7 @@ namespace ModMyFactory.Models.ModSettings
                 if (!comparer.Equals(value, this.value))
                 {
                     this.value = value;
-                    if (!Override) OnPropertyChanged(new PropertyChangedEventArgs(nameof(Value)));
+                    if (Override) OnPropertyChanged(new PropertyChangedEventArgs(nameof(Value)));
                 }
             }
         }

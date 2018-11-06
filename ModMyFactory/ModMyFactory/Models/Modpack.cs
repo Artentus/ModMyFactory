@@ -13,6 +13,7 @@ using ModMyFactory.Views;
 using System.Collections.Generic;
 using System.Linq;
 using ModMyFactory.Helpers;
+using ModMyFactory.ModSettings;
 
 namespace ModMyFactory.Models
 {
@@ -223,10 +224,14 @@ namespace ModMyFactory.Models
 
         public void ViewSettings()
         {
+            var proxyList = ModProxies.ToList();
+
             var settingsWindow = new ModSettingsWindow() { Owner = App.Instance.MainWindow };
             var settingsViewModel = (ModSettingsViewModel)settingsWindow.ViewModel;
-            settingsViewModel.SetMods(ModProxies.ToList());
+            settingsViewModel.SetMods(proxyList);
             settingsWindow.ShowDialog();
+
+            ModSettingsManager.SaveSettings(proxyList);
         }
 
         /// <summary>

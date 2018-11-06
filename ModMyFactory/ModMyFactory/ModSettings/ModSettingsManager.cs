@@ -102,9 +102,9 @@ namespace ModMyFactory.ModSettings
             return modSettings.ContainsKey(mod.UniqueID);
         }
 
-        public static void SaveSettings(IHasModSettings mod)
+        private static void AddSettings(IHasModSettings mod)
         {
-            if (mod.Override)
+            if (mod.HasSettings && mod.Override)
             {
                 var exportTemplate = new ModSettingsExportTemplate(mod);
                 modSettings[mod.UniqueID] = exportTemplate;
@@ -114,7 +114,17 @@ namespace ModMyFactory.ModSettings
                 if (modSettings.ContainsKey(mod.UniqueID))
                     modSettings.Remove(mod.UniqueID);
             }
+        }
 
+        public static void SaveSettings(IHasModSettings mod)
+        {
+            AddSettings(mod);
+            JsonHelper.Serialize(modSettings, settingsFile);
+        }
+
+        public static void SaveSettings(IEnumerable<IHasModSettings> mods)
+        {
+            foreach (var mod in mods) AddSettings(mod);
             JsonHelper.Serialize(modSettings, settingsFile);
         }
 

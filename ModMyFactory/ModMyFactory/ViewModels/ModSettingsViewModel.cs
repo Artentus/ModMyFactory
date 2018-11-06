@@ -2,6 +2,7 @@
 using ModMyFactory.Models.ModSettings;
 using ModMyFactory.MVVM.Sorters;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
@@ -46,6 +47,10 @@ namespace ModMyFactory.ViewModels
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModOverride)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModSettings)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModSettingsView)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModSettingGroups)));
+
+                    SelectedModSettingGroupIndex = 0;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedModSettingGroupIndex)));
                 }
             }
         }
@@ -59,6 +64,10 @@ namespace ModMyFactory.ViewModels
         public IReadOnlyCollection<IModSetting> SelectedModSettings { get; private set; }
 
         public ICollectionView SelectedModSettingsView { get; private set; }
+
+        public ReadOnlyObservableCollection<object> SelectedModSettingGroups => SelectedModSettingsView?.Groups;
+
+        public object SelectedModSettingGroupIndex { get; set; }
 
         public void SetMod(IHasModSettings mod)
         {
@@ -86,7 +95,7 @@ namespace ModMyFactory.ViewModels
             ModsView = view;
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModsView)));
 
-            SelectedMod = Mods.FirstOrDefault();
+            SelectedMod = Mods.FirstOrDefault(mod => mod.HasSettings);
         }
 
         private bool ModFilter(object item)
