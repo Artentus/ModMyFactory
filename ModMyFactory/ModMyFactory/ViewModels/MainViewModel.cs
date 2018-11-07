@@ -22,6 +22,7 @@ using ModMyFactory.Web.ModApi;
 using WPFCore;
 using WPFCore.Commands;
 using ModMyFactory.Web;
+using ModMyFactory.ModSettings;
 
 namespace ModMyFactory.ViewModels
 {
@@ -627,7 +628,9 @@ namespace ModMyFactory.ViewModels
         {
             ModManager.LoadTemplates();
             LoadFactorioVersions();
+            //ModSettingsManager.LoadSettings();
             LoadModsAndModpacks();
+            //ModSettingsManager.SaveSettings(Mods);
         }
 
         private bool ModsSelected() => Mods.Any(mod => mod.IsSelected);

@@ -1,5 +1,5 @@
 ﻿using ModMyFactory.ModSettings;
-using System.Globalization;
+using ModMyFactory.ModSettings.Serialization;
 using System.Windows;
 
 namespace ModMyFactory.Models.ModSettings
@@ -17,6 +17,8 @@ namespace ModMyFactory.Models.ModSettings
         DataTemplate Template { get; }
 
         IModSettingProxy CreateProxy();
+
+        ModSettingValueTemplate CreateValueTemplate();
     }
 
     interface IModSetting<T> : IModSetting

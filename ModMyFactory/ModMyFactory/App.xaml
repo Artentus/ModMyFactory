@@ -1438,33 +1438,32 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type TabItem}">
-                            <Grid>
+                            <Grid Background="{DynamicResource BackgroundBrush}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="4"/>
                                 </Grid.RowDefinitions>
 
-                                <Border x:Name="Border" Grid.Row="0" Background="{DynamicResource BackgroundBrush}">
-                                    <ContentPresenter x:Name="ContentSite" VerticalAlignment="Center" HorizontalAlignment="Left" ContentSource="Header" Margin="4"/>
-                                </Border>
+                                <Border x:Name="HoverBorder" Grid.Row="0" Grid.RowSpan="2" Background="{DynamicResource HoverBrush}" Opacity="0"/>
+                                <ContentPresenter x:Name="ContentSite" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" ContentSource="Header" Margin="4"/>
                                 <Rectangle x:Name="Rectangle" Grid.Row="1" Fill="{DynamicResource SelectionBrush}" Opacity="0"/>
                             </Grid>
 
                             <ControlTemplate.Triggers>
-                                <Trigger SourceName="Border" Property="IsMouseOver" Value="True">
+                                <Trigger Property="IsMouseOver" Value="True">
                                     <Trigger.EnterActions>
                                         <BeginStoryboard>
                                             <Storyboard>
-                                                <ColorAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Background.Color" From="{StaticResource BackgroundColor}" To="{StaticResource HoverColor}" Duration="0:0:0.3"/>
+                                                <DoubleAnimation Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </Trigger.EnterActions>
                                     <Trigger.ExitActions>
                                         <BeginStoryboard>
                                             <Storyboard>
-                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background.Color">
-                                                    <DiscreteColorKeyFrame KeyTime="0:0:0" Value="{StaticResource BackgroundColor}"/>
-                                                </ColorAnimationUsingKeyFrames>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="Opacity">
+                                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                                                </DoubleAnimationUsingKeyFrames>
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </Trigger.ExitActions>

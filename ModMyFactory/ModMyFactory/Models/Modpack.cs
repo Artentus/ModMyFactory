@@ -13,6 +13,7 @@ using ModMyFactory.Views;
 using System.Collections.Generic;
 using System.Linq;
 using ModMyFactory.Helpers;
+using ModMyFactory.ModSettings;
 
 namespace ModMyFactory.Models
 {
@@ -217,16 +218,31 @@ namespace ModMyFactory.Models
         /// <summary>
         /// Indicates whether any mods in this modpack have settings;
         /// </summary>
-        public bool HasSettings => ModProxies.Any(proxy => proxy.HasSettings);
+        public bool HasSettings
+        {
+            get
+            {
+                foreach (var proxy in ModProxies)
+                {
+                    if (proxy.HasSettings)
+                        return true;
+                }
+                return false;
+            }
+        }
 
         public ICommand ViewSettingsCommand { get; }
 
         public void ViewSettings()
         {
+            var proxyList = ModProxies.ToList();
+
             var settingsWindow = new ModSettingsWindow() { Owner = App.Instance.MainWindow };
             var settingsViewModel = (ModSettingsViewModel)settingsWindow.ViewModel;
-            settingsViewModel.SetMods(ModProxies.ToList());
+            settingsViewModel.SetMods(proxyList);
             settingsWindow.ShowDialog();
+
+            //ModSettingsManager.SaveSettings(proxyList);
         }
 
         /// <summary>
@@ -361,7 +377,7 @@ namespace ModMyFactory.Models
                     foreach (IModReference mod in e.NewItems)
                     {
                         mod.PropertyChanged += ModPropertyChanged;
-                        proxyDict.Add(mod, mod.ModProxies.Select(proxy => new ModSettingsProxy(proxy)));
+                        proxyDict.Add(mod, mod.ModProxies.Select(proxy => new ModSettingsProxy(proxy, this)));
                     }
                     SetActive();
                     SetHasUnsatisfiedDependencies();
@@ -379,7 +395,7 @@ namespace ModMyFactory.Models
                     foreach (IModReference mod in e.NewItems)
                     {
                         mod.PropertyChanged += ModPropertyChanged;
-                        proxyDict.Add(mod, mod.ModProxies.Select(proxy => new ModSettingsProxy(proxy)));
+                        proxyDict.Add(mod, mod.ModProxies.Select(proxy => new ModSettingsProxy(proxy, this)));
                     }
                     foreach (IModReference mod in e.OldItems)
                     {

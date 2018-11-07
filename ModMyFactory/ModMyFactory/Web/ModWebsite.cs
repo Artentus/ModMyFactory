@@ -44,7 +44,7 @@ namespace ModMyFactory.Web
             pages.Add(firstPage);
             if (pageCount == 1) return pages;
             
-            Parallel.For(2, pageCount, pageIndex =>
+            Parallel.For(2, pageCount + 1, pageIndex =>
             {
                 var page = DownloadPage(pageSize, pageIndex);
                 pages.Add(page);

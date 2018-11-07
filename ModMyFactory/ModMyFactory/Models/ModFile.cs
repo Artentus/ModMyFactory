@@ -1,6 +1,5 @@
 ﻿using ModMyFactory.Helpers;
 using ModMyFactory.ModSettings;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -160,93 +159,12 @@ namespace ModMyFactory.Models
             InfoFile = infoFile;
             this.isFile = isFile;
         }
-
-        private static ModSettingInfo[] ParseSettingsFile(Stream stream)
-        {
-            string content = string.Empty;
-            using (var reader = new StreamReader(stream))
-            {
-                while (!reader.EndOfStream)
-                {
-                    string line = reader.ReadLine();
-                    if (!line.TrimStart().StartsWith("--")) content += line;
-                }
-            }
-            
-            content = content.Trim();
-            content = content.Substring(4).TrimStart(); // Remove 'data'
-            content = content.Substring(1).TrimStart(); // Remove ':'
-            content = content.Substring(6).TrimStart(); // Remove 'extend'
-            if (content[0] == '(') content = content.Substring(1).TrimStart(); // Remove '(' if present
-            if (content[content.Length - 1] == ')') content = content.Substring(0, content.Length - 1).TrimEnd(); // Remove ')' if present
-            content = content.Substring(1, content.Length - 2).Trim(); // Remove outer {} brackets
-            content = content.Replace('=', ':'); // Replace assignment char
-            content = '[' + content + ']'; // Add array brackets
-
-            // ToDo: add support for 'require' statements
-            
-            try
-            {
-                return JsonHelper.Deserialize<ModSettingInfo[]>(content);
-            }
-            catch (JsonReaderException)
-            {
-                return new ModSettingInfo[0];
-            }
-        }
-
-        private static bool TryLoadSettingsFromFile(FileInfo archiveFile, out ModSettingInfo[] settings)
-        {
-            using (var archive = ZipFile.OpenRead(archiveFile.FullName))
-            {
-                foreach (var entry in archive.Entries)
-                {
-                    if ((entry.Name == "settings.lua") && (entry.FullName.Count(c => c == '/') == 1))
-                    {
-                        using (var stream = entry.Open())
-                        {
-                            settings = ParseSettingsFile(stream);
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            settings = null;
-            return false;
-        }
-
-        private static bool TryLoadSettingsFromDirectory(DirectoryInfo directory, out ModSettingInfo[] settings)
-        {
-            var settingsFile = directory.EnumerateFiles("settings.lua").FirstOrDefault();
-            if (settingsFile == null)
-            {
-                settings = null;
-                return false;
-            }
-
-            using (var stream = settingsFile.OpenRead())
-            {
-                settings = ParseSettingsFile(stream);
-                return true;
-            }
-        }
-
-        private bool TryLoadSettings(out ModSettingInfo[] settings)
-        {
-            if (isFile)
-                return TryLoadSettingsFromFile((FileInfo)file, out settings);
-            else
-                return TryLoadSettingsFromDirectory((DirectoryInfo)file, out settings);
-        }
-
+        
         public ModSettingInfo[] GetSettings()
         {
-            if (settings != null) return settings;
+            // ToDo: read settings using Lua interpreter
 
-            if (!TryLoadSettings(out settings))
-                settings = new ModSettingInfo[0];
-
+            if (settings == null) settings = new ModSettingInfo[0];
             return settings;
         }
 

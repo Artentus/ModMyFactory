@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModMyFactory.ModSettings;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
@@ -21,7 +22,11 @@ namespace ModMyFactory.Models.ModSettings
                     @override = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Override)));
 
-                    if (@override) this.value = baseSetting.Value;
+                    if (@override)
+                    {
+                        if (ModSettingsManager.TryGetSavedValue(Owner, this, out T savedValue)) this.value = savedValue;
+                        else this.value = baseSetting.Value;
+                    }
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Value)));
                 }
             }
@@ -36,13 +41,13 @@ namespace ModMyFactory.Models.ModSettings
                 if (!comparer.Equals(value, this.value))
                 {
                     this.value = value;
-                    if (!Override) OnPropertyChanged(new PropertyChangedEventArgs(nameof(Value)));
+                    if (Override) OnPropertyChanged(new PropertyChangedEventArgs(nameof(Value)));
                 }
             }
         }
 
         public override DataTemplate Template => baseSetting.Template;
-
+        
         protected ModSettingProxy(ModSetting<T> baseSetting)
             : base(baseSetting.Owner, baseSetting.Name, baseSetting.LoadTime, baseSetting.Ordering, baseSetting.DefaultValue)
         {

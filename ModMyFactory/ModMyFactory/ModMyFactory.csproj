@@ -183,6 +183,7 @@
     <Compile Include="ModManager.cs" />
     <Compile Include="Export\ModpackExportTemplate.cs" />
     <Compile Include="ModpackCollection.cs" />
+    <Compile Include="ModSettings\ModSettingsManager.cs" />
     <Compile Include="ModSettings\Serialization\BinaryFile.cs" />
     <Compile Include="ModSettings\Serialization\BinaryVersion.cs" />
     <Compile Include="ModSettings\Serialization\ModSettingsExportTemplate.cs" />
