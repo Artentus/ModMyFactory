@@ -103,13 +103,13 @@ namespace ModMyFactory.Models
                     dependenciesView.CustomSort = new ModDependencySorter();
                     DependenciesView = dependenciesView;
 
-                    var settings = file.GetSettings().Select(info => info.ToSetting(this)).ToList();
-                    Settings = new ReadOnlyCollection<IModSetting>(settings);
-                    source = new CollectionViewSource() { Source = Settings };
-                    var settingsView = (ListCollectionView)source.View;
-                    settingsView.CustomSort = new ModSettingSorter();
-                    settingsView.GroupDescriptions.Add(new PropertyGroupDescription("LoadTime"));
-                    SettingsView = settingsView;
+                    //var settings = file.GetSettings().Select(info => info.ToSetting(this)).ToList();
+                    //Settings = new ReadOnlyCollection<IModSetting>(settings);
+                    //source = new CollectionViewSource() { Source = Settings };
+                    //var settingsView = (ListCollectionView)source.View;
+                    //settingsView.CustomSort = new ModSettingSorter();
+                    //settingsView.GroupDescriptions.Add(new PropertyGroupDescription("LoadTime"));
+                    //SettingsView = settingsView;
 
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Version)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(FactorioVersion)));
@@ -180,7 +180,7 @@ namespace ModMyFactory.Models
         /// <summary>
         /// Indicates whether this mod has any settings.
         /// </summary>
-        public bool HasSettings => Settings.Count > 0;
+        public bool HasSettings => (Settings == null) ? false : (Settings.Count > 0);
 
         /// <summary>
         /// Additional information about this mod to be displayed in a tooltip.
@@ -323,7 +323,7 @@ namespace ModMyFactory.Models
             settingsViewModel.SetMod(this);
             settingsWindow.ShowDialog();
 
-            ModSettingsManager.SaveSettings(this);
+            //ModSettingsManager.SaveSettings(this);
         }
         
         private bool KeepOldFile(ModFile newFile)

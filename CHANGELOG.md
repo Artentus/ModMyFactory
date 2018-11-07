@@ -1,8 +1,9 @@
-#### 1.9.0pre1
+#### 1.9.0
 * Added proper handling for inverted mod dependencies.
 * Added theme support (light and dark theme available now).
 * Removed autosaves from the save selection when creating a link.
 * Fixed crash when adding Factorio from folder.
+* Fixed an issue that caused some mods to not be shown in the online list.
 * Fixed bug that caused deactivated releases in the online mods window to be selected.
 
 #### 1.8.6

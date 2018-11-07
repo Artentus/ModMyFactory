@@ -628,9 +628,9 @@ namespace ModMyFactory.ViewModels
         {
             ModManager.LoadTemplates();
             LoadFactorioVersions();
-            ModSettingsManager.LoadSettings();
+            //ModSettingsManager.LoadSettings();
             LoadModsAndModpacks();
-            ModSettingsManager.SaveSettings(Mods);
+            //ModSettingsManager.SaveSettings(Mods);
         }
 
         private bool ModsSelected() => Mods.Any(mod => mod.IsSelected);

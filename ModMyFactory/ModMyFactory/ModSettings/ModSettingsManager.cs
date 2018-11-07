@@ -99,6 +99,7 @@ namespace ModMyFactory.ModSettings
 
         public static bool HasSavedDataPresent(IHasModSettings mod)
         {
+            if (modSettings == null) return false;
             return modSettings.ContainsKey(mod.UniqueID);
         }
 

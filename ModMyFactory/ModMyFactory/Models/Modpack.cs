@@ -218,7 +218,18 @@ namespace ModMyFactory.Models
         /// <summary>
         /// Indicates whether any mods in this modpack have settings;
         /// </summary>
-        public bool HasSettings => ModProxies.Any(proxy => proxy.HasSettings);
+        public bool HasSettings
+        {
+            get
+            {
+                foreach (var proxy in ModProxies)
+                {
+                    if (proxy.HasSettings)
+                        return true;
+                }
+                return false;
+            }
+        }
 
         public ICommand ViewSettingsCommand { get; }
 
@@ -231,7 +242,7 @@ namespace ModMyFactory.Models
             settingsViewModel.SetMods(proxyList);
             settingsWindow.ShowDialog();
 
-            ModSettingsManager.SaveSettings(proxyList);
+            //ModSettingsManager.SaveSettings(proxyList);
         }
 
         /// <summary>

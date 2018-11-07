@@ -78,13 +78,21 @@ namespace ModMyFactory.Models
 
         private void CreateView()
         {
-            var list = baseMod.Settings.Select(setting => setting.CreateProxy()).ToList();
-            settings = new ReadOnlyCollection<IModSettingProxy>(list);
-            var source = new CollectionViewSource() { Source = settings };
-            var settingsView = (ListCollectionView)source.View;
-            settingsView.CustomSort = new ModSettingSorter();
-            settingsView.GroupDescriptions.Add(new PropertyGroupDescription("LoadTime"));
-            SettingsView = settingsView;
+            if (HasSettings)
+            {
+                var list = baseMod.Settings.Select(setting => setting.CreateProxy()).ToList();
+                settings = new ReadOnlyCollection<IModSettingProxy>(list);
+                var source = new CollectionViewSource() { Source = settings };
+                var settingsView = (ListCollectionView)source.View;
+                settingsView.CustomSort = new ModSettingSorter();
+                settingsView.GroupDescriptions.Add(new PropertyGroupDescription("LoadTime"));
+                SettingsView = settingsView;
+            }
+            else
+            {
+                settings = null;
+                SettingsView = null;
+            }
 
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(Settings)));
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(SettingsView)));
@@ -95,6 +103,10 @@ namespace ModMyFactory.Models
             if (e.PropertyName == nameof(IHasModSettings.Settings))
             {
                 CreateView();
+            }
+            else if (e.PropertyName == nameof(IHasModSettings.HasSettings))
+            {
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasSettings)));
             }
         }
 
