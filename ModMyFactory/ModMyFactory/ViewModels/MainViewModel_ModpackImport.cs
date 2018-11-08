@@ -43,8 +43,7 @@ namespace ModMyFactory.ViewModels
 
         private async Task DownloadModRelease(ModExportTemplate modTemplate, ModRelease release, DirectoryInfo fileLocation, IProgress<double> progress, CancellationToken cancellationToken)
         {
-            var installedMod = Mods.FindByFactorioVersion(modTemplate.Name, release.InfoFile.FactorioVersion);
-            if ((installedMod != null) && (installedMod.Version >= release.Version))
+            if (Mods.TryGetMod(modTemplate.Name, release.Version, out Mod installedMod))
             {
                 modTemplate.Mod = installedMod;
                 return;

@@ -1438,7 +1438,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type TabItem}">
-                            <Grid Background="{DynamicResource BackgroundBrush}">
+                            <Grid x:Name="Header" Background="{DynamicResource BackgroundBrush}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="4"/>
@@ -1450,7 +1450,7 @@
                             </Grid>
 
                             <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger Property="IsMouseOver" SourceName="Header" Value="True">
                                     <Trigger.EnterActions>
                                         <BeginStoryboard>
                                             <Storyboard>

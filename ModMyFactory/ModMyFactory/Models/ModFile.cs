@@ -17,6 +17,7 @@ namespace ModMyFactory.Models
     sealed class ModFile : IComparable<ModFile>
     {
         private const string DefaultLocaleString = "en";
+        private const string DisabledNameSuffix = "___disabled";
 
         private readonly bool isFile;
         private FileSystemInfo file;
@@ -39,6 +40,11 @@ namespace ModMyFactory.Models
         public Version Version => InfoFile.Version;
 
         /// <summary>
+        /// Indicates whether this mod file is enabled.
+        /// </summary>
+        public bool Enabled { get; private set; }
+
+        /// <summary>
         /// Indicates whether updates for this mod should be extracted.
         /// </summary>
         public bool ExtractUpdates => !(isFile || App.Instance.Settings.AlwaysUpdateZipped);
@@ -53,7 +59,7 @@ namespace ModMyFactory.Models
         /// </summary>
         public bool ResidesInModDirectory => file.ParentDirectory().DirectoryEquals(App.Instance.Settings.GetModDirectory(InfoFile.FactorioVersion));
 
-        private string BuildNewFileName(int uid)
+        private string BuildNewFileName(int uid, bool enabled)
         {
             var sb = new StringBuilder();
 
@@ -66,6 +72,8 @@ namespace ModMyFactory.Models
             sb.Append(Name);
             sb.Append('_');
             sb.Append(Version);
+
+            if (!enabled) sb.Append(DisabledNameSuffix);
 
             if (isFile) sb.Append(".zip");
 
@@ -84,7 +92,7 @@ namespace ModMyFactory.Models
         /// <param name="uid">Optional. A UID to append to the file name.</param>
         public async Task MoveToAsync(string destination, int uid = -1)
         {
-            string newName = BuildNewFileName(uid);
+            string newName = BuildNewFileName(uid, Enabled);
             string newPath = Path.Combine(destination, newName);
             await file.MoveToAsync(newPath);
 
@@ -99,12 +107,12 @@ namespace ModMyFactory.Models
         /// <returns>Returns a new mod file object representing the copy created.</returns>
         public async Task<ModFile> CopyToAsync(string destination, int uid = -1)
         {
-            string newName = BuildNewFileName(uid);
+            string newName = BuildNewFileName(uid, true);
             string newPath = Path.Combine(destination, newName);
             await file.CopyToAsync(newPath);
 
             var newFile = GetNewFile(newPath);
-            return new ModFile(newFile, InfoFile, isFile);
+            return new ModFile(newFile, InfoFile, isFile, true);
         }
 
         /// <summary>
@@ -120,7 +128,7 @@ namespace ModMyFactory.Models
             await Task.Run(() => ZipFile.ExtractToDirectory(fi.FullName, fi.DirectoryName));
 
             var newDir = new DirectoryInfo(Path.Combine(fi.DirectoryName, fi.NameWithoutExtension()));
-            var newModFile = new ModFile(newDir, InfoFile, false);
+            var newModFile = new ModFile(newDir, InfoFile, false, Enabled);
 
             fi.Delete();
             return newModFile;
@@ -153,11 +161,51 @@ namespace ModMyFactory.Models
             return result;
         }
 
-        private ModFile(FileSystemInfo file, InfoFile infoFile, bool isFile)
+        private ModFile(FileSystemInfo file, InfoFile infoFile, bool isFile, bool enabled)
         {
             this.file = file;
             InfoFile = infoFile;
             this.isFile = isFile;
+            Enabled = enabled;
+        }
+
+        /// <summary>
+        /// Enables this mod file.
+        /// </summary>
+        public void Enable()
+        {
+            if (Enabled) return;
+
+            string newName = BuildNewFileName(-1, true);
+            string newPath = Path.Combine(file.ParentDirectory().FullName, newName);
+            file.MoveTo(newPath);
+
+            file = GetNewFile(newPath);
+            Enabled = true;
+        }
+
+        /// <summary>
+        /// Disables this mod file.
+        /// </summary>
+        public void Disable()
+        {
+            if (!Enabled) return;
+
+            string newName = BuildNewFileName(-1, false);
+            string newPath = Path.Combine(file.ParentDirectory().FullName, newName);
+            file.MoveTo(newPath);
+
+            file = GetNewFile(newPath);
+            Enabled = false;
+        }
+
+        /// <summary>
+        /// Sets the files enabled state.
+        /// </summary>
+        public void SetEndabled(bool value)
+        {
+            if (value) Enable();
+            else Disable();
         }
         
         public ModSettingInfo[] GetSettings()
@@ -291,9 +339,10 @@ namespace ModMyFactory.Models
             if (!file.Exists) return false;
 
             InfoFile infoFile;
-            if (!ArchiveFileValid(file, out infoFile, hasUid)) return false;
+            bool enabled;
+            if (!ArchiveFileValid(file, out infoFile, out enabled, hasUid)) return false;
 
-            result = new ModFile(file, infoFile, true);
+            result = new ModFile(file, infoFile, true, enabled);
             return true;
         }
 
@@ -310,9 +359,10 @@ namespace ModMyFactory.Models
             if (!directory.Exists) return false;
 
             InfoFile infoFile;
-            if (!DirectoryValid(directory, out infoFile, hasUid)) return false;
+            bool enabled;
+            if (!DirectoryValid(directory, out infoFile, out enabled, hasUid)) return false;
 
-            result = new ModFile(directory, infoFile, false);
+            result = new ModFile(directory, infoFile, false, enabled);
             return true;
         }
 
@@ -357,12 +407,16 @@ namespace ModMyFactory.Models
         /// <param name="fileName">The file name to parse.</param>
         /// <param name="name">Out. The parsed mod name.</param>
         /// <param name="version">Out. The parsed mod version.</param>
+        /// <param name="enabled">Out. Indicates if the mod file is enabled.</param>
         /// <param name="hasUid">Specifies if the file name contains a UID.</param>
         /// <returns>Returns true if the file name was a valid mod file name, otherwise false.</returns>
-        private static bool TryParseModName(string fileName, out string name, out Version version, bool hasUid)
+        private static bool TryParseModName(string fileName, out string name, out Version version, out bool enabled, bool hasUid)
         {
             name = null;
             version = null;
+
+            enabled = !fileName.EndsWith(DisabledNameSuffix);
+            if (!enabled) fileName = fileName.Substring(0, fileName.Length - DisabledNameSuffix.Length);
             
             int index = fileName.LastIndexOf('_');
             if ((index < 1) || (index >= fileName.Length - 1)) return false;
@@ -455,13 +509,13 @@ namespace ModMyFactory.Models
         /// <param name="infoFile">Out. The mods info file.</param>
         /// <param name="hasUid">Specifies if the file name contains a UID.</param>
         /// <returns>Returns true if the specified file is a valid mod, otherwise false.</returns>
-        private static bool ArchiveFileValid(FileInfo archiveFile, out InfoFile infoFile, bool hasUid)
+        private static bool ArchiveFileValid(FileInfo archiveFile, out InfoFile infoFile, out bool enabled, bool hasUid)
         {
             infoFile = null;
 
             string fileName;
             Version fileVersion;
-            if (!TryParseModName(archiveFile.NameWithoutExtension(), out fileName, out fileVersion, hasUid)) return false;
+            if (!TryParseModName(archiveFile.NameWithoutExtension(), out fileName, out fileVersion, out enabled, hasUid)) return false;
 
             if (TryReadInfoFileFromArchive(archiveFile, out infoFile))
             {
@@ -480,19 +534,20 @@ namespace ModMyFactory.Models
         /// <param name="infoFile">Out. The mods info file.</param>
         /// <param name="hasUid">Specifies if the directory name contains a UID.</param>
         /// <returns>Returns true if the specified directory is a valid mod, otherwise false.</returns>
-        private static bool DirectoryValid(DirectoryInfo directory, out InfoFile infoFile, bool hasUid)
+        private static bool DirectoryValid(DirectoryInfo directory, out InfoFile infoFile, out bool enabled, bool hasUid)
         {
             infoFile = null;
 
             if (directory.Name == "base")
             {
+                enabled = true;
                 return TryReadInfoFileFromDirectory(directory, out infoFile);
             }
             else
             {
                 string fileName;
                 Version fileVersion;
-                if (!TryParseModName(directory.Name, out fileName, out fileVersion, hasUid)) return false;
+                if (!TryParseModName(directory.Name, out fileName, out fileVersion, out enabled, hasUid)) return false;
 
                 if (TryReadInfoFileFromDirectory(directory, out infoFile))
                 {

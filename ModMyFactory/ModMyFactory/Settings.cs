@@ -14,8 +14,6 @@ namespace ModMyFactory
         {
             var defaultSettings = new Settings(fileName)
             {
-                ManagerMode = ManagerMode.PerFactorioVersion,
-
                 FactorioDirectoryOption = DirectoryOption.AppData,
                 ModDirectoryOption = DirectoryOption.AppData,
                 SavegameDirectoryOption = DirectoryOption.AppData,
@@ -76,9 +74,7 @@ namespace ModMyFactory
         }
 
         FileInfo file;
-
-        public ManagerMode ManagerMode;
-
+        
         public DirectoryOption FactorioDirectoryOption;
 
         public DirectoryOption ModDirectoryOption;

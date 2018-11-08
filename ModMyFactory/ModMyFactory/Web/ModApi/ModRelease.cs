@@ -27,7 +27,6 @@ namespace ModMyFactory.Web.ModApi
 
 
         bool isInstalled;
-        bool isVersionInstalled;
 
         public bool IsInstalled
         {
@@ -38,19 +37,6 @@ namespace ModMyFactory.Web.ModApi
                 {
                     isInstalled = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsInstalled)));
-                }
-            }
-        }
-
-        public bool IsVersionInstalled
-        {
-            get { return isVersionInstalled; }
-            set
-            {
-                if (value != isVersionInstalled)
-                {
-                    isVersionInstalled = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsVersionInstalled)));
                 }
             }
         }

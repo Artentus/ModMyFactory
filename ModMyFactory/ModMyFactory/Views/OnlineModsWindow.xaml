@@ -205,18 +205,6 @@
             <Rectangle Grid.Row="5" Grid.Column="0" Height="4" Fill="{StaticResource SelectionBrush}"/>
             <ListBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" IsSynchronizedWithCurrentItem="False"
                      ItemsSource="{Binding SelectedReleasesView}" SelectedItem="{Binding SelectedRelease, Mode=TwoWay}">
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsVersionInstalled}" Value="True">
-                                <DataTrigger.Setters>
-                                    <Setter Property="IsEnabled" Value="False"/>
-                                </DataTrigger.Setters>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ListBox.ItemContainerStyle>
-
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type modApi:ModRelease}">
                         <Grid>

@@ -15,6 +15,8 @@ namespace ModMyFactory.Models
 
         public string VersionInfo => string.Empty;
 
+        public string FactorioVersionInfo => string.Empty;
+
         public BitmapImage Image { get; }
 
         public bool? Active

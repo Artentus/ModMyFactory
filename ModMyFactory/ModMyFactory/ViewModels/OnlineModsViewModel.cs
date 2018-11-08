@@ -234,11 +234,10 @@ namespace ModMyFactory.ViewModels
                     foreach (var release in extendedInfo.Releases)
                     {
                         release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
-                        release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.InfoFile.FactorioVersion);
                     }
 
                     SelectedReleases = extendedInfo.Releases;
-                    SelectedRelease = SelectedReleases.OrderBy(item => item, new ModReleaseSorter()).FirstOrDefault(item => item.IsInstalled || !item.IsVersionInstalled);
+                    SelectedRelease = SelectedReleases.MinBy(item => item, new ModReleaseSorter());
                 }
                 else
                 {
@@ -507,7 +506,6 @@ namespace ModMyFactory.ViewModels
             foreach (var release in SelectedReleases)
             {
                 release.IsInstalled = InstalledMods.Contains(selectedMod.Name, release.Version);
-                release.IsVersionInstalled = !release.IsInstalled && InstalledMods.ContainsByFactorioVersion(selectedMod.Name, release.InfoFile.FactorioVersion);
             }
         }
 
@@ -562,9 +560,11 @@ namespace ModMyFactory.ViewModels
 
         private void DeleteSelectedModRelease()
         {
-            Mod mod = InstalledMods.Find(SelectedMod.Name, SelectedRelease.Version);
-            mod?.Delete(true);
-            UpdateSelectedReleases();
+            if (InstalledMods.TryGetMod(SelectedMod.Name, SelectedRelease.Version, out Mod mod))
+            {
+                mod.Delete(true);
+                UpdateSelectedReleases();
+            }
         }
 
         private async Task RefreshModList()

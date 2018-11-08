@@ -13,42 +13,7 @@ namespace ModMyFactory.ViewModels
         static SettingsViewModel instance;
 
         public static SettingsViewModel Instance => instance ?? (instance = new SettingsViewModel());
-
-        #region ManagerMode
-
-        bool managerModeIsPerFactorioVersion;
-        bool managerModeIsGlobal;
-
-        public bool ManagerModeIsPerFactorioVersion
-        {
-            get { return managerModeIsPerFactorioVersion; }
-            set
-            {
-                if (value != managerModeIsPerFactorioVersion)
-                {
-                    managerModeIsPerFactorioVersion = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ManagerModeIsPerFactorioVersion)));
-                }
-            }
-        }
-
-        public bool ManagerModeIsGlobal
-        {
-            get { return managerModeIsGlobal; }
-            set
-            {
-                if (value != managerModeIsGlobal)
-                {
-                    managerModeIsGlobal = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ManagerModeIsGlobal)));
-                }
-            }
-        }
-
-        public ManagerMode ManagerMode => ManagerModeIsGlobal ? ManagerMode.Global : ManagerMode.PerFactorioVersion;
-
-        #endregion
-
+        
         #region Misc
 
         bool updateSearchOnStartup;
@@ -555,19 +520,7 @@ namespace ModMyFactory.ViewModels
         public void Reset()
         {
             Settings settings = App.Instance.Settings;
-
-            ManagerModeIsPerFactorioVersion = false;
-            ManagerModeIsGlobal = false;
-            switch (settings.ManagerMode)
-            {
-                case ManagerMode.PerFactorioVersion:
-                    ManagerModeIsPerFactorioVersion = true;
-                    break;
-                case ManagerMode.Global:
-                    ManagerModeIsGlobal = true;
-                    break;
-            }
-
+            
             UpdateSearchOnStartup = settings.UpdateSearchOnStartup;
             IncludePreReleasesForUpdate = settings.IncludePreReleasesForUpdate;
 

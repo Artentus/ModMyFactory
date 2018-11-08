@@ -15,7 +15,9 @@ namespace ModMyFactory.Models
 
         public string DisplayName => Mod.FriendlyName;
 
-        public string VersionInfo => $"({Mod.FactorioVersion})";
+        public string VersionInfo => Mod.Version.ToString();
+
+        public string FactorioVersionInfo => $"(Factorio {Mod.FactorioVersion})";
 
         public BitmapImage Image { get; }
 

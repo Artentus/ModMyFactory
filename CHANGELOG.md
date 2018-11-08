@@ -1,3 +1,6 @@
+#### 1.9.1
+* Added support for multiple versions of the same mod simultaneously.
+
 #### 1.9.0
 * Added proper handling for inverted mod dependencies.
 * Added theme support (light and dark theme available now).

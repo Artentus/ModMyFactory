@@ -1094,11 +1094,7 @@ namespace ModMyFactory.ViewModels
             DirectoryInfo oldModDirectory = settings.GetModDirectory();
             DirectoryInfo oldSavegameDirectory = settings.GetSavegameDirectory();
             DirectoryInfo oldScenarioDirectory = settings.GetScenarioDirectory();
-
-            // Manager mode
-            bool managerModeChanged = (settingsViewModel.ManagerMode != settings.ManagerMode);
-            settings.ManagerMode = settingsViewModel.ManagerMode;
-
+            
             // Update search
             settings.UpdateSearchOnStartup = settingsViewModel.UpdateSearchOnStartup;
             settings.IncludePreReleasesForUpdate = settingsViewModel.IncludePreReleasesForUpdate;
@@ -1181,7 +1177,7 @@ namespace ModMyFactory.ViewModels
 
 
             // Reload everything if required
-            if (managerModeChanged || moveFactorioDirectory || moveModDirectory)
+            if (moveFactorioDirectory || moveModDirectory)
             {
                 Refresh();
             }

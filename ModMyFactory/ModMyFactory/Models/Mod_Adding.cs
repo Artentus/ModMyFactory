@@ -9,19 +9,9 @@ namespace ModMyFactory.Models
     {
         private static void ShowModExistsMessage(InfoFile infoFile)
         {
-            switch (App.Instance.Settings.ManagerMode)
-            {
-                case ManagerMode.PerFactorioVersion:
-                    MessageBox.Show(string.Format(App.Instance.GetLocalizedMessage("ModExistsPerVersion", MessageType.Information), infoFile.FriendlyName, infoFile.FactorioVersion),
-                        App.Instance.GetLocalizedMessageTitle("ModExistsPerVersion", MessageType.Information),
-                        MessageBoxButton.OK, MessageBoxImage.Information);
-                    break;
-                case ManagerMode.Global:
-                    MessageBox.Show(string.Format(App.Instance.GetLocalizedMessage("ModExists", MessageType.Information), infoFile.FriendlyName),
+            MessageBox.Show(string.Format(App.Instance.GetLocalizedMessage("ModExists", MessageType.Information), infoFile.FriendlyName),
                         App.Instance.GetLocalizedMessageTitle("ModExists", MessageType.Information),
                         MessageBoxButton.OK, MessageBoxImage.Information);
-                    break;
-            }
         }
 
         /// <summary>
@@ -37,8 +27,7 @@ namespace ModMyFactory.Models
         {
             var infoFile = file.InfoFile;
 
-            var existingMod = parentCollection.FindByFactorioVersion(infoFile.Name, infoFile.FactorioVersion);
-            if ((existingMod != null) && (existingMod.Version >= file.Version))
+            if (parentCollection.TryGetMod(infoFile.Name, infoFile.Version, out Mod existingMod))
             {
                 if (!silent) ShowModExistsMessage(infoFile);
                 return existingMod;
@@ -58,18 +47,10 @@ namespace ModMyFactory.Models
                     await file.MoveToAsync(modDirectory.FullName);
                 }
             }
-
-            if (existingMod != null)
-            {
-                await existingMod.UpdateAsync(file);
-                return existingMod;
-            }
-            else
-            {
-                var newMod = new Mod(file, parentCollection, modpackCollection);
-                parentCollection.Add(newMod);
-                return newMod;
-            }
+            
+            var newMod = new Mod(file, parentCollection, modpackCollection);
+            parentCollection.Add(newMod);
+            return newMod;
         }
 
         /// <summary>

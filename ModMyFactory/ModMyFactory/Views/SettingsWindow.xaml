@@ -36,19 +36,7 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <GroupBox Grid.Row="0" Margin="0,0,0,2" Header="{DynamicResource ManagerModeGroupHeader}">
-                            <Grid Margin="4">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <RadioButton Grid.Row="0" Margin="2" IsChecked="{Binding ManagerModeIsPerFactorioVersion}" Content="{DynamicResource PerFactorioVersionGroupItem}"/>
-                                <RadioButton Grid.Row="1" Margin="2" IsChecked="{Binding ManagerModeIsGlobal}" Content="{DynamicResource GlobalGroupItem}"/>
-                            </Grid>
-                        </GroupBox>
-
-                        <GroupBox Grid.Row="1" Margin="0,2" Header="{DynamicResource UpdateGroupHeader}">
+                        <GroupBox Grid.Row="1" Margin="0,0,0,2" Header="{DynamicResource UpdateGroupHeader}">
                             <Grid Margin="4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
