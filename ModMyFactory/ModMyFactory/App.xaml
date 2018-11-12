@@ -422,9 +422,9 @@
 
                                     <Border Grid.Column="0">
                                         <Grid>
-                                            <Border x:Name="HoverBorder" Background="{DynamicResource HoverBrush}" Opacity="0"/>
+                                            <Border x:Name="HoverBorder" Margin="1" Background="{DynamicResource HoverBrush}" Opacity="0"/>
                                             <Border x:Name="SelectionBorder" BorderThickness="1" BorderBrush="{DynamicResource SelectionBrush}" Opacity="0"/>
-                                            <ContentPresenter/>
+                                            <ContentPresenter Margin="1"/>
                                         </Grid>
                                     </Border>
                                     <Rectangle x:Name="Rectangle" Grid.Column="1" Width="4" Fill="{DynamicResource SelectionBrush}" Opacity="0"/>

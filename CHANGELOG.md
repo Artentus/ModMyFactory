@@ -1,5 +1,6 @@
 #### 1.9.1
 * Added support for multiple versions of the same mod simultaneously.
+* Fixed visual bug in expanded list items.
 
 #### 1.9.0
 * Added proper handling for inverted mod dependencies.
