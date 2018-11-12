@@ -895,8 +895,11 @@ namespace ModMyFactory.ViewModels
             {
                 foreach (Mod mod in mods)
                 {
-                    var reference = new ModReference(mod, modpack);
-                    modpack.Mods.Add(reference);
+                    if (!modpack.Contains(mod.Name, mod.FactorioVersion))
+                    {
+                        var reference = new ModReference(mod, modpack);
+                        modpack.Mods.Add(reference);
+                    }
                 }
 
                 modpack.ContentsExpanded = true;

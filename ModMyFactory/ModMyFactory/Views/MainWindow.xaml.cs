@@ -90,7 +90,16 @@ namespace ModMyFactory.Views
                     Modpack parent = (Modpack)listBox.ItemContainerGenerator.ItemFromContainer(item);
                     foreach (Mod mod in mods)
                     {
-                        if (!parent.Contains(mod))
+                        if (parent.Contains(mod.Name, mod.FactorioVersion, out var @ref))
+                        {
+                            if (@ref.Mod != mod)
+                            {
+                                @ref.RemoveFromParentCommand.Execute();
+                                var reference = new ModReference(mod, parent);
+                                parent.Mods.Add(reference);
+                            }
+                        }
+                        else
                         {
                             var reference = new ModReference(mod, parent);
                             parent.Mods.Add(reference);

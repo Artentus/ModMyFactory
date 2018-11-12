@@ -248,6 +248,37 @@ namespace ModMyFactory.Models
         /// <summary>
         /// Checks if this modpack contains a specified mod.
         /// </summary>
+        public bool Contains(string modName, Version factorioVersion, out ModReference reference)
+        {
+            foreach (var @ref in Mods)
+            {
+                var modReference = @ref as ModReference;
+                if (modReference != null)
+                {
+                    if ((modReference.Mod.Name == modName) && (modReference.Mod.FactorioVersion == factorioVersion))
+                    {
+                        reference = modReference;
+                        return true;
+                    }
+                }
+            }
+
+            reference = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if this modpack contains a specified mod.
+        /// </summary>
+        public bool Contains(string modName, Version factorioVersion)
+        {
+            ModReference reference;
+            return Contains(modName, factorioVersion, out reference);
+        }
+
+        /// <summary>
+        /// Checks if this modpack contains a specified mod.
+        /// </summary>
         public bool Contains(Mod mod, out ModReference reference)
         {
             foreach (var @ref in Mods)
