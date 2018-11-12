@@ -58,77 +58,77 @@ namespace ModMyFactory.ViewModels
         {
             var result = new List<ModUpdateInfo>();
 
-            if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
-            {
-                var latestInstalledVersions = new Dictionary<string, Mod>();
-                var infos = new Dictionary<string, ExtendedModInfo>();
+            //if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
+            //{
+            //    var latestInstalledVersions = new Dictionary<string, Mod>();
+            //    var infos = new Dictionary<string, ExtendedModInfo>();
                 
-                int modCount = Mods.Count;
-                int index = 0;
-                foreach (var mod in Mods)
-                {
-                    progress.Report(new Tuple<double, string>((double)index / modCount, mod.FriendlyName));
+            //    int modCount = Mods.Count;
+            //    int index = 0;
+            //    foreach (var mod in Mods)
+            //    {
+            //        progress.Report(new Tuple<double, string>((double)index / modCount, mod.FriendlyName));
 
-                    SetLatestInstalledVersion(latestInstalledVersions, mod);
-                    ExtendedModInfo info = await GetInfoAsync(infos, mod.Name);
+            //        SetLatestInstalledVersion(latestInstalledVersions, mod);
+            //        ExtendedModInfo info = await GetInfoAsync(infos, mod.Name);
 
-                    if (info != null)
-                    {
-                        var release = info.GetLatestRelease(mod.FactorioVersion);
-                        if ((release != null) && (release.Version > mod.Version))
-                            result.Add(new ModUpdateInfo(mod, release, false));
-                    }
+            //        if (info != null)
+            //        {
+            //            var release = info.GetLatestRelease(mod.FactorioVersion);
+            //            if ((release != null) && (release.Version > mod.Version))
+            //                result.Add(new ModUpdateInfo(mod, release, false));
+            //        }
 
-                    index++;
-                }
+            //        index++;
+            //    }
 
-                foreach (var kvp in latestInstalledVersions)
-                {
-                    var mod = kvp.Value;
-                    if (infos.TryGetValue(kvp.Key, out var info))
-                    {
-                        var latestRelease = info.GetLatestRelease();
-                        if (latestRelease.InfoFile.FactorioVersion > mod.FactorioVersion)
-                            result.Add(new ModUpdateInfo(mod, latestRelease, true));
-                    }
-                }
-            }
-            else
-            {
-                int modCount = Mods.Count;
-                int index = 0;
-                foreach (var mod in Mods)
-                {
-                    progress.Report(new Tuple<double, string>((double)index / modCount, mod.FriendlyName));
+            //    foreach (var kvp in latestInstalledVersions)
+            //    {
+            //        var mod = kvp.Value;
+            //        if (infos.TryGetValue(kvp.Key, out var info))
+            //        {
+            //            var latestRelease = info.GetLatestRelease();
+            //            if (latestRelease.InfoFile.FactorioVersion > mod.FactorioVersion)
+            //                result.Add(new ModUpdateInfo(mod, latestRelease, true));
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    int modCount = Mods.Count;
+            //    int index = 0;
+            //    foreach (var mod in Mods)
+            //    {
+            //        progress.Report(new Tuple<double, string>((double)index / modCount, mod.FriendlyName));
 
-                    ExtendedModInfo info = null;
-                    try
-                    {
-                        info = await ModWebsite.GetExtendedInfoAsync(mod.Name);
-                    }
-                    catch (WebException ex)
-                    {
-                        bool throwEx = true;
+            //        ExtendedModInfo info = null;
+            //        try
+            //        {
+            //            info = await ModWebsite.GetExtendedInfoAsync(mod.Name);
+            //        }
+            //        catch (WebException ex)
+            //        {
+            //            bool throwEx = true;
 
-                        if (ex.Status == WebExceptionStatus.ProtocolError)
-                        {
-                            var response = ex.Response as HttpWebResponse;
-                            if ((response != null) && (response.StatusCode == HttpStatusCode.NotFound)) throwEx = false;
-                        }
+            //            if (ex.Status == WebExceptionStatus.ProtocolError)
+            //            {
+            //                var response = ex.Response as HttpWebResponse;
+            //                if ((response != null) && (response.StatusCode == HttpStatusCode.NotFound)) throwEx = false;
+            //            }
 
-                        if (throwEx) throw;
-                    }
+            //            if (throwEx) throw;
+            //        }
 
-                    if (info != null)
-                    {
-                        var latestRelease = info.GetLatestRelease();
-                        if ((latestRelease != null) && (latestRelease.Version > mod.Version))
-                            result.Add(new ModUpdateInfo(mod, latestRelease, false));
-                    }
+            //        if (info != null)
+            //        {
+            //            var latestRelease = info.GetLatestRelease();
+            //            if ((latestRelease != null) && (latestRelease.Version > mod.Version))
+            //                result.Add(new ModUpdateInfo(mod, latestRelease, false));
+            //        }
 
-                    index++;
-                }
-            }
+            //        index++;
+            //    }
+            //}
 
             return result;
         }

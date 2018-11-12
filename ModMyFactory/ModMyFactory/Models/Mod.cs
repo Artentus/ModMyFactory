@@ -33,6 +33,18 @@ namespace ModMyFactory.Models
         bool hasUnsatisfiedDependencies;
         ModFile file;
 
+        private void SetInactiveFileDisabled()
+        {
+            if (active)
+            {
+                active = false;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
+            }
+
+            File.Disable();
+            foreach (var oldFile in oldVersions) oldFile.Disable();
+        }
+
         /// <summary>
         /// Indicates whether the mod is currently active.
         /// </summary>
@@ -47,6 +59,19 @@ namespace ModMyFactory.Models
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
 
                     ModManager.SetActive(Name, FactorioVersion, value);
+
+                    if (active)
+                    {
+                        File.Enable();
+                        foreach (var oldFile in oldVersions) oldFile.Enable();
+
+                        var mods = parentCollection.Find(Name, FactorioVersion);
+                        foreach (var mod in mods)
+                        {
+                            if (mod != this)
+                                mod.SetInactiveFileDisabled();
+                        }
+                    }
                     
                     if (active && App.Instance.Settings.ActivateDependencies)
                         ActivateDependencies(App.Instance.Settings.ActivateOptionalDependencies);
@@ -253,7 +278,20 @@ namespace ModMyFactory.Models
             files.Remove(file);
             oldVersions = files;
 
-            active = ModManager.GetActive(Name, FactorioVersion);
+            if (!File.Enabled) active = false;
+            else active = ModManager.GetActive(Name, FactorioVersion);
+            if (active)
+            {
+                File.Enable();
+                foreach (var oldFile in oldVersions) oldFile.Enable();
+
+                var mods = parentCollection.Find(Name, FactorioVersion);
+                foreach (var mod in mods)
+                {
+                    if (mod != this)
+                        mod.SetInactiveFileDisabled();
+                }
+            }
         }
 
         /// <summary>
@@ -265,7 +303,20 @@ namespace ModMyFactory.Models
             File = file;
             oldVersions = new ModFileCollection();
 
-            active = ModManager.GetActive(Name, FactorioVersion);
+            if (!File.Enabled) active = false;
+            else active = ModManager.GetActive(Name, FactorioVersion);
+            if (active)
+            {
+                File.Enable();
+                foreach (var oldFile in oldVersions) oldFile.Enable();
+
+                var mods = parentCollection.Find(Name, FactorioVersion);
+                foreach (var mod in mods)
+                {
+                    if (mod != this)
+                        mod.SetInactiveFileDisabled();
+                }
+            }
         }
         
         public ILocale GetLocale(CultureInfo culture)
