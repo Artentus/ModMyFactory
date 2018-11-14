@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using WPFCore;
 
 namespace ModMyFactory.Models
@@ -11,6 +12,8 @@ namespace ModMyFactory.Models
         public Mod Mod { get; }
 
         public Version Version => Mod.Version;
+
+        public int ModpackCount { get; }
 
         public bool IsSelected
         {
@@ -25,10 +28,11 @@ namespace ModMyFactory.Models
             }
         }
 
-        public ModVersionUpdateInfo(Mod mod)
+        public ModVersionUpdateInfo(Mod mod, ModpackCollection modpacks)
         {
             Mod = mod;
             isSelected = false;
+            ModpackCount = modpacks.Count(pack => pack.Contains(mod));
         }
     }
 }

@@ -458,6 +458,7 @@
     <!-- format strings -->
     <sys:String x:Key="CurrentVersionFormat">Aktuelle Version: {0}</sys:String>
     <sys:String x:Key="NewestVersionFormat">Neuste Version: {0}</sys:String>
+    <sys:String x:Key="ModpackCountFormat">In Modpacks:</sys:String>
 
 
     <!--

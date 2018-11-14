@@ -103,7 +103,7 @@ namespace ModMyFactory.ViewModels
                             if (latestVersion.Version < latestRelease.Version)
                             {
                                 var updateInfo = new ModUpdateInfo(modName, latestVersion.FriendlyName, latestRelease);
-                                updateInfo.ModVersions.AddRange(groupedMods.Select(m => new ModVersionUpdateInfo(m)));
+                                updateInfo.ModVersions.AddRange(groupedMods.Select(m => new ModVersionUpdateInfo(m, Modpacks)));
                                 AddUpdateInfo(updateInfos, updateInfo);
                             }
                         }

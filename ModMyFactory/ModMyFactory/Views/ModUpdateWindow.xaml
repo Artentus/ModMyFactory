@@ -47,7 +47,21 @@
                     <ItemsControl Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="2" Margin="6,2" ItemsSource="{Binding ModVersions}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type model:ModVersionUpdateInfo}">
-                                <CheckBox Margin="0,2" IsChecked="{Binding IsSelected, Mode=TwoWay}" Content="{Binding Version}"/>
+                                <CheckBox Grid.Column="0" Margin="0,2" IsChecked="{Binding IsSelected, Mode=TwoWay}">
+                                    <CheckBox.Content>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" Margin="2,0" VerticalAlignment="Center" Text="{Binding Version}"/>
+                                            <TextBlock Grid.Column="1" Margin="2,0" VerticalAlignment="Center" Text="{DynamicResource ModpackCountFormat}" Foreground="{DynamicResource MutedForegroundBrush}"/>
+                                            <TextBlock Grid.Column="2" Margin="2,0" VerticalAlignment="Center" Text="{Binding ModpackCount}" Foreground="{DynamicResource MutedForegroundBrush}"/>
+                                        </Grid>
+                                    </CheckBox.Content>
+                                </CheckBox>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
