@@ -377,39 +377,6 @@ namespace ModMyFactory.Models
             //ModSettingsManager.SaveSettings(this);
         }
         
-        private bool KeepOldFile(ModFile newFile)
-        {
-            bool isNewFactorioVersion = newFile.InfoFile.FactorioVersion > FactorioVersion;
-            if (App.Instance.Settings.KeepOldModVersionsWhenNewFactorioVersion && isNewFactorioVersion) return true;
-            return file.KeepOnUpdate;
-        }
-
-        /// <summary>
-        /// Updates this mod to a given new mod file.
-        /// If the given mod file is not a valid update for this mod the update will fail and no action will be taken.
-        /// </summary>
-        /// <param name="newFile">The updated mod file.</param>
-        /// <returns>Returns true if the update was sucessful, otherwise false.</returns>
-        public async Task<bool> UpdateAsync(ModFile newFile)
-        {
-            if ((newFile.Name != Name) || (newFile.Version <= Version)) return false;
-
-            if (File.ExtractUpdates)
-                newFile = await newFile.ExtractAsync();
-
-            if (KeepOldFile(newFile))
-            {
-                oldVersions.Add(File);
-            }
-            else
-            {
-                File.Delete();
-            }
-
-            File = newFile;
-            return true;
-        }
-        
         private void DeleteOldVersions()
         {
             foreach (var file in oldVersions)

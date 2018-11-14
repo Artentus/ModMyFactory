@@ -1,4 +1,5 @@
-﻿using ModMyFactory.Models;
+﻿using ModMyFactory.Helpers;
+using ModMyFactory.Models;
 using ModMyFactory.Views;
 using ModMyFactory.Web;
 using ModMyFactory.Web.ModApi;
@@ -15,24 +16,9 @@ namespace ModMyFactory.ViewModels
 {
     partial class MainViewModel
     {
-        private void SetLatestInstalledVersion(Dictionary<string, Mod> latestInstalledVersions, Mod mod)
+        private async Task AddInfoAsync(Dictionary<string, ExtendedModInfo> infos, string modName)
         {
-            Mod latestInstalledVersion;
-            if (latestInstalledVersions.TryGetValue(mod.Name, out latestInstalledVersion))
-            {
-                if (mod.Version > latestInstalledVersion.Version)
-                    latestInstalledVersions[mod.Name] = mod;
-            }
-            else
-            {
-                latestInstalledVersions.Add(mod.Name, mod);
-            }
-        }
-
-        private async Task<ExtendedModInfo> GetInfoAsync(Dictionary<string, ExtendedModInfo> infos, string modName)
-        {
-            ExtendedModInfo info = null;
-            if (!infos.TryGetValue(modName, out info))
+            if (!infos.TryGetValue(modName, out var info))
             {
                 try
                 {
@@ -44,102 +30,108 @@ namespace ModMyFactory.ViewModels
                     if (ex.Status == WebExceptionStatus.ProtocolError)
                     {
                         var response = ex.Response as HttpWebResponse;
-                        if ((response != null) && (response.StatusCode == HttpStatusCode.NotFound)) return null;
+                        if ((response != null) && (response.StatusCode == HttpStatusCode.NotFound)) return;
                     }
 
                     throw;
                 }
             }
-
-            return info;
         }
 
+        private void UpdaterAddMod(Dictionary<string, Dictionary<Version, List<Mod>>> mods, Mod mod)
+        {
+            if (!mods.TryGetValue(mod.Name, out var subDict))
+            {
+                subDict = new Dictionary<Version, List<Mod>>();
+                mods.Add(mod.Name, subDict);
+            }
+
+            if (!subDict.TryGetValue(mod.FactorioVersion, out var list))
+            {
+                list = new List<Mod>();
+                subDict.Add(mod.FactorioVersion, list);
+            }
+
+            list.Add(mod);
+        }
+
+        private void AddUpdateInfo(Dictionary<string, Dictionary<Version, ModUpdateInfo>> updateInfos, ModUpdateInfo updateInfo)
+        {
+            if (!updateInfos.TryGetValue(updateInfo.ModName, out var subDict))
+            {
+                subDict = new Dictionary<Version, ModUpdateInfo>();
+                updateInfos.Add(updateInfo.ModName, subDict);
+            }
+
+            subDict[updateInfo.FactorioVersion] = updateInfo;
+        }
+        
         private async Task<List<ModUpdateInfo>> GetModUpdatesAsync(IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
-            var result = new List<ModUpdateInfo>();
+            var mods = new Dictionary<string, Dictionary<Version, List<Mod>>>();
+            var infos = new Dictionary<string, ExtendedModInfo>();
 
-            //if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
-            //{
-            //    var latestInstalledVersions = new Dictionary<string, Mod>();
-            //    var infos = new Dictionary<string, ExtendedModInfo>();
-                
-            //    int modCount = Mods.Count;
-            //    int index = 0;
-            //    foreach (var mod in Mods)
-            //    {
-            //        progress.Report(new Tuple<double, string>((double)index / modCount, mod.FriendlyName));
+            int modCount = Mods.Count;
+            int index = 0;
+            foreach (var mod in Mods)
+            {
+                progress.Report(new Tuple<double, string>((double)index / modCount, mod.FriendlyName));
+                if (cancellationToken.IsCancellationRequested) return null;
 
-            //        SetLatestInstalledVersion(latestInstalledVersions, mod);
-            //        ExtendedModInfo info = await GetInfoAsync(infos, mod.Name);
+                UpdaterAddMod(mods, mod);
+                await AddInfoAsync(infos, mod.Name);
 
-            //        if (info != null)
-            //        {
-            //            var release = info.GetLatestRelease(mod.FactorioVersion);
-            //            if ((release != null) && (release.Version > mod.Version))
-            //                result.Add(new ModUpdateInfo(mod, release, false));
-            //        }
+                index++;
+            }
 
-            //        index++;
-            //    }
 
-            //    foreach (var kvp in latestInstalledVersions)
-            //    {
-            //        var mod = kvp.Value;
-            //        if (infos.TryGetValue(kvp.Key, out var info))
-            //        {
-            //            var latestRelease = info.GetLatestRelease();
-            //            if (latestRelease.InfoFile.FactorioVersion > mod.FactorioVersion)
-            //                result.Add(new ModUpdateInfo(mod, latestRelease, true));
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    int modCount = Mods.Count;
-            //    int index = 0;
-            //    foreach (var mod in Mods)
-            //    {
-            //        progress.Report(new Tuple<double, string>((double)index / modCount, mod.FriendlyName));
+            var updateInfos = new Dictionary<string, Dictionary<Version, ModUpdateInfo>>();
+            foreach (var kvp in mods)
+            {
+                string modName = kvp.Key;
+                if (infos.TryGetValue(modName, out var info))
+                {
+                    foreach (var group in kvp.Value)
+                    {
+                        var factorioVersion = group.Key;
+                        var groupedMods = group.Value;
 
-            //        ExtendedModInfo info = null;
-            //        try
-            //        {
-            //            info = await ModWebsite.GetExtendedInfoAsync(mod.Name);
-            //        }
-            //        catch (WebException ex)
-            //        {
-            //            bool throwEx = true;
+                        var latestRelease = info.GetLatestRelease(factorioVersion);
+                        if (latestRelease != null)
+                        {
+                            var latestVersion = groupedMods.MaxBy(m => m.Version, new VersionComparer());
+                            if (latestVersion.Version < latestRelease.Version)
+                            {
+                                var updateInfo = new ModUpdateInfo(modName, latestVersion.FriendlyName, latestRelease);
+                                updateInfo.ModVersions.AddRange(groupedMods.Select(m => new ModVersionUpdateInfo(m)));
+                                AddUpdateInfo(updateInfos, updateInfo);
+                            }
+                        }
+                    }
 
-            //            if (ex.Status == WebExceptionStatus.ProtocolError)
-            //            {
-            //                var response = ex.Response as HttpWebResponse;
-            //                if ((response != null) && (response.StatusCode == HttpStatusCode.NotFound)) throwEx = false;
-            //            }
+                    if (updateInfos.ContainsKey(modName))
+                    {
+                        var latestRelease = info.GetLatestRelease();
+                        if (!updateInfos[modName].ContainsKey(latestRelease.InfoFile.FactorioVersion))
+                        {
+                            var latestVersion = kvp.Value.MaxBy(v => v.Key, new VersionComparer()).Value.MaxBy(m => m.Version, new VersionComparer());
+                            if (latestVersion.Version < latestRelease.Version)
+                            {
+                                var updateInfo = new ModUpdateInfo(modName, latestVersion.FriendlyName, latestRelease);
+                                AddUpdateInfo(updateInfos, updateInfo);
+                            }
+                        }
+                    }
+                }
+            }
 
-            //            if (throwEx) throw;
-            //        }
-
-            //        if (info != null)
-            //        {
-            //            var latestRelease = info.GetLatestRelease();
-            //            if ((latestRelease != null) && (latestRelease.Version > mod.Version))
-            //                result.Add(new ModUpdateInfo(mod, latestRelease, false));
-            //        }
-
-            //        index++;
-            //    }
-            //}
-
-            return result;
+            return updateInfos.Values.SelectMany(subDict => subDict.Values).ToList();
         }
 
         private async Task UpdateModAsyncInner(ModUpdateInfo modUpdate, string token, IProgress<double> progress, CancellationToken cancellationToken)
         {
             var updateFile = await ModWebsite.DownloadUpdateAsync(modUpdate.Update, GlobalCredentials.Instance.Username, token, progress, cancellationToken);
-            if (modUpdate.CreateNewMod)
-                await Mod.Add(updateFile, Mods, Modpacks, false, true);
-            else
-                await modUpdate.Mod.UpdateAsync(updateFile);
+            await Mod.Add(updateFile, Mods, Modpacks, false, true);
         }
 
         private async Task UpdateModsAsyncInner(List<ModUpdateInfo> modUpdates, string token, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
@@ -226,7 +218,7 @@ namespace ModMyFactory.ViewModels
 
             if (!cancellationSource.IsCancellationRequested)
             {
-                if (modUpdates.Count > 0)
+                if ((modUpdates != null) && (modUpdates.Count > 0))
                 {
                     var updateWindow = new ModUpdateWindow() { Owner = Window };
                     var updateViewModel = (ModUpdateViewModel)updateWindow.ViewModel;

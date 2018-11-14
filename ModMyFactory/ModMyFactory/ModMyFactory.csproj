@@ -170,6 +170,7 @@
     <Compile Include="Models\ModSettings\ModSettingProxy.cs" />
     <Compile Include="Models\ModSettings\StringListModSetting.cs" />
     <Compile Include="Models\ModSettings\StringModSetting.cs" />
+    <Compile Include="Models\ModVersionUpdateInfo.cs" />
     <Compile Include="ModSettings\LoadTime.cs" />
     <Compile Include="ModSettings\LoadTimeJsonConverter.cs" />
     <Compile Include="ModSettings\ModSettingInfo.cs" />
@@ -205,6 +206,7 @@
     <Compile Include="MVVM\Converters\ThemeNameConverter.cs" />
     <Compile Include="MVVM\Selectors\ComboBoxTemplateSelector.cs" />
     <Compile Include="MVVM\Selectors\ModSettingTemplateSelector.cs" />
+    <Compile Include="MVVM\Selectors\ModUpdateTemplateSelector.cs" />
     <Compile Include="MVVM\Sorters\FactorioOnlineVersionSorter.cs" />
     <Compile Include="MVVM\Sorters\ModDependencySorter.cs" />
     <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />

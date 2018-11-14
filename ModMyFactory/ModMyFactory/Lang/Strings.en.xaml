@@ -460,7 +460,10 @@
     ____________________ ModUpdateWindow ____________________
     -->
     
-    <sys:String x:Key="ModUpdateWindowTitle">Select mods to update</sys:String>
+    <sys:String x:Key="ModUpdateWindowTitle">Select mod updates to download</sys:String>
+    
+    <!-- headers -->
+    <sys:String x:Key="SelectUpdateVersionsHeader">Select installed versions to replace:</sys:String>
     
     <!-- format strings -->
     <sys:String x:Key="CurrentVersionFormat">Current version: {0}</sys:String>

@@ -9,7 +9,12 @@ namespace ModMyFactory.MVVM.Sorters
     {
         public int Compare(ModUpdateInfo x, ModUpdateInfo y)
         {
-            return string.Compare(x.Name, y.Name, StringComparison.InvariantCultureIgnoreCase);
+            int result = y.FactorioVersion.CompareTo(x.FactorioVersion);
+
+            if (result == 0)
+                result = string.Compare(x.FriendlyName, y.FriendlyName, StringComparison.InvariantCultureIgnoreCase);
+
+            return result;
         }
 
         public int Compare(object x, object y)

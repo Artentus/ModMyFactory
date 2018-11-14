@@ -450,7 +450,10 @@
     ____________________ ModUpdateWindow ____________________
     -->
 
-    <sys:String x:Key="ModUpdateWindowTitle">Mods zum Aktualisieren auswählen</sys:String>
+    <sys:String x:Key="ModUpdateWindowTitle">Mod-Aktualisierungen zum Herunterladen auswählen</sys:String>
+    
+    <!-- headers -->
+    <sys:String x:Key="SelectUpdateVersionsHeader">Installierte Versionen zum Ersetzen auswählen:</sys:String>
 
     <!-- format strings -->
     <sys:String x:Key="CurrentVersionFormat">Aktuelle Version: {0}</sys:String>
