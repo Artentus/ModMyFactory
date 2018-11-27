@@ -281,6 +281,7 @@
     
     <!-- tooltips -->
     <sys:String x:Key="RenameToolTip">Rename</sys:String>
+    <sys:String x:Key="LockToolTip">Lock modpack</sys:String>
     <sys:String x:Key="DeleteToolTip">Delete</sys:String>
     <sys:String x:Key="RemoveToolTip">Remove from modpack</sys:String>
     <sys:String x:Key="SetActiveToolTip">Activate</sys:String>

@@ -603,6 +603,8 @@
     <Resource Include="Images\Themes\dark.png" />
     <Resource Include="Images\Themes\light.png" />
     <Resource Include="Images\Themes.png" />
+    <Resource Include="Images\Lock.png" />
+    <Resource Include="Images\Lock_blue.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>

@@ -34,6 +34,8 @@
         <BitmapImage x:Key="InformationIcon" UriSource="../Images/Information.png"/>
         <BitmapImage x:Key="InvertedIcon" UriSource="../Images/Inverted_small.png"/>
         <BitmapImage x:Key="LinkIcon" UriSource="../Images/Link.png"/>
+        <BitmapImage x:Key="LockButtonIcon" UriSource="../Images/Lock.png"/>
+        <BitmapImage x:Key="LockHoverIcon" UriSource="../Images/Lock_blue.png"/>
         <BitmapImage x:Key="MenuIcon" UriSource="../Images/Menu.png"/>
         <BitmapImage x:Key="NewPackageIcon" UriSource="../Images/NewPackage.png"/>
         <BitmapImage x:Key="OpenFolderIcon" UriSource="../Images/OpenFolder.png"/>
@@ -712,6 +714,18 @@
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
+
+                    <ControlTemplate x:Key="LockButtonTemplate" TargetType="{x:Type ToggleButton}">
+                        <Image x:Name="Image" Source="{DynamicResource LockButtonIcon}" Stretch="None" VerticalAlignment="Center"/>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Trigger.Setters>
+                                    <Setter TargetName="Image" Property="Source" Value="{DynamicResource LockHoverIcon}"/>
+                                </Trigger.Setters>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
                 </controls:DragDropReadyListBox.Resources>
 
                 <controls:DragDropReadyListBox.ItemContainerStyle>
@@ -731,6 +745,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
@@ -753,7 +768,9 @@
                                             Visibility="{Binding HasUnsatisfiedDependencies, Converter={StaticResource VisibilityConverter}}">
                                         <Image Margin="1" Source="{StaticResource DependencyWarningIcon}" Stretch="None"/>
                                     </Border>
-                                    <Button Grid.Column="6" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
+                                    <ToggleButton Grid.Column="6" Margin="2,0" ToolTip="{DynamicResource LockToolTip}" Template="{StaticResource LockButtonTemplate}"
+                                                  IsChecked="{Binding IsLocked, Mode=TwoWay}" Focusable="False"/>
+                                    <Button Grid.Column="7" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
                                             CommandParameter="{StaticResource True}" Command="{Binding DeleteCommand}"/>
                                 </Grid>
                             </Expander.Header>

@@ -31,6 +31,7 @@ namespace ModMyFactory.Models
         bool isSelected;
         bool contentsExpanded;
         bool hasUnsatisfiedDependencies;
+        bool isLocked;
         Dictionary<IModReference, IEnumerable<IHasModSettings>> proxyDict;
 
         private string GetUniqueName(string baseName)
@@ -184,6 +185,22 @@ namespace ModMyFactory.Models
                 {
                     hasUnsatisfiedDependencies = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasUnsatisfiedDependencies)));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether this modpack is accepting changes.
+        /// </summary>
+        public bool IsLocked
+        {
+            get => isLocked;
+            set
+            {
+                if (value != isLocked)
+                {
+                    isLocked = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsLocked)));
                 }
             }
         }
