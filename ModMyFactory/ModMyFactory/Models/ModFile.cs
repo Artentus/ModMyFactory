@@ -37,7 +37,7 @@ namespace ModMyFactory.Models
         /// <summary>
         /// The mods version.
         /// </summary>
-        public Version Version => InfoFile.Version;
+        public GameCompatibleVersion Version => InfoFile.Version;
 
         /// <summary>
         /// Indicates whether this mod file is enabled.
@@ -410,7 +410,7 @@ namespace ModMyFactory.Models
         /// <param name="enabled">Out. Indicates if the mod file is enabled.</param>
         /// <param name="hasUid">Specifies if the file name contains a UID.</param>
         /// <returns>Returns true if the file name was a valid mod file name, otherwise false.</returns>
-        private static bool TryParseModName(string fileName, out string name, out Version version, out bool enabled, bool hasUid)
+        private static bool TryParseModName(string fileName, out string name, out GameCompatibleVersion version, out bool enabled, bool hasUid)
         {
             name = null;
             version = null;
@@ -424,7 +424,7 @@ namespace ModMyFactory.Models
             name = fileName.Substring(0, index);
             if (hasUid) name = GetNameWithoutUid(name);
             string versionString = fileName.Substring(index + 1);
-            return Version.TryParse(versionString, out version);
+            return GameCompatibleVersion.TryParse(versionString, out version);
         }
 
         /// <summary>
@@ -514,7 +514,7 @@ namespace ModMyFactory.Models
             infoFile = null;
 
             string fileName;
-            Version fileVersion;
+            GameCompatibleVersion fileVersion;
             if (!TryParseModName(archiveFile.NameWithoutExtension(), out fileName, out fileVersion, out enabled, hasUid)) return false;
 
             if (TryReadInfoFileFromArchive(archiveFile, out infoFile))
@@ -546,7 +546,7 @@ namespace ModMyFactory.Models
             else
             {
                 string fileName;
-                Version fileVersion;
+                GameCompatibleVersion fileVersion;
                 if (!TryParseModName(directory.Name, out fileName, out fileVersion, out enabled, hasUid)) return false;
 
                 if (TryReadInfoFileFromDirectory(directory, out infoFile))

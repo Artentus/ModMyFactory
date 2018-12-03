@@ -59,7 +59,7 @@ namespace ModMyFactory.Models
             var selectedDirectories = new List<DirectoryInfo>();
             foreach (var subDirectory in modDirectory.EnumerateDirectories())
             {
-                if (Version.TryParse(subDirectory.Name, out var factorioVersion))
+                if (System.Version.TryParse(subDirectory.Name, out var factorioVersion))
                     selectedDirectories.Add(subDirectory);
             }
 

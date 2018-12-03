@@ -13,7 +13,7 @@ namespace ModMyFactory.Models
 
         public Version FactorioVersion { get; }
 
-        public Version Version { get; set; }
+        public GameCompatibleVersion Version { get; set; }
 
         public bool IsOptional
         {
@@ -41,7 +41,7 @@ namespace ModMyFactory.Models
             }
         }
 
-        public ModDependencyInfo(string name, Version factorioVersion, Version version, bool isOptional)
+        public ModDependencyInfo(string name, Version factorioVersion, GameCompatibleVersion version, bool isOptional)
         {
             Name = name;
             FactorioVersion = factorioVersion;

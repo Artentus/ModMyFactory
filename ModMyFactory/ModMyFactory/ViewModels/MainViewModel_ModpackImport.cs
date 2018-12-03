@@ -56,10 +56,10 @@ namespace ModMyFactory.ViewModels
             await ModWebsite.DownloadReleaseToFileAsync(release, GlobalCredentials.Instance.Username, token, fileName, progress, cancellationToken);
         }
 
-        private Version GetVersionFromFile(FileSystemInfo file)
+        private GameCompatibleVersion GetVersionFromFile(FileSystemInfo file)
         {
             string[] parts = file.NameWithoutExtension().Split('_');
-            return Version.Parse(parts[parts.Length - 1]);
+            return GameCompatibleVersion.Parse(parts[parts.Length - 1]);
         }
 
         private async Task DownloadIncludedMod(ModExportTemplate modTemplate, DirectoryInfo fileLocation, ExtendedModInfo info, IProgress<double> progress, CancellationToken cancellationToken)

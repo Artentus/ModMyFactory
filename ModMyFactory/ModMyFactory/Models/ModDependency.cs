@@ -40,7 +40,7 @@ namespace ModMyFactory.Models
         /// The lowest allowed version of the mod.
         /// Only valid if <see cref="HasVersionRestriction"/> is true.
         /// </summary>
-        public Version ModVersion { get; }
+        public GameCompatibleVersion ModVersion { get; }
 
         /// <summary>
         /// Indicates whether this dependency is referencing the base game.

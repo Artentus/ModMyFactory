@@ -24,7 +24,7 @@ namespace ModMyFactory
         /// <param name="name">The name of the mod.</param>
         /// <param name="version">The mods version.</param>
         /// <returns>Returns true if the collection contains the mod, otherwise false.</returns>
-        public bool Contains(string name, Version version)
+        public bool Contains(string name, GameCompatibleVersion version)
         {
             return this.Any(mod =>
                 string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)
@@ -72,7 +72,7 @@ namespace ModMyFactory
         /// <param name="version">The mods version.</param>
         /// <param name="mod">Out. The requested mod.</param>
         /// <returns>Return true if the collection contained the specified mod, otherwise false.</returns>
-        public bool TryGetMod(string name, Version version, out Mod mod)
+        public bool TryGetMod(string name, GameCompatibleVersion version, out Mod mod)
         {
             foreach (var m in this)
             {

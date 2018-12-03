@@ -16,7 +16,7 @@ namespace ModMyFactory.Export
             return new ModExportTemplate(mod.Name, includeVersionInfo ? mod.Version : null);
         }
 
-        private ModExportTemplate(string name, Version version)
+        private ModExportTemplate(string name, GameCompatibleVersion version)
             : this(-1, name, ExportMode.Version1, version, null)
         { }
 
@@ -48,9 +48,9 @@ namespace ModMyFactory.Export
         public ExportMode ExportMode { get; }
 
         [DefaultValue(null)]
-        [JsonConverter(typeof(VersionConverter))]
+        [JsonConverter(typeof(GameVersionConverter))]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public Version Version { get; }
+        public GameCompatibleVersion Version { get; }
 
         [DefaultValue(null)]
         [JsonConverter(typeof(VersionConverter))]
@@ -69,7 +69,7 @@ namespace ModMyFactory.Export
 
 
         [JsonConstructor]
-        private ModExportTemplate(int uid, string name, ExportMode exportMode, Version version, Version factorioVersion)
+        private ModExportTemplate(int uid, string name, ExportMode exportMode, GameCompatibleVersion version, Version factorioVersion)
         {
             Uid = uid;
             Name = name;

@@ -10,7 +10,7 @@ namespace ModMyFactory.Models
     {
         string Name { get; }
 
-        Version Version { get; }
+        GameCompatibleVersion Version { get; }
 
         Version FactorioVersion { get; }
 

@@ -160,7 +160,7 @@ namespace ModMyFactory.Models
         /// <summary>
         /// The version of the mod.
         /// </summary>
-        public Version Version => InfoFile.Version;
+        public GameCompatibleVersion Version => InfoFile.Version;
 
         /// <summary>
         /// The version of Factorio this mod is compatible with.

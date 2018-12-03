@@ -2,7 +2,6 @@
 using System.IO;
 using ModMyFactory.Helpers;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace ModMyFactory.Models
 {
@@ -19,8 +18,8 @@ namespace ModMyFactory.Models
         /// The mods version.
         /// </summary>
         [JsonProperty("version")]
-        [JsonConverter(typeof(VersionConverter))]
-        public Version Version { get; }
+        [JsonConverter(typeof(GameVersionConverter))]
+        public GameCompatibleVersion Version { get; }
 
         /// <summary>
         /// The version of Factorio this mod is compatible with.
@@ -60,7 +59,7 @@ namespace ModMyFactory.Models
         public bool IsValid => !string.IsNullOrWhiteSpace(Name) && (Version != null) && ((Name == "base") || (FactorioVersion != null));
 
         [JsonConstructor]
-        private InfoFile(string name, Version version, Version factorioVersion, string friendlyName, string author, string description, ModDependency[] dependencies)
+        private InfoFile(string name, GameCompatibleVersion version, Version factorioVersion, string friendlyName, string author, string description, ModDependency[] dependencies)
         {
             Name = name;
             Version = version;
