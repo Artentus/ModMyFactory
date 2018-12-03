@@ -137,8 +137,16 @@ namespace ModMyFactory.Models
             {
                 if (value != editing)
                 {
-                    editing = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Editing)));
+                    if (isLocked && value)
+                    {
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Editing)));
+                        return;
+                    }
+                    else
+                    {
+                        editing = value;
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Editing)));
+                    }
 
                     if (editing)
                     {
@@ -201,6 +209,8 @@ namespace ModMyFactory.Models
                 {
                     isLocked = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsLocked)));
+
+                    if (isLocked && editing) EndEdit();
                 }
             }
         }
@@ -464,6 +474,8 @@ namespace ModMyFactory.Models
         /// <param name="showPrompt">Indicates whether a confirmation prompt is shown to the user.</param>
         public void Delete(bool showPrompt)
         {
+            if (isLocked) return;
+
             if (!showPrompt || MessageBox.Show(
                 App.Instance.GetLocalizedMessage("DeleteModpack", MessageType.Question),
                 App.Instance.GetLocalizedMessageTitle("DeleteModpack", MessageType.Question),

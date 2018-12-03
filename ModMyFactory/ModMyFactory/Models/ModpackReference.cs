@@ -42,7 +42,11 @@ namespace ModMyFactory.Models
             Image = new BitmapImage(new Uri("../Images/Package.png", UriKind.Relative));
 
             modpack.PropertyChanged += PropertyChangedHandler;
-            RemoveFromParentCommand = new RelayCommand(() => parent.Mods.Remove(this));
+            RemoveFromParentCommand = new RelayCommand(() =>
+            {
+                if (!parent.IsLocked)
+                    parent.Mods.Remove(this);
+            });
         }
 
         ~ModpackReference()
