@@ -210,6 +210,9 @@ namespace ModMyFactory.Models
                     isLocked = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsLocked)));
 
+                    ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
+                    ModpackTemplateList.Instance.Save();
+
                     if (isLocked && editing) EndEdit();
                 }
             }
@@ -497,10 +500,11 @@ namespace ModMyFactory.Models
         /// </summary>
         /// <param name="name">The name of the modpack.</param>
         /// <param name="parentCollection">The collection containing this modpack.</param>
-        public Modpack(string name, ModpackCollection parentCollection)
+        public Modpack(string name, bool isLocked, ModpackCollection parentCollection)
         {
             this.parentCollection = parentCollection;
             Name = name;
+            this.isLocked = isLocked;
             active = false;
             activeChanging = false;
             proxyDict = new Dictionary<IModReference, IEnumerable<IHasModSettings>>();

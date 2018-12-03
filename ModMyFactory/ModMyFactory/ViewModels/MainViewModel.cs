@@ -887,7 +887,7 @@ namespace ModMyFactory.ViewModels
                 newName = $"{name} {counter}";
             }
 
-            Modpack modpack = new Modpack(newName, Modpacks);
+            Modpack modpack = new Modpack(newName, false, Modpacks);
             modpack.ParentView = ModpacksView;
             Modpacks.Add(modpack);
 
