@@ -10,6 +10,7 @@ using ModMyFactory.Views;
 using ModMyFactory.Web;
 using ModMyFactory.Web.AuthenticationApi;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using WPFCore;
 
 namespace ModMyFactory
@@ -119,10 +120,38 @@ namespace ModMyFactory
 
         private bool IsLoggedInWithToken() => IsLoggedIn() && !string.IsNullOrEmpty(token);
 
+        private bool ReadFactorioCredentials(out string username, out string token)
+        {
+            var FactorioCredentialsFile = new FileInfo(Path.Combine(App.Instance.AppDataPath, @"..\Factorio\player-data.json"));
+
+            username = null;
+            token = null;
+
+            if (!FactorioCredentialsFile.Exists)
+            {
+                return false;
+            }
+            using (JsonTextReader FactorioCredentialsFileReader = new JsonTextReader(FactorioCredentialsFile.OpenText()))
+            {
+                JObject FactorioCredentials = (JObject)JToken.ReadFrom(FactorioCredentialsFileReader);
+
+                if ((username = FactorioCredentials["service-username"].ToString()) == "" ||
+                   (token = FactorioCredentials["service-token"].ToString()) == "")
+                    return false;
+            }
+            return true;
+        }
+
         public bool LogIn(Window owner, out string loginToken)
         {
 
             loginToken = null;
+
+            if (ReadFactorioCredentials(out username, out token))
+            {
+                loginToken = token;
+                return true;
+            }
 
             if (IsLoggedInWithToken()) // Credentials and token available.
             {
@@ -159,6 +188,7 @@ namespace ModMyFactory
 
             loginToken = token;
             return true;
+
         }
 
         private void Save(FileInfo file)
