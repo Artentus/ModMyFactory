@@ -22,12 +22,13 @@ namespace ModMyFactory.Views
         private void SaveCredentialsBoxCheckedHandler(object sender, RoutedEventArgs e)
         {
             UsernameBox.Text = GlobalCredentials.Instance.Username;
+            TokenBox.Text = GlobalCredentials.Instance.Token;
         }
 
         private void SaveCredentialsBoxUncheckedHandler(object sender, RoutedEventArgs e)
         {
             UsernameBox.Text = null;
-            PasswordBox.Password = null;
+            TokenBox.Text = null;
         }
     }
 }

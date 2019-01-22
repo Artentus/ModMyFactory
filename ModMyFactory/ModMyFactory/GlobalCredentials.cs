@@ -21,7 +21,7 @@ namespace ModMyFactory
         {
             public string Entropy;
             public string ProtectedUsername;
-            public string ProtectedPassword;
+            public string ProtectedToken;
         }
 
 
@@ -47,7 +47,6 @@ namespace ModMyFactory
 
 
         string username;
-        SecureString password;
         string token;
 
         public string Username
@@ -58,20 +57,18 @@ namespace ModMyFactory
                 if (value != username)
                 {
                     username = value;
-                    token = null;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Username)));
                 }
             }
         }
 
-        public SecureString Password
+        public string Token
         {
-            get { return password; }
+            get { return token; }
             set
             {
-                password = value;
-                token = null;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Password)));
+                token = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Token)));
             }
         }
 
@@ -81,19 +78,19 @@ namespace ModMyFactory
 
             byte[] entropy = Convert.FromBase64String(template.Entropy);
             byte[] protectedUsernameBytes = Convert.FromBase64String(template.ProtectedUsername);
-            byte[] protectedPasswordBytes = Convert.FromBase64String(template.ProtectedPassword);
+            byte[] protectedTokenBytes = Convert.FromBase64String(template.ProtectedToken);
 
             byte[] usernameBytes = ProtectedData.Unprotect(protectedUsernameBytes, entropy, DataProtectionScope.CurrentUser);
-            byte[] passwordBytes = ProtectedData.Unprotect(protectedPasswordBytes, entropy, DataProtectionScope.CurrentUser);
+            byte[] tokenBytes = ProtectedData.Unprotect(protectedTokenBytes, entropy, DataProtectionScope.CurrentUser);
 
             try
             {
                 username = Encoding.Unicode.GetString(usernameBytes);
-                password = SecureStringHelper.SecureStringFromBytes(passwordBytes, Encoding.Unicode);
+                token = Encoding.Unicode.GetString(tokenBytes);
             }
             finally
             {
-                SecureStringHelper.DestroySecureByteArray(passwordBytes);
+                SecureStringHelper.DestroySecureByteArray(tokenBytes);
             }
         }
 
@@ -118,35 +115,27 @@ namespace ModMyFactory
             }
         }
 
-        private bool IsLoggedIn() => !string.IsNullOrEmpty(Username) && (Password != null);
+        private bool IsLoggedIn() => !string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Token);
 
         private bool IsLoggedInWithToken() => IsLoggedIn() && !string.IsNullOrEmpty(token);
 
         public bool LogIn(Window owner, out string loginToken)
         {
+
             loginToken = null;
 
-            bool failed = false;
             if (IsLoggedInWithToken()) // Credentials and token available.
             {
                 // Token only expires on user request, best to not check and save bandwidth.
             }
             else if (IsLoggedIn()) // Only credentials available.
             {
-                AuthenticationInfo info;
-                failed = !ApiAuthentication.LogIn(Username, Password, out info);
-                if (!failed)
-                {
-                    username = info.Username;
-                    token = info.Token;
-                    if (App.Instance.Settings.SaveCredentials) Save();
-                }
+                AuthenticationInfo info = ApiAuthentication.LogIn(Username, Token);
+                username = info.Username;
+                token = info.Token;
+                if (App.Instance.Settings.SaveCredentials) Save();
             }
 
-            if (failed)
-            {
-                token = null;
-            }
 
             while (!IsLoggedInWithToken())
             {
@@ -154,28 +143,18 @@ namespace ModMyFactory
                 {
                     Owner = owner,
                     SaveCredentialsBox = { IsChecked = App.Instance.Settings.SaveCredentials },
-                    FailedText = { Visibility = failed ? Visibility.Visible : Visibility.Collapsed },
                 };
                 bool? loginResult = loginWindow.ShowDialog();
                 if (loginResult == null || loginResult == false) return false;
                 username = loginWindow.UsernameBox.Text;
-                password = loginWindow.PasswordBox.SecurePassword;
-
+                token = loginWindow.TokenBox.Text;
                 bool saveCredentials = loginWindow.SaveCredentialsBox.IsChecked ?? false;
                 App.Instance.Settings.SaveCredentials = saveCredentials;
 
-                AuthenticationInfo info;
-                failed = !ApiAuthentication.LogIn(Username, Password, out info);
-                if (failed)
-                {
-                    token = null;
-                }
-                else
-                {
-                    username = info.Username;
-                    token = info.Token;
-                    if (saveCredentials) Save();
-                }
+                AuthenticationInfo info = ApiAuthentication.LogIn(Username, Token);
+                username = info.Username;
+                token = info.Token;
+                if (saveCredentials) Save();
             }
 
             loginToken = token;
@@ -185,27 +164,26 @@ namespace ModMyFactory
         private void Save(FileInfo file)
         {
             byte[] usernameBytes = Encoding.Unicode.GetBytes(Username);
-            byte[] passwordBytes = new byte[SecureStringHelper.GetSecureStringByteCount(Password, Encoding.Unicode)];
-            SecureStringHelper.SecureStringToBytes(Password, passwordBytes, 0, Encoding.Unicode);
+            byte[] tokenBytes = Encoding.Unicode.GetBytes(Token);
 
             try
             {
                 byte[] entropy = GenerateEntropy();
                 byte[] protectedUsernameBytes = ProtectedData.Protect(usernameBytes, entropy, DataProtectionScope.CurrentUser);
-                byte[] protectedPasswordBytes = ProtectedData.Protect(passwordBytes, entropy, DataProtectionScope.CurrentUser);
+                byte[] protectedTokenBytes = ProtectedData.Protect(tokenBytes, entropy, DataProtectionScope.CurrentUser);
 
                 var template = new CredentialsExportTemplate()
                 {
                     Entropy = Convert.ToBase64String(entropy),
                     ProtectedUsername = Convert.ToBase64String(protectedUsernameBytes),
-                    ProtectedPassword = Convert.ToBase64String(protectedPasswordBytes),
+                    ProtectedToken = Convert.ToBase64String(protectedTokenBytes),
                 };
 
                 JsonHelper.Serialize(template, file);
             }
             finally
             {
-                SecureStringHelper.DestroySecureByteArray(passwordBytes);
+                SecureStringHelper.DestroySecureByteArray(tokenBytes);
             }
         }
 

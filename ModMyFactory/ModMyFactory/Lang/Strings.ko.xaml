@@ -371,8 +371,8 @@
     <sys:String x:Key="LoginWindowTitle">로그인</sys:String>
     
     <!-- headers -->
-    <sys:String x:Key="UsernameHeader">Username 또는 Email</sys:String>
-    <sys:String x:Key="PasswordHeader">비밀번호</sys:String>
+    <sys:String x:Key="UsernameHeader">Username</sys:String>
+    <sys:String x:Key="TokenHeader">토큰</sys:String>
     <sys:String x:Key="SaveCredentialsHeader">로그인 상태 유지</sys:String>
 
     <!-- messages -->

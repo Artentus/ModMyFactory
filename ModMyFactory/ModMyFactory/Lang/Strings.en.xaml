@@ -371,8 +371,8 @@
     <sys:String x:Key="LoginWindowTitle">Login</sys:String>
     
     <!-- headers -->
-    <sys:String x:Key="UsernameHeader">Username or Email</sys:String>
-    <sys:String x:Key="PasswordHeader">Password</sys:String>
+    <sys:String x:Key="UsernameHeader">Username</sys:String>
+    <sys:String x:Key="TokenHeader">Token</sys:String>
     <sys:String x:Key="SaveCredentialsHeader">Remember my login credentials</sys:String>
 
     <!-- messages -->
