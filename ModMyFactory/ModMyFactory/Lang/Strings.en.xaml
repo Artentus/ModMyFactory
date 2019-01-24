@@ -546,7 +546,7 @@
     <sys:String x:Key="OverrideCheckBox">Override settings</sys:String>
     
     <sys:String x:Key="UseLocalLoginInfo">Use Ingame Login Data</sys:String>
-    <sys:String x:Key="Token">Token</sys:String>
+    <sys:String x:Key="TokenHeader">Token</sys:String>
     <sys:String x:Key="ExportModSettingsMenuItem">Export mod-settings.json</sys:String>
     <sys:String x:Key="ImportModSettingsMenuItem">Import mod-settings.json</sys:String>
     <sys:String x:Key="RemoveModSettingsMenuItem">Remove ModSetting Data</sys:String>
