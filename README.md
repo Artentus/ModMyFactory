@@ -2,7 +2,7 @@
 
 ![alt tag](https://i.imgur.com/DyKg7m7.png)
 
-ModMyFactory is a Factorio mod manager with lots of extra features.
+ModMyFactory Refined is a Enhanced Factorio mod manager with lots of EXTRA features.
 These include:
 #### Login With Factorio API Token
 Now you can Login without Your Factorio password!
