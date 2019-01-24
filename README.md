@@ -1,9 +1,28 @@
-## ModMyFactory
+## ModMyFactory Refined
 
 ![alt tag](https://i.imgur.com/DyKg7m7.png)
 
 ModMyFactory is a Factorio mod manager with lots of extra features.
 These include:
+#### Login With Factorio API Token
+Now you can Login without Your Factorio password!
+
+#### Fixed Occupational File Deletion due ModMyFactory Directory Link
+After First MMF Launches, File Deletion can happen.
+on Refined version, Files are MOVED once before Deleting.
+
+#### Restore FMPV1 Support
+on Base MMF, FMPV1 Support are Dropped on MMF 1.7.
+FMPV1 Support NOW Re-Supported on Refined.
+
+#### Mod Download Accelation
+3x~10x Download Speed Accelation compares of Base MMF.
+
+#### Fixed Some Base MMF Error
+Select Custom Scenario Folder. etc.
+
+
+Refined MMF Also include Base ModMyFactory Features:
 
 #### Access to mods.factorio.com
 Download mods from the official mod portal. Update your mods automatically.  
