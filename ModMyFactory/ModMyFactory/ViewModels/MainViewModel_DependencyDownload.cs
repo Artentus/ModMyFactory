@@ -118,7 +118,7 @@ namespace ModMyFactory.ViewModels
                         minNum = dependencyCount - 1;
                     }
                     double minPer = ProgressCnt[minNum];
-                    progress.Report(new Tuple<double, string>(minPer, "("+ dependencyIndex + " / "+ dependencyCount + ") : "+dependencies[minNum].Name));
+                    progress.Report(new Tuple<double, string>(minPer, "("+ (minNum + 1) + " / "+ dependencyCount + ") : "+dependencies[minNum].Name));
                 }
             }
             void SubProgress_ProgressChanged(object sender, double e)
