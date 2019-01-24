@@ -115,8 +115,8 @@
                 <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor3Command}">mpwoz</Hyperlink></TextBlock>
                 <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor4Command}">Credomane Evonguard</Hyperlink></TextBlock>
                 <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor5Command}">distantcam</Hyperlink></TextBlock>
-                <TextBlock Margin="4,0">h4n9u1</TextBlock>
-                <TextBlock Margin="4,0">PolarZero</TextBlock>
+                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor6Command}">h4n9u1</Hyperlink></TextBlock>
+                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor7Command}">PolarZero</Hyperlink></TextBlock>
             </WrapPanel>
         </Grid>
 
