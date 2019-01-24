@@ -1,4 +1,4 @@
-﻿using ModMyFactory.Export;
+using ModMyFactory.Export;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.Views;
@@ -198,20 +198,8 @@ namespace ModMyFactory.ViewModels
                 }
             }
         }
-        /*
-        private class DownloadTask:Task
-        {
-            private int _tid;
-            public int ProgId { get => _tid; private set => _tid = value; }
-
-            public DownloadTask(int count, object task): base((Action)task)
-            {
-                this._tid = count;
-            }
-        }*/
         private class DownloadProgress : Progress<double>
         {
-            private int _tid;
             private int _index;
             
             /// <summary>
@@ -228,15 +216,12 @@ namespace ModMyFactory.ViewModels
             {
                 _index = index;
             }
-
         }
-
         private async Task DownloadImportedMods(ExportTemplate template, DirectoryInfo fileLocation, IProgress<double> progress, CancellationToken cancellationToken, ProgressWindow progWnd)
         {
             int progressIndex = 0;
             int progressCount = template.Mods.Length;
             
-            //https://docs.microsoft.com/ko-kr/dotnet/csharp/programming-guide/concepts/async/start-multiple-async-tasks-and-process-them-as-they-complete
             List<Task> downloadTasks = new List<Task>();
             List<Progress<double>> ProgressList = new List<Progress<double>>();
             //Progressing %
@@ -257,9 +242,9 @@ namespace ModMyFactory.ViewModels
                         }
                         minNum++;
                     }
-                    if(minNum >= template.Mods.Length - 1)
+                    if(minNum >= progressCount - 1)
                     {
-                        minNum = template.Mods.Length - 1;
+                        minNum = progressCount - 1;
                     }
                     double minPer = ProgressCnt[minNum];
                     ((ProgressViewModel)(progWnd.ViewModel)).ProgressDescription = App.Instance.GetLocalizedResourceString("ImportingDownloadingDescription") + " (" + (minNum+1) + " / " + progressCount + ") : "+ template.Mods[minNum].Name;
@@ -268,9 +253,11 @@ namespace ModMyFactory.ViewModels
             }
             void SubProgress_ProgressChanged(object sender, double e)
             {
+                if (cancellationToken.IsCancellationRequested) return;
+
                 DownloadProgress dProgress = (DownloadProgress)sender;
                
-                while (ProgressCnt.Count <= template.Mods.Length)
+                while (ProgressCnt.Count <= progressCount)
                 {
                     ProgressCnt.Add(-1);
                     ProgressNum.Add(-1);
@@ -278,21 +265,20 @@ namespace ModMyFactory.ViewModels
                 ProgressCnt[dProgress.Index] = e;
                 ProgressNum[dProgress.Index] = dProgress.Index;
             }
-            int ModIndex = 0;
-            while ( ModIndex < template.Mods.Length)
+            while (progressIndex < progressCount)
             {
                 if (cancellationToken.IsCancellationRequested) break;
 
                
-                while (downloadTasks.Count < Math.Min(5, template.Mods.Length))
+                while (downloadTasks.Count < Math.Min(4, progressCount))
                 {
-                    ModExportTemplate modTemplate = template.Mods[ModIndex];
+                    ModExportTemplate modTemplate = template.Mods[progressIndex];
 
-                    var subProgress = new DownloadProgress(ModIndex, ReportProgress);
+                    var subProgress = new DownloadProgress(progressIndex, ReportProgress);
                     subProgress.ProgressChanged += SubProgress_ProgressChanged;
                     downloadTasks.Add(DownloadIfMissing(modTemplate, fileLocation, subProgress, cancellationToken));
 
-                    ModIndex++;
+                    progressIndex++;
                 }
 
                 Task FinishedTask = await Task.WhenAny(downloadTasks);
@@ -306,7 +292,6 @@ namespace ModMyFactory.ViewModels
             {
                 Task FinishedTask = await Task.WhenAny(downloadTasks);
                 downloadTasks.Remove(FinishedTask);
-                progressIndex++;
             }
         }
 
