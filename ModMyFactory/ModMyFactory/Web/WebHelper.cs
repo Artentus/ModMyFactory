@@ -1,10 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Toqe.Downloader.Business.Contract;
+using Toqe.Downloader.Business.Contract.Events;
+using Toqe.Downloader.Business.Download;
+using Toqe.Downloader.Business.DownloadBuilder;
+using Toqe.Downloader.Business.Observer;
+using Toqe.Downloader.Business.Utils;
 
 namespace ModMyFactory.Web
 {
@@ -129,6 +137,9 @@ namespace ModMyFactory.Web
             return document;
         }
 
+        static IProgress<double> progress2 = null;
+        static DownloadProgressMonitor progressMonitor = null;
+        static MultiPartDownload download = null;
         /// <summary>
         /// Downloads the response of an HTTP request and saves it as a file.
         /// </summary>
@@ -137,55 +148,38 @@ namespace ModMyFactory.Web
         /// <param name="file">The file the data is written to.</param>
         /// <param name="progress">A progress object used to report the progress of the operation.</param>
         /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
+        /// 
+
         public static async Task DownloadFileAsync(Uri url, CookieContainer container, FileInfo file, IProgress<double> progress, CancellationToken cancellationToken)
         {
-            try
-            {
-                var handler = new HttpClientHandler();
-                if (container != null)
-                {
-                    handler.CookieContainer = container;
-                    handler.UseCookies = true;
-                }
+      
+            var requestBuilder = new SimpleWebRequestBuilder();
+            var dlChecker = new DownloadChecker();
 
-                using (var client = new HttpClient(handler, true))
-                {
-                    client.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
+            var httpDlBuilder = new SimpleDownloadBuilder(requestBuilder, dlChecker);
+            var timeForHeartbeat = 3000;
+            var timeToRetry = 5000;
+            var maxRetries = 5;
+            var rdlBuilder = new ResumingDownloadBuilder(timeForHeartbeat, timeToRetry, maxRetries, httpDlBuilder);
+            List<DownloadRange> alreadyDownloadedRanges = null;
+            var bufferSize = 4096;
+            var numberOfParts = 10;
+            download = new MultiPartDownload(url, bufferSize, numberOfParts, rdlBuilder, requestBuilder, dlChecker, alreadyDownloadedRanges);
+            var speedMonitor = new DownloadSpeedMonitor(maxSampleCount: 128);
+            speedMonitor.Attach(download);
+            progressMonitor = new DownloadProgressMonitor();
+            progressMonitor.Attach(download);
+            var dlSaver = new DownloadToFileSaver(file);
+            dlSaver.Attach(download);
+            download.DownloadCompleted += ModWebsite.OnCompleted;
+            download.DataReceived += Download_DataReceived;
+            progress2 = progress;
+            await Task.Run(() => download.Start());
+        }
 
-                    HttpResponseMessage response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-                    response.EnsureSuccessStatusCode();
-
-                    using (Stream data = await response.Content.ReadAsStreamAsync())
-                    {
-                        long? fileSize = response.Content.Headers.ContentLength;
-
-                        if (file.Directory?.Exists == false) file.Directory.Create();
-                        using (Stream fs = file.OpenWrite())
-                        {
-                            byte[] buffer = new byte[8192];
-                            int byteCount;
-                            do
-                            {
-                                byteCount = await data.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
-                                if (byteCount > 0) await fs.WriteAsync(buffer, 0, byteCount, cancellationToken);
-
-                                if (fileSize.HasValue) progress.Report((double)fs.Length / fileSize.Value);
-                            } while (byteCount > 0);
-                        }
-                    }
-
-                    progress.Report(1);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                if (file.Exists) file.Delete();
-            }
-            catch (Exception)
-            {
-                if (file.Exists) file.Delete();
-                throw;
-            }
+        private static void Download_DataReceived(DownloadDataReceivedEventArgs args)
+        {
+            progress2.Report(progressMonitor.GetCurrentProgressPercentage(download));
         }
     }
 }

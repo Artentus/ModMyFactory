@@ -80,6 +80,12 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Toqe.Downloader.Business">
+      <HintPath>Downloader\Toqe.Downloader.Business.dll</HintPath>
+    </Reference>
+    <Reference Include="Toqe.Downloader.Business.Contract">
+      <HintPath>Downloader\Toqe.Downloader.Business.Contract.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -593,6 +599,9 @@
     <Resource Include="Images\Lock_blue.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Downloader\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
