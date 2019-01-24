@@ -42,9 +42,9 @@ ModMyFactory has full localization support.
 Currently available languages are: English, German, Russian, Portuguese, Chinese, Korean (hopefully more to come).
 
 ### Download
-You can find the latest release of ModMyFactory [here](https://github.com/Artentus/ModMyFactory/releases/latest).  
-A full list of all releases can be found [here](https://github.com/Artentus/ModMyFactory/releases).
-The complete changelog can be found [here](https://github.com/Artentus/ModMyFactory/blob/master/CHANGELOG.md).
+You can find the latest release of ModMyFactory [here](https://github.com/h4n9u1/ModMyFactory/releases/latest).  
+A full list of all releases can be found [here](https://github.com/h4n9u1/ModMyFactory/releases).
+The complete changelog can be found [here](https://github.com/Artentus/h4n9u1/blob/master/CHANGELOG.md).
 
 ### System requirements
 ModMyFactory has the following system requirements:
