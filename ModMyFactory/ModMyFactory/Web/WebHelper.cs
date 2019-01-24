@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -198,6 +198,10 @@ namespace ModMyFactory.Web
                 
                 void threadedDownload()
                 {
+                    if(download == null)
+                    {
+                        return;
+                    }
                     download.Start();
 
                     ManualResetEventSlim mres = new ManualResetEventSlim(false);
@@ -205,7 +209,7 @@ namespace ModMyFactory.Web
                     for (int wait=0;wait< RND.Next(55,80);wait++)
                     {
                         mres.Wait(1000);
-                        if(Complete)
+                        if(Complete || cancellationToken.IsCancellationRequested)
                         {
                             signal.Release();
                             return;
@@ -226,7 +230,7 @@ namespace ModMyFactory.Web
                         for (int wait = 0; wait < RND.Next(40, 80); wait++)
                         {
                             mres.Wait(1000);
-                            if (Complete || download.ToDoRanges.Count == 0)
+                            if (Complete || download.ToDoRanges.Count == 0 || cancellationToken.IsCancellationRequested)
                             {
                                 download.Stop();
                                 signal.Release();
