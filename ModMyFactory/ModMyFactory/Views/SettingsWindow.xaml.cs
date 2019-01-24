@@ -36,14 +36,14 @@ namespace ModMyFactory.Views
                 }
             }
             UsernameBox.Text = GlobalCredentials.Instance.Username;
-            PasswordBox.Text = GlobalCredentials.Instance.Token;
+            TokenBox.Text = GlobalCredentials.Instance.Token;
         }
 
         private void SaveCredentialsBoxUncheckedHandler(object sender, RoutedEventArgs e)
         {
             GlobalCredentials.Instance.Token = null;
             UsernameBox.Text = null;
-            PasswordBox.Text = null;
+            TokenBox.Text = null;
         }
     }
 }
