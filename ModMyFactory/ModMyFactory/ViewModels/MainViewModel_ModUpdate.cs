@@ -1,4 +1,4 @@
-﻿using ModMyFactory.Helpers;
+using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.Views;
 using ModMyFactory.Web;
@@ -132,40 +132,108 @@ namespace ModMyFactory.ViewModels
         {
             var updateFile = await ModWebsite.DownloadUpdateAsync(modUpdate.Update, GlobalCredentials.Instance.Username, token, progress, cancellationToken);
             await Mod.Add(updateFile, Mods, Modpacks, false, true);
+            progress.Report(1);
         }
 
         private async Task UpdateModsAsyncInner(List<ModUpdateInfo> modUpdates, string token, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
-            int modCount = modUpdates.Count(item => item.IsSelected);
-            double baseProgressValue = 0;
-            foreach (var modUpdate in modUpdates)
+            try
             {
+                int ModIndex = 0;
+                int ModProgressIndex = 0;
+                int modCount = modUpdates.Count(item => item.IsSelected);
+
+                List<Task> downloadTasks = new List<Task>();
+                List<Progress<Tuple<double, string>>> ProgressList = new List<Progress<Tuple<double, string>>>();
+                //Progressing %
+                List<double> ProgressCnt = new List<double>();
+                //Progressing UID
+                List<int> ProgressNum = new List<int>();
+
+                void ReportProgress(double e)
+                {
+                    if (ProgressNum.Count > 0)
+                    {
+                        int minNum = 0;
+                        while (minNum < modCount)
+                        {
+                            if (ProgressCnt[minNum] < 1 && ProgressCnt[minNum] >= 0)
+                            {
+                                break;
+                            }
+                            minNum++;
+                        }
+                        if (minNum >= modCount - 1)
+                        {
+                            minNum = modCount - 1;
+                        }
+                        double minPer = ProgressCnt[minNum];
+                        progress.Report(new Tuple<double, string>(minPer, "(" + (minNum + 1) + " / " + modCount + ") : " + modUpdates[minNum].FriendlyName));
+                    }
+                }
+                void SubProgress_ProgressChanged(object sender, double e)
+                {
+                    if (cancellationToken.IsCancellationRequested) return;
+
+                    DownloadProgress dProgress = (DownloadProgress)sender;
+
+                    while (ProgressCnt.Count <= modCount)
+                    {
+                        ProgressCnt.Add(-1);
+                        ProgressNum.Add(-1);
+                    }
+                    ProgressCnt[dProgress.Index] = e;
+                    ProgressNum[dProgress.Index] = dProgress.Index;
+                }
+                while (ModIndex < modCount)
+                {
+                    if (cancellationToken.IsCancellationRequested) break;
+
+                    if (!modUpdates[ModIndex].IsSelected)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        ModProgressIndex++;
+                    }
+                    while (downloadTasks.Count < Math.Min(4, modCount))
+                    {
+                        if (!modUpdates[ModIndex].IsSelected)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            ModProgressIndex++;
+                        }
+                        var subProgress = new DownloadProgress(ModIndex, ReportProgress);
+                        subProgress.ProgressChanged += SubProgress_ProgressChanged;
+                        downloadTasks.Add(UpdateModAsyncInner(modUpdates[ModIndex], token, subProgress, cancellationToken));
+
+                        ModIndex++;
+                    }
+
+                    Task FinishedTask = await Task.WhenAny(downloadTasks);
+                    downloadTasks.Remove(FinishedTask);
+                    ModIndex++;
+
+                }
                 if (cancellationToken.IsCancellationRequested) return;
 
-                if (modUpdate.IsSelected)
+                while (downloadTasks.Count > 0)
                 {
-                    double modProgressValue = 0;
-                    var modProgress = new Progress<double>(value =>
-                    {
-                        modProgressValue = value / modCount;
-                        progress.Report(new Tuple<double, string>(baseProgressValue + modProgressValue, modUpdate.FriendlyName));
-                    });
-
-                    try
-                    {
-                        await UpdateModAsyncInner(modUpdate, token, modProgress, cancellationToken);
-                    }
-                    catch (HttpRequestException)
-                    {
-                        MessageBox.Show(Window,
-                            App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
-                            App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
-                            MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-
-                    baseProgressValue += modProgressValue;
+                    Task FinishedTask = await Task.WhenAny(downloadTasks);
+                    downloadTasks.Remove(FinishedTask);
                 }
+            }
+            catch (HttpRequestException)
+            {
+                MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
+                    App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
 
             ModpackTemplateList.Instance.Update(Modpacks);
