@@ -105,7 +105,7 @@ namespace ModMyFactory
                 {
                     if (CredentialsFile.Exists) Load(CredentialsFile);
                 }
-                catch (CryptographicException)
+                catch (Exception)
                 {
                     DeleteSave();
                 }
