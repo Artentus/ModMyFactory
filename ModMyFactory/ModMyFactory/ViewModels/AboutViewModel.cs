@@ -35,6 +35,9 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand Contributor5Command { get; }
 
+        public RelayCommand Contributor6Command { get; }
+
+        public RelayCommand Contributor7Command { get; }
 
         public RelayCommand Translator1Command { get; }
 
@@ -62,6 +65,8 @@ namespace ModMyFactory.ViewModels
             Contributor3Command = new RelayCommand(() => Process.Start("https://github.com/mpwoz"));
             Contributor4Command = new RelayCommand(() => Process.Start("https://github.com/credomane"));
             Contributor5Command = new RelayCommand(() => Process.Start("https://github.com/distantcam"));
+            Contributor6Command = new RelayCommand(() => Process.Start("https://github.com/h4n9u1"));
+            Contributor7Command = new RelayCommand(() => Process.Start("https://github.com/Polar-Zero"));
 
             Translator1Command = new RelayCommand(() => Process.Start("https://github.com/Averssem"));
             Translator2Command = new RelayCommand(() => Process.Start("https://www.reddit.com/user/blackbat24"));
