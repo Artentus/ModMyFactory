@@ -546,7 +546,7 @@
     <sys:String x:Key="OverrideCheckBox">재정의 설정</sys:String>
 
     <sys:String x:Key="UseLocalLoginInfo">게임 내 로그인 데이터 사용</sys:String>
-    <sys:String x:Key="Token">토큰</sys:String>
+    <sys:String x:Key="TokenHeader">토큰</sys:String>
     <sys:String x:Key="ExportModSettingsMenuItem">모드 설정 내보내기</sys:String>
     <sys:String x:Key="ImportModSettingsMenuItem">모드 설정 불러오기</sys:String>
     <sys:String x:Key="RemoveModSettingsMenuItem">모드 설정 제거</sys:String>
