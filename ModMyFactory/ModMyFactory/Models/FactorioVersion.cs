@@ -496,36 +496,6 @@ namespace ModMyFactory.Models
             }
         }
 
-        private void CreatePlayerDataLinkInternal(string localPDataPath)
-        {
-            if(!App.Instance.Settings.GetFactorioDirectory().Exists)
-            {
-                return;
-            }
-            string globalFactData = App.Instance.Settings.GetFactorioDirectory().FullName + "\\token.json";
-           
-            if (System.IO.File.Exists(localPDataPath))
-            {
-                if (System.IO.File.Exists(globalFactData))
-                {
-                    System.IO.File.Delete(globalFactData);
-                }
-                File.Copy(localPDataPath, globalFactData);
-            }
-        }
-
-        /// <summary>
-        /// Creates the directory junction for mods.
-        /// </summary>
-        public void CreatePlayerDataLink()
-        {
-            if (hasLinks)
-            {
-                string localModPath = Path.Combine(linkDirectory.FullName, "player-data.json");
-                CreatePlayerDataLinkInternal(localModPath);
-            }
-        }
-
         /// <summary>
         /// Creates all directory junctions.
         /// </summary>
@@ -536,7 +506,6 @@ namespace ModMyFactory.Models
                 CreateSaveDirectoryLink();
                 CreateScenarioDirectoryLink();
                 CreateModDirectoryLink();
-                CreatePlayerDataLink();
             }
         }
 
