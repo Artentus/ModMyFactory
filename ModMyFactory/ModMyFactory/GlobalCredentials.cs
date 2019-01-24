@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Security;
@@ -10,6 +10,7 @@ using ModMyFactory.Views;
 using ModMyFactory.Web;
 using ModMyFactory.Web.AuthenticationApi;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using WPFCore;
 
 namespace ModMyFactory
@@ -21,7 +22,7 @@ namespace ModMyFactory
         {
             public string Entropy;
             public string ProtectedUsername;
-            public string ProtectedPassword;
+            public string ProtectedToken;
         }
 
 
@@ -47,21 +48,8 @@ namespace ModMyFactory
 
 
         string username;
-        SecureString password;
-        string _token;
-        public string Token
-        {
-            get { return _token; }
-            set
-            {
-                if (value != _token)
-                {
-                    password = null;
-                    _token = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(_token)));
-                }
-            }
-        }
+        string token;
+
         public string Username
         {
             get { return username; }
@@ -70,20 +58,18 @@ namespace ModMyFactory
                 if (value != username)
                 {
                     username = value;
-                    _token = null;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Username)));
                 }
             }
         }
 
-        public SecureString Password
+        public string Token
         {
-            get { return password; }
+            get { return token; }
             set
             {
-                password = value;
-                _token = null;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Password)));
+                token = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Token)));
             }
         }
 
@@ -93,26 +79,25 @@ namespace ModMyFactory
 
             byte[] entropy = Convert.FromBase64String(template.Entropy);
             byte[] protectedUsernameBytes = Convert.FromBase64String(template.ProtectedUsername);
-            byte[] protectedPasswordBytes = Convert.FromBase64String(template.ProtectedPassword);
+            byte[] protectedTokenBytes = Convert.FromBase64String(template.ProtectedToken);
 
             byte[] usernameBytes = ProtectedData.Unprotect(protectedUsernameBytes, entropy, DataProtectionScope.CurrentUser);
-            byte[] passwordBytes = ProtectedData.Unprotect(protectedPasswordBytes, entropy, DataProtectionScope.CurrentUser);
+            byte[] tokenBytes = ProtectedData.Unprotect(protectedTokenBytes, entropy, DataProtectionScope.CurrentUser);
 
             try
             {
                 username = Encoding.Unicode.GetString(usernameBytes);
-                //password = SecureStringHelper.SecureStringFromBytes(passwordBytes, Encoding.Unicode);
-                _token = Encoding.Unicode.GetString(passwordBytes);
+                token = Encoding.Unicode.GetString(tokenBytes);
             }
             finally
             {
-                SecureStringHelper.DestroySecureByteArray(passwordBytes);
+                SecureStringHelper.DestroySecureByteArray(tokenBytes);
             }
         }
 
         private GlobalCredentials()
         {
-            _token = null;
+            token = null;
 
             if (App.Instance.Settings.SaveCredentials)
             {
@@ -120,7 +105,7 @@ namespace ModMyFactory
                 {
                     if (CredentialsFile.Exists) Load(CredentialsFile);
                 }
-                catch (CryptographicException)
+                catch (Exception)
                 {
                     DeleteSave();
                 }
@@ -131,175 +116,104 @@ namespace ModMyFactory
             }
         }
 
-        private bool IsLoggedIn() => !string.IsNullOrEmpty(Username) && (Password != null || _token != null);
+        private bool IsLoggedIn() => !string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Token);
 
-        private bool IsLoggedInWithToken() => IsLoggedIn() && !string.IsNullOrEmpty(_token);
-        
+        private bool IsLoggedInWithToken() => IsLoggedIn() && !string.IsNullOrEmpty(token);
+
+        private bool ReadFactorioCredentials(out string username, out string token)
+        {
+            var FactorioCredentialsFile = new FileInfo(Path.Combine(App.Instance.AppDataPath, @"..\Factorio\player-data.json"));
+
+            username = null;
+            token = null;
+
+            if (!FactorioCredentialsFile.Exists)
+            {
+                return false;
+            }
+            using (JsonTextReader FactorioCredentialsFileReader = new JsonTextReader(FactorioCredentialsFile.OpenText()))
+            {
+                JObject FactorioCredentials = (JObject)JToken.ReadFrom(FactorioCredentialsFileReader);
+
+                if ((username = FactorioCredentials["service-username"].ToString()) == "" ||
+                   (token = FactorioCredentials["service-token"].ToString()) == "")
+                    return false;
+            }
+            return true;
+        }
+
         public bool LogIn(Window owner, out string loginToken)
         {
+
             loginToken = null;
 
-            bool failed = false;
-            if (password == null && _token != null) // Only Token available;
+            if (ReadFactorioCredentials(out username, out token))
             {
-
+                loginToken = token;
+                return true;
             }
-            else if (IsLoggedInWithToken()) // Credentials and token available.
+
+            if (IsLoggedInWithToken()) // Credentials and token available.
             {
                 // Token only expires on user request, best to not check and save bandwidth.
             }
             else if (IsLoggedIn()) // Only credentials available.
             {
-                AuthenticationInfo info;
-                failed = !ApiAuthentication.LogIn(Username, Password, out info);
-                if (!failed)
-                {
-                    username = info.Username;
-                    _token = info.Token;
-                    if (App.Instance.Settings.SaveCredentials) Save();
-                }
+                AuthenticationInfo info = ApiAuthentication.LogIn(Username, Token);
+                username = info.Username;
+                token = info.Token;
+                if (App.Instance.Settings.SaveCredentials) Save();
             }
 
-            if (failed)
-            {
-                password = null;
-                _token = null;
-            }
 
             while (!IsLoggedInWithToken())
             {
-                bool? loginResult = false;
-                if (!LoginWindow.isOpened)
+                var loginWindow = new LoginWindow
                 {
-                    LoginWindow loginWindow = new LoginWindow
-                    {
-                        Owner = owner,
-                        SaveCredentialsBox = { IsChecked = App.Instance.Settings.SaveCredentials },
-                        FailedText = { Visibility = failed ? Visibility.Visible : Visibility.Collapsed },
-                    };
-                    loginResult = loginWindow.ShowDialog();
-                
-                    if (loginResult == null || loginResult == false) return false;
-               
-                    bool saveCredentials = loginWindow.SaveCredentialsBox.IsChecked ?? false;
-                    App.Instance.Settings.SaveCredentials = saveCredentials;
+                    Owner = owner,
+                    SaveCredentialsBox = { IsChecked = App.Instance.Settings.SaveCredentials },
+                };
+                bool? loginResult = loginWindow.ShowDialog();
+                if (loginResult == null || loginResult == false) return false;
+                username = loginWindow.UsernameBox.Text;
+                token = loginWindow.TokenBox.Text;
+                bool saveCredentials = loginWindow.SaveCredentialsBox.IsChecked ?? false;
+                App.Instance.Settings.SaveCredentials = saveCredentials;
 
-                    username = loginWindow.UsernameBox.Text;
-                    loginWindow.Close();
-
-                    if (loginWindow.useLocalToken)
-                    {
-                        DirectoryOption defoption = App.Instance.Settings.FactorioDirectoryOption;
-                        string pdata = App.Instance.Settings.GetFactorioDirectory() + "\\token.json";
-                        if (!File.Exists(pdata))
-                        {
-                            App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.AppData;
-                            pdata = App.Instance.Settings.GetFactorioDirectory() + "\\token.json";
-                            if (!File.Exists(pdata))
-                            {
-                                App.Instance.Settings.FactorioDirectoryOption = DirectoryOption.ApplicationDirectory;
-                                pdata = App.Instance.Settings.GetFactorioDirectory() + "\\token.json";
-                                if (!File.Exists(pdata))
-                                {
-                                    App.Instance.Settings.FactorioDirectoryOption = defoption;
-                                    ViewModels.SettingsViewModel.Instance.SelectFactorioDirectoryCommand.Execute();
-                                    pdata = ViewModels.SettingsViewModel.Instance.FactorioDirectory + "\\token.json";
-                                }
-                            }
-                        }
-
-                        if (File.Exists(pdata))
-                        {
-                            JsonTextReader jr = new JsonTextReader(new StringReader(File.ReadAllText(pdata)));
-                            try
-                            {
-                                while (jr.Read())
-                                {
-                                    if ((string)jr.Value == "service-username")
-                                    {
-                                        if (!jr.Read())
-                                        {
-                                            break;
-                                        }
-                                        username = (string)jr.Value;
-                                    }
-                                    else if ((string)jr.Value == "service-token")
-                                    {
-                                        if (!jr.Read())
-                                        {
-                                            break;
-                                        }
-                                        _token = (string)jr.Value;
-                                    }
-                                }
-                            }
-                           catch
-                            {
-
-                            }
-                        }
-                        if(String.IsNullOrWhiteSpace(username) || String.IsNullOrWhiteSpace(Token))
-                        {
-                            failed = true;
-                            password = null;
-                            _token = null;
-                            return false;
-                        }
-                        else
-                        {
-                            loginToken = _token;
-                            if (saveCredentials) Save();
-                            return true;
-                        }
-                    }
-                
-                    password = loginWindow.PasswordBox.SecurePassword;
-                
-                    AuthenticationInfo info;
-                    failed = !ApiAuthentication.LogIn(Username, Password, out info);
-                    if (!failed)
-                    {
-                        username = info.Username;
-                        _token = info.Token;
-                        if (saveCredentials) Save();
-
-                        loginToken = _token;
-                        return true;
-                    }
-                }
-                password = null;
-                _token = null;
-                return false;
+                AuthenticationInfo info = ApiAuthentication.LogIn(Username, Token);
+                username = info.Username;
+                token = info.Token;
+                if (saveCredentials) Save();
             }
 
-            loginToken = _token;
+            loginToken = token;
             return true;
+
         }
 
         private void Save(FileInfo file)
         {
             byte[] usernameBytes = Encoding.Unicode.GetBytes(Username);
-            byte[] passwordBytes = Encoding.Unicode.GetBytes(Token);//new byte[SecureStringHelper.GetSecureStringByteCount(Password, Encoding.Unicode)];
-            //SecureStringHelper.SecureStringToBytes(Password, passwordBytes, 0, Encoding.Unicode);
+            byte[] tokenBytes = Encoding.Unicode.GetBytes(Token);
 
             try
             {
                 byte[] entropy = GenerateEntropy();
                 byte[] protectedUsernameBytes = ProtectedData.Protect(usernameBytes, entropy, DataProtectionScope.CurrentUser);
-                byte[] protectedPasswordBytes = ProtectedData.Protect(passwordBytes, entropy, DataProtectionScope.CurrentUser);
+                byte[] protectedTokenBytes = ProtectedData.Protect(tokenBytes, entropy, DataProtectionScope.CurrentUser);
 
                 var template = new CredentialsExportTemplate()
                 {
                     Entropy = Convert.ToBase64String(entropy),
                     ProtectedUsername = Convert.ToBase64String(protectedUsernameBytes),
-                    ProtectedPassword = Convert.ToBase64String(protectedPasswordBytes),
+                    ProtectedToken = Convert.ToBase64String(protectedTokenBytes),
                 };
 
                 JsonHelper.Serialize(template, file);
             }
             finally
             {
-                SecureStringHelper.DestroySecureByteArray(passwordBytes);
+                SecureStringHelper.DestroySecureByteArray(tokenBytes);
             }
         }
 
