@@ -13,7 +13,7 @@ on Refined version, Files are MOVED once before Deleting.
 
 #### Restore FMPV1 Support
 on Base MMF, FMPV1 Support are Dropped on MMF 1.7.
-FMPV1 Support NOW Re-Supported on Refined.
+FMPV1 Support NOW Re-gained on Refined.
 
 #### Mod Download Accelation
 3x~10x Download Speed Accelation compares of Base MMF.
