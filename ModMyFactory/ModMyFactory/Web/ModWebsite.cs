@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models;
 using ModMyFactory.Web.ModApi;
-using Toqe.Downloader.Business.Contract.Events;
 
 namespace ModMyFactory.Web
 {
@@ -150,11 +149,6 @@ namespace ModMyFactory.Web
             return new Uri($"{BaseUrl}{release.DownloadUrl}?username={username}&token={token}");
         }
 
-        static bool finished = false;
-        public static void OnCompleted(DownloadEventArgs args)
-        {
-            finished = true ;
-        }
         /// <summary>
         /// Downloads a mod.
         /// </summary>
@@ -173,28 +167,23 @@ namespace ModMyFactory.Web
 
             var downloadUrl = BuildUrl(release, username, token);
             var file = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
-            
 
             try
             {
                 await WebHelper.DownloadFileAsync(downloadUrl, null, file, progress, cancellationToken);
                 if (!cancellationToken.IsCancellationRequested)
                 {
-                    while(!finished)
+                    if (ModFile.TryLoadFromFile(file, out ModFile modFile))
                     {
-                        await Task.Delay(1000);
-                    }
-                        if (ModFile.TryLoadFromFile(file, out ModFile modFile))
+                        if (modFile.InfoFile.FactorioVersion == release.InfoFile.FactorioVersion)
                         {
-                            if (modFile.InfoFile.FactorioVersion == release.InfoFile.FactorioVersion)
-                            {
-                                return await Mod.Add(modFile, parentCollection, modpackCollection, false);
-                            }
+                            return await Mod.Add(modFile, parentCollection, modpackCollection, false);
                         }
-
-                        throw new InvalidOperationException("The server sent an invalid mod file.");
                     }
+
+                    throw new InvalidOperationException("The server sent an invalid mod file.");
                 }
+            }
             catch (Exception)
             {
                 if (file.Exists) file.Delete();
@@ -216,6 +205,10 @@ namespace ModMyFactory.Web
         /// <param name="cancellationToken">A cancelation token that can be used to cancel the operation.</param>
         public static async Task<Mod> DownloadReleaseToFileAsync(ModRelease release, string username, string token, string fileName, IProgress<double> progress, CancellationToken cancellationToken)
         {
+            if(username == null || token == null)
+            {
+                return null;
+            }
             DirectoryInfo modDirectory = App.Instance.Settings.GetModDirectory(release.InfoFile.FactorioVersion);
             if (!modDirectory.Exists) modDirectory.Create();
 
