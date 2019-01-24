@@ -1,4 +1,4 @@
-﻿using ModMyFactory.Models;
+using ModMyFactory.Models;
 using ModMyFactory.Views;
 using ModMyFactory.Web;
 using System;
@@ -85,27 +85,83 @@ namespace ModMyFactory.ViewModels
             {
                 await ModWebsite.DownloadReleaseAsync(latestRelease, GlobalCredentials.Instance.Username, token, progress, cancellationToken, Mods, Modpacks);
             }
+            progress.Report(1);
         }
 
-        private async Task DownloadDependenciesInternal(ICollection<ModDependencyInfo> dependencies, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken, string token)
+        private async Task DownloadDependenciesInternal(IList<ModDependencyInfo> dependencies, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken, string token)
         {
+            int dependencyIndex = 0;
             int dependencyCount = dependencies.Count;
-            double baseProgress = 0;
-            foreach (var dependency in dependencies)
+
+            List<Task> downloadTasks = new List<Task>();
+            List<Progress<Tuple<double, string>>> ProgressList = new List<Progress<Tuple<double, string>>>();
+            //Progressing %
+            List<double> ProgressCnt = new List<double>();
+            //Progressing UID
+            List<int> ProgressNum = new List<int>();
+
+            void ReportProgress(double e)
+            {
+                if (ProgressNum.Count > 0)
+                {
+                    int minNum = 0;
+                    while (minNum < dependencyCount)
+                    {
+                        if (ProgressCnt[minNum] < 1 && ProgressCnt[minNum] >= 0)
+                        {
+                            break;
+                        }
+                        minNum++;
+                    }
+                    if (minNum >= dependencyCount - 1)
+                    {
+                        minNum = dependencyCount - 1;
+                    }
+                    double minPer = ProgressCnt[minNum];
+                    progress.Report(new Tuple<double, string>(minPer, "("+ dependencyIndex + " / "+ dependencyCount + ") : "+dependencies[minNum].Name));
+                }
+            }
+            void SubProgress_ProgressChanged(object sender, double e)
             {
                 if (cancellationToken.IsCancellationRequested) return;
 
-                double dependencyProgress = 0;
-                var subProgress = new Progress<double>(value =>
+                DownloadProgress dProgress = (DownloadProgress)sender;
+
+                while (ProgressCnt.Count <= dependencyCount)
                 {
-                    dependencyProgress = value / dependencyCount;
-                    progress.Report(new Tuple<double, string>(baseProgress + dependencyProgress, dependency.Name));
-                });
-
-                await DownloadDependency(dependency, subProgress, cancellationToken, token);
-
-                baseProgress += dependencyProgress;
+                    ProgressCnt.Add(-1);
+                    ProgressNum.Add(-1);
+                }
+                ProgressCnt[dProgress.Index] = e;
+                ProgressNum[dProgress.Index] = dProgress.Index;
             }
+            while (dependencyIndex < dependencyCount)
+            {
+                if (cancellationToken.IsCancellationRequested) break;
+
+
+                while (downloadTasks.Count < Math.Min(4, dependencyCount))
+                {
+                    var subProgress = new DownloadProgress(dependencyIndex, ReportProgress);
+                    subProgress.ProgressChanged += SubProgress_ProgressChanged;
+                    downloadTasks.Add(DownloadDependency(dependencies[dependencyIndex], subProgress, cancellationToken, token));
+
+                    dependencyIndex++;
+                }
+
+                Task FinishedTask = await Task.WhenAny(downloadTasks);
+                downloadTasks.Remove(FinishedTask);
+                dependencyIndex++;
+
+            }
+            if (cancellationToken.IsCancellationRequested) return;
+
+            while (downloadTasks.Count > 0)
+            {
+                Task FinishedTask = await Task.WhenAny(downloadTasks);
+                downloadTasks.Remove(FinishedTask);
+            }
+           
         }
 
         private async Task DownloadDependencies()
