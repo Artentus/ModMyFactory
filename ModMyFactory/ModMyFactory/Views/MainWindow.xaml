@@ -640,6 +640,11 @@
                                     <Separator/>
                                     <MenuItem Header="{DynamicResource SelectActiveModpacksMenuItem}" Command="{Binding SelectActiveModpacksCommand}"/>
                                     <MenuItem Header="{DynamicResource SelectInactiveModpacksMenuItem}" Command="{Binding SelectInactiveModpacksCommand}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{DynamicResource ExportModSettingsMenuItem}" Command="{Binding ExportSelectedModpacksCommand}"/>
+                                    <MenuItem Header="{DynamicResource ImportModSettingsMenuItem}" Command="{Binding ImportSelectedModpacksCommand}"/>
+                                    <MenuItem Header="{DynamicResource RemoveModSettingsMenuItem}" Command="{Binding ExplodeSelectedModSettingsCommand}"/>
+
                                 </Menu>
                             </Border>
                         </Popup>
@@ -690,6 +695,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
+                               
                                 <CheckBox Grid.Column="0" Margin="4,3,4,2" Style="{StaticResource ActiveInactiveCheckBoxStyle}" IsChecked="{Binding Active, Mode=TwoWay}"/>
                                 <Image Grid.Column="1" Margin="1" Source="{Binding Image}" Stretch="None" VerticalAlignment="Center"/>
                                 <TextBlock Grid.Column="2" Margin="2,0" VerticalAlignment="Center" Text="{Binding DisplayName}" IsHitTestVisible="False"/>
@@ -699,6 +705,7 @@
                                        Visibility="{Binding HasUnsatisfiedDependencies, Converter={StaticResource VisibilityConverter}}" Stretch="None" VerticalAlignment="Center"/>
                                 <Button Grid.Column="7" Margin="4,0" ToolTip="{DynamicResource RemoveToolTip}" Style="{StaticResource SmallCloseButton}"
                                     Command="{Binding RemoveFromParentCommand}"/>
+                                
                             </Grid>
                         </Border>
                     </DataTemplate>
@@ -744,17 +751,19 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <CheckBox Grid.Column="0" Margin="4" Style="{StaticResource ActiveInactiveCheckBoxStyle}" IsChecked="{Binding Active, Mode=TwoWay}"/>
-                                    <ToggleButton x:Name="RenameButton" Grid.Column="1" Margin="2,0" ToolTip="{DynamicResource RenameToolTip}" Template="{StaticResource RenameButtonTemplate}"
+                                    <CheckBox Grid.Column="1" Margin="4" Style="{StaticResource ActiveInactiveCheckBoxStyle}" IsChecked="{Binding Active, Mode=TwoWay}"/>
+                                    <CheckBox Grid.Column="0" Margin="4" Style="{StaticResource ActiveInactiveCheckBoxStyle}" IsEnabled="{Binding ModSettingsNonNull}" ToolTip="{DynamicResource ModSettingsToolTip}"  IsChecked="{Binding ModSettingEnabled, Mode=TwoWay}"/>
+                                    <ToggleButton x:Name="RenameButton" Grid.Column="2" Margin="2,0" ToolTip="{DynamicResource RenameToolTip}" Template="{StaticResource RenameButtonTemplate}"
                                                   IsChecked="{Binding Editing, Mode=TwoWay}" Focusable="False"/>
-                                    <TextBlock Grid.Column="2" Margin="2,0" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Name, Mode=OneWay}"/>
-                                    <TextBox Grid.Column="2" Margin="2,0" Padding="2" VerticalAlignment="Center" MaxLines="1"
+                                    <TextBlock Grid.Column="3" Margin="2,0" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Name, Mode=OneWay}"/>
+                                    <TextBox Grid.Column="3" Margin="2,0" Padding="2" VerticalAlignment="Center" MaxLines="1"
                                              LostFocus="RenameTextBoxLostFocusHandler" IsVisibleChanged="RenameTextBoxVisibilityChangedHandler"
                                              Text="{Binding EditingName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                              Visibility="{Binding Editing, Converter={StaticResource VisibilityConverter}, Mode=TwoWay}">
@@ -762,15 +771,15 @@
                                             <KeyBinding Key="Return" Command="{Binding EndEditCommand}"/>
                                         </TextBox.InputBindings>
                                     </TextBox>
-                                    <Button Grid.Column="3" Margin="2,0" Style="{StaticResource SettingsButtonStyle}" ToolTip="{DynamicResource ModSettingsToolTip}"
+                                    <Button Grid.Column="4" Margin="2,0" Style="{StaticResource SettingsButtonStyle}" ToolTip="{DynamicResource ModSettingsToolTip}"
                                             Visibility="{Binding HasSettings, Converter={StaticResource VisibilityConverter}}" Command="{Binding ViewSettingsCommand}"/>
-                                    <Border Grid.Column="5" Margin="2" Background="Transparent" ToolTip="{DynamicResource MissingDependenciesModpackToolTip}"
+                                    <Border Grid.Column="6" Margin="2" Background="Transparent" ToolTip="{DynamicResource MissingDependenciesModpackToolTip}"
                                             Visibility="{Binding HasUnsatisfiedDependencies, Converter={StaticResource VisibilityConverter}}">
                                         <Image Margin="1" Source="{StaticResource DependencyWarningIcon}" Stretch="None"/>
                                     </Border>
-                                    <ToggleButton Grid.Column="6" Margin="2,0" ToolTip="{DynamicResource LockToolTip}" Template="{StaticResource LockButtonTemplate}"
+                                    <ToggleButton Grid.Column="7" Margin="2,0" ToolTip="{DynamicResource LockToolTip}" Template="{StaticResource LockButtonTemplate}"
                                                   IsChecked="{Binding IsLocked, Mode=TwoWay}" Focusable="False"/>
-                                    <Button Grid.Column="7" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
+                                    <Button Grid.Column="8" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
                                             CommandParameter="{StaticResource True}" Command="{Binding DeleteCommand}"/>
                                 </Grid>
                             </Expander.Header>
@@ -800,6 +809,12 @@
                         <Separator/>
                         <MenuItem Header="{DynamicResource SelectActiveModpacksMenuItem}" Command="{Binding SelectActiveModpacksCommand}"/>
                         <MenuItem Header="{DynamicResource SelectInactiveModpacksMenuItem}" Command="{Binding SelectInactiveModpacksCommand}"/>
+
+                        <Separator/>
+                        <MenuItem Header="{DynamicResource ExportModSettingsMenuItem}" Command="{Binding ExportSelectedModSettingsCommand}"/>
+                        <MenuItem Header="{DynamicResource ImportModSettingsMenuItem}" Command="{Binding ImportSelectedModSettingsCommand}"/>
+                        <MenuItem Header="{DynamicResource RemoveModSettingsMenuItem}" Command="{Binding ExplodeSelectedModSettingsCommand}"/>
+
                     </ContextMenu>
                 </controls:DragDropReadyListBox.ContextMenu>
             </controls:DragDropReadyListBox>

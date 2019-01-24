@@ -371,8 +371,8 @@
     <sys:String x:Key="LoginWindowTitle">로그인</sys:String>
     
     <!-- headers -->
-    <sys:String x:Key="UsernameHeader">Username</sys:String>
-    <sys:String x:Key="TokenHeader">토큰</sys:String>
+    <sys:String x:Key="UsernameHeader">Username 또는 Email</sys:String>
+    <sys:String x:Key="PasswordHeader">비밀번호</sys:String>
     <sys:String x:Key="SaveCredentialsHeader">로그인 상태 유지</sys:String>
 
     <!-- messages -->
@@ -545,5 +545,21 @@
     <!-- checkboxes -->
     <sys:String x:Key="OverrideCheckBox">재정의 설정</sys:String>
 
+    <sys:String x:Key="UseLocalLoginInfo">게임 내 로그인 데이터 사용</sys:String>
+    <sys:String x:Key="Token">토큰</sys:String>
+    <sys:String x:Key="ExportModSettingsMenuItem">모드 설정 내보내기</sys:String>
+    <sys:String x:Key="ImportModSettingsMenuItem">모드 설정 불러오기</sys:String>
+    <sys:String x:Key="RemoveModSettingsMenuItem">모드 설정 제거</sys:String>
+    
+    <sys:String x:Key="Information.NoModpack.Message">이 모드팩 파일은 구 ModMyFactory 1.9 이전 버전에서 작성되었습니다. New ModMyFactory에서 이전 파일의 모드 설정 지원이 중단되었습니다. &#x0a;</sys:String>
+    <sys:String x:Key="Information.NoModpack.Title">동작 사용 불가</sys:String>
+    <sys:String x:Key="Question.UpdateModSettings.Message">선택한 모드 설정을 정말로 업데이트 하시겠습니까?</sys:String>
+    <sys:String x:Key="Question.UpdateModSettings.Title">확인</sys:String>
+    <sys:String x:Key="LoadModSettings">모드 설정 불러오기 :</sys:String>
+    <sys:String x:Key="SaveModSettings">모드 설정 저장 :</sys:String>
+    <sys:String x:Key="Question.RemoveModSetting.Message">다음 모드팩의 모드 설정 데이터를 삭제하시겠습니까? :</sys:String>
+     <sys:String x:Key="Question.RemoveModSetting.title">모드 설정 삭제</sys:String>
+        
+    
 </ResourceDictionary>
 

@@ -210,7 +210,7 @@ namespace ModMyFactory.ViewModels
             if (newValue != allModsActive)
             {
                 allModsActive = newValue;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModsActive)));
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(allModsActive)));
             }
         }
 
@@ -352,6 +352,23 @@ namespace ModMyFactory.ViewModels
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModpacksActive)));
                 }
             }
+        }
+        public void ResetModSettings()
+        {
+            if (Modpacks.Count == 0 || allModpacksSelectedChanging)
+                return;
+            
+            for (int i = 1; i < Modpacks.Count; i++)
+            {
+                if (Modpacks[i].ModSettingEnabled == true)
+                {
+                    Modpacks[i].ModSettingEnabled = false;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModpacksView)));
+                    break;
+                }
+            }
+
+            
         }
 
         private void SetAllModpacksActive()
@@ -566,6 +583,11 @@ namespace ModMyFactory.ViewModels
 
         public RelayCommand<bool> ActivateDependenciesCommand { get; }
 
+        public RelayCommand ExportSelectedModSettingsCommand { get; }
+
+        public RelayCommand ImportSelectedModSettingsCommand { get; }
+        public RelayCommand ExplodeSelectedModSettingsCommand { get; }
+
         #endregion
 
         public IReadOnlyCollection<Theme> Themes { get; }
@@ -736,6 +758,10 @@ namespace ModMyFactory.ViewModels
                 SelectActiveModpacksCommand = new RelayCommand(SelectActiveModpacks);
                 SelectInactiveModpacksCommand = new RelayCommand(SelectInactiveModpacks);
 
+                ExportSelectedModSettingsCommand = new RelayCommand(ExportSelectedModSettings, ModpacksSelected);
+                ImportSelectedModSettingsCommand = new RelayCommand(ImportSelectedModSettings, ModpacksSelected);
+                ExplodeSelectedModSettingsCommand = new RelayCommand(ExplodeSelectedModSettings, ModpacksSelected);
+
                 DeleteSelectedModsAndModpacksCommand = new RelayCommand(DeleteSelectedModsAndModpacks, () => ModsSelected() || ModpacksSelected());
 
                 ClearModFilterCommand = new RelayCommand(() => ModFilterPattern = string.Empty);
@@ -887,7 +913,8 @@ namespace ModMyFactory.ViewModels
                 newName = $"{name} {counter}";
             }
 
-            Modpack modpack = new Modpack(newName, false, Modpacks);
+            //TBD!!!
+            Modpack modpack = new Modpack(newName, false, Modpacks ,null);
             modpack.ParentView = ModpacksView;
             Modpacks.Add(modpack);
 
@@ -1138,11 +1165,10 @@ namespace ModMyFactory.ViewModels
             settings.SaveCredentials = settingsWindow.SaveCredentialsBox.IsChecked ?? false;
             if (settings.SaveCredentials)
             {
-                if (settingsWindow.TokenBox.Text.Length > 0)
+                if (settingsWindow.PasswordBox.Text.Length > 0)
                 {
                     GlobalCredentials.Instance.Username = settingsWindow.UsernameBox.Text;
-                    GlobalCredentials.Instance.Token = settingsWindow.TokenBox.Text;
-
+                    GlobalCredentials.Instance.Token = settingsWindow.PasswordBox.Text;
                     GlobalCredentials.Instance.Save();
                 }
             }
@@ -1349,6 +1375,99 @@ namespace ModMyFactory.ViewModels
         private void DeactivateSelectedModpacks()
         {
             SetSelectedModpacksActiveState(false);
+        }
+
+        private  void ExportSelectedModSettings()
+        {
+            foreach (Modpack modpack in Modpacks)
+            {
+                if (modpack.IsSelected)
+                {
+                   if (modpack.ModSettings != null)
+                    {
+                        var dialog = new VistaSaveFileDialog();
+                        dialog.Title = App.Instance.GetLocalizedResourceString("LoadModSettings") + modpack.Name;
+                        dialog.FileName = "mod-settings.dat";
+                        dialog.Filter = App.Instance.GetLocalizedResourceString("LoadModSettings") + modpack.Name + " (mod-settings.dat)|mod-settings.dat";
+                        bool? result = dialog.ShowDialog(Window);
+                        if (result.HasValue && result.Value)
+                        {
+                            try
+                            {
+                                File.WriteAllBytes(dialog.FileName, Convert.FromBase64String(modpack.ModSettings));
+                            }
+                            catch { }
+                            
+                        }
+                    }
+                   else
+                    {
+                        MessageBox.Show(Window,
+                App.Instance.GetLocalizedMessage("NoModpack", MessageType.Information),
+                App.Instance.GetLocalizedMessageTitle("NoModpack", MessageType.Information),
+                MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            
+        }
+        private void ExplodeSelectedModSettings()
+        {
+            foreach (Modpack modpack in Modpacks)
+            {
+                if (modpack.IsSelected)
+                {
+                    if (modpack.ModSettings != null)
+                    {
+                        MessageBoxResult mbr = MessageBox.Show(Window,
+                 App.Instance.GetLocalizedMessage("RemoveModSetting", MessageType.Question),
+                 App.Instance.GetLocalizedMessageTitle("RemoveModSetting", MessageType.Question),
+                 MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+                        if (mbr == MessageBoxResult.No)
+                        {
+                            continue;
+                        }
+                    }
+                    modpack.ModSettings = null;
+
+                }
+            }
+        }
+        private void ImportSelectedModSettings()
+        {
+            foreach (Modpack modpack in Modpacks)
+            {
+                if (modpack.IsSelected)
+                {
+                    if (modpack.ModSettings != null)
+                    {
+                        MessageBoxResult mbr = MessageBox.Show(Window,
+                 App.Instance.GetLocalizedMessage("UpdateModSettings", MessageType.Question),
+                 App.Instance.GetLocalizedMessageTitle("UpdateModSettings", MessageType.Question),
+                 MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+                        if(mbr == MessageBoxResult.No)
+                        {
+                            continue;
+                        }
+                    }
+                    var dialog = new VistaOpenFileDialog();
+                    dialog.Multiselect = true;
+                    dialog.Title = App.Instance.GetLocalizedResourceString("LoadModSettings") + modpack.Name;
+                    dialog.Filter = App.Instance.GetLocalizedResourceString("LoadModSettings") + modpack.Name + " (mod-settings.dat)|mod-settings.dat";
+                    bool? result = dialog.ShowDialog(Window);
+                    if (result.HasValue && result.Value)
+                    {
+                        try
+                        {
+                            modpack.ModSettings = Convert.ToBase64String(File.ReadAllBytes(dialog.FileName));
+
+                        }
+                        catch { }
+                    }
+                    
+                }
+            }
+
         }
 
         private void DeleteSelectedModpacks()

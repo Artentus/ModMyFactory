@@ -451,7 +451,7 @@ namespace ModMyFactory.ViewModels
                 if (value != scenarioDirectoryIsCustom)
                 {
                     scenarioDirectoryIsCustom = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SavegameDirectoryIsCustom)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(scenarioDirectoryIsCustom)));
                     ValidateSettings();
                 }
             }

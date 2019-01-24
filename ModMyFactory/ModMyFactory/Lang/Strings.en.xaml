@@ -371,8 +371,8 @@
     <sys:String x:Key="LoginWindowTitle">Login</sys:String>
     
     <!-- headers -->
-    <sys:String x:Key="UsernameHeader">Username</sys:String>
-    <sys:String x:Key="TokenHeader">Token</sys:String>
+    <sys:String x:Key="UsernameHeader">Username or Email</sys:String>
+    <sys:String x:Key="PasswordHeader">Password</sys:String>
     <sys:String x:Key="SaveCredentialsHeader">Remember my login credentials</sys:String>
 
     <!-- messages -->
@@ -544,5 +544,19 @@
     
     <!-- checkboxes -->
     <sys:String x:Key="OverrideCheckBox">Override settings</sys:String>
+    
+    <sys:String x:Key="UseLocalLoginInfo">Use Ingame Login Data</sys:String>
+    <sys:String x:Key="Token">Token</sys:String>
+    <sys:String x:Key="ExportModSettingsMenuItem">Export mod-settings.json</sys:String>
+    <sys:String x:Key="ImportModSettingsMenuItem">Import mod-settings.json</sys:String>
+    <sys:String x:Key="RemoveModSettingsMenuItem">Remove ModSetting Data</sys:String>
+    
+    <sys:String x:Key="Information.NoModpack.Message">This modpack file was created in Old ModMyFactory. ModSetttings Support for old files has been dropped as of New ModMyFactory.&#x0a;</sys:String>
+    <sys:String x:Key="Information.NoModpack.Title">Operation not possible</sys:String>
+    <sys:String x:Key="LoadModSettings">Load ModSettings for Modpack :</sys:String>
+    <sys:String x:Key="SaveModSettings">Save ModSettings of Modpack :</sys:String>
+    <sys:String x:Key="Question.RemoveModSetting.Message">Operation Will Remove ModSetting Data for Modpack :</sys:String>
+ <sys:String x:Key="Question.RemoveModSetting.title">Remove ModSetting Data</sys:String>
+        
 
 </ResourceDictionary>

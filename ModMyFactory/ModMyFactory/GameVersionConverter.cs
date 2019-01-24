@@ -16,6 +16,10 @@ namespace ModMyFactory
         {
             JToken token = JToken.Load(reader);
             string value = token.Value<string>();
+            if(value == null)
+            {
+                return null;
+            }
             return GameCompatibleVersion.Parse(value);
         }
 

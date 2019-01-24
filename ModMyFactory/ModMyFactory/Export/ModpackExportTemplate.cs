@@ -31,7 +31,7 @@ namespace ModMyFactory.Export
                 }
             }
 
-            return new ModpackExportTemplate(modpack.Name, mods.ToArray(), modpacks.ToArray());
+            return new ModpackExportTemplate(modpack.Name, mods.ToArray(), modpacks.ToArray(), modpack.ModSettings);
         }
 
         [DefaultValue(null)]
@@ -42,8 +42,9 @@ namespace ModMyFactory.Export
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string[] Modpacks { get; }
 
-        private ModpackExportTemplate(string name, ModExportTemplate[] mods, string[] modpacks)
-            : this(-1, name, mods, modpacks, null, null)
+
+        private ModpackExportTemplate(string name, ModExportTemplate[] mods, string[] modpacks, string modSettings)
+            : this(-1, name, mods, modpacks, null, null, modSettings)
         { }
 
         //----------------------------------------------------------------------------------------------------------------------------
@@ -76,9 +77,12 @@ namespace ModMyFactory.Export
         [DefaultValue(null)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int[] ModpackIds { get; }
+        [DefaultValue(null)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string ModSettings { get; }
 
         [JsonConstructor]
-        private ModpackExportTemplate(int uid, string name, ModExportTemplate[] mods, string[] modpacks, int[] modIds, int[] modpackIds)
+        private ModpackExportTemplate(int uid, string name, ModExportTemplate[] mods, string[] modpacks, int[] modIds, int[] modpackIds, string modSettings)
         {
             Uid = uid;
             Name = name;
@@ -86,9 +90,10 @@ namespace ModMyFactory.Export
             Modpacks = modpacks;
             ModIds = modIds;
             ModpackIds = modpackIds;
+           ModSettings = modSettings;
         }
 
-        public ModpackExportTemplate(Modpack modpack, int[] modIds, int[] modpackIds)
+        public ModpackExportTemplate(Modpack modpack, int[] modIds, int[] modpackIds, string modSettings)
         {
             Uid = globalUid;
             globalUid++;
@@ -97,6 +102,7 @@ namespace ModMyFactory.Export
             Name = modpack.Name;
             ModIds = modIds;
             ModpackIds = modpackIds;
+            ModSettings = modSettings;
         }
 
 

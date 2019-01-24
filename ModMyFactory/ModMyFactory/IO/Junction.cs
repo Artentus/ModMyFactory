@@ -54,7 +54,7 @@ namespace ModMyFactory.IO
                     var privileges = new TokenPrivileges
                     {
                         PrivilegeCount = 1,
-                        Privileges = new []
+                        Privileges = new[]
                         {
                             new Privilege()
                             {

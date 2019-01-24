@@ -188,7 +188,7 @@ namespace ModMyFactory.Export
                     if (exportTemplate != null) modpackIds.Add(exportTemplate.Uid);
                 }
 
-                var modpackExportTemplate = new ModpackExportTemplate(modpack.Modpack, modIds.ToArray(), modpackIds.ToArray());
+                var modpackExportTemplate = new ModpackExportTemplate(modpack.Modpack, modIds.ToArray(), modpackIds.ToArray(), modpack.Modpack.ModSettings);
                 modpackExportTemplates.Add(modpackExportTemplate);
             }
 

@@ -12,6 +12,11 @@ namespace ModMyFactory.Views
         private void LoadedHandler(object sender, RoutedEventArgs e)
         {
             TabControl.SelectedIndex = 0;
+
+            if(SaveCredentialsBox.IsChecked == true)
+            {
+                SaveCredentialsBoxCheckedHandler(sender, e);
+            }
         }
 
         private void OKButtonClickHandler(object sender, RoutedEventArgs e)
@@ -21,14 +26,24 @@ namespace ModMyFactory.Views
 
         private void SaveCredentialsBoxCheckedHandler(object sender, RoutedEventArgs e)
         {
+            string tokenout = GlobalCredentials.Instance.Token;
+            if (this.IsLoaded)
+            {
+                if (!GlobalCredentials.Instance.LogIn(this, out tokenout))
+                {
+                    SaveCredentialsBox.IsChecked = false;
+                    return;
+                }
+            }
             UsernameBox.Text = GlobalCredentials.Instance.Username;
-            TokenBox.Text = GlobalCredentials.Instance.Token;
+            PasswordBox.Text = GlobalCredentials.Instance.Token;
         }
 
         private void SaveCredentialsBoxUncheckedHandler(object sender, RoutedEventArgs e)
         {
+            GlobalCredentials.Instance.Token = null;
             UsernameBox.Text = null;
-            TokenBox.Text = null;
+            PasswordBox.Text = null;
         }
     }
 }

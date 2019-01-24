@@ -369,6 +369,40 @@ namespace ModMyFactory.Models
             return path;
         }
 
+        /// <summary>
+        /// Move Directory Safely.
+        /// </summary>
+        /// <param name="source">Source Directory</param>
+        /// <param name="destination">Destination Directory</param>
+        public static void RobustMove(string source, string destination)
+        {
+            //move if directories are on the same volume
+            if (Path.GetPathRoot(source) == Path.GetPathRoot(destination))
+            {
+                System.IO.Directory.Move(source, destination);
+            }
+            else
+            {
+                CopyFilesRecursively(new DirectoryInfo(source), new DirectoryInfo(destination));
+                System.IO.Directory.Delete(source, true);
+            }
+        }
+        private static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
+        {
+            foreach (DirectoryInfo dir in source.GetDirectories())
+                CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
+            foreach (FileInfo file in source.GetFiles())
+                file.CopyTo(Path.Combine(target.FullName, file.Name));
+        }
+        internal static void DeleteFilesRecursively(DirectoryInfo target)
+        {
+
+            foreach (FileInfo file in target.GetFiles())
+                file.Delete();
+            foreach (DirectoryInfo dir in target.GetDirectories())
+                DeleteFilesRecursively(dir);
+        }
+
         private void CreateSaveDirectoryLinkInternal(string localSavePath)
         {
             var globalSaveDirectory = App.Instance.Settings.GetSavegameDirectory();
@@ -382,7 +416,7 @@ namespace ModMyFactory.Models
             else
             {
                 if (System.IO.Directory.Exists(localSaveJunction.FullName))
-                    System.IO.Directory.Delete(localSaveJunction.FullName, true);
+                   RobustMove(localSaveJunction.FullName, globalSaveDirectory.FullName);
 
                 localSaveJunction.Create(globalSaveDirectory.FullName);
             }
@@ -413,7 +447,7 @@ namespace ModMyFactory.Models
             else
             {
                 if (System.IO.Directory.Exists(localScenarioJunction.FullName))
-                    System.IO.Directory.Delete(localScenarioJunction.FullName, true);
+                    RobustMove(localScenarioJunction.FullName, globalScenarioDirectory.FullName);
 
                 localScenarioJunction.Create(globalScenarioDirectory.FullName);
             }
@@ -444,7 +478,7 @@ namespace ModMyFactory.Models
             else
             {
                 if (System.IO.Directory.Exists(localModJunction.FullName))
-                    System.IO.Directory.Delete(localModJunction.FullName, true);
+                    RobustMove(localModJunction.FullName, globalModDirectory.FullName);
 
                 localModJunction.Create(globalModDirectory.FullName);
             }
@@ -462,6 +496,36 @@ namespace ModMyFactory.Models
             }
         }
 
+        private void CreatePlayerDataLinkInternal(string localPDataPath)
+        {
+            if(!App.Instance.Settings.GetFactorioDirectory().Exists)
+            {
+                return;
+            }
+            string globalFactData = App.Instance.Settings.GetFactorioDirectory().FullName + "\\token.json";
+           
+            if (System.IO.File.Exists(localPDataPath))
+            {
+                if (System.IO.File.Exists(globalFactData))
+                {
+                    System.IO.File.Delete(globalFactData);
+                }
+                File.Copy(localPDataPath, globalFactData);
+            }
+        }
+
+        /// <summary>
+        /// Creates the directory junction for mods.
+        /// </summary>
+        public void CreatePlayerDataLink()
+        {
+            if (hasLinks)
+            {
+                string localModPath = Path.Combine(linkDirectory.FullName, "player-data.json");
+                CreatePlayerDataLinkInternal(localModPath);
+            }
+        }
+
         /// <summary>
         /// Creates all directory junctions.
         /// </summary>
@@ -472,6 +536,7 @@ namespace ModMyFactory.Models
                 CreateSaveDirectoryLink();
                 CreateScenarioDirectoryLink();
                 CreateModDirectoryLink();
+                CreatePlayerDataLink();
             }
         }
 

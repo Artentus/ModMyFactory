@@ -24,6 +24,7 @@ namespace ModMyFactory.Models
     {
         string name;
         string editingName;
+        string modsetting;
         readonly ModpackCollection parentCollection;
         bool editing;
         bool? active;
@@ -33,7 +34,19 @@ namespace ModMyFactory.Models
         bool hasUnsatisfiedDependencies;
         bool isLocked;
         Dictionary<IModReference, IEnumerable<IHasModSettings>> proxyDict;
-
+        public string ModSettings
+        {
+            get { return modsetting; }
+            set
+            {
+                if (value != modsetting)
+                {
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModSettings)));
+                    modsetting = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModSettingsNonNull)));
+                }
+            }
+        }
         private string GetUniqueName(string baseName)
         {
             int counter = 0;
@@ -79,7 +92,37 @@ namespace ModMyFactory.Models
                 }
             }
         }
+        bool modSettingEnabled = false;
+        public bool? ModSettingsNonNull
+        {
+            get { return ModSettings != null; }
+        }
+        public bool? ModSettingEnabled
+        {
+            get { return modSettingEnabled; }
+            set
+            {
+                if (value != modSettingEnabled)
+                {
+                    if(value == true)
+                    {
+                        MainViewModel.Instance.ResetModSettings();
+                        if(ModSettings != null)
+                        {
+                            System.IO.File.WriteAllBytes(App.Instance.Settings.GetModDirectory() + "\\mod-settings.dat", Convert.FromBase64String(ModSettings));
+                           
+                        }
+                        else
+                        {
+                            value = false;
+                        }
+                    }
 
+                    modSettingEnabled = value== true ? true : false;
+                }
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModSettingEnabled)));
+            }
+        }
         /// <summary>
         /// Indicates whether the modpack is currently active.
         /// </summary>
@@ -500,7 +543,7 @@ namespace ModMyFactory.Models
         /// </summary>
         /// <param name="name">The name of the modpack.</param>
         /// <param name="parentCollection">The collection containing this modpack.</param>
-        public Modpack(string name, bool isLocked, ModpackCollection parentCollection)
+        public Modpack(string name, bool isLocked, ModpackCollection parentCollection, string settings)
         {
             this.parentCollection = parentCollection;
             Name = name;
@@ -518,6 +561,8 @@ namespace ModMyFactory.Models
             DeleteCommand = new RelayCommand<bool?>(showPrompt => Delete(showPrompt ?? true));
             EndEditCommand = new RelayCommand(EndEdit, () => Editing);
             ViewSettingsCommand = new RelayCommand(ViewSettings);
+
+            ModSettings = settings;
         }
 
         public void BeginEdit()

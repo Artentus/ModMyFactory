@@ -39,6 +39,8 @@ namespace ModMyFactory
             public ModpackTemplateMod[] Mods { get; set; }
 
             public string[] Modpacks { get; set; }
+
+            public string ModSettings { get; set; }
         }
 
         static ModpackTemplateList instance;
@@ -103,7 +105,7 @@ namespace ModMyFactory
         {
             foreach (var template in Modpacks)
             {
-                var modpack = new Modpack(template.Name, template.IsLocked, modpackList);
+                var modpack = new Modpack(template.Name, template.IsLocked, modpackList, template.ModSettings);
                 if (modpackView != null) modpack.ParentView = modpackView;
 
                 foreach (ModpackTemplateMod modTemplate in template.Mods)
@@ -144,6 +146,7 @@ namespace ModMyFactory
                                        .Select(mod => new ModpackTemplateMod(mod.Name, mod.FactorioVersion))
                                        .ToArray(),
                     Modpacks = modpack.Mods.Where(item => item is ModpackReference).Select(item => item.DisplayName).ToArray(),
+                    ModSettings = modpack.ModSettings
                 };
 
                 index++;

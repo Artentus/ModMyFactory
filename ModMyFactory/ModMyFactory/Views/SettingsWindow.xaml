@@ -91,10 +91,10 @@
                                 </Grid.RowDefinitions>
 
                                 <CheckBox x:Name="SaveCredentialsBox" Grid.Row="0" Grid.Column="0" Margin="2,0,2,6" Content="{DynamicResource SaveCredentialsHeader}" Checked="SaveCredentialsBoxCheckedHandler" Unchecked="SaveCredentialsBoxUncheckedHandler"/>
-                                <TextBlock Grid.Row="1" Grid.Column="0" Margin="10,0" Text="{DynamicResource UsernameHeader}" IsEnabled="{Binding IsChecked, ElementName=SaveCredentialsBox}"/>
-                                <TextBox x:Name="UsernameBox" Grid.Row="2" Grid.Column="0" Margin="10,2" Padding="2,3" MaxLines="1" IsEnabled="{Binding IsChecked, ElementName=SaveCredentialsBox}"/>
-                                <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,0" Text="{DynamicResource TokenHeader}" IsEnabled="{Binding IsChecked, ElementName=SaveCredentialsBox}"/>
-                                <TextBox x:Name="TokenBox" Grid.Row="4" Grid.Column="0" Margin="10,2" Padding="2,3" IsEnabled="{Binding IsChecked, ElementName=SaveCredentialsBox}"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Margin="10,0" Text="{DynamicResource UsernameHeader}" />
+                                <TextBox x:Name="UsernameBox" Grid.Row="2" Grid.Column="0" Margin="10,2" Padding="2,3" MaxLines="1" IsEnabled="False"/>
+                                <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,0" Text="{DynamicResource Token}"/>
+                                <TextBox x:Name="PasswordBox" Grid.Row="4" Grid.Column="0" Margin="10,2" Padding="2,3" IsEnabled="False"/>
                             </Grid>
                         </GroupBox>
                     </Grid>
