@@ -189,14 +189,6 @@ namespace ModMyFactory.ViewModels
                 {
                     if (cancellationToken.IsCancellationRequested) break;
 
-                    if (!modUpdates[ModIndex].IsSelected)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        ModProgressIndex++;
-                    }
                     while (downloadTasks.Count < Math.Min(4, modCount))
                     {
                         if (!modUpdates[ModIndex].IsSelected)
