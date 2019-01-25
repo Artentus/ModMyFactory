@@ -193,6 +193,7 @@ namespace ModMyFactory.ViewModels
                     {
                         if (!modUpdates[ModIndex].IsSelected)
                         {
+                            ModIndex++;
                             continue;
                         }
                         else
@@ -208,8 +209,6 @@ namespace ModMyFactory.ViewModels
 
                     Task FinishedTask = await Task.WhenAny(downloadTasks);
                     downloadTasks.Remove(FinishedTask);
-                    ModIndex++;
-
                 }
                 if (cancellationToken.IsCancellationRequested) return;
 
