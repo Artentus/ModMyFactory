@@ -139,7 +139,6 @@ namespace ModMyFactory.ViewModels
             {
                 if (cancellationToken.IsCancellationRequested) break;
 
-
                 while (downloadTasks.Count < Math.Min(4, dependencyCount))
                 {
                     var subProgress = new DownloadProgress(dependencyIndex, ReportProgress);
@@ -151,8 +150,6 @@ namespace ModMyFactory.ViewModels
 
                 Task FinishedTask = await Task.WhenAny(downloadTasks);
                 downloadTasks.Remove(FinishedTask);
-                dependencyIndex++;
-
             }
             if (cancellationToken.IsCancellationRequested) return;
 
