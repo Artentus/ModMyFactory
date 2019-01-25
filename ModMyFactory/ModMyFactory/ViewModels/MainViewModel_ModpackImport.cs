@@ -269,7 +269,6 @@ namespace ModMyFactory.ViewModels
             {
                 if (cancellationToken.IsCancellationRequested) break;
 
-               
                 while (downloadTasks.Count < Math.Min(4, progressCount))
                 {
                     ModExportTemplate modTemplate = template.Mods[progressIndex];
@@ -283,8 +282,6 @@ namespace ModMyFactory.ViewModels
 
                 Task FinishedTask = await Task.WhenAny(downloadTasks);
                 downloadTasks.Remove(FinishedTask);
-                progressIndex++;
-                
             }
             if (cancellationToken.IsCancellationRequested) return;
 
