@@ -31,6 +31,12 @@ namespace ModMyFactory.Models
                 {
                     isSelected = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsSelected)));
+
+                    if (!isSelected)
+                    {
+                        foreach (var version in ModVersions)
+                            version.IsSelected = false;
+                    }
                 }
             }
         }

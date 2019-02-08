@@ -101,7 +101,7 @@
                 </Grid>
             </TabItem>
             
-            <TabItem Header="{DynamicResource LocationsTabHeader}">
+            <TabItem Header="{DynamicResource LocationsTabHeader}" IsSelected="True">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition SharedSizeGroup="TabContent"/>

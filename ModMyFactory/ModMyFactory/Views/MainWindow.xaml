@@ -715,17 +715,38 @@
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
 
-                    <ControlTemplate x:Key="LockButtonTemplate" TargetType="{x:Type ToggleButton}">
-                        <Image x:Name="Image" Source="{DynamicResource LockButtonIcon}" Stretch="None" VerticalAlignment="Center"/>
+                    <Style x:Key="LockButtonStyle" TargetType="{x:Type ToggleButton}">
+                        <Style.Setters>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                        <Image x:Name="Image" Source="{DynamicResource LockButtonIcon}" Stretch="None" VerticalAlignment="Center"/>
 
-                        <ControlTemplate.Triggers>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Trigger.Setters>
+                                                    <Setter TargetName="Image" Property="Source" Value="{DynamicResource LockHoverIcon}"/>
+                                                </Trigger.Setters>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="ToolTip" Value="{DynamicResource LockToolTip}"/>
+                        </Style.Setters>
+                        <Style.Triggers>
                             <Trigger Property="IsChecked" Value="True">
                                 <Trigger.Setters>
-                                    <Setter TargetName="Image" Property="Source" Value="{DynamicResource LockHoverIcon}"/>
+                                    <Setter Property="ToolTip" Value="{DynamicResource UnlockToolTip}"/>
                                 </Trigger.Setters>
                             </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
+                            <Trigger Property="IsChecked" Value="{x:Null}">
+                                <Trigger.Setters>
+                                    <Setter Property="ToolTip" Value="{DynamicResource LockToolTip}"/>
+                                </Trigger.Setters>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
                 </controls:DragDropReadyListBox.Resources>
 
                 <controls:DragDropReadyListBox.ItemContainerStyle>
@@ -768,7 +789,7 @@
                                             Visibility="{Binding HasUnsatisfiedDependencies, Converter={StaticResource VisibilityConverter}}">
                                         <Image Margin="1" Source="{StaticResource DependencyWarningIcon}" Stretch="None"/>
                                     </Border>
-                                    <ToggleButton Grid.Column="6" Margin="2,0" ToolTip="{DynamicResource LockToolTip}" Template="{StaticResource LockButtonTemplate}"
+                                    <ToggleButton Grid.Column="6" Margin="2,0" Style="{StaticResource LockButtonStyle}"
                                                   IsChecked="{Binding IsLocked, Mode=TwoWay}" Focusable="False"/>
                                     <Button Grid.Column="7" Margin="4,0" ToolTip="{DynamicResource DeleteToolTip}" Style="{StaticResource SmallCloseButton}"
                                             CommandParameter="{StaticResource True}" Command="{Binding DeleteCommand}"/>
