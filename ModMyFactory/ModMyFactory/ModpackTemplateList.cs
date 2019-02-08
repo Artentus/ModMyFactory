@@ -13,19 +13,29 @@ namespace ModMyFactory
     [JsonObject(MemberSerialization.OptIn)]
     sealed class ModpackTemplateList
     {
-        [JsonObject(MemberSerialization.OptOut)]
+        [JsonObject(MemberSerialization.OptIn)]
         sealed class ModpackTemplateMod
         {
+            [JsonProperty]
             public string Name { get; }
 
+            [JsonProperty]
             [JsonConverter(typeof(VersionConverter))]
             public Version FactorioVersion { get; }
 
+            [JsonProperty]
+            [JsonConverter(typeof(GameVersionConverter))]
+            [DefaultValue(null)]
+            public GameCompatibleVersion Version { get; }
+
+            public bool UsesExactVersion => Version != null;
+
             [JsonConstructor]
-            public ModpackTemplateMod(string name, Version factorioVersion)
+            public ModpackTemplateMod(string name, Version factorioVersion, GameCompatibleVersion version)
             {
                 Name = name;
                 FactorioVersion = factorioVersion;
+                Version = version;
             }
         }
 
@@ -83,13 +93,22 @@ namespace ModMyFactory
             Modpacks = new ModpackTemplate[0];
         }
 
-        private Mod GetMod(ICollection<Mod> modList, ModpackTemplateMod modTemplate)
+        private Mod GetMod(ModCollection modList, ModpackTemplateMod modTemplate)
         {
-            return modList.FirstOrDefault(mod => (mod.Name == modTemplate.Name || mod.FriendlyName == modTemplate.Name)
-                                                 && mod.FactorioVersion == modTemplate.FactorioVersion);
+            Mod result = null;
+
+            if (!(modTemplate.UsesExactVersion && modList.TryGetMod(modTemplate.Name, modTemplate.Version, out result)))
+            {
+                var candidates = modList.Find(modTemplate.Name, modTemplate.FactorioVersion);
+                if (!candidates.Any()) candidates = modList.Find(modTemplate.Name);
+
+                result = candidates.MaxBy(mod => mod.Version, new VersionComparer());
+            }
+
+            return result;
         }
 
-        private Modpack GetModpack(ICollection<Modpack> modpackList, string name)
+        private Modpack GetModpack(ModpackCollection modpackList, string name)
         {
             return modpackList.FirstOrDefault(modpack => modpack.Name == name);
         }
@@ -99,7 +118,7 @@ namespace ModMyFactory
             return Modpacks.First(template => template.Name == name);
         }
 
-        public void PopulateModpackList(ICollection<Mod> modList, ModpackCollection modpackList, IEditableCollectionView modpackView)
+        public void PopulateModpackList(ModCollection modList, ModpackCollection modpackList, IEditableCollectionView modpackView)
         {
             foreach (var template in Modpacks)
             {
@@ -141,7 +160,7 @@ namespace ModMyFactory
                     Name = modpack.Name,
                     IsLocked = modpack.IsLocked,
                     Mods = modpack.Mods.Where(item => item is ModReference).Select(item => ((ModReference)item).Mod)
-                                       .Select(mod => new ModpackTemplateMod(mod.Name, mod.FactorioVersion))
+                                       .Select(mod => new ModpackTemplateMod(mod.Name, mod.FactorioVersion, mod.Version))
                                        .ToArray(),
                     Modpacks = modpack.Mods.Where(item => item is ModpackReference).Select(item => item.DisplayName).ToArray(),
                 };

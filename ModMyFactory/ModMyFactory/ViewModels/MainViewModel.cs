@@ -585,12 +585,17 @@ namespace ModMyFactory.ViewModels
             refreshing = false;
         }
 
+        private void SaveModpacks()
+        {
+            ModpackTemplateList.Instance.Update(Modpacks);
+            ModpackTemplateList.Instance.Save();
+        }
+
         private void ModpacksCollectionChangedHandler(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (!modpacksLoading)
             {
-                ModpackTemplateList.Instance.Update(Modpacks);
-                ModpackTemplateList.Instance.Save();
+                SaveModpacks();
             }
         }
 
@@ -1437,6 +1442,11 @@ namespace ModMyFactory.ViewModels
                         await ImportModpacksInner(Program.ImportFileList);
                     else if (Program.UpdateCheckOnStartup && App.Instance.Settings.UpdateSearchOnStartup) // Just skip update check if import list is non-zero
                         await Update(true);
+                };
+
+                Window.Closing += (sender, ea) =>
+                {
+                    SaveModpacks(); // Save modpack configuration on app close to overwrite outdated configuration files
                 };
             }
         }
