@@ -1,4 +1,4 @@
-#### 1.9.1
+#### 1.10.0
 * Added support for multiple versions of the same mod simultaneously.
 * Added option to lock modpacks
 * Fixed visual bug in expanded list items.

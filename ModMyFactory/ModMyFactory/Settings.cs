@@ -42,12 +42,9 @@ namespace ModMyFactory
                 UpdateSearchOnStartup = true,
                 IncludePreReleasesForUpdate = false,
 
+                PreSelectModVersions = true,
                 AlwaysUpdateZipped = true,
                 KeepOldModVersions = false,
-                KeepOldExtractedModVersions = true,
-                KeepOldZippedModVersions = false,
-                KeepOldModVersionsWhenNewFactorioVersion = true,
-                DownloadIntermediateUpdates = false,
 
                 ShowOptionalDependencies = false,
                 ActivateDependencies = true,
@@ -121,22 +118,14 @@ namespace ModMyFactory
 
         [DefaultValue(true)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        public bool PreSelectModVersions;
+
+        [DefaultValue(true)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool AlwaysUpdateZipped;
 
         public bool KeepOldModVersions;
-
-        [DefaultValue(true)]
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        public bool KeepOldExtractedModVersions;
-
-        public bool KeepOldZippedModVersions;
-
-        [DefaultValue(true)]
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        public bool KeepOldModVersionsWhenNewFactorioVersion;
-
-        public bool DownloadIntermediateUpdates;
-
+        
         public bool ShowOptionalDependencies;
 
         [DefaultValue(true)]

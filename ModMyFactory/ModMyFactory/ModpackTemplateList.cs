@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -148,7 +147,7 @@ namespace ModMyFactory
             }
         }
 
-        public void Update(ICollection<Modpack> modpackList)
+        public void Update(ModpackCollection modpackList)
         {
             Modpacks = new ModpackTemplate[modpackList.Count];
 

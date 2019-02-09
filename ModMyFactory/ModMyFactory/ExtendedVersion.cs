@@ -5,6 +5,7 @@ namespace ModMyFactory
 {
     class ExtendedVersion : ICloneable, IComparable, IComparable<ExtendedVersion>, IComparable<Version>, IEquatable<ExtendedVersion>, IEquatable<Version>
     {
+        private const string DevReleaseTag = "dev";
         private const string PreReleaseTag = "pre";
 
         public Version BaseVersion { get; }
@@ -30,8 +31,17 @@ namespace ModMyFactory
             }
             else
             {
-                BaseVersion = new Version(version);
-                PreReleaseVersion = -1;
+                index = version.IndexOf(DevReleaseTag, StringComparison.InvariantCultureIgnoreCase);
+                if (index >= 0)
+                {
+                    BaseVersion = new Version(version.Substring(0, index));
+                    PreReleaseVersion = 0;
+                }
+                else
+                {
+                    BaseVersion = new Version(version);
+                    PreReleaseVersion = -1;
+                }
             }
         }
 
@@ -82,7 +92,11 @@ namespace ModMyFactory
             var sb = new StringBuilder();
             sb.Append(BaseVersion);
 
-            if (PreReleaseVersion >= 0)
+            if (PreReleaseVersion == 0)
+            {
+                sb.Append(DevReleaseTag);
+            }
+            else if (PreReleaseVersion > 0)
             {
                 sb.Append(PreReleaseTag);
                 sb.Append(PreReleaseVersion);
@@ -100,8 +114,15 @@ namespace ModMyFactory
 
             if (fieldCount == 5)
             {
-                sb.Append(PreReleaseTag);
-                sb.Append(Math.Max(PreReleaseVersion, 0));
+                if (PreReleaseVersion == 0)
+                {
+                    sb.Append(DevReleaseTag);
+                }
+                else
+                {
+                    sb.Append(PreReleaseTag);
+                    sb.Append(Math.Max(PreReleaseVersion, 0));
+                }
             }
 
             return sb.ToString();

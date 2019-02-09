@@ -48,12 +48,7 @@ namespace ModMyFactory.Models
         /// Indicates whether updates for this mod should be extracted.
         /// </summary>
         public bool ExtractUpdates => !(isFile || App.Instance.Settings.AlwaysUpdateZipped);
-
-        /// <summary>
-        /// Indicates whether this mod file should be preserved when updating to a new mod version.
-        /// </summary>
-        public bool KeepOnUpdate => isFile ? App.Instance.Settings.KeepOldZippedModVersions : App.Instance.Settings.KeepOldExtractedModVersions;
-
+        
         /// <summary>
         /// Indicaes whether this mod file resides inside the managed mod directory.
         /// </summary>

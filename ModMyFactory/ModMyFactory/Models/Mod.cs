@@ -208,6 +208,11 @@ namespace ModMyFactory.Models
         public bool HasSettings => (Settings == null) ? false : (Settings.Count > 0);
 
         /// <summary>
+        /// Indicates whether updates for this mod should be extracted.
+        /// </summary>
+        public bool ExtractUpdates => File?.ExtractUpdates ?? false;
+
+        /// <summary>
         /// Additional information about this mod to be displayed in a tooltip.
         /// </summary>
         public string ToolTip
@@ -279,7 +284,7 @@ namespace ModMyFactory.Models
             oldVersions = files;
 
             if (!File.Enabled) active = false;
-            else active = ModManager.GetActive(Name, FactorioVersion);
+            else active = ModManager.GetActive(Name, FactorioVersion); // ToDo: check if old versions are active
             if (active)
             {
                 File.Enable();

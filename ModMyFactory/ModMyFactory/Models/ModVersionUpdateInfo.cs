@@ -31,7 +31,7 @@ namespace ModMyFactory.Models
         public ModVersionUpdateInfo(Mod mod, ModpackCollection modpacks)
         {
             Mod = mod;
-            isSelected = false;
+            isSelected = App.Instance.Settings.PreSelectModVersions;
             ModpackCount = modpacks.Count(pack => pack.Contains(mod));
         }
     }

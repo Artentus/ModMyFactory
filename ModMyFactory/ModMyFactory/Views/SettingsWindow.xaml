@@ -54,17 +54,11 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <!--<RowDefinition Height="Auto"/>-->
                                 </Grid.RowDefinitions>
 
-                                <CheckBox Grid.Row="0" Margin="2" IsChecked="{Binding AlwaysUpdateZipped}" Content="{DynamicResource UpdateZippedGroupItem}"/>
-                                <CheckBox Grid.Row="1" Margin="2" IsChecked="{Binding KeepOldModVersions}" Content="{DynamicResource KeepOldModVersionsGroupItem}"/>
-                                <CheckBox Grid.Row="2" Margin="20,2" IsChecked="{Binding KeepExtracted}" Content="{DynamicResource KeepExtractedModVersionsGroupItem}" IsEnabled="{Binding KeepOldModVersions, Converter={StaticResource InverseBooleanConverter}}"/>
-                                <CheckBox Grid.Row="3" Margin="20,2" IsChecked="{Binding KeepZipped}" Content="{DynamicResource KeepZippedModVersionsGroupItem}" IsEnabled="{Binding KeepOldModVersions, Converter={StaticResource InverseBooleanConverter}}"/>
-                                <CheckBox Grid.Row="4" Margin="20,2" IsChecked="{Binding KeepWhenNewFactorioVersion}" Content="{DynamicResource KeepOldWhenNewFactorioGroupItem}" IsEnabled="{Binding KeepOldModVersions, Converter={StaticResource InverseBooleanConverter}}"/>
-                                <!--<CheckBox Grid.Row="5" Margin="2" IsChecked="{Binding UpdateIntermediate}" Content="{DynamicResource UpdateIntermediateGroupItem}"/>-->
+                                <CheckBox Grid.Row="0" Margin="2" IsChecked="{Binding PreSelectModVersions}" Content="{DynamicResource PreSelectModVersionsGroupItem}"/>
+                                <CheckBox Grid.Row="1" Margin="2" IsChecked="{Binding AlwaysUpdateZipped}" Content="{DynamicResource UpdateZippedGroupItem}"/>
+                                <CheckBox Grid.Row="2" Margin="2" IsChecked="{Binding KeepOldModVersions}" Content="{DynamicResource KeepOldModVersionsGroupItem}"/>
                             </Grid>
                         </GroupBox>
 

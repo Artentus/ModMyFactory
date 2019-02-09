@@ -20,7 +20,7 @@ namespace ModMyFactory.Web
             string osVersion = Environment.OSVersion.Version.ToString(2);
             string osPlatform = Environment.Is64BitOperatingSystem ? "Win64" : "Win32";
             string appPlatform = Environment.Is64BitProcess ? "x64" : "x86";
-            UserAgent = $"Mozilla/5.0 (Windows NT {osVersion}; {osPlatform}; {appPlatform}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.101 Safari/537.36";
+            UserAgent = $"Mozilla/5.0 (Windows NT {osVersion}; {osPlatform}; {appPlatform}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.96 Safari/537.36";
         }
 
         /// <summary>

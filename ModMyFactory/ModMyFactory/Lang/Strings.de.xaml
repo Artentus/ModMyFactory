@@ -339,6 +339,7 @@
     <sys:String x:Key="PerFactorioVersionGroupItem">Pro Factorio-Version</sys:String>
     <sys:String x:Key="UpdateSearchGroupItem">Bei Start nach Updates suchen</sys:String>
     <sys:String x:Key="IncludePreReleasesGroupItem">Vorabversionen bei der Updatesuche miteinbeziehen</sys:String>
+    <sys:String x:Key="PreSelectModVersionsGroupItem">Mods automatisch für Hard-Updates markieren</sys:String>
     <sys:String x:Key="UpdateZippedGroupItem">Mod-Updates immer als ZIP gepackt behalten</sys:String>
     <sys:String x:Key="KeepOldModVersionsGroupItem">Alte Mod-Versionen beim Updaten behalten</sys:String>
     <sys:String x:Key="KeepExtractedModVersionsGroupItem">Alte Versionen von extrahierten Mods behalten</sys:String>
@@ -413,6 +414,7 @@
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Mitwirkende</sys:String>
     <sys:String x:Key="TranslatorsHeader">Übersetzer</sys:String>
+    <sys:String x:Key="TestersHeader">Tester</sys:String>
 
     
     <!--

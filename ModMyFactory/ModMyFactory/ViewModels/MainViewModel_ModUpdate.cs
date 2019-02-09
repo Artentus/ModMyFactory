@@ -131,7 +131,35 @@ namespace ModMyFactory.ViewModels
         private async Task UpdateModAsyncInner(ModUpdateInfo modUpdate, string token, IProgress<double> progress, CancellationToken cancellationToken)
         {
             var updateFile = await ModWebsite.DownloadUpdateAsync(modUpdate.Update, GlobalCredentials.Instance.Username, token, progress, cancellationToken);
-            await Mod.Add(updateFile, Mods, Modpacks, false, true);
+            if (modUpdate.Extract) updateFile = await updateFile.ExtractAsync();
+
+            Mod newMod = await Mod.Add(updateFile, Mods, Modpacks, false, true);
+
+            foreach (var version in modUpdate.ModVersions)
+            {
+                if (version.IsSelected)
+                {
+                    bool deleteAfter = !App.Instance.Settings.KeepOldModVersions;
+
+                    foreach (var modpack in Modpacks)
+                    {
+                        if (modpack.Contains(version.Mod, out var reference))
+                        {
+                            if (modpack.IsLocked)
+                            {
+                                deleteAfter = false;
+                            }
+                            else
+                            {
+                                reference.RemoveFromParentCommand.Execute();
+                                modpack.Mods.Add(new ModReference(newMod, modpack));
+                            }
+                        }
+                    }
+
+                    if (deleteAfter) version.Mod.Delete(false);
+                }
+            }
         }
 
         private async Task UpdateModsAsyncInner(List<ModUpdateInfo> modUpdates, string token, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)

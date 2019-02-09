@@ -1108,12 +1108,9 @@ namespace ModMyFactory.ViewModels
             settings.IncludePreReleasesForUpdate = settingsViewModel.IncludePreReleasesForUpdate;
 
             // Mod update
+            settings.PreSelectModVersions = settingsViewModel.PreSelectModVersions;
             settings.AlwaysUpdateZipped = settingsViewModel.AlwaysUpdateZipped;
             settings.KeepOldModVersions = settingsViewModel.KeepOldModVersions;
-            settings.KeepOldExtractedModVersions = settingsViewModel.KeepExtracted;
-            settings.KeepOldZippedModVersions = settingsViewModel.KeepZipped;
-            settings.KeepOldModVersionsWhenNewFactorioVersion = settingsViewModel.KeepWhenNewFactorioVersion;
-            settings.DownloadIntermediateUpdates = settingsViewModel.UpdateIntermediate;
 
             // Mod dependencies
             settings.ActivateDependencies = settingsViewModel.ActivateDependencies;

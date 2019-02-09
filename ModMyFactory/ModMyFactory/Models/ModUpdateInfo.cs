@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using ModMyFactory.Web.ModApi;
 using WPFCore;
 
@@ -21,6 +22,8 @@ namespace ModMyFactory.Models
         public Version FactorioVersion => Update.InfoFile.FactorioVersion;
 
         public List<ModVersionUpdateInfo> ModVersions { get; }
+
+        public bool Extract => ModVersions.Any(version => version.Mod.ExtractUpdates);
         
         public bool IsSelected
         {
