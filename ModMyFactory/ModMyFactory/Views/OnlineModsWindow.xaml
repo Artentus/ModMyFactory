@@ -38,25 +38,23 @@
                  ItemsSource="{Binding ModsView}" SelectedItem="{Binding SelectedMod, Mode=TwoWay}" UseLayoutRounding="True">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type modApi:ModInfo}">
-                    <Grid>
+                    <Grid Margin="1,1,11,1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="Column1"/>
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="Column2"/>
-                            <ColumnDefinition Width="6"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="DownloadCount"/>
                         </Grid.ColumnDefinitions>
 
-                        <Border Padding="4,2" HorizontalAlignment="Stretch" Background="Transparent"
-                                 ToolTipService.InitialShowDelay="800" ToolTipService.ShowDuration="15000">
-                            <Border.ToolTip>
+                        <StackPanel Background="Transparent" Grid.Column="0" Margin="4,2" Orientation="Horizontal" FlowDirection="LeftToRight" HorizontalAlignment="Stretch"
+                                        ToolTipService.InitialShowDelay="800" ToolTipService.ShowDuration="15000">
+                            <StackPanel.ToolTip>
                                 <TextBlock MaxWidth="300" TextWrapping="WrapWithOverflow" Text="{Binding Summary}"/>
-                            </Border.ToolTip>
+                            </StackPanel.ToolTip>
 
-                            <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
-                                <TextBlock Margin="2" Text="{Binding Title}"/>
-                                <TextBlock Margin="2" Text="{Binding Author, StringFormat={StaticResource ByFormat}}" Foreground="Gray"/>
-                            </StackPanel>
-                        </Border>
+                            <TextBlock Margin="2" Text="{Binding Title}"/>
+                            <TextBlock Margin="2" Text="{Binding Author, StringFormat={StaticResource ByFormat}}" Foreground="Gray"/>
+                        </StackPanel>
+                        
                         <Image Grid.Column="1" Width="16" Height="16" Margin="20,0,4,0" Source="{StaticResource DownloadsIcon}"
                                VerticalAlignment="Center" ToolTip="{DynamicResource DownloadsToolTip}" Stretch="None"/>
                         <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding DownloadCount}"/>

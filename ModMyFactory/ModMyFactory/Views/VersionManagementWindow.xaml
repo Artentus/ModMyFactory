@@ -46,7 +46,7 @@
             
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type model:FactorioVersion}">
-                    <Grid Margin="2">
+                    <Grid Margin="2,2,6,2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>

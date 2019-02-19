@@ -437,23 +437,21 @@
                                        AllowDrop="True" DragOver="ModsListBoxDragOverHandler" Drop="ModsListBoxDropHandler">
                 <controls:DragDropReadyListBox.Resources>
                     <DataTemplate x:Key="SubitemTemplate" DataType="{x:Type model:ModDependency}">
-                        <Border BorderBrush="Transparent" BorderThickness="1" Background="Transparent">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
+                        <Grid Margin="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                                <Image Grid.Column="0" Margin="1" Source="{StaticResource OptionalIcon}" Visibility="{Binding IsOptional, Converter={StaticResource VisibilityConverter}}" Stretch="None" VerticalAlignment="Center" Height="16"/>
-                                <Image Grid.Column="1" Margin="1" Source="{StaticResource InvertedIcon}" Visibility="{Binding IsInverted, Converter={StaticResource VisibilityConverter}}" Stretch="None" VerticalAlignment="Center" Height="16"/>
-                                <TextBlock Grid.Column="2" Margin="1" VerticalAlignment="Center" Text="{Binding FriendlyDescription}" IsHitTestVisible="False"/>
-                                <Image x:Name="DependencyWarningImage" Grid.Column="3" Margin="4,1" Source="{StaticResource WarningIcon}"
+                            <Image Grid.Column="0" Margin="1" Source="{StaticResource OptionalIcon}" Visibility="{Binding IsOptional, Converter={StaticResource VisibilityConverter}}" Stretch="None" VerticalAlignment="Center" Height="16"/>
+                            <Image Grid.Column="1" Margin="1" Source="{StaticResource InvertedIcon}" Visibility="{Binding IsInverted, Converter={StaticResource VisibilityConverter}}" Stretch="None" VerticalAlignment="Center" Height="16"/>
+                            <TextBlock Grid.Column="2" Margin="1" VerticalAlignment="Center" Text="{Binding FriendlyDescription}" IsHitTestVisible="False"/>
+                            <Image x:Name="DependencyWarningImage" Grid.Column="3" Margin="4,1" Source="{StaticResource WarningIcon}"
                                        Visibility="{Binding Unsatisfied, Converter={StaticResource VisibilityConverter}}" Stretch="None" VerticalAlignment="Center"/>
-                            </Grid>
-                        </Border>
+                        </Grid>
 
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding IsOptional, Mode=OneTime}" Value="{StaticResource True}">
@@ -474,12 +472,6 @@
                 
                 <controls:DragDropReadyListBox.GroupStyle>
                     <GroupStyle>
-                        <GroupStyle.Panel>
-                            <ItemsPanelTemplate>
-                                <StackPanel/>
-                            </ItemsPanelTemplate>
-                        </GroupStyle.Panel>
-                        
                         <GroupStyle.ContainerStyle>
                             <Style TargetType="{x:Type GroupItem}">
                                 <Style.Setters>
@@ -517,7 +509,7 @@
 
                 <controls:DragDropReadyListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type model:Mod}">
-                        <Expander>
+                        <Expander Margin="1,1,5,1">
                             <Expander.Header>
                                 <Grid Margin="2">
                                     <Grid.ColumnDefinitions>
@@ -544,15 +536,7 @@
                                 </Grid>
                             </Expander.Header>
 
-                            <Border Background="{DynamicResource MutedBackgroundBrush}">
-                                <ItemsControl Margin="20,2,4,2" ItemsSource="{Binding DependenciesView}" ItemTemplate="{StaticResource SubitemTemplate}">
-                                    <ItemsControl.Template>
-                                        <ControlTemplate TargetType="{x:Type ItemsControl}">
-                                            <StackPanel IsItemsHost="True"/>
-                                        </ControlTemplate>
-                                    </ItemsControl.Template>
-                                </ItemsControl>
-                            </Border>
+                            <ItemsControl Margin="20,2,4,2" ItemsSource="{Binding DependenciesView}" ItemTemplate="{StaticResource SubitemTemplate}"/>
                         </Expander>
                     </DataTemplate>
                 </controls:DragDropReadyListBox.ItemTemplate>
@@ -757,7 +741,7 @@
 
                 <controls:DragDropReadyListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type model:Modpack}">
-                        <Expander IsExpanded="{Binding ContentsExpanded, Mode=TwoWay}">
+                        <Expander Margin="1,1,5,1" IsExpanded="{Binding ContentsExpanded, Mode=TwoWay}">
                             <Expander.Header>
                                 <Grid Margin="2">
                                     <Grid.ColumnDefinitions>
@@ -796,15 +780,7 @@
                                 </Grid>
                             </Expander.Header>
 
-                            <Border Background="{DynamicResource MutedBackgroundBrush}">
-                                <ItemsControl Margin="20,2,4,2" ItemsSource="{Binding ModsView}" ItemTemplate="{StaticResource SubitemTemplate}">
-                                    <ItemsControl.Template>
-                                        <ControlTemplate TargetType="{x:Type ItemsControl}">
-                                            <StackPanel IsItemsHost="True"/>
-                                        </ControlTemplate>
-                                    </ItemsControl.Template>
-                                </ItemsControl>
-                            </Border>
+                            <ItemsControl Margin="20,2,4,2" ItemsSource="{Binding ModsView}" ItemTemplate="{StaticResource SubitemTemplate}"/>
                         </Expander>
                     </DataTemplate>
                 </controls:DragDropReadyListBox.ItemTemplate>

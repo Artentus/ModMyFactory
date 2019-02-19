@@ -10,6 +10,8 @@ namespace ModMyFactory.Models
 {
     sealed class ModDependency : NotifyPropertyChangedBase
     {
+        readonly string stringRepresentation;
+
         /// <summary>
         /// Indicates whether this dependency is optional.
         /// </summary>
@@ -50,22 +52,7 @@ namespace ModMyFactory.Models
         /// <summary>
         /// A human-readable description of this dependency.
         /// </summary>
-        public string FriendlyDescription
-        {
-            get
-            {
-                var result = new StringBuilder();
-                result.Append(IsBase ? "Factorio" : ModName);
-
-                if (HasVersionRestriction)
-                {
-                    result.Append(ExactRestriction ? " = " : " >= ");
-                    result.Append(ModVersion.ToString());
-                }
-
-                return result.ToString();
-            }
-        }
+        public string FriendlyDescription { get; }
 
         /// <summary>
         /// Indicates whether this dependency is unsatisfied.
@@ -185,6 +172,35 @@ namespace ModMyFactory.Models
                 ModVersion = version;
                 HasVersionRestriction = true;
             }
+
+
+            // Friendly Description
+            var result = new StringBuilder();
+            result.Append(IsBase ? "Factorio" : ModName);
+
+            if (HasVersionRestriction)
+            {
+                result.Append(ExactRestriction ? " = " : " >= ");
+                result.Append(ModVersion.ToString());
+            }
+
+            FriendlyDescription = result.ToString();
+
+
+            // String Representation
+            result.Clear();
+
+            if (IsOptional) result.Append("? ");
+            else if (IsInverted) result.Append('!');
+
+            result.Append(ModName);
+            if (HasVersionRestriction)
+            {
+                result.Append(ExactRestriction ? " = " : " >= ");
+                result.Append(ModVersion.ToString());
+            }
+
+             stringRepresentation = result.ToString();
         }
 
         /// <summary>
@@ -212,22 +228,7 @@ namespace ModMyFactory.Models
             }
         }
 
-        public override string ToString()
-        {
-            var result = new StringBuilder();
-
-            if (IsOptional) result.Append("? ");
-            else if (IsInverted) result.Append('!');
-
-            result.Append(ModName);
-            if (HasVersionRestriction)
-            {
-                result.Append(ExactRestriction ? " = " : " >= ");
-                result.Append(ModVersion.ToString());
-            }
-
-            return result.ToString();
-        }
+        public override string ToString() => stringRepresentation;
 
         public static implicit operator ModDependency(string value)
         {

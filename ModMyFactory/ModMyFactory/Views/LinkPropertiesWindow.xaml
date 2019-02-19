@@ -62,7 +62,7 @@
                  ItemsSource="{Binding ModpacksView}" SelectedItem="{Binding SelectedModpack}">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type model:Modpack}">
-                    <TextBlock Margin="4,2" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Name}"/>
+                    <TextBlock Margin="5,3,9,3" VerticalAlignment="Center" IsHitTestVisible="False" Text="{Binding Name}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
