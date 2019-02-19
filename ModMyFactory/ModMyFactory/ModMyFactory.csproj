@@ -218,6 +218,7 @@
     <Compile Include="MVVM\Sorters\UpdateTargetSorter.cs" />
     <Compile Include="FactorioUpdate\UpdatePackageInfo.cs" />
     <Compile Include="FactorioUpdate\UpdaterErrorType.cs" />
+    <Compile Include="SingleOrArrayJsonConverter.cs" />
     <Compile Include="Theme.cs" />
     <Compile Include="TwoPartVersionConverter.cs" />
     <Compile Include="VersionComparer.cs" />
