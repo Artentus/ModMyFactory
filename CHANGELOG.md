@@ -1,7 +1,11 @@
 #### 1.10.0
-* Added support for multiple versions of the same mod simultaneously.
-* Added option to lock modpacks
+* Added support for multiple versions of the same mod.
+* Added option to lock modpacks.
+* Added changelog to About section.
+* Fixed crash when selecting certain online mods.
+* Fixed rare crash when adding Steam installation.
 * Fixed visual bug in expanded list items.
+* Improved filtering performance.
 
 #### 1.9.0
 * Added proper handling for inverted mod dependencies.

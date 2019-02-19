@@ -197,6 +197,7 @@
     <Compile Include="ModSettings\SettingValue.cs" />
     <Compile Include="ModSettings\SettingValueArrayJsonConverter.cs" />
     <Compile Include="ModSettings\SettingValueJsonConverter.cs" />
+    <Compile Include="MVVM\Converters\AdvancedVisibilityConverter.cs" />
     <Compile Include="MVVM\Converters\FactorioVersionConverter.cs" />
     <Compile Include="MVVM\Converters\LocalizedNameConverter.cs" />
     <Compile Include="MVVM\Converters\RemoveFileExtensionConverter.cs" />
@@ -222,6 +223,8 @@
     <Compile Include="Theme.cs" />
     <Compile Include="TwoPartVersionConverter.cs" />
     <Compile Include="VersionComparer.cs" />
+    <Compile Include="ViewModels\AboutPageViewModel.cs" />
+    <Compile Include="ViewModels\ChangelogPageViewModel.cs" />
     <Compile Include="ViewModels\CopyOrMoveViewModel.cs" />
     <Compile Include="ViewModels\DependencyDownloadViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel_DependencyDownload.cs" />
@@ -233,6 +236,12 @@
     <Compile Include="ViewModels\ModUpdateViewModel.cs" />
     <Compile Include="ViewModels\OnlineModsViewModel.cs" />
     <Compile Include="ViewModels\UpdateListViewModel.cs" />
+    <Compile Include="Views\AboutPage.xaml.cs">
+      <DependentUpon>AboutPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChangelogPage.xaml.cs">
+      <DependentUpon>ChangelogPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CopyOrMoveMessageWindow.xaml.cs">
       <DependentUpon>CopyOrMoveMessageWindow.xaml</DependentUpon>
     </Compile>
@@ -381,7 +390,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\AboutPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ChangelogPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

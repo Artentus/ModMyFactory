@@ -424,6 +424,10 @@
     <sys:String x:Key="ContributorsHeader">Contributors</sys:String>
     <sys:String x:Key="TranslatorsHeader">Translators</sys:String>
     <sys:String x:Key="TestersHeader">Testers</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="ChangelogButton">View Changelog</sys:String>
+    <sys:String x:Key="CloseChangelogButton">Close Changelog</sys:String>
 
 
     <!--

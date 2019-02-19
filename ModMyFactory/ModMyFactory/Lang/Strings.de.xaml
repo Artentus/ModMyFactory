@@ -415,6 +415,10 @@
     <sys:String x:Key="ContributorsHeader">Mitwirkende</sys:String>
     <sys:String x:Key="TranslatorsHeader">Übersetzer</sys:String>
     <sys:String x:Key="TestersHeader">Tester</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="ChangelogButton">Changelog ansehen</sys:String>
+    <sys:String x:Key="CloseChangelogButton">Changelog schließen</sys:String>
 
     
     <!--
