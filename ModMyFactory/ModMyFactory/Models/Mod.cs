@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models.ModSettings;
 using ModMyFactory.ModSettings;
@@ -146,6 +147,8 @@ namespace ModMyFactory.Models
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Settings)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SettingsView)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasSettings)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Thumbnail)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasThumbnail)));
                 }
             }
         }
@@ -213,18 +216,14 @@ namespace ModMyFactory.Models
         public bool ExtractUpdates => File?.ExtractUpdates ?? false;
 
         /// <summary>
-        /// Additional information about this mod to be displayed in a tooltip.
+        /// An optional thumbnail provided in the mod file.
         /// </summary>
-        public string ToolTip
-        {
-            get
-            {
-                var authorAndVersion = $"Author: {Author}     Version: {Version}";
-                if (Description.Length > authorAndVersion.Length)
-                    authorAndVersion = authorAndVersion.PadRight(Math.Min(Description.Length, 100));
-                return $"{authorAndVersion}\n\n{Description.Wrap(authorAndVersion.Length)}";
-            }
-        }
+        public BitmapImage Thumbnail => File.Thumbnail;
+
+        /// <summary>
+        /// Indicates whether this mod is providing a thumbnail.
+        /// </summary>
+        public bool HasThumbnail => Thumbnail != null;
 
         /// <summary>
         /// Indicates if all of this mods required dependencies are active.

@@ -8,6 +8,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace ModMyFactory.Models
 {
@@ -53,6 +54,11 @@ namespace ModMyFactory.Models
         /// Indicaes whether this mod file resides inside the managed mod directory.
         /// </summary>
         public bool ResidesInModDirectory => file.ParentDirectory().DirectoryEquals(App.Instance.Settings.GetModDirectory(InfoFile.FactorioVersion));
+
+        /// <summary>
+        /// An optional thumbnail provided in the mod file.
+        /// </summary>
+        public BitmapImage Thumbnail { get; }
 
         private string BuildNewFileName(int uid, bool enabled)
         {
@@ -107,7 +113,7 @@ namespace ModMyFactory.Models
             await file.CopyToAsync(newPath);
 
             var newFile = GetNewFile(newPath);
-            return new ModFile(newFile, InfoFile, isFile, true);
+            return new ModFile(newFile, InfoFile, isFile, true, Thumbnail);
         }
 
         /// <summary>
@@ -123,7 +129,7 @@ namespace ModMyFactory.Models
             await Task.Run(() => ZipFile.ExtractToDirectory(fi.FullName, fi.DirectoryName));
 
             var newDir = new DirectoryInfo(Path.Combine(fi.DirectoryName, fi.NameWithoutExtension()));
-            var newModFile = new ModFile(newDir, InfoFile, false, Enabled);
+            var newModFile = new ModFile(newDir, InfoFile, false, Enabled, Thumbnail);
 
             fi.Delete();
             return newModFile;
@@ -156,12 +162,13 @@ namespace ModMyFactory.Models
             return result;
         }
 
-        private ModFile(FileSystemInfo file, InfoFile infoFile, bool isFile, bool enabled)
+        private ModFile(FileSystemInfo file, InfoFile infoFile, bool isFile, bool enabled, BitmapImage thumbnail)
         {
             this.file = file;
             InfoFile = infoFile;
             this.isFile = isFile;
             Enabled = enabled;
+            Thumbnail = thumbnail;
         }
 
         /// <summary>
@@ -321,6 +328,54 @@ namespace ModMyFactory.Models
             }
         }
 
+        private static BitmapImage LoadImageFromStream(Stream stream)
+        {
+            var result = new BitmapImage();
+            result.BeginInit();
+            result.CacheOption = BitmapCacheOption.OnLoad;
+            result.StreamSource = stream;
+            result.EndInit();
+            result.Freeze();
+            return result;
+        }
+
+        private static BitmapImage GetThumbnailFromArchive(FileInfo archiveFile)
+        {
+            try
+            {
+                using (var archive = ZipFile.OpenRead(archiveFile.FullName))
+                {
+                    var entry = archive.Entries.FirstOrDefault(e => (e.Name == "thumbnail.png") && (e.FullName.Count(c => c == '/') == 1));
+                    if (entry == null) return null;
+
+                    using (var stream = entry.Open())
+                        return LoadImageFromStream(stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                App.Instance.WriteExceptionLog(ex);
+                return null;
+            }
+        }
+
+        private static BitmapImage GetThumbnailFromDirectory(DirectoryInfo directory)
+        {
+            try
+            {
+                var file = directory.EnumerateFiles("thumbnail.png").FirstOrDefault();
+                if (file == null) return null;
+
+                using (var stream = file.OpenRead())
+                    return LoadImageFromStream(stream);
+            }
+            catch (Exception ex)
+            {
+                App.Instance.WriteExceptionLog(ex);
+                return null;
+            }
+        }
+
         /// <summary>
         /// Tries to load a file.
         /// </summary>
@@ -337,7 +392,8 @@ namespace ModMyFactory.Models
             bool enabled;
             if (!ArchiveFileValid(file, out infoFile, out enabled, hasUid)) return false;
 
-            result = new ModFile(file, infoFile, true, enabled);
+            var thumbnail = GetThumbnailFromArchive(file);
+            result = new ModFile(file, infoFile, true, enabled, thumbnail);
             return true;
         }
 
@@ -357,7 +413,8 @@ namespace ModMyFactory.Models
             bool enabled;
             if (!DirectoryValid(directory, out infoFile, out enabled, hasUid)) return false;
 
-            result = new ModFile(directory, infoFile, false, enabled);
+            var thumbnail = GetThumbnailFromDirectory(directory);
+            result = new ModFile(directory, infoFile, false, enabled, thumbnail);
             return true;
         }
 

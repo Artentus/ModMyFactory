@@ -625,6 +625,7 @@
     <Resource Include="Images\Themes.png" />
     <Resource Include="Images\Lock.png" />
     <Resource Include="Images\Lock_blue.png" />
+    <Resource Include="Images\Empty_Thumbnail.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>
