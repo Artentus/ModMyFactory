@@ -222,6 +222,8 @@ namespace ModMyFactory.ViewModels
             {
                 extendedInfo = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(ExtendedInfo)));
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(ThumbnailUri)));
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasThumbnail)));
 
                 if (extendedInfo != null)
                 {
@@ -255,6 +257,10 @@ namespace ModMyFactory.ViewModels
                 CommandManager.InvalidateRequerySuggested();
             }
         }
+
+        public Uri ThumbnailUri => ExtendedInfo?.GetFullThumbnailUri();
+
+        public bool HasThumbnail => ThumbnailUri != null;
 
         public string SelectedModName
         {

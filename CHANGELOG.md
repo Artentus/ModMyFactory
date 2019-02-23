@@ -1,6 +1,7 @@
 #### 1.10.0
 * Added support for multiple versions of the same mod.
 * Added option to lock modpacks.
+* Added support for mod thumbnails.
 * Added changelog to About section.
 * Fixed crash when selecting certain online mods.
 * Fixed rare crash when adding Steam installation.

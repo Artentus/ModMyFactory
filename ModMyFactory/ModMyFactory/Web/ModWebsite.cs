@@ -20,7 +20,7 @@ namespace ModMyFactory.Web
     {
         const string BaseUrl = "https://mods.factorio.com";
         const string ModsUrl = BaseUrl + "/api/mods";
-
+        
         private static ApiPage DownloadPage(int pageSize, int page)
         {
             string pageUrl = $"{ModsUrl}?page_size={pageSize}";
