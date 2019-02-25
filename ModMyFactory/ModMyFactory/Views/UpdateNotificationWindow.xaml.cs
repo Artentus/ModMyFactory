@@ -25,7 +25,7 @@ namespace ModMyFactory.Views
 
             try
             {
-                string document = await Task.Run(() => WebHelper.GetDocument(changelogUrl, null));
+                string document = await Task.Run(() => WebHelper.GetDocument(changelogUrl));
                 ChangelogTextBlock.Text = document;
             }
             catch (WebException)

@@ -60,7 +60,7 @@ namespace ModMyFactory.Web
             
             var file = new FileInfo(Path.Combine(factorioDirectory.FullName, "package.zip"));
             string url = version.DownloadUrl + $"?username={username}&token={token}";
-            await WebHelper.DownloadFileAsync(new Uri(url), null, file, progress, cancellationToken);
+            await WebHelper.DownloadFileAsync(new Uri(url), file, progress, cancellationToken);
 
             try
             {
