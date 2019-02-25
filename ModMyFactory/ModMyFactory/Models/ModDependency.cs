@@ -1,7 +1,6 @@
 ﻿using ModMyFactory.Helpers;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using WPFCore;
@@ -10,6 +9,31 @@ namespace ModMyFactory.Models
 {
     sealed class ModDependency : NotifyPropertyChangedBase
     {
+        private static readonly Dictionary<string, Func<GameCompatibleVersion, GameCompatibleVersion, bool>> comparisonFunctions;
+        private static readonly Dictionary<string, string> comparisonRepresentations;
+
+        static ModDependency()
+        {
+            comparisonFunctions = new Dictionary<string, Func<GameCompatibleVersion, GameCompatibleVersion, bool>>()
+            {
+                { ">=", (a, b) => a >= b },
+                { ">", (a, b) => a > b },
+                { "<=", (a, b) => a <= b },
+                { "<", (a, b) => a < b },
+                { "=", (a, b) => a == b }
+            };
+
+            comparisonRepresentations = new Dictionary<string, string>()
+            {
+                { ">=", "≥" },
+                { ">", ">" },
+                { "<=", "≤" },
+                { "<", "<" },
+                { "=", "=" }
+            };
+        }
+
+
         readonly string stringRepresentation;
 
         /// <summary>
@@ -28,21 +52,19 @@ namespace ModMyFactory.Models
         public string ModName { get; }
 
         /// <summary>
-        /// Indicates whether this dependency enforces a specific mod version.
+        /// Indicates whether the dependency has a version restriction.
         /// </summary>
-        public bool HasVersionRestriction { get; }
+        public bool HasRestriction { get; }
 
         /// <summary>
-        /// Indicates whether this dependencies restriction is exact.
-        /// Only valid if <see cref="HasVersionRestriction"/> is true.
+        /// The comparison type of the restriction. Empty if no restriction is present.
         /// </summary>
-        public bool ExactRestriction { get; }
-
+        public string RestrictionComparison { get; }
+        
         /// <summary>
-        /// The lowest allowed version of the mod.
-        /// Only valid if <see cref="HasVersionRestriction"/> is true.
+        /// The restrictions version.
         /// </summary>
-        public GameCompatibleVersion ModVersion { get; }
+        public GameCompatibleVersion RestrictionVersion { get; }
 
         /// <summary>
         /// Indicates whether this dependency is referencing the base game.
@@ -60,80 +82,59 @@ namespace ModMyFactory.Models
         public bool Unsatisfied { get; private set; }
         
         /// <summary>
-        /// Checks if a collection of mods satisfies this dependency.
+        /// Checks if a collection of mods contains a mod that satisfies this dependency.
         /// </summary>
-        public bool IsMet(ModCollection mods, Version factorioVersion)
+        public bool IsPresent(ModCollection mods, Version factorioVersion)
         {
-            bool result;
+            bool result = false;
 
             if (IsBase || IsInverted)
             {
                 result = true;
             }
-            else
+            else if (HasRestriction)
             {
-                if (HasVersionRestriction)
+                var comparison = comparisonFunctions[RestrictionComparison];
+
+                var candidates = mods.Find(ModName, factorioVersion);
+                foreach (var candidate in candidates)
                 {
-                    if (ExactRestriction)
-                        result = mods.Contains(ModName, ModVersion);
-                    else
+                    if (comparison(candidate.Version, RestrictionVersion))
                     {
-                        var candidates = mods.Find(ModName, factorioVersion);
-                        result = candidates.Any(item => item.Version >= ModVersion);
+                        result = true;
+                        break;
                     }
                 }
-                else
-                {
-                    result = mods.ContainsbyFactorioVersion(ModName, factorioVersion);
-                }
+            }
+            else
+            {
+                result = mods.ContainsbyFactorioVersion(ModName, factorioVersion);
             }
 
             Unsatisfied = !result;
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Unsatisfied)));
-
             return result;
         }
-
-        private IEnumerable<Mod> GetTargetMods(ModCollection mods, Version factorioVersion)
-        {
-            if (HasVersionRestriction)
-            {
-                if (ExactRestriction)
-                {
-                    if (mods.TryGetMod(ModName, ModVersion, out Mod mod))
-                        return mod.EnumerateSingle();
-                    else
-                        return Enumerable.Empty<Mod>();
-                }
-                else
-                {
-                    return mods.Find(ModName, factorioVersion).Where(item => item.Version >= ModVersion);
-                }
-            }
-            else
-            {
-                return mods.Find(ModName, factorioVersion);
-            }
-        }
-
+        
         /// <summary>
         /// Checks if a collection of mods satisfies this dependency and the dependency is active.
         /// </summary>
         public bool IsActive(ModCollection mods, Version factorioVersion)
         {
-            if (IsBase)
+            if (IsBase || IsInverted)
             {
                 return true;
             }
-            else if (IsInverted)
+            else if (HasRestriction)
             {
-                var candidates = GetTargetMods(mods, factorioVersion);
-                return candidates.All(item => !item.Active);
+                var comparison = comparisonFunctions[RestrictionComparison];
+
+                var candidates = mods.Find(ModName, factorioVersion);
+                return candidates.Any(candidate => candidate.Active && comparison(candidate.Version, RestrictionVersion));
             }
             else
             {
-                var candidates = GetTargetMods(mods, factorioVersion);
-                return candidates.Any(item => item.Active);
+                var candidates = mods.Find(ModName, factorioVersion);
+                return candidates.Any(candidate => candidate.Active);
             }
         }
 
@@ -142,65 +143,92 @@ namespace ModMyFactory.Models
             if (string.IsNullOrWhiteSpace(value)) throw new ArgumentNullException(nameof(value));
             value = value.Trim();
 
-            if (value[0] == '?')
+            if (value[0] == '?') // Optional
             {
                 IsOptional = true;
                 value = value.Substring(1).TrimStart();
             }
-            else if (value[0] == '!')
+            else if (value[0] == '!') // Inverted
             {
                 IsInverted = true;
                 value = value.Substring(1).TrimStart();
             }
+            if (string.IsNullOrEmpty(value)) throw new ArgumentException("No mod name specified.", nameof(value));
 
-            string[] parts = value.Split(new[] { ">=" }, StringSplitOptions.None);
-            if (parts.Length == 1)
+            HasRestriction = false;
+            string[] parts = { };
+            foreach (var comparison in comparisonFunctions.Keys)
             {
-                ExactRestriction = true;
-                parts = value.Split(new[] { '=' }, StringSplitOptions.None);
+                parts = value.Split(new[] { comparison }, StringSplitOptions.None);
+                if (parts.Length == 1)
+                {
+                    // Comparison not present
+                    continue;
+                }
+                else if (parts.Length == 2)
+                {
+                    // Comparison present
+                    HasRestriction = true;
+                    RestrictionComparison = comparison;
+                    break;
+                }
+                else
+                {
+                    // Comparison present more than once
+                    throw new ArgumentException("Invalid input format.", nameof(value));
+                }
             }
-            if ((parts.Length == 0) || (parts.Length > 2)) throw new ArgumentException("Invalid dependency string.");
 
-            string name = parts[0].TrimEnd();
-            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid dependency string.");
-            ModName = name;
-
-            if (parts.Length == 2)
+            if (HasRestriction)
             {
+                ModName = parts[0].TrimEnd();
+
                 string versionString = parts[1].TrimStart();
-                if (!Version.TryParse(versionString, out var version)) throw new ArgumentException("Invalid dependency string.");
-                ModVersion = version;
-                HasVersionRestriction = true;
+                if (!GameCompatibleVersion.TryParse(versionString, out var version))
+                    throw new ArgumentException("Invalid input format.", nameof(value));
+                RestrictionVersion = version;
             }
-
-
-            // Friendly Description
-            var result = new StringBuilder();
-            result.Append(IsBase ? "Factorio" : ModName);
-
-            if (HasVersionRestriction)
+            else
             {
-                result.Append(ExactRestriction ? " = " : " >= ");
-                result.Append(ModVersion.ToString());
+                ModName = value;
             }
 
-            FriendlyDescription = result.ToString();
 
+            // Friendly description
+            var sb = new StringBuilder();
 
-            // String Representation
-            result.Clear();
+            string name = ModName;
+            if (name == "base") name = "Factorio";
+            sb.Append(name);
 
-            if (IsOptional) result.Append("? ");
-            else if (IsInverted) result.Append('!');
-
-            result.Append(ModName);
-            if (HasVersionRestriction)
+            if (HasRestriction)
             {
-                result.Append(ExactRestriction ? " = " : " >= ");
-                result.Append(ModVersion.ToString());
+                sb.Append(' ');
+                sb.Append(comparisonRepresentations[RestrictionComparison]);
+                sb.Append(' ');
+                sb.Append(RestrictionVersion);
             }
 
-             stringRepresentation = result.ToString();
+            FriendlyDescription = sb.ToString();
+
+
+            // ToString
+            sb.Clear();
+
+            if (IsOptional) sb.Append("? ");
+            if (IsInverted) sb.Append('!');
+
+            sb.Append(ModName);
+
+            if (HasRestriction)
+            {
+                sb.Append(' ');
+                sb.Append(RestrictionComparison);
+                sb.Append(' ');
+                sb.Append(RestrictionVersion);
+            }
+
+            stringRepresentation = sb.ToString();
         }
 
         /// <summary>
@@ -208,22 +236,26 @@ namespace ModMyFactory.Models
         /// </summary>
         public void Activate(ModCollection mods, Version factorioVersion)
         {
-            if (IsBase)
+            if (IsBase) return;
+
+            var candidates = mods.Find(ModName, factorioVersion);
+            if (HasRestriction)
             {
-                return;
+                var comparison = comparisonFunctions[RestrictionComparison];
+                candidates = candidates.Where(candidate => comparison(candidate.Version, RestrictionVersion));
             }
-            else if (IsInverted)
+            
+            if (IsInverted)
             {
-                var candidates = GetTargetMods(mods, factorioVersion);
-                foreach (var item in candidates) item.Active = false;
+                foreach (var candidate in candidates)
+                    candidate.Active = false;
             }
             else
             {
-                var candidates = GetTargetMods(mods, factorioVersion);
-                if (!candidates.Any(item => item.Active))
+                if (!candidates.Any(candidate => candidate.Active))
                 {
-                    Mod max = candidates.MaxBy(item => item.Version, new VersionComparer());
-                    if (max != null) max.Active = true;
+                    var max = candidates.MaxBy(candidate => candidate.Version, new VersionComparer());
+                    max.Active = true;
                 }
             }
         }

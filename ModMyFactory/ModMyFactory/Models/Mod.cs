@@ -357,13 +357,13 @@ namespace ModMyFactory.Models
             {
                 foreach (var dependency in Dependencies)
                 {
-                    if (!dependency.IsOptional && !dependency.IsMet(parentCollection, FactorioVersion))
+                    if (!dependency.IsOptional && !dependency.IsPresent(parentCollection, FactorioVersion))
                     {
                         result = true;
                     }
                     else if (dependency.IsOptional)
                     {
-                        dependency.IsMet(parentCollection, FactorioVersion);
+                        dependency.IsPresent(parentCollection, FactorioVersion);
                     }
                 }
             }
