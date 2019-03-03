@@ -127,6 +127,7 @@ namespace ModMyFactory.Models
                     var source = new CollectionViewSource() { Source = Dependencies };
                     var dependenciesView = (ListCollectionView)source.View;
                     dependenciesView.CustomSort = new ModDependencySorter();
+                    dependenciesView.Filter = (item) => !((ModDependency)item).IsHidden;
                     DependenciesView = dependenciesView;
 
                     //var settings = file.GetSettings().Select(info => info.ToSetting(this)).ToList();
@@ -337,7 +338,7 @@ namespace ModMyFactory.Models
         {
             foreach (var dependency in Dependencies)
             {
-                if (optional || !dependency.IsOptional)
+                if (!dependency.IsHidden && (optional || !dependency.IsOptional))
                     dependency.Activate(parentCollection, FactorioVersion);
             }
         }

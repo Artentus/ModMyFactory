@@ -335,7 +335,6 @@ namespace ModMyFactory.Models
             result.CacheOption = BitmapCacheOption.OnLoad;
             result.StreamSource = stream;
             result.EndInit();
-            result.Freeze();
             return result;
         }
 

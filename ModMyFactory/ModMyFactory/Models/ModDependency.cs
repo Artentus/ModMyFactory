@@ -47,6 +47,11 @@ namespace ModMyFactory.Models
         public bool IsInverted { get; }
 
         /// <summary>
+        /// Indicates whether this dependency is hidden.
+        /// </summary>
+        public bool IsHidden { get; }
+
+        /// <summary>
         /// The name of the mod specified by this dependency.
         /// </summary>
         public string ModName { get; }
@@ -152,6 +157,12 @@ namespace ModMyFactory.Models
             {
                 IsInverted = true;
                 value = value.Substring(1).TrimStart();
+            }
+            else if (value.StartsWith("(?)")) // Optional hidden
+            {
+                IsOptional = true;
+                IsHidden = true;
+                value = value.Substring(3).TrimStart();
             }
             if (string.IsNullOrEmpty(value)) throw new ArgumentException("No mod name specified.", nameof(value));
 
