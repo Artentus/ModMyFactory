@@ -335,6 +335,7 @@ namespace ModMyFactory.Models
             result.CacheOption = BitmapCacheOption.OnLoad;
             result.StreamSource = stream;
             result.EndInit();
+            result.Freeze();
             return result;
         }
 
@@ -348,7 +349,13 @@ namespace ModMyFactory.Models
                     if (entry == null) return null;
 
                     using (var stream = entry.Open())
-                        return LoadImageFromStream(stream);
+                    {
+                        var buffer = new byte[stream.Length];
+                        stream.Read(buffer, 0, (int)stream.Length);
+
+                        using (var ms = new MemoryStream(buffer))
+                            return LoadImageFromStream(ms);
+                    }
                 }
             }
             catch (Exception ex)
