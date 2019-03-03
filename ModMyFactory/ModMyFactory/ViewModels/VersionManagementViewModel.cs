@@ -101,7 +101,7 @@ namespace ModMyFactory.ViewModels
                 Task closeWindowTask = null;
                 try
                 {
-                    var getVersionsTask = FactorioWebsite.GetVersionsAsync(GlobalCredentials.Instance.Username, token);
+                    var getVersionsTask = FactorioWebsite.GetVersionsAsync();
 
                     closeWindowTask = getVersionsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                     progressWindow.ShowDialog();

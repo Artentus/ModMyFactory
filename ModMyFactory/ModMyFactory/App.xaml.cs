@@ -13,6 +13,7 @@ using Octokit;
 using Application = System.Windows.Application;
 using ModMyFactory.Models;
 using FileMode = System.IO.FileMode;
+using System.Net;
 
 namespace ModMyFactory
 {
@@ -103,6 +104,10 @@ namespace ModMyFactory
                     this.Shutdown(e.Exception.HResult);
                 };
             }
+
+            // Http connection limit
+            ServicePointManager.DefaultConnectionLimit = 20;
+            ServicePointManager.Expect100Continue = false;
         }
 
         public App(bool createCrashLog = true)

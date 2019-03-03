@@ -1,9 +1,9 @@
-﻿using ModMyFactory.Helpers;
-using ModMyFactory.Models;
+﻿using ModMyFactory.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,37 +14,43 @@ namespace ModMyFactory.Web
     /// </summary>
     static class FactorioWebsite
     {
+        private static bool VersionListContains(List<FactorioOnlineVersion> versionList, Version version)
+        {
+            return versionList.Any(item => item.Version == version);
+        }
+        
+        private static void GetVersionsFromUrl(string url, bool isExperimental, List<FactorioOnlineVersion> versionList)
+        {
+            const string pattern = @"<h3> *(?<version>\d+\.\d+\.\d+) +\(.+\) *<\/h3>";
+
+            string document = WebHelper.GetDocument(url);
+            var matches = Regex.Matches(document, pattern);
+            foreach (Match match in matches)
+            {
+                string versionString = match.Groups["version"].Value;
+                var version = Version.Parse(versionString);
+
+                if (!VersionListContains(versionList, version))
+                {
+                    var onlineVersion = new FactorioOnlineVersion(version, isExperimental);
+                    versionList.Add(onlineVersion);
+                }
+            }
+        }
+
         /// <summary>
         /// Reads the Factorio version list.
         /// </summary>
         /// <returns>Returns the list of available Factorio versions or null if the operation was unsucessful.</returns>
-        public static async Task<List<FactorioOnlineVersion>> GetVersionsAsync(string username, string token)
+        public static async Task<List<FactorioOnlineVersion>> GetVersionsAsync()
         {
-            var updateInfo = await UpdateWebsite.GetUpdateInfoAsync(username, token);
-            if (updateInfo == null) return null;
-
-            var versions = new List<FactorioOnlineVersion>();
-
-            var groups = updateInfo.Package.GroupBy(item => new Version(item.To.Major, item.To.Minor));
-            var latestMainVersion = groups.Select(group => group.Key).Max();
-            foreach (var group in groups)
+            return await Task.Run(() =>
             {
-                if (group.Key == latestMainVersion)
-                {
-                    var latestStable = group.Where(item => item.IsStable).MaxBy(item => item.To);
-                    if (latestStable != null) versions.Add(new FactorioOnlineVersion(latestStable.To, false));
-
-                    var latestExperimental = group.MaxBy(item => item.To);
-                    if ((latestExperimental != null) && (latestExperimental != latestStable)) versions.Add(new FactorioOnlineVersion(latestExperimental.To, true));
-                }
-                else
-                {
-                    var latestStable = group.MaxBy(item => item.To);
-                    if (latestStable != null) versions.Add(new FactorioOnlineVersion(latestStable.To, false));
-                }
-            }
-
-            return versions;
+                var result = new List<FactorioOnlineVersion>();
+                GetVersionsFromUrl("https://factorio.com/download-headless", false, result);
+                GetVersionsFromUrl("https://factorio.com/download-headless/experimental", true, result);
+                return result;
+            });
         }
 
         /// <summary>

@@ -26,6 +26,7 @@ namespace ModMyFactory.Web
             request.Method = WebRequestMethods.Http.Get;
             request.KeepAlive = true;
             request.UserAgent = UserAgent;
+            request.Proxy = null;
             return request;
         }
 
@@ -41,6 +42,7 @@ namespace ModMyFactory.Web
             request.Method = WebRequestMethods.Http.Post;
             request.KeepAlive = true;
             request.UserAgent = UserAgent;
+            request.Proxy = null;
             request.ContentType = "application/x-www-form-urlencoded";
 
             request.ContentLength = content.Length;
