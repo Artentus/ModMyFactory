@@ -105,9 +105,11 @@ namespace ModMyFactory
                 };
             }
 
-            // Http connection limit
+            // Http request speed optimization
             ServicePointManager.DefaultConnectionLimit = 20;
             ServicePointManager.Expect100Continue = false;
+            ServicePointManager.CheckCertificateRevocationList = false;
+            ServicePointManager.UseNagleAlgorithm = false;
         }
 
         public App(bool createCrashLog = true)
