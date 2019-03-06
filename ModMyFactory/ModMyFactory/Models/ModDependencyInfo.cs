@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModMyFactory.Web.ModApi;
+using System;
 using System.ComponentModel;
 using WPFCore;
 
@@ -9,11 +10,13 @@ namespace ModMyFactory.Models
         bool isOptional;
         bool isSelected;
 
+        public ModRelease Release { get; }
+
         public string Name { get; }
 
         public Version FactorioVersion { get; }
 
-        public GameCompatibleVersion Version { get; set; }
+        public GameCompatibleVersion Version => Release.Version;
 
         public bool IsOptional
         {
@@ -41,11 +44,11 @@ namespace ModMyFactory.Models
             }
         }
 
-        public ModDependencyInfo(string name, Version factorioVersion, GameCompatibleVersion version, bool isOptional)
+        public ModDependencyInfo(ModRelease release, string name, Version factorioVersion, bool isOptional)
         {
+            Release = release;
             Name = name;
             FactorioVersion = factorioVersion;
-            Version = version;
             IsOptional = isOptional;
             IsSelected = !isOptional;
         }

@@ -1,4 +1,5 @@
 ﻿using ModMyFactory.Helpers;
+using ModMyFactory.Web.ModApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -117,6 +118,36 @@ namespace ModMyFactory.Models
             }
 
             Unsatisfied = !result;
+            return result;
+        }
+
+        /// <summary>
+        /// Checks if a dependency is present on the mod portal.
+        /// </summary>
+        public bool IsPresent(ExtendedModInfo modInfo, Version factorioVersion, out ModRelease release)
+        {
+            bool result = false;
+            release = null;
+
+            if (IsBase || IsInverted)
+            {
+                result = true;
+            }
+            else if (HasRestriction)
+            {
+                var comparison = comparisonFunctions[RestrictionComparison];
+
+                var candidates = modInfo.Releases.Where(item => (item.InfoFile.FactorioVersion == factorioVersion) && comparison(item.Version, RestrictionVersion));
+                release = candidates.MaxBy(candidate => candidate.Version, new VersionComparer());
+                result = release != null;
+            }
+            else
+            {
+                var candidates = modInfo.Releases.Where(item => item.InfoFile.FactorioVersion == factorioVersion);
+                release = candidates.MaxBy(candidate => candidate.Version, new VersionComparer());
+                result = release != null;
+            }
+
             return result;
         }
         

@@ -172,6 +172,8 @@
     <sys:String x:Key="ExportingAction">Modpacks werden exportiert</sys:String>
     <sys:String x:Key="ImportingAction">Modpacks werden importiert</sys:String>
     <sys:String x:Key="ImportingDownloadingDescription">Mods werden heruntergeladen</sys:String>
+    
+    <sys:String x:Key="FetchingDependenciesAction">Abhängigkeiten werden abgerufen</sys:String>
 
 
 
