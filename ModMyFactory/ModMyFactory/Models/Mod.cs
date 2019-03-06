@@ -145,6 +145,7 @@ namespace ModMyFactory.Models
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Description)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Dependencies)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DependenciesView)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasVisibleDependencies)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Settings)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SettingsView)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasSettings)));
@@ -195,6 +196,11 @@ namespace ModMyFactory.Models
         /// A view containing this mods dependencies.
         /// </summary>
         public ICollectionView DependenciesView { get; private set; }
+
+        /// <summary>
+        /// Indicates whether this mod has visible dependencies.
+        /// </summary>
+        public bool HasVisibleDependencies => Dependencies.Any(item => !item.IsHidden);
 
         /// <summary>
         /// This mods settings.

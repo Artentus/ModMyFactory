@@ -292,6 +292,7 @@
     <sys:String x:Key="MissingDependenciesModToolTip">Dependencies of this mod are missing.</sys:String>
     <sys:String x:Key="MissingDependenciesModpackToolTip">Dependencies of mods in this modpack are missing.</sys:String>
     <sys:String x:Key="ModSettingsToolTip">Mod settings</sys:String>
+    <sys:String x:Key="DependenciesToolTip">Dependencies</sys:String>
     
     
     <!--

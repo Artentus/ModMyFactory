@@ -6,7 +6,8 @@
 * Fixed crash when selecting certain online mods.
 * Fixed rare crash when adding Steam installation.
 * Fixed visual bug in expanded list items.
-* Improved filtering performance.
+* Improved mod filtering performance.
+* Improved performance of web requests.
 
 #### 1.9.0
 * Added proper handling for inverted mod dependencies.
