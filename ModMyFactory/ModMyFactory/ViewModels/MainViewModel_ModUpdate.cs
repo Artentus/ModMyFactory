@@ -122,6 +122,19 @@ namespace ModMyFactory.ViewModels
                             }
                         }
                     }
+                    else
+                    {
+                        var latestRelease = info.GetLatestRelease();
+                        if (latestRelease != null)
+                        {
+                            var latestVersion = kvp.Value.SelectMany(group => group.Value).MaxBy(m => m.Version, new VersionComparer());
+                            if (latestVersion.Version < latestRelease.Version)
+                            {
+                                var updateInfo = new ModUpdateInfo(modName, latestVersion.FriendlyName, latestRelease);
+                                AddUpdateInfo(updateInfos, updateInfo);
+                            }
+                        }
+                    }
                 }
             }
 
