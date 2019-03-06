@@ -350,11 +350,18 @@ namespace ModMyFactory.Models
 
                     using (var stream = entry.Open())
                     {
-                        var buffer = new byte[stream.Length];
-                        stream.Read(buffer, 0, (int)stream.Length);
+                        using (var ms = new MemoryStream())
+                        {
+                            var buffer = new byte[8192];
+                            int count = 0;
+                            do
+                            {
+                                count = stream.Read(buffer, 0, buffer.Length);
+                                if (count > 0) ms.Write(buffer, 0, count);
+                            } while (count > 0);
 
-                        using (var ms = new MemoryStream(buffer))
                             return LoadImageFromStream(ms);
+                        }
                     }
                 }
             }
