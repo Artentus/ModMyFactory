@@ -14,11 +14,6 @@ namespace ModMyFactory
         {
             var defaultSettings = new Settings(fileName)
             {
-                FactorioDirectoryOption = DirectoryOption.AppData,
-                ModDirectoryOption = DirectoryOption.AppData,
-                SavegameDirectoryOption = DirectoryOption.AppData,
-                ScenarioDirectoryOption = DirectoryOption.AppData,
-
                 FactorioDirectory = string.Empty,
                 ModDirectory = string.Empty,
                 SavegameDirectory = string.Empty,
@@ -71,14 +66,6 @@ namespace ModMyFactory
         }
 
         FileInfo file;
-        
-        public DirectoryOption FactorioDirectoryOption;
-
-        public DirectoryOption ModDirectoryOption;
-
-        public DirectoryOption SavegameDirectoryOption;
-
-        public DirectoryOption ScenarioDirectoryOption;
 
         public string FactorioDirectory;
 
@@ -157,80 +144,28 @@ namespace ModMyFactory
         public DirectoryInfo GetFactorioDirectory()
         {
             const string directoryName = "Factorio";
-
-            switch (FactorioDirectoryOption)
-            {
-                case DirectoryOption.AppData:
-                    return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
-                case DirectoryOption.ApplicationDirectory:
-                    return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
-                case DirectoryOption.Custom:
-                    return new DirectoryInfo(FactorioDirectory);
-            }
-
-            throw new InvalidOperationException();
+            return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
         }
 
         public DirectoryInfo GetModDirectory(Version version = null)
         {
             const string directoryName = "mods";
-
-            switch (ModDirectoryOption)
-            {
-                case DirectoryOption.AppData:
-                    if (version != null)
-                        return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName, version.ToString(2)));
-                    else
-                        return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
-
-                case DirectoryOption.ApplicationDirectory:
-                    if (version != null)
-                        return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName, version.ToString(2)));
-                    else
-                        return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
-
-                case DirectoryOption.Custom:
-                    if (version != null)
-                        return new DirectoryInfo(Path.Combine(ModDirectory, version.ToString(2)));
-                    else
-                        return new DirectoryInfo(ModDirectory);
-            }
-
-            throw new InvalidOperationException();
+            if (version != null)
+                return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName, version.ToString(2)));
+            else
+                return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
         }
 
         public DirectoryInfo GetSavegameDirectory()
         {
             const string directoryName = "saves";
-
-            switch (SavegameDirectoryOption)
-            {
-                case DirectoryOption.AppData:
-                    return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
-                case DirectoryOption.ApplicationDirectory:
-                    return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
-                case DirectoryOption.Custom:
-                    return new DirectoryInfo(SavegameDirectory);
-            }
-
-            throw new InvalidOperationException();
+            return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
         }
 
         public DirectoryInfo GetScenarioDirectory()
         {
             const string directoryName = "scenarios";
-
-            switch (ScenarioDirectoryOption)
-            {
-                case DirectoryOption.AppData:
-                    return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
-                case DirectoryOption.ApplicationDirectory:
-                    return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
-                case DirectoryOption.Custom:
-                    return new DirectoryInfo(ScenarioDirectory);
-            }
-
-            throw new InvalidOperationException();
+            return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
         }
     }
 }
