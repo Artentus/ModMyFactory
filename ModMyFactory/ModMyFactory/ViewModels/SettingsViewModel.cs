@@ -8,52 +8,14 @@ namespace ModMyFactory.ViewModels
         static SettingsViewModel instance;
 
         public static SettingsViewModel Instance => instance ?? (instance = new SettingsViewModel());
-
-        #region ManagerMode
-
-        bool managerModeIsPerFactorioVersion;
-        bool managerModeIsGlobal;
-
-        public bool ManagerModeIsPerFactorioVersion
-        {
-            get { return managerModeIsPerFactorioVersion; }
-            set
-            {
-                if (value != managerModeIsPerFactorioVersion)
-                {
-                    managerModeIsPerFactorioVersion = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ManagerModeIsPerFactorioVersion)));
-                }
-            }
-        }
-
-        public bool ManagerModeIsGlobal
-        {
-            get { return managerModeIsGlobal; }
-            set
-            {
-                if (value != managerModeIsGlobal)
-                {
-                    managerModeIsGlobal = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ManagerModeIsGlobal)));
-                }
-            }
-        }
-
-        public ManagerMode ManagerMode => ManagerModeIsGlobal ? ManagerMode.Global : ManagerMode.PerFactorioVersion;
-
-        #endregion
-
+        
         #region Misc
 
         bool updateSearchOnStartup;
         bool includePreReleasesForUpdate;
+        bool preSelectModVersions;
         bool alwaysUpdateZipped;
         bool keepOldModVersions;
-        bool keepExtracted;
-        bool keepZipped;
-        bool keepWhenNewFactorioVersion;
-        bool updateIntermediate;
 
         public bool UpdateSearchOnStartup
         {
@@ -81,6 +43,19 @@ namespace ModMyFactory.ViewModels
             }
         }
 
+        public bool PreSelectModVersions
+        {
+            get { return preSelectModVersions; }
+            set
+            {
+                if (value != preSelectModVersions)
+                {
+                    preSelectModVersions = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(PreSelectModVersions)));
+                }
+            }
+        }
+
         public bool AlwaysUpdateZipped
         {
             get { return alwaysUpdateZipped; }
@@ -103,65 +78,6 @@ namespace ModMyFactory.ViewModels
                 {
                     keepOldModVersions = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(KeepOldModVersions)));
-                }
-
-                if (keepOldModVersions)
-                {
-                    KeepExtracted = true;
-                    KeepZipped = true;
-                    KeepWhenNewFactorioVersion = true;
-                }
-            }
-        }
-
-        public bool KeepExtracted
-        {
-            get { return keepExtracted; }
-            set
-            {
-                if (value != keepExtracted)
-                {
-                    keepExtracted = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(KeepExtracted)));
-                }
-            }
-        }
-
-        public bool KeepZipped
-        {
-            get { return keepZipped; }
-            set
-            {
-                if (value != keepZipped)
-                {
-                    keepZipped = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(KeepZipped)));
-                }
-            }
-        }
-
-        public bool KeepWhenNewFactorioVersion
-        {
-            get { return keepWhenNewFactorioVersion; }
-            set
-            {
-                if (value != keepWhenNewFactorioVersion)
-                {
-                    keepWhenNewFactorioVersion = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(KeepWhenNewFactorioVersion)));
-                }
-            }
-        }
-
-        public bool UpdateIntermediate
-        {
-            get { return updateIntermediate; }
-            set
-            {
-                if (value != updateIntermediate)
-                {
-                    updateIntermediate = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(UpdateIntermediate)));
                 }
             }
         }
@@ -222,28 +138,13 @@ namespace ModMyFactory.ViewModels
         public void Reset()
         {
             Settings settings = App.Instance.Settings;
-
-            ManagerModeIsPerFactorioVersion = false;
-            ManagerModeIsGlobal = false;
-            switch (settings.ManagerMode)
-            {
-                case ManagerMode.PerFactorioVersion:
-                    ManagerModeIsPerFactorioVersion = true;
-                    break;
-                case ManagerMode.Global:
-                    ManagerModeIsGlobal = true;
-                    break;
-            }
-
+            
             UpdateSearchOnStartup = settings.UpdateSearchOnStartup;
             IncludePreReleasesForUpdate = settings.IncludePreReleasesForUpdate;
 
+            PreSelectModVersions = settings.PreSelectModVersions;
             AlwaysUpdateZipped = settings.AlwaysUpdateZipped;
-            KeepExtracted = settings.KeepOldExtractedModVersions;
-            KeepZipped = settings.KeepOldZippedModVersions;
-            KeepWhenNewFactorioVersion = settings.KeepOldModVersionsWhenNewFactorioVersion;
             KeepOldModVersions = settings.KeepOldModVersions;
-            UpdateIntermediate = settings.DownloadIntermediateUpdates;
 
             ActivateOptionalDependencies = settings.ActivateOptionalDependencies;
             ActivateDependencies = settings.ActivateDependencies;

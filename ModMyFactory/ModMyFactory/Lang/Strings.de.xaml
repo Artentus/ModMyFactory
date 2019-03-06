@@ -172,6 +172,8 @@
     <sys:String x:Key="ExportingAction">Modpacks werden exportiert</sys:String>
     <sys:String x:Key="ImportingAction">Modpacks werden importiert</sys:String>
     <sys:String x:Key="ImportingDownloadingDescription">Mods werden heruntergeladen</sys:String>
+    
+    <sys:String x:Key="FetchingDependenciesAction">Abhängigkeiten werden abgerufen</sys:String>
 
 
 
@@ -272,6 +274,8 @@
 
     <!-- tooltips -->
     <sys:String x:Key="RenameToolTip">Umbenennen</sys:String>
+    <sys:String x:Key="LockToolTip">Modpack sperren</sys:String>
+    <sys:String x:Key="UnlockToolTip">Modpack entsperren</sys:String>
     <sys:String x:Key="DeleteToolTip">Löschen</sys:String>
     <sys:String x:Key="RemoveToolTip">Aus Modpack entfernen</sys:String>
     <sys:String x:Key="SetActiveToolTip">Aktivieren</sys:String>
@@ -281,6 +285,7 @@
     <sys:String x:Key="MissingDependenciesModToolTip">Abhängigkeiten dieser Mod fehlen.</sys:String>
     <sys:String x:Key="MissingDependenciesModpackToolTip">Abhängigkeiten von Mods in diesem Modpack fehlen.</sys:String>
     <sys:String x:Key="ModSettingsToolTip">Mod-Einstellungen</sys:String>
+    <sys:String x:Key="DependenciesToolTip">Abhängigkeiten</sys:String>
 
 
     <!--
@@ -337,6 +342,7 @@
     <sys:String x:Key="PerFactorioVersionGroupItem">Pro Factorio-Version</sys:String>
     <sys:String x:Key="UpdateSearchGroupItem">Bei Start nach Updates suchen</sys:String>
     <sys:String x:Key="IncludePreReleasesGroupItem">Vorabversionen bei der Updatesuche miteinbeziehen</sys:String>
+    <sys:String x:Key="PreSelectModVersionsGroupItem">Mods automatisch für Hard-Updates markieren</sys:String>
     <sys:String x:Key="UpdateZippedGroupItem">Mod-Updates immer als ZIP gepackt behalten</sys:String>
     <sys:String x:Key="KeepOldModVersionsGroupItem">Alte Mod-Versionen beim Updaten behalten</sys:String>
     <sys:String x:Key="KeepExtractedModVersionsGroupItem">Alte Versionen von extrahierten Mods behalten</sys:String>
@@ -411,6 +417,11 @@
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Mitwirkende</sys:String>
     <sys:String x:Key="TranslatorsHeader">Übersetzer</sys:String>
+    <sys:String x:Key="TestersHeader">Tester</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="ChangelogButton">Changelog ansehen</sys:String>
+    <sys:String x:Key="CloseChangelogButton">Changelog schließen</sys:String>
 
     
     <!--
@@ -450,11 +461,15 @@
     ____________________ ModUpdateWindow ____________________
     -->
 
-    <sys:String x:Key="ModUpdateWindowTitle">Mods zum Aktualisieren auswählen</sys:String>
+    <sys:String x:Key="ModUpdateWindowTitle">Mod-Aktualisierungen zum Herunterladen auswählen</sys:String>
+    
+    <!-- headers -->
+    <sys:String x:Key="SelectUpdateVersionsHeader">Installierte Versionen zum Ersetzen auswählen:</sys:String>
 
     <!-- format strings -->
     <sys:String x:Key="CurrentVersionFormat">Aktuelle Version: {0}</sys:String>
     <sys:String x:Key="NewestVersionFormat">Neuste Version: {0}</sys:String>
+    <sys:String x:Key="ModpackCountFormat">In Modpacks:</sys:String>
 
 
     <!--

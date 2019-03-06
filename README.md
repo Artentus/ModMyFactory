@@ -30,7 +30,7 @@ ModMyFactory allows sharing of arbitrarily complex modpacks with ease. You can e
 Exported modpacks support a plethora of settings on a per-mod basis, as well as the ability to directly include mod files so mods don't have to be downloaded on import.
 
 #### Mod dependency handling
-Automatically download and enable dependenciey of your mods. Optional dependencies are also supported.  
+Automatically download and enable dependencies of your mods. Optional dependencies are also supported.  
 If you are missing dependencies for some of your mods ModMyFactory will tell you in an obvious but unintrusive manner.
 
 #### Disk location selection

@@ -172,6 +172,8 @@
     <sys:String x:Key="ExportingAction">Exporting modpacks</sys:String>
     <sys:String x:Key="ImportingAction">Importing modpacks</sys:String>
     <sys:String x:Key="ImportingDownloadingDescription">Downloading mods</sys:String>
+    
+    <sys:String x:Key="FetchingDependenciesAction">Fetching dependencies</sys:String>
 
     
     
@@ -281,6 +283,8 @@
     
     <!-- tooltips -->
     <sys:String x:Key="RenameToolTip">Rename</sys:String>
+    <sys:String x:Key="LockToolTip">Lock modpack</sys:String>
+    <sys:String x:Key="UnlockToolTip">Unlock modpack</sys:String>
     <sys:String x:Key="DeleteToolTip">Delete</sys:String>
     <sys:String x:Key="RemoveToolTip">Remove from modpack</sys:String>
     <sys:String x:Key="SetActiveToolTip">Activate</sys:String>
@@ -290,6 +294,7 @@
     <sys:String x:Key="MissingDependenciesModToolTip">Dependencies of this mod are missing.</sys:String>
     <sys:String x:Key="MissingDependenciesModpackToolTip">Dependencies of mods in this modpack are missing.</sys:String>
     <sys:String x:Key="ModSettingsToolTip">Mod settings</sys:String>
+    <sys:String x:Key="DependenciesToolTip">Dependencies</sys:String>
     
     
     <!--
@@ -346,6 +351,7 @@
     <sys:String x:Key="PerFactorioVersionGroupItem">Per Factorio version</sys:String>
     <sys:String x:Key="UpdateSearchGroupItem">Search for updates on startup</sys:String>
     <sys:String x:Key="IncludePreReleasesGroupItem">Include prereleases when searching for updates</sys:String>
+    <sys:String x:Key="PreSelectModVersionsGroupItem">Automatically mark mods for hard updates</sys:String>
     <sys:String x:Key="UpdateZippedGroupItem">Always keep mod updates zipped</sys:String>
     <sys:String x:Key="KeepOldModVersionsGroupItem">Keep old mod versions when updating</sys:String>
     <sys:String x:Key="KeepExtractedModVersionsGroupItem">Keep old versions of extracted mods</sys:String>
@@ -420,6 +426,11 @@
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Contributors</sys:String>
     <sys:String x:Key="TranslatorsHeader">Translators</sys:String>
+    <sys:String x:Key="TestersHeader">Testers</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="ChangelogButton">View Changelog</sys:String>
+    <sys:String x:Key="CloseChangelogButton">Close Changelog</sys:String>
 
 
     <!--
@@ -460,11 +471,15 @@
     ____________________ ModUpdateWindow ____________________
     -->
     
-    <sys:String x:Key="ModUpdateWindowTitle">Select mods to update</sys:String>
+    <sys:String x:Key="ModUpdateWindowTitle">Select mod updates to download</sys:String>
+    
+    <!-- headers -->
+    <sys:String x:Key="SelectUpdateVersionsHeader">Select installed versions to replace:</sys:String>
     
     <!-- format strings -->
     <sys:String x:Key="CurrentVersionFormat">Current version: {0}</sys:String>
     <sys:String x:Key="NewestVersionFormat">Newest version: {0}</sys:String>
+    <sys:String x:Key="ModpackCountFormat">In modpacks:</sys:String>
     
     
     <!--

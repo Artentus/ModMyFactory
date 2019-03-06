@@ -101,7 +101,7 @@ namespace ModMyFactory.ViewModels
                 Task closeWindowTask = null;
                 try
                 {
-                    var getVersionsTask = FactorioWebsite.GetVersionsAsync(GlobalCredentials.Instance.Username, token);
+                    var getVersionsTask = FactorioWebsite.GetVersionsAsync();
 
                     closeWindowTask = getVersionsTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
                     progressWindow.ShowDialog();
@@ -432,17 +432,24 @@ namespace ModMyFactory.ViewModels
 
             if (appDataDir.Exists)
             {
-                var oldDir = new DirectoryInfo(Path.Combine(appDataDir.Parent.FullName, appDataDir.Name + "-old"));
-                oldDir.Create();
+                string backupDirName = appDataDir.Name + "-old";
+                int backupDirCounter = 1;
+                DirectoryInfo backupDir;
+                do
+                {
+                    backupDir = new DirectoryInfo(Path.Combine(appDataDir.Parent.FullName, backupDirName));
+                    backupDirName = appDataDir.Name + "-old-" + backupDirCounter;
+                } while (backupDir.Exists);
+                backupDir.Create();
 
                 var savesDir = new DirectoryInfo(Path.Combine(appDataDir.FullName, "saves"));
-                if (savesDir.Exists) savesDir.MoveTo(Path.Combine(oldDir.FullName, "saves"));
+                if (savesDir.Exists) savesDir.MoveTo(Path.Combine(backupDir.FullName, "saves"));
 
                 var scenariosDir = new DirectoryInfo(Path.Combine(appDataDir.FullName, "scenarios"));
-                if (scenariosDir.Exists) scenariosDir.MoveTo(Path.Combine(oldDir.FullName, "scenarios"));
+                if (scenariosDir.Exists) scenariosDir.MoveTo(Path.Combine(backupDir.FullName, "scenarios"));
 
                 var modsDir = new DirectoryInfo(Path.Combine(appDataDir.FullName, "mods"));
-                if (modsDir.Exists) modsDir.MoveTo(Path.Combine(oldDir.FullName, "mods"));
+                if (modsDir.Exists) modsDir.MoveTo(Path.Combine(backupDir.FullName, "mods"));
             }
             else
             {

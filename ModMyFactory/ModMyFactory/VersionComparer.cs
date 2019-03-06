@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ModMyFactory
 {
-    sealed class VersionComparer : IComparer<Version>, IComparer
+    sealed class VersionComparer : IComparer<Version>, IComparer<GameCompatibleVersion>, IComparer
     {
         public int Compare(Version x, Version y)
         {
@@ -26,17 +26,40 @@ namespace ModMyFactory
             }
         }
 
+        public int Compare(GameCompatibleVersion x, GameCompatibleVersion y)
+        {
+            if ((x == null) && (y == null))
+            {
+                return 0;
+            }
+            else if (x == null)
+            {
+                return -1;
+            }
+            else if (y == null)
+            {
+                return 1;
+            }
+            else
+            {
+                return x.CompareTo(y);
+            }
+        }
+
         public int Compare(object x, object y)
         {
-            Version vX = x as Version;
-            Version vY = y as Version;
-
-            if ((x != null) && (vX == null))
+            if ((x is Version) && (y is Version))
+            {
+                return Compare((Version)x, (Version)y);
+            }
+            else if ((x is GameCompatibleVersion) && (y is GameCompatibleVersion))
+            {
+                return Compare((GameCompatibleVersion)x, (GameCompatibleVersion)y);
+            }
+            else
+            {
                 throw new ArgumentException("Parameters need to be of type Version.");
-            if ((y != null) && (vY == null))
-                throw new ArgumentException("Parameters need to be of type Version.");
-
-            return Compare(vX, vY);
+            }
         }
     }
 }

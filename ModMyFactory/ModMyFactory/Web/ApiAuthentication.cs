@@ -31,7 +31,7 @@ namespace ModMyFactory.Web
 
             try
             {
-                string document = WebHelper.GetDocument(loginPage, null, content);
+                string document = WebHelper.GetDocument(loginPage, content);
                 if (string.IsNullOrWhiteSpace(document)) return false;
 
                 info = JsonHelper.Deserialize<AuthenticationInfo>(document);

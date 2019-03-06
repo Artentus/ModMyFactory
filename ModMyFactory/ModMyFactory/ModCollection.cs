@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ModMyFactory.Models;
@@ -23,7 +24,7 @@ namespace ModMyFactory
         /// <param name="name">The name of the mod.</param>
         /// <param name="version">The mods version.</param>
         /// <returns>Returns true if the collection contains the mod, otherwise false.</returns>
-        public bool Contains(string name, Version version)
+        public bool Contains(string name, GameCompatibleVersion version)
         {
             return this.Any(mod =>
                 string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)
@@ -36,19 +37,11 @@ namespace ModMyFactory
         /// <param name="name">The name of the mod.</param>
         /// <param name="factorioVersion">The mods Factorio version.</param>
         /// <returns>Returns true if the collection contains the mod, otherwise false.</returns>
-        public bool ContainsByFactorioVersion(string name, Version factorioVersion)
+        public bool ContainsbyFactorioVersion(string name, Version factorioVersion)
         {
-            if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
-            {
-                return this.Any(mod =>
-                    string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)
-                    && (mod.FactorioVersion == factorioVersion));
-            }
-            else
-            {
-                return this.Any(mod =>
-                    string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase));
-            }
+            return this.Any(mod =>
+                string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)
+                && (mod.FactorioVersion == factorioVersion));
         }
 
         /// <summary>
@@ -56,43 +49,42 @@ namespace ModMyFactory
         /// </summary>
         /// <param name="name">The name of the mods.</param>
         /// <returns>Returns the mods searched for.</returns>
-        public Mod[] Find(string name)
+        public IEnumerable<Mod> Find(string name)
         {
-            return this.Where(mod => string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)).ToArray();
+            return this.Where(mod => string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase));
         }
 
         /// <summary>
-        /// Finds a mod in this collection.
+        /// Finds mods in this collection.
+        /// </summary>
+        /// <param name="name">The name of the mods.</param>
+        /// <param name="factorioVersion">The mods Factorio version.</param>
+        /// <returns>Returns the mods searched for.</returns>
+        public IEnumerable<Mod> Find(string name, Version factorioVersion)
+        {
+            return this.Where(mod => string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase) && (mod.FactorioVersion == factorioVersion));
+        }
+
+        /// <summary>
+        /// Tries to get the specified mod.
         /// </summary>
         /// <param name="name">The name of the mod.</param>
         /// <param name="version">The mods version.</param>
-        /// <returns>Returns the mod searched for.</returns>
-        public Mod Find(string name, Version version)
+        /// <param name="mod">Out. The requested mod.</param>
+        /// <returns>Return true if the collection contained the specified mod, otherwise false.</returns>
+        public bool TryGetMod(string name, GameCompatibleVersion version, out Mod mod)
         {
-            return this.FirstOrDefault(mod =>
-                string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)
-                && (mod.Version == version));
-        }
+            foreach (var m in this)
+            {
+                if (string.Equals(m.Name, name, StringComparison.InvariantCultureIgnoreCase) && (m.Version == version))
+                {
+                    mod = m;
+                    return true;
+                }
+            }
 
-        /// <summary>
-        /// Finds a mod in this collection.
-        /// </summary>
-        /// <param name="name">The name of the mod.</param>
-        /// <param name="factorioVersion">The mods Factorio version.</param>
-        /// <returns>Returns the mod searched for.</returns>
-        public Mod FindByFactorioVersion(string name, Version factorioVersion)
-        {
-            if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
-            {
-                return this.FirstOrDefault(mod =>
-                    string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase)
-                    && (mod.FactorioVersion == factorioVersion));
-            }
-            else
-            {
-                return this.FirstOrDefault(mod =>
-                    string.Equals(mod.Name, name, StringComparison.InvariantCultureIgnoreCase));
-            }
+            mod = null;
+            return false;
         }
 
         /// <summary>

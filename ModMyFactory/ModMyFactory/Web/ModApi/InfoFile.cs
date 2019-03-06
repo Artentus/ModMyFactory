@@ -10,6 +10,7 @@ namespace ModMyFactory.Web.ModApi
         public Version FactorioVersion { get; set; }
 
         [JsonProperty("dependencies")]
+        [JsonConverter(typeof(SingleOrArrayJsonConverter<string>))]
         public string[] Dependencies { get; set; }
     }
 }

@@ -14,7 +14,10 @@ namespace ModMyFactory
         {
             var defaultSettings = new Settings(fileName)
             {
-                ManagerMode = ManagerMode.PerFactorioVersion,
+                FactorioDirectoryOption = DirectoryOption.AppData,
+                ModDirectoryOption = DirectoryOption.AppData,
+                SavegameDirectoryOption = DirectoryOption.AppData,
+                ScenarioDirectoryOption = DirectoryOption.AppData,
 
                 FactorioDirectory = string.Empty,
                 ModDirectory = string.Empty,
@@ -39,12 +42,9 @@ namespace ModMyFactory
                 UpdateSearchOnStartup = true,
                 IncludePreReleasesForUpdate = false,
 
+                PreSelectModVersions = true,
                 AlwaysUpdateZipped = true,
                 KeepOldModVersions = false,
-                KeepOldExtractedModVersions = true,
-                KeepOldZippedModVersions = false,
-                KeepOldModVersionsWhenNewFactorioVersion = true,
-                DownloadIntermediateUpdates = false,
 
                 ShowOptionalDependencies = false,
                 ActivateDependencies = true,
@@ -71,8 +71,14 @@ namespace ModMyFactory
         }
 
         FileInfo file;
+        
+        public DirectoryOption FactorioDirectoryOption;
 
-        public ManagerMode ManagerMode;
+        public DirectoryOption ModDirectoryOption;
+
+        public DirectoryOption SavegameDirectoryOption;
+
+        public DirectoryOption ScenarioDirectoryOption;
 
         public string FactorioDirectory;
 
@@ -112,22 +118,14 @@ namespace ModMyFactory
 
         [DefaultValue(true)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        public bool PreSelectModVersions;
+
+        [DefaultValue(true)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool AlwaysUpdateZipped;
 
         public bool KeepOldModVersions;
-
-        [DefaultValue(true)]
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        public bool KeepOldExtractedModVersions;
-
-        public bool KeepOldZippedModVersions;
-
-        [DefaultValue(true)]
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        public bool KeepOldModVersionsWhenNewFactorioVersion;
-
-        public bool DownloadIntermediateUpdates;
-
+        
         public bool ShowOptionalDependencies;
 
         [DefaultValue(true)]
@@ -159,28 +157,80 @@ namespace ModMyFactory
         public DirectoryInfo GetFactorioDirectory()
         {
             const string directoryName = "Factorio";
-            return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
+
+            switch (FactorioDirectoryOption)
+            {
+                case DirectoryOption.AppData:
+                    return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
+                case DirectoryOption.ApplicationDirectory:
+                    return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
+                case DirectoryOption.Custom:
+                    return new DirectoryInfo(FactorioDirectory);
+            }
+
+            throw new InvalidOperationException();
         }
 
         public DirectoryInfo GetModDirectory(Version version = null)
         {
             const string directoryName = "mods";
-            if (version != null)
-                return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName, version.ToString(2)));
-            else
-                return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
+
+            switch (ModDirectoryOption)
+            {
+                case DirectoryOption.AppData:
+                    if (version != null)
+                        return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName, version.ToString(2)));
+                    else
+                        return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
+
+                case DirectoryOption.ApplicationDirectory:
+                    if (version != null)
+                        return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName, version.ToString(2)));
+                    else
+                        return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
+
+                case DirectoryOption.Custom:
+                    if (version != null)
+                        return new DirectoryInfo(Path.Combine(ModDirectory, version.ToString(2)));
+                    else
+                        return new DirectoryInfo(ModDirectory);
+            }
+
+            throw new InvalidOperationException();
         }
 
         public DirectoryInfo GetSavegameDirectory()
         {
             const string directoryName = "saves";
-            return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
+
+            switch (SavegameDirectoryOption)
+            {
+                case DirectoryOption.AppData:
+                    return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
+                case DirectoryOption.ApplicationDirectory:
+                    return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
+                case DirectoryOption.Custom:
+                    return new DirectoryInfo(SavegameDirectory);
+            }
+
+            throw new InvalidOperationException();
         }
 
         public DirectoryInfo GetScenarioDirectory()
         {
             const string directoryName = "scenarios";
-            return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
+
+            switch (ScenarioDirectoryOption)
+            {
+                case DirectoryOption.AppData:
+                    return new DirectoryInfo(Path.Combine(App.Instance.AppDataPath, directoryName));
+                case DirectoryOption.ApplicationDirectory:
+                    return new DirectoryInfo(Path.Combine(App.Instance.ApplicationDirectoryPath, directoryName));
+                case DirectoryOption.Custom:
+                    return new DirectoryInfo(ScenarioDirectory);
+            }
+
+            throw new InvalidOperationException();
         }
     }
 }

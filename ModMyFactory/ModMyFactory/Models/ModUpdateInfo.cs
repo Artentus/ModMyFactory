@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using ModMyFactory.Web.ModApi;
 using WPFCore;
 
@@ -8,25 +10,21 @@ namespace ModMyFactory.Models
     class ModUpdateInfo : NotifyPropertyChangedBase
     {
         bool isSelected;
-
-        public Mod Mod { get; }
-
+        
         public ModRelease Update { get; }
 
-        public string Name => Mod.Name;
+        public string ModName { get; }
 
-        public string FriendlyName => Mod.FriendlyName;
-
-        public Version CurrentVersion => Mod.Version;
+        public string FriendlyName { get; }
 
         public Version UpdateVersion => Update.Version;
 
-        public Version CurrentFactorioVersion => Mod.FactorioVersion;
+        public Version FactorioVersion => Update.InfoFile.FactorioVersion;
 
-        public Version UpdateFactorioVersion => Update.InfoFile.FactorioVersion;
+        public List<ModVersionUpdateInfo> ModVersions { get; }
 
-        public bool CreateNewMod { get; }
-
+        public bool Extract => ModVersions.Any(version => version.Mod.ExtractUpdates);
+        
         public bool IsSelected
         {
             get { return isSelected; }
@@ -36,16 +34,23 @@ namespace ModMyFactory.Models
                 {
                     isSelected = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsSelected)));
+
+                    if (!isSelected)
+                    {
+                        foreach (var version in ModVersions)
+                            version.IsSelected = false;
+                    }
                 }
             }
         }
 
-        public ModUpdateInfo(Mod mod, ModRelease update, bool createNewMod)
+        public ModUpdateInfo(string modName, string friendlyName, ModRelease update)
         {
-            Mod = mod;
+            ModName = modName;
+            FriendlyName = friendlyName;
             Update = update;
-            CreateNewMod = createNewMod;
             isSelected = true;
+            ModVersions = new List<ModVersionUpdateInfo>();
         }
     }
 }

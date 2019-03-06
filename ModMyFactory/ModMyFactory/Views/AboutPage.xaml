@@ -1,0 +1,136 @@
+﻿<Page x:Class="ModMyFactory.Views.AboutPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:vm="clr-namespace:ModMyFactory.ViewModels"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="AboutPage" UseLayoutRounding="True">
+
+    <Page.DataContext>
+        <vm:AboutPageViewModel/>
+    </Page.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource FlagsLabel}"/>
+            <TextBlock Grid.Row="0" Grid.Column="1">
+                        <Hyperlink Command="{Binding Url1Command}">Flag Icons by FamFamFam</Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource FontLabel}"/>
+            <TextBlock Grid.Row="1" Grid.Column="1">
+                        <Hyperlink Command="{Binding Url2Command}">Sylar Stencil</Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource DialogsLabel}"/>
+            <TextBlock Grid.Row="2" Grid.Column="1">
+                        <Hyperlink Command="{Binding Url3Command}">Ookii.Dialogs</Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource JsonLabel}"/>
+            <TextBlock Grid.Row="3" Grid.Column="1">
+                        <Hyperlink Command="{Binding Url4Command}">Json.NET</Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource GitHubLabel}"/>
+            <TextBlock Grid.Row="4" Grid.Column="1">
+                        <Hyperlink Command="{Binding Url5Command}">Octokit</Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="5" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource ZlibLabel}"/>
+            <TextBlock Grid.Row="5" Grid.Column="1">
+                        <Hyperlink Command="{Binding Url6Command}">zlib</Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="6" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource XdeltaLabel}"/>
+            <TextBlock Grid.Row="6" Grid.Column="1">
+                        <Hyperlink Command="{Binding Url7Command}">Xdelta-sharp</Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="7" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource INIparserLabel}"/>
+            <TextBlock Grid.Row="7" Grid.Column="1">
+                        <Hyperlink Command="{Binding Url8Command}">INI-parser</Hyperlink>
+            </TextBlock>
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="20,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Rectangle Grid.Row="0" Margin="0,10" Height="1" Fill="{StaticResource BorderBrush}"/>
+            <TextBlock Grid.Row="1" Text="{DynamicResource ContributorsHeader}" FontWeight="DemiBold"/>
+            <WrapPanel Grid.Row="2" Margin="-4,2" Orientation="Horizontal">
+                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor1Command}">plague006</Hyperlink></TextBlock>
+                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor2Command}">jodli</Hyperlink></TextBlock>
+                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor3Command}">mpwoz</Hyperlink></TextBlock>
+                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor4Command}">Credomane Evonguard</Hyperlink></TextBlock>
+                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor5Command}">distantcam</Hyperlink></TextBlock>
+            </WrapPanel>
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="20,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Rectangle Grid.Row="0" Margin="0,10" Height="1" Fill="{StaticResource BorderBrush}"/>
+            <TextBlock Grid.Row="1" Text="{DynamicResource TranslatorsHeader}" FontWeight="DemiBold"/>
+            <WrapPanel Grid.Row="2" Margin="-6,2" Orientation="Horizontal">
+                <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator1Command}">Averssem</Hyperlink>,
+                    <Hyperlink Command="{Binding Translator3Command}">Corwin616</Hyperlink> (Russian)</TextBlock>
+                <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator2Command}">blackbat24</Hyperlink> (Portuguese)</TextBlock>
+                <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator4Command}">James Y.</Hyperlink> (Chinese)</TextBlock>
+                <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator5Command}">Xagros</Hyperlink> (Korean)</TextBlock>
+            </WrapPanel>
+        </Grid>
+
+        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="20,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Rectangle Grid.Row="0" Margin="0,10" Height="1" Fill="{StaticResource BorderBrush}"/>
+            <TextBlock Grid.Row="1" Text="{DynamicResource TestersHeader}" FontWeight="DemiBold"/>
+            <WrapPanel Grid.Row="2" Margin="-6,2" Orientation="Horizontal">
+                <TextBlock Margin="6,0">Dirkus</TextBlock>
+            </WrapPanel>
+        </Grid>
+    </Grid>
+</Page>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -20,55 +19,23 @@ namespace ModMyFactory.Web
     {
         const string BaseUrl = "https://mods.factorio.com";
         const string ModsUrl = BaseUrl + "/api/mods";
-
-        private static ApiPage DownloadPage(int pageSize, int page)
+        
+        private static ApiPage DownloadPage()
         {
-            string pageUrl = $"{ModsUrl}?page_size={pageSize}";
-            if (page > 1) pageUrl += $"&page={page}";
-
-            string document = WebHelper.GetDocument(pageUrl, null);
+            string pageUrl = $"{ModsUrl}?page_size=max";
+            
+            string document = WebHelper.GetDocument(pageUrl);
             return JsonHelper.Deserialize<ApiPage>(document);
         }
-
-        private static ApiPage DownloadFirstPage(int pageSize)
-        {
-            return DownloadPage(pageSize, 1);
-        }
-
-        private static IEnumerable<ApiPage> DownloadAllPages(int pageSize)
-        {
-            var firstPage = DownloadFirstPage(pageSize);
-            int pageCount = firstPage.Info.PageCount;
-
-            var pages = new ConcurrentBag<ApiPage>();
-            pages.Add(firstPage);
-            if (pageCount == 1) return pages;
-            
-            Parallel.For(2, pageCount + 1, pageIndex =>
-            {
-                var page = DownloadPage(pageSize, pageIndex);
-                pages.Add(page);
-            });
-
-            return pages;
-        }
-
+        
         /// <summary>
         /// Gets all mods that are available online.
         /// </summary>
         /// <returns>Returns a list of online available mods.</returns>
-        public static async Task<List<ModInfo>> GetModsAsync(ModCollection installedMods, int pageSize = 500)
+        public static async Task<List<ModInfo>> GetModsAsync(ModCollection installedMods)
         {
-            List<ModInfo> mods = null;
-
-            var pages = await Task.Run(() => DownloadAllPages(pageSize));
-            foreach (var page in pages)
-            {
-                if (mods == null)
-                    mods = new List<ModInfo>(page.Info.ModCount + 50);
-
-                mods.AddRange(page.Mods);
-            }
+            var page = await Task.Run(() => DownloadPage());
+            List<ModInfo> mods = new List<ModInfo>(page.Mods);
 
             foreach (var installedMod in installedMods)
             {
@@ -94,7 +61,7 @@ namespace ModMyFactory.Web
         {
             string modUrl = $"{ModsUrl}/{modName}/full";
 
-            string document = WebHelper.GetDocument(modUrl, null);
+            string document = WebHelper.GetDocument(modUrl);
             if (!string.IsNullOrEmpty(document))
             {
                 ExtendedModInfo result = JsonHelper.Deserialize<ExtendedModInfo>(document);
@@ -170,7 +137,7 @@ namespace ModMyFactory.Web
 
             try
             {
-                await WebHelper.DownloadFileAsync(downloadUrl, null, file, progress, cancellationToken);
+                await WebHelper.DownloadFileAsync(downloadUrl, file, progress, cancellationToken);
                 if (!cancellationToken.IsCancellationRequested)
                 {
                     if (ModFile.TryLoadFromFile(file, out ModFile modFile))
@@ -213,7 +180,7 @@ namespace ModMyFactory.Web
 
             try
             {
-                await WebHelper.DownloadFileAsync(downloadUrl, null, modFile, progress, cancellationToken);
+                await WebHelper.DownloadFileAsync(downloadUrl, modFile, progress, cancellationToken);
             }
             catch (Exception)
             {
@@ -240,7 +207,7 @@ namespace ModMyFactory.Web
 
             var downloadUrl = BuildUrl(release, username, token);
             var file = new FileInfo(Path.Combine(modDirectory.FullName, release.FileName));
-            await WebHelper.DownloadFileAsync(downloadUrl, null, file, progress, cancellationToken);
+            await WebHelper.DownloadFileAsync(downloadUrl, file, progress, cancellationToken);
             if (cancellationToken.IsCancellationRequested) return null;
 
             ModFile modFile;

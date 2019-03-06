@@ -11,18 +11,20 @@ namespace ModMyFactory.Models
         {
             if (ModFile.TryLoad(file, out var modFile))
             {
+                string key = $"{modFile.Name}_{modFile.Version}";
+
                 ModFileCollection collection;
-                if (!dictionary.TryGetValue(modFile.Name, out collection))
+                if (!dictionary.TryGetValue(key, out collection))
                 {
                     collection = new ModFileCollection();
-                    dictionary.Add(modFile.Name, collection);
+                    dictionary.Add(key, collection);
                 }
 
                 collection.Add(modFile);
             }
         }
 
-        private static Dictionary<string, ModFileCollection> CreateFileDictionary(params DirectoryInfo[] directories)
+        private static Dictionary<string, ModFileCollection> CreateFileDictionary(IEnumerable<DirectoryInfo> directories)
         {
             var dictionary = new Dictionary<string, ModFileCollection>();
 
@@ -54,29 +56,15 @@ namespace ModMyFactory.Models
             var modDirectory = App.Instance.Settings.GetModDirectory();
             if (!modDirectory.Exists) modDirectory.Create();
 
-            if (App.Instance.Settings.ManagerMode == ManagerMode.PerFactorioVersion)
+            var selectedDirectories = new List<DirectoryInfo>();
+            foreach (var subDirectory in modDirectory.EnumerateDirectories())
             {
-                foreach (var subDirectory in modDirectory.EnumerateDirectories())
-                {
-                    if (Version.TryParse(subDirectory.Name, out var factorioVersion))
-                    {
-                        var fileDictionary = CreateFileDictionary(subDirectory);
-                        LoadModsFromFileDictionary(fileDictionary, parentCollection, modpackCollection);
-                    }
-                }
+                if (System.Version.TryParse(subDirectory.Name, out var factorioVersion))
+                    selectedDirectories.Add(subDirectory);
             }
-            else
-            {
-                var selectedDirectories = new List<DirectoryInfo>();
-                foreach (var subDirectory in modDirectory.EnumerateDirectories())
-                {
-                    if (Version.TryParse(subDirectory.Name, out var factorioVersion))
-                        selectedDirectories.Add(subDirectory);
-                }
 
-                var fileDictionary = CreateFileDictionary(selectedDirectories.ToArray());
-                LoadModsFromFileDictionary(fileDictionary, parentCollection, modpackCollection);
-            }
+            var fileDictionary = CreateFileDictionary(selectedDirectories);
+            LoadModsFromFileDictionary(fileDictionary, parentCollection, modpackCollection);
 
             parentCollection.EvaluateDependencies();
         }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using ModMyFactory.Helpers;
 using ModMyFactory.Models.ModSettings;
 using ModMyFactory.ModSettings;
@@ -33,6 +34,18 @@ namespace ModMyFactory.Models
         bool hasUnsatisfiedDependencies;
         ModFile file;
 
+        private void SetInactiveFileDisabled()
+        {
+            if (active)
+            {
+                active = false;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
+            }
+
+            File.Disable();
+            foreach (var oldFile in oldVersions) oldFile.Disable();
+        }
+
         /// <summary>
         /// Indicates whether the mod is currently active.
         /// </summary>
@@ -47,6 +60,19 @@ namespace ModMyFactory.Models
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
 
                     ModManager.SetActive(Name, FactorioVersion, value);
+
+                    if (active)
+                    {
+                        File.Enable();
+                        foreach (var oldFile in oldVersions) oldFile.Enable();
+
+                        var mods = parentCollection.Find(Name, FactorioVersion);
+                        foreach (var mod in mods)
+                        {
+                            if (mod != this)
+                                mod.SetInactiveFileDisabled();
+                        }
+                    }
                     
                     if (active && App.Instance.Settings.ActivateDependencies)
                         ActivateDependencies(App.Instance.Settings.ActivateOptionalDependencies);
@@ -101,6 +127,7 @@ namespace ModMyFactory.Models
                     var source = new CollectionViewSource() { Source = Dependencies };
                     var dependenciesView = (ListCollectionView)source.View;
                     dependenciesView.CustomSort = new ModDependencySorter();
+                    dependenciesView.Filter = (item) => !((ModDependency)item).IsHidden;
                     DependenciesView = dependenciesView;
 
                     //var settings = file.GetSettings().Select(info => info.ToSetting(this)).ToList();
@@ -118,9 +145,12 @@ namespace ModMyFactory.Models
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Description)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Dependencies)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DependenciesView)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasVisibleDependencies)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Settings)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SettingsView)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasSettings)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Thumbnail)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasThumbnail)));
                 }
             }
         }
@@ -135,7 +165,7 @@ namespace ModMyFactory.Models
         /// <summary>
         /// The version of the mod.
         /// </summary>
-        public Version Version => InfoFile.Version;
+        public GameCompatibleVersion Version => InfoFile.Version;
 
         /// <summary>
         /// The version of Factorio this mod is compatible with.
@@ -168,6 +198,11 @@ namespace ModMyFactory.Models
         public ICollectionView DependenciesView { get; private set; }
 
         /// <summary>
+        /// Indicates whether this mod has visible dependencies.
+        /// </summary>
+        public bool HasVisibleDependencies => Dependencies.Any(item => !item.IsHidden);
+
+        /// <summary>
         /// This mods settings.
         /// </summary>
         public IReadOnlyCollection<IModSetting> Settings { get; private set; }
@@ -183,18 +218,19 @@ namespace ModMyFactory.Models
         public bool HasSettings => (Settings == null) ? false : (Settings.Count > 0);
 
         /// <summary>
-        /// Additional information about this mod to be displayed in a tooltip.
+        /// Indicates whether updates for this mod should be extracted.
         /// </summary>
-        public string ToolTip
-        {
-            get
-            {
-                var authorAndVersion = $"Author: {Author}     Version: {Version}";
-                if (Description.Length > authorAndVersion.Length)
-                    authorAndVersion = authorAndVersion.PadRight(Math.Min(Description.Length, 100));
-                return $"{authorAndVersion}\n\n{Description.Wrap(authorAndVersion.Length)}";
-            }
-        }
+        public bool ExtractUpdates => File?.ExtractUpdates ?? false;
+
+        /// <summary>
+        /// An optional thumbnail provided in the mod file.
+        /// </summary>
+        public BitmapImage Thumbnail => File.Thumbnail;
+
+        /// <summary>
+        /// Indicates whether this mod is providing a thumbnail.
+        /// </summary>
+        public bool HasThumbnail => Thumbnail != null;
 
         /// <summary>
         /// Indicates if all of this mods required dependencies are active.
@@ -253,7 +289,20 @@ namespace ModMyFactory.Models
             files.Remove(file);
             oldVersions = files;
 
-            active = ModManager.GetActive(Name, FactorioVersion);
+            if (!File.Enabled) active = false;
+            else active = ModManager.GetActive(Name, FactorioVersion); // ToDo: check if old versions are active
+            if (active)
+            {
+                File.Enable();
+                foreach (var oldFile in oldVersions) oldFile.Enable();
+
+                var mods = parentCollection.Find(Name, FactorioVersion);
+                foreach (var mod in mods)
+                {
+                    if (mod != this)
+                        mod.SetInactiveFileDisabled();
+                }
+            }
         }
 
         /// <summary>
@@ -265,7 +314,20 @@ namespace ModMyFactory.Models
             File = file;
             oldVersions = new ModFileCollection();
 
-            active = ModManager.GetActive(Name, FactorioVersion);
+            if (!File.Enabled) active = false;
+            else active = ModManager.GetActive(Name, FactorioVersion);
+            if (active)
+            {
+                File.Enable();
+                foreach (var oldFile in oldVersions) oldFile.Enable();
+
+                var mods = parentCollection.Find(Name, FactorioVersion);
+                foreach (var mod in mods)
+                {
+                    if (mod != this)
+                        mod.SetInactiveFileDisabled();
+                }
+            }
         }
         
         public ILocale GetLocale(CultureInfo culture)
@@ -282,7 +344,7 @@ namespace ModMyFactory.Models
         {
             foreach (var dependency in Dependencies)
             {
-                if (optional || !dependency.IsOptional)
+                if (!dependency.IsHidden && (optional || !dependency.IsOptional))
                     dependency.Activate(parentCollection, FactorioVersion);
             }
         }
@@ -302,13 +364,13 @@ namespace ModMyFactory.Models
             {
                 foreach (var dependency in Dependencies)
                 {
-                    if (!dependency.IsOptional && !dependency.IsMet(parentCollection, FactorioVersion))
+                    if (!dependency.IsOptional && !dependency.IsPresent(parentCollection, FactorioVersion))
                     {
                         result = true;
                     }
                     else if (dependency.IsOptional)
                     {
-                        dependency.IsMet(parentCollection, FactorioVersion);
+                        dependency.IsPresent(parentCollection, FactorioVersion);
                     }
                 }
             }
@@ -324,39 +386,6 @@ namespace ModMyFactory.Models
             settingsWindow.ShowDialog();
 
             //ModSettingsManager.SaveSettings(this);
-        }
-        
-        private bool KeepOldFile(ModFile newFile)
-        {
-            bool isNewFactorioVersion = newFile.InfoFile.FactorioVersion > FactorioVersion;
-            if (App.Instance.Settings.KeepOldModVersionsWhenNewFactorioVersion && isNewFactorioVersion) return true;
-            return file.KeepOnUpdate;
-        }
-
-        /// <summary>
-        /// Updates this mod to a given new mod file.
-        /// If the given mod file is not a valid update for this mod the update will fail and no action will be taken.
-        /// </summary>
-        /// <param name="newFile">The updated mod file.</param>
-        /// <returns>Returns true if the update was sucessful, otherwise false.</returns>
-        public async Task<bool> UpdateAsync(ModFile newFile)
-        {
-            if ((newFile.Name != Name) || (newFile.Version <= Version)) return false;
-
-            if (File.ExtractUpdates)
-                newFile = await newFile.ExtractAsync();
-
-            if (KeepOldFile(newFile))
-            {
-                oldVersions.Add(File);
-            }
-            else
-            {
-                File.Delete();
-            }
-
-            File = newFile;
-            return true;
         }
         
         private void DeleteOldVersions()

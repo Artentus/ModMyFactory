@@ -43,8 +43,7 @@ namespace ModMyFactory.ViewModels
 
         private async Task DownloadModRelease(ModExportTemplate modTemplate, ModRelease release, DirectoryInfo fileLocation, IProgress<double> progress, CancellationToken cancellationToken)
         {
-            var installedMod = Mods.FindByFactorioVersion(modTemplate.Name, release.InfoFile.FactorioVersion);
-            if ((installedMod != null) && (installedMod.Version >= release.Version))
+            if (Mods.TryGetMod(modTemplate.Name, release.Version, out Mod installedMod))
             {
                 modTemplate.Mod = installedMod;
                 return;
@@ -57,10 +56,10 @@ namespace ModMyFactory.ViewModels
             await ModWebsite.DownloadReleaseToFileAsync(release, GlobalCredentials.Instance.Username, token, fileName, progress, cancellationToken);
         }
 
-        private Version GetVersionFromFile(FileSystemInfo file)
+        private GameCompatibleVersion GetVersionFromFile(FileSystemInfo file)
         {
             string[] parts = file.NameWithoutExtension().Split('_');
-            return Version.Parse(parts[parts.Length - 1]);
+            return GameCompatibleVersion.Parse(parts[parts.Length - 1]);
         }
 
         private async Task DownloadIncludedMod(ModExportTemplate modTemplate, DirectoryInfo fileLocation, ExtendedModInfo info, IProgress<double> progress, CancellationToken cancellationToken)
@@ -264,7 +263,7 @@ namespace ModMyFactory.ViewModels
 
                 foreach (var modpackTemplate in template.Modpacks)
                 {
-                    var modpack = new Modpack(modpackTemplate.Name, Modpacks);
+                    var modpack = new Modpack(modpackTemplate.Name, false, Modpacks);
                     modpacks.Add(modpack);
                     modpackTemplate.Modpack = modpack;
                     

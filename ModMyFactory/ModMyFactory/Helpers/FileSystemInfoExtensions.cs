@@ -58,6 +58,26 @@ namespace ModMyFactory.Helpers
         }
 
         /// <summary>
+        /// Moves the file to a new location.
+        /// </summary>
+        public static void MoveTo(this FileSystemInfo file, string destination)
+        {
+            FileInfo fileInfo = file as FileInfo;
+            if (fileInfo != null)
+            {
+                fileInfo.MoveTo(destination);
+                return;
+            }
+
+            DirectoryInfo directoryInfo = file as DirectoryInfo;
+            if (directoryInfo != null)
+            {
+                directoryInfo.MoveTo(destination);
+                return;
+            }
+        }
+
+        /// <summary>
         /// Copies the file to a new location.
         /// </summary>
         public static async Task CopyToAsync(this FileSystemInfo file, string destination)

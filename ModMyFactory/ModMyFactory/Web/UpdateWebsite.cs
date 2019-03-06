@@ -24,7 +24,7 @@ namespace ModMyFactory.Web
         public static async Task<UpdateInfo> GetUpdateInfoAsync(string username, string token)
         {
             string url = $"{BaseUrl}/get-available-versions?username={username}&token={token}&apiVersion={ApiVersion}";
-            string document = await Task.Run(() => WebHelper.GetDocument(url, null));
+            string document = await Task.Run(() => WebHelper.GetDocument(url));
 
             if (!string.IsNullOrEmpty(document))
             {
@@ -49,7 +49,7 @@ namespace ModMyFactory.Web
             string package = Environment.Is64BitOperatingSystem ? win64Package : win32Package;
 
             string url = $"{BaseUrl}/get-download-link?username={username}&token={token}&apiVersion={ApiVersion}&package={package}&from={step.From}&to={step.To}";
-            string document = await Task.Run(() => WebHelper.GetDocument(url, null));
+            string document = await Task.Run(() => WebHelper.GetDocument(url));
 
             int firstIndex = document.IndexOf('"');
             int lastIndex = document.LastIndexOf('"');
@@ -77,7 +77,7 @@ namespace ModMyFactory.Web
             if (fileName.Contains("?")) fileName = fileName.Substring(0, fileName.LastIndexOf('?'));
 
             var file = new FileInfo(Path.Combine(tempDir.FullName, fileName));
-            await WebHelper.DownloadFileAsync(new Uri(url), null, file, progress, cancellationToken);
+            await WebHelper.DownloadFileAsync(new Uri(url), file, progress, cancellationToken);
 
             return cancellationToken.IsCancellationRequested ? null : file;
         }

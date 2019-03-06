@@ -585,12 +585,17 @@ namespace ModMyFactory.ViewModels
             refreshing = false;
         }
 
+        private void SaveModpacks()
+        {
+            ModpackTemplateList.Instance.Update(Modpacks);
+            ModpackTemplateList.Instance.Save();
+        }
+
         private void ModpacksCollectionChangedHandler(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (!modpacksLoading)
             {
-                ModpackTemplateList.Instance.Update(Modpacks);
-                ModpackTemplateList.Instance.Save();
+                SaveModpacks();
             }
         }
 
@@ -682,7 +687,7 @@ namespace ModMyFactory.ViewModels
                 DownloadDependenciesCommand = new RelayCommand(async () => await DownloadDependencies());
 
                 OpenVersionManagerCommand = new RelayCommand(OpenVersionManager);
-                OpenSettingsCommand = new RelayCommand(OpenSettings);
+                OpenSettingsCommand = new RelayCommand(async () => await OpenSettings());
 
                 // 'View' menu
                 OpenFactorioFolderCommand = new RelayCommand(() =>
@@ -887,7 +892,7 @@ namespace ModMyFactory.ViewModels
                 newName = $"{name} {counter}";
             }
 
-            Modpack modpack = new Modpack(newName, Modpacks);
+            Modpack modpack = new Modpack(newName, false, Modpacks);
             modpack.ParentView = ModpacksView;
             Modpacks.Add(modpack);
 
@@ -895,8 +900,11 @@ namespace ModMyFactory.ViewModels
             {
                 foreach (Mod mod in mods)
                 {
-                    var reference = new ModReference(mod, modpack);
-                    modpack.Mods.Add(reference);
+                    if (!modpack.Contains(mod.Name, mod.FactorioVersion))
+                    {
+                        var reference = new ModReference(mod, modpack);
+                        modpack.Mods.Add(reference);
+                    }
                 }
 
                 modpack.ContentsExpanded = true;
@@ -973,29 +981,161 @@ namespace ModMyFactory.ViewModels
         }
 
         #region Settings
-        
-        private void ApplySettings(Settings settings, SettingsViewModel settingsViewModel, SettingsWindow settingsWindow)
-        {
-            // Manager mode
-            bool managerModeChanged = (settingsViewModel.ManagerMode != settings.ManagerMode);
-            settings.ManagerMode = settingsViewModel.ManagerMode;
 
+        private async Task MoveFactorioDirectory(DirectoryInfo oldFactorioDirectory, DirectoryInfo newFactorioDirectory)
+        {
+            if (!newFactorioDirectory.Exists) newFactorioDirectory.Create();
+
+            foreach (var version in FactorioVersions)
+            {
+                version.DeleteLinks();
+                await version.MoveToAsync(newFactorioDirectory);
+            }
+
+            if (oldFactorioDirectory.Exists) oldFactorioDirectory.DeleteIfEmpty();
+        }
+
+        private async Task MoveModDirectory(DirectoryInfo oldModDirectory, DirectoryInfo newModDirectory)
+        {
+            if (oldModDirectory.Exists)
+            {
+                if (!newModDirectory.Exists) newModDirectory.Create();
+
+                foreach (var mod in Mods)
+                {
+                    var dir = App.Instance.Settings.GetModDirectory(mod.FactorioVersion);
+                    if (!dir.Exists) dir.Create();
+                    await mod.MoveToAsync(dir.FullName);
+                }
+                foreach (var version in FactorioVersions)
+                {
+                    if (!(version is SpecialFactorioVersion))
+                    {
+                        var dir = new DirectoryInfo(Path.Combine(oldModDirectory.FullName, version.Version.ToString(2)));
+                        if (dir.Exists)
+                        {
+                            var modListFile = new FileInfo(Path.Combine(dir.FullName, "mod-list.json"));
+                            var modSettingsFile = new FileInfo(Path.Combine(dir.FullName, "mod-settings.dat"));
+
+                            var newDir = App.Instance.Settings.GetModDirectory(version.Version);
+                            if (!newDir.Exists) newDir.Create();
+
+                            if (modListFile.Exists) await modListFile.MoveToAsync(Path.Combine(newDir.FullName, modListFile.Name));
+                            if (modSettingsFile.Exists) await modSettingsFile.MoveToAsync(Path.Combine(newDir.FullName, modSettingsFile.Name));
+
+                            dir.DeleteIfEmpty();
+                        }
+                    }
+                }
+
+                oldModDirectory.DeleteIfEmpty();
+            }
+        }
+
+        private async Task MoveSavegameDirectory(DirectoryInfo oldSavegameDirectory, DirectoryInfo newSavegameDirectory)
+        {
+            if (oldSavegameDirectory.Exists)
+                await oldSavegameDirectory.MoveToAsync(newSavegameDirectory.FullName);
+        }
+
+        private async Task MoveScenarioDirectory(DirectoryInfo oldScenarioDirectory, DirectoryInfo newScenarioDirectory)
+        {
+            if (oldScenarioDirectory.Exists && !newScenarioDirectory.DirectoryEquals(oldScenarioDirectory))
+                await oldScenarioDirectory.MoveToAsync(newScenarioDirectory.FullName);
+        }
+
+        private async Task RecreateLinks()
+        {
+            await Task.Run(() =>
+            {
+                foreach (var version in FactorioVersions)
+                    version.CreateLinks();
+            });
+        }
+
+        private async Task MoveDirectoriesInternal(
+            DirectoryInfo oldFactorioDirectory, DirectoryInfo oldModDirectory, DirectoryInfo oldSavegameDirectory, DirectoryInfo oldScenarioDirectory,
+            DirectoryInfo newFactorioDirectory, DirectoryInfo newModDirectory, DirectoryInfo newSavegameDirectory, DirectoryInfo newScenarioDirectory,
+            bool moveFactorioDirectory, bool moveModDirectory, bool moveSavegameDirectory, bool moveScenarioDirectory)
+        {
+            if (moveFactorioDirectory)
+                await MoveFactorioDirectory(oldFactorioDirectory, newFactorioDirectory);
+
+            if (moveModDirectory)
+                await MoveModDirectory(oldModDirectory, newModDirectory);
+
+            if (moveSavegameDirectory)
+                await MoveSavegameDirectory(oldSavegameDirectory, newSavegameDirectory);
+
+            if (moveScenarioDirectory)
+                await MoveScenarioDirectory(oldScenarioDirectory, newScenarioDirectory);
+
+            await RecreateLinks();
+        }
+
+        private async Task MoveDirectories(
+            DirectoryInfo oldFactorioDirectory, DirectoryInfo oldModDirectory, DirectoryInfo oldSavegameDirectory, DirectoryInfo oldScenarioDirectory,
+            DirectoryInfo newFactorioDirectory, DirectoryInfo newModDirectory, DirectoryInfo newSavegameDirectory, DirectoryInfo newScenarioDirectory,
+            bool moveFactorioDirectory, bool moveModDirectory, bool moveSavegameDirectory, bool moveScenarioDirectory)
+        {
+            var progressWindow = new ProgressWindow() { Owner = Window };
+            var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+            progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("MovingDirectoriesAction");
+            progressViewModel.ProgressDescription = App.Instance.GetLocalizedResourceString("MovingFilesDescription");
+            progressViewModel.IsIndeterminate = true;
+
+            Task moveDirectoriesTask = MoveDirectoriesInternal(
+                oldFactorioDirectory, oldModDirectory, oldSavegameDirectory, oldScenarioDirectory,
+                newFactorioDirectory, newModDirectory, newSavegameDirectory, newScenarioDirectory,
+                moveFactorioDirectory, moveModDirectory, moveSavegameDirectory, moveScenarioDirectory);
+
+            Task closeWindowTask = moveDirectoriesTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+            progressWindow.ShowDialog();
+
+            await moveDirectoriesTask;
+            await closeWindowTask;
+        }
+
+        private async Task ApplySettings(Settings settings, SettingsViewModel settingsViewModel, SettingsWindow settingsWindow)
+        {
+            DirectoryInfo oldFactorioDirectory = settings.GetFactorioDirectory();
+            DirectoryInfo oldModDirectory = settings.GetModDirectory();
+            DirectoryInfo oldSavegameDirectory = settings.GetSavegameDirectory();
+            DirectoryInfo oldScenarioDirectory = settings.GetScenarioDirectory();
+            
             // Update search
             settings.UpdateSearchOnStartup = settingsViewModel.UpdateSearchOnStartup;
             settings.IncludePreReleasesForUpdate = settingsViewModel.IncludePreReleasesForUpdate;
 
             // Mod update
+            settings.PreSelectModVersions = settingsViewModel.PreSelectModVersions;
             settings.AlwaysUpdateZipped = settingsViewModel.AlwaysUpdateZipped;
             settings.KeepOldModVersions = settingsViewModel.KeepOldModVersions;
-            settings.KeepOldExtractedModVersions = settingsViewModel.KeepExtracted;
-            settings.KeepOldZippedModVersions = settingsViewModel.KeepZipped;
-            settings.KeepOldModVersionsWhenNewFactorioVersion = settingsViewModel.KeepWhenNewFactorioVersion;
-            settings.DownloadIntermediateUpdates = settingsViewModel.UpdateIntermediate;
 
             // Mod dependencies
             settings.ActivateDependencies = settingsViewModel.ActivateDependencies;
             settings.ActivateOptionalDependencies = settingsViewModel.ActivateOptionalDependencies;
-            
+
+            // Factorio location
+            settings.FactorioDirectoryOption = settingsViewModel.FactorioDirectoryOption;
+            settings.FactorioDirectory = (settings.FactorioDirectoryOption == DirectoryOption.Custom)
+                ? settingsViewModel.FactorioDirectory : string.Empty;
+
+            // Mod location
+            settings.ModDirectoryOption = settingsViewModel.ModDirectoryOption;
+            settings.ModDirectory = (settings.ModDirectoryOption == DirectoryOption.Custom)
+                ? settingsViewModel.ModDirectory : string.Empty;
+
+            // Savegame location
+            settings.SavegameDirectoryOption = settingsViewModel.SavegameDirectoryOption;
+            settings.SavegameDirectory = (settings.SavegameDirectoryOption == DirectoryOption.Custom)
+                ? settingsViewModel.SavegameDirectory : string.Empty;
+
+            // Scenario location
+            settings.ScenarioDirectoryOption = settingsViewModel.ScenarioDirectoryOption;
+            settings.ScenarioDirectory = (settings.ScenarioDirectoryOption == DirectoryOption.Custom)
+                ? settingsViewModel.ScenarioDirectory : string.Empty;
+
             // Login credentials
             settings.SaveCredentials = settingsWindow.SaveCredentialsBox.IsChecked ?? false;
             if (settings.SaveCredentials)
@@ -1014,15 +1154,41 @@ namespace ModMyFactory.ViewModels
 
             settings.Save();
 
-            
+            DirectoryInfo newFactorioDirectory = settings.GetFactorioDirectory();
+            DirectoryInfo newModDirectory = settings.GetModDirectory();
+            DirectoryInfo newSavegameDirectory = settings.GetSavegameDirectory();
+            DirectoryInfo newScenarioDirectory = settings.GetScenarioDirectory();
+
+
+            // Move directories
+            bool moveFactorioDirectory = !newFactorioDirectory.DirectoryEquals(oldFactorioDirectory);
+            bool moveModDirectory = !newModDirectory.DirectoryEquals(oldModDirectory);
+            bool moveSavegameDirectory = !newSavegameDirectory.DirectoryEquals(oldSavegameDirectory);
+            bool moveScenarioDirectory = !newScenarioDirectory.DirectoryEquals(oldScenarioDirectory);
+
+            if (moveFactorioDirectory || moveModDirectory || moveSavegameDirectory || moveScenarioDirectory)
+            {
+                if (MessageBox.Show(Window,
+                App.Instance.GetLocalizedMessage("MoveDirectories", MessageType.Question),
+                App.Instance.GetLocalizedMessageTitle("MoveDirectories", MessageType.Question),
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    await MoveDirectories(
+                        oldFactorioDirectory, oldModDirectory, oldSavegameDirectory, oldScenarioDirectory,
+                        newFactorioDirectory, newModDirectory, newSavegameDirectory, newScenarioDirectory,
+                        moveFactorioDirectory, moveModDirectory, moveSavegameDirectory, moveScenarioDirectory);
+                }
+            }
+
+
             // Reload everything if required
-            if (managerModeChanged)
+            if (moveFactorioDirectory || moveModDirectory)
             {
                 Refresh();
             }
         }
 
-        private void OpenSettings()
+        private async Task OpenSettings()
         {
             Settings settings = App.Instance.Settings;
 
@@ -1034,7 +1200,7 @@ namespace ModMyFactory.ViewModels
             bool? result = settingsWindow.ShowDialog();
             if (result != null && result.Value)
             {
-                ApplySettings(settings, settingsViewModel, settingsWindow);
+                await ApplySettings(settings, settingsViewModel, settingsWindow);
             }
         }
 
@@ -1273,6 +1439,11 @@ namespace ModMyFactory.ViewModels
                         await ImportModpacksInner(Program.ImportFileList);
                     else if (Program.UpdateCheckOnStartup && App.Instance.Settings.UpdateSearchOnStartup) // Just skip update check if import list is non-zero
                         await Update(true);
+                };
+
+                Window.Closing += (sender, ea) =>
+                {
+                    SaveModpacks(); // Save modpack configuration on app close to overwrite outdated configuration files
                 };
             }
         }

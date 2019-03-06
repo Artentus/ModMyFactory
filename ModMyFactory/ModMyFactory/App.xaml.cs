@@ -13,12 +13,13 @@ using Octokit;
 using Application = System.Windows.Application;
 using ModMyFactory.Models;
 using FileMode = System.IO.FileMode;
+using System.Net;
 
 namespace ModMyFactory
 {
     public partial class App : Application
     {
-        private const int PreReleaseVersion = -1;
+        private const int PreReleaseVersion = 1;
 
         /// <summary>
         /// The current application instance.
@@ -101,6 +102,12 @@ namespace ModMyFactory
                     this.Shutdown(e.Exception.HResult);
                 };
             }
+
+            // Http request speed optimization
+            ServicePointManager.DefaultConnectionLimit = 20;
+            ServicePointManager.Expect100Continue = false;
+            ServicePointManager.CheckCertificateRevocationList = false;
+            ServicePointManager.UseNagleAlgorithm = false;
         }
         
         /// <summary>

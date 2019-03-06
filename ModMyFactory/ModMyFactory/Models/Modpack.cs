@@ -31,6 +31,7 @@ namespace ModMyFactory.Models
         bool isSelected;
         bool contentsExpanded;
         bool hasUnsatisfiedDependencies;
+        bool isLocked;
         Dictionary<IModReference, IEnumerable<IHasModSettings>> proxyDict;
 
         private string GetUniqueName(string baseName)
@@ -136,8 +137,16 @@ namespace ModMyFactory.Models
             {
                 if (value != editing)
                 {
-                    editing = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Editing)));
+                    if (isLocked && value)
+                    {
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Editing)));
+                        return;
+                    }
+                    else
+                    {
+                        editing = value;
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Editing)));
+                    }
 
                     if (editing)
                     {
@@ -184,6 +193,27 @@ namespace ModMyFactory.Models
                 {
                     hasUnsatisfiedDependencies = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasUnsatisfiedDependencies)));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether this modpack is accepting changes.
+        /// </summary>
+        public bool IsLocked
+        {
+            get => isLocked;
+            set
+            {
+                if (value != isLocked)
+                {
+                    isLocked = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsLocked)));
+
+                    ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
+                    ModpackTemplateList.Instance.Save();
+
+                    if (isLocked && editing) EndEdit();
                 }
             }
         }
@@ -243,6 +273,37 @@ namespace ModMyFactory.Models
             settingsWindow.ShowDialog();
 
             //ModSettingsManager.SaveSettings(proxyList);
+        }
+
+        /// <summary>
+        /// Checks if this modpack contains a specified mod.
+        /// </summary>
+        public bool Contains(string modName, Version factorioVersion, out ModReference reference)
+        {
+            foreach (var @ref in Mods)
+            {
+                var modReference = @ref as ModReference;
+                if (modReference != null)
+                {
+                    if ((modReference.Mod.Name == modName) && (modReference.Mod.FactorioVersion == factorioVersion))
+                    {
+                        reference = modReference;
+                        return true;
+                    }
+                }
+            }
+
+            reference = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if this modpack contains a specified mod.
+        /// </summary>
+        public bool Contains(string modName, Version factorioVersion)
+        {
+            ModReference reference;
+            return Contains(modName, factorioVersion, out reference);
         }
 
         /// <summary>
@@ -416,6 +477,8 @@ namespace ModMyFactory.Models
         /// <param name="showPrompt">Indicates whether a confirmation prompt is shown to the user.</param>
         public void Delete(bool showPrompt)
         {
+            if (isLocked) return;
+
             if (!showPrompt || MessageBox.Show(
                 App.Instance.GetLocalizedMessage("DeleteModpack", MessageType.Question),
                 App.Instance.GetLocalizedMessageTitle("DeleteModpack", MessageType.Question),
@@ -437,10 +500,11 @@ namespace ModMyFactory.Models
         /// </summary>
         /// <param name="name">The name of the modpack.</param>
         /// <param name="parentCollection">The collection containing this modpack.</param>
-        public Modpack(string name, ModpackCollection parentCollection)
+        public Modpack(string name, bool isLocked, ModpackCollection parentCollection)
         {
             this.parentCollection = parentCollection;
             Name = name;
+            this.isLocked = isLocked;
             active = false;
             activeChanging = false;
             proxyDict = new Dictionary<IModReference, IEnumerable<IHasModSettings>>();

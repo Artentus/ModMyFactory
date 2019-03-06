@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using WPFCore;
 
 namespace ModMyFactory.Web.ModApi
@@ -10,8 +9,8 @@ namespace ModMyFactory.Web.ModApi
     sealed class ModRelease : NotifyPropertyChangedBase
     {
         [JsonProperty("version")]
-        [JsonConverter(typeof(VersionConverter))]
-        public Version Version { get; set; }
+        [JsonConverter(typeof(GameVersionConverter))]
+        public GameCompatibleVersion Version { get; set; }
 
         [JsonProperty("download_url")]
         public string DownloadUrl { get; set; }
@@ -27,7 +26,6 @@ namespace ModMyFactory.Web.ModApi
 
 
         bool isInstalled;
-        bool isVersionInstalled;
 
         public bool IsInstalled
         {
@@ -38,19 +36,6 @@ namespace ModMyFactory.Web.ModApi
                 {
                     isInstalled = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsInstalled)));
-                }
-            }
-        }
-
-        public bool IsVersionInstalled
-        {
-            get { return isVersionInstalled; }
-            set
-            {
-                if (value != isVersionInstalled)
-                {
-                    isVersionInstalled = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsVersionInstalled)));
                 }
             }
         }

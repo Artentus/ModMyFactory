@@ -88,9 +88,20 @@ namespace ModMyFactory.Views
                 {
                     var mods = (List<Mod>)e.Data.GetData(typeof(List<Mod>));
                     Modpack parent = (Modpack)listBox.ItemContainerGenerator.ItemFromContainer(item);
+                    if (parent.IsLocked) return;
+
                     foreach (Mod mod in mods)
                     {
-                        if (!parent.Contains(mod))
+                        if (parent.Contains(mod.Name, mod.FactorioVersion, out var @ref))
+                        {
+                            if (@ref.Mod != mod)
+                            {
+                                @ref.RemoveFromParentCommand.Execute();
+                                var reference = new ModReference(mod, parent);
+                                parent.Mods.Add(reference);
+                            }
+                        }
+                        else
                         {
                             var reference = new ModReference(mod, parent);
                             parent.Mods.Add(reference);
@@ -104,6 +115,8 @@ namespace ModMyFactory.Views
                 {
                     var modpacks = (List<Modpack>)e.Data.GetData(typeof(List<Modpack>));
                     Modpack parent = (Modpack)listBox.ItemContainerGenerator.ItemFromContainer(item);
+                    if (parent.IsLocked) return;
+
                     foreach (Modpack modpack in modpacks)
                     {
                         if (modpack != parent && !parent.Contains(modpack) && !modpack.Contains(parent, true))

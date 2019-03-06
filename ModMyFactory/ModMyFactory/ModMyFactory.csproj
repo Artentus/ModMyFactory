@@ -110,6 +110,8 @@
     <Compile Include="FactorioUpdate\FactorioUpdater.cs" />
     <Compile Include="FactorioUpdate\FileUpdateAction.cs" />
     <Compile Include="FactorioUpdate\FileUpdateInfo.cs" />
+    <Compile Include="GameCompatibleVersion.cs" />
+    <Compile Include="GameVersionConverter.cs" />
     <Compile Include="GlobalCredentials.cs" />
     <Compile Include="Helpers\CollectionExtensions.cs" />
     <Compile Include="Helpers\DirectoryInfoExtensions.cs" />
@@ -170,6 +172,7 @@
     <Compile Include="Models\ModSettings\ModSettingProxy.cs" />
     <Compile Include="Models\ModSettings\StringListModSetting.cs" />
     <Compile Include="Models\ModSettings\StringModSetting.cs" />
+    <Compile Include="Models\ModVersionUpdateInfo.cs" />
     <Compile Include="ModSettings\LoadTime.cs" />
     <Compile Include="ModSettings\LoadTimeJsonConverter.cs" />
     <Compile Include="ModSettings\ModSettingInfo.cs" />
@@ -194,6 +197,7 @@
     <Compile Include="ModSettings\SettingValue.cs" />
     <Compile Include="ModSettings\SettingValueArrayJsonConverter.cs" />
     <Compile Include="ModSettings\SettingValueJsonConverter.cs" />
+    <Compile Include="MVVM\Converters\AdvancedVisibilityConverter.cs" />
     <Compile Include="MVVM\Converters\FactorioVersionConverter.cs" />
     <Compile Include="MVVM\Converters\LocalizedNameConverter.cs" />
     <Compile Include="MVVM\Converters\RemoveFileExtensionConverter.cs" />
@@ -205,6 +209,7 @@
     <Compile Include="MVVM\Converters\ThemeNameConverter.cs" />
     <Compile Include="MVVM\Selectors\ComboBoxTemplateSelector.cs" />
     <Compile Include="MVVM\Selectors\ModSettingTemplateSelector.cs" />
+    <Compile Include="MVVM\Selectors\ModUpdateTemplateSelector.cs" />
     <Compile Include="MVVM\Sorters\FactorioOnlineVersionSorter.cs" />
     <Compile Include="MVVM\Sorters\ModDependencySorter.cs" />
     <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />
@@ -214,9 +219,12 @@
     <Compile Include="MVVM\Sorters\UpdateTargetSorter.cs" />
     <Compile Include="FactorioUpdate\UpdatePackageInfo.cs" />
     <Compile Include="FactorioUpdate\UpdaterErrorType.cs" />
+    <Compile Include="SingleOrArrayJsonConverter.cs" />
     <Compile Include="Theme.cs" />
     <Compile Include="TwoPartVersionConverter.cs" />
     <Compile Include="VersionComparer.cs" />
+    <Compile Include="ViewModels\AboutPageViewModel.cs" />
+    <Compile Include="ViewModels\ChangelogPageViewModel.cs" />
     <Compile Include="ViewModels\CopyOrMoveViewModel.cs" />
     <Compile Include="ViewModels\DependencyDownloadViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel_DependencyDownload.cs" />
@@ -228,6 +236,12 @@
     <Compile Include="ViewModels\ModUpdateViewModel.cs" />
     <Compile Include="ViewModels\OnlineModsViewModel.cs" />
     <Compile Include="ViewModels\UpdateListViewModel.cs" />
+    <Compile Include="Views\AboutPage.xaml.cs">
+      <DependentUpon>AboutPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChangelogPage.xaml.cs">
+      <DependentUpon>ChangelogPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CopyOrMoveMessageWindow.xaml.cs">
       <DependentUpon>CopyOrMoveMessageWindow.xaml</DependentUpon>
     </Compile>
@@ -376,7 +390,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\AboutPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ChangelogPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -601,6 +623,9 @@
     <Resource Include="Images\Themes\dark.png" />
     <Resource Include="Images\Themes\light.png" />
     <Resource Include="Images\Themes.png" />
+    <Resource Include="Images\Lock.png" />
+    <Resource Include="Images\Lock_blue.png" />
+    <Resource Include="Images\Empty_Thumbnail.png" />
     <Content Include="Zlib\zlib32.dll" />
     <Content Include="Zlib\zlib64.dll" />
   </ItemGroup>

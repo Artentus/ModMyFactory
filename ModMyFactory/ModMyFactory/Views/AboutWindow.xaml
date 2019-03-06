@@ -5,12 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:ModMyFactory.ViewModels"
         xmlns:controls="clr-namespace:ModMyFactory.Controls"
+        xmlns:converter="clr-namespace:ModMyFactory.MVVM.Converters"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="{DynamicResource AboutWindowTitle}" SizeToContent="WidthAndHeight"
+        Title="{DynamicResource AboutWindowTitle}"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon="..\Images\MMF_Icon.ico"
-        Style="{StaticResource WindowStyle}">
+        Style="{StaticResource WindowStyle}"
+        Width="560" Height="540">
     
     <Window.DataContext>
         <vm:AboutViewModel/>
@@ -18,6 +21,9 @@
 
     <Window.Resources>
         <BitmapImage x:Key="Logo" UriSource="../Images/modmyfactory.png"/>
+        <sys:Boolean x:Key="False">False</sys:Boolean>
+        <sys:Boolean x:Key="True">True</sys:Boolean>
+        <converter:AdvancedVisibilityConverter x:Key="AdvancedVisibilityConverter"/>
     </Window.Resources>
     
     <Grid Margin="4">
@@ -26,9 +32,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="20"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="10"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
@@ -42,101 +46,26 @@
         <TextBlock Grid.Row="1" Grid.Column="0" Margin="20,0" Text="{DynamicResource AuthorLabel}"/>
         <TextBlock Grid.Row="1" Grid.Column="2" Margin="20,0" Text="{Binding VersionString}"/>
 
-        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+        <Frame Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Source="{Binding PageUri}">
+            <Frame.Template>
+                <ControlTemplate TargetType="{x:Type Frame}">
+                    <ContentPresenter x:Name="PART_FrameCP"/>
+                </ControlTemplate>
+            </Frame.Template>
+        </Frame>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock Grid.Row="0" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource FlagsLabel}"/>
-            <TextBlock Grid.Row="0" Grid.Column="1">
-                <Hyperlink Command="{Binding Url1Command}">Flag Icons by FamFamFam</Hyperlink>
-            </TextBlock>
-            
-            <TextBlock Grid.Row="1" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource FontLabel}"/>
-            <TextBlock Grid.Row="1" Grid.Column="1">
-                <Hyperlink Command="{Binding Url2Command}">Sylar Stencil</Hyperlink>
-            </TextBlock>
-
-            <TextBlock Grid.Row="2" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource DialogsLabel}"/>
-            <TextBlock Grid.Row="2" Grid.Column="1">
-                <Hyperlink Command="{Binding Url3Command}">Ookii.Dialogs</Hyperlink>
-            </TextBlock>
-
-            <TextBlock Grid.Row="3" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource JsonLabel}"/>
-            <TextBlock Grid.Row="3" Grid.Column="1">
-                <Hyperlink Command="{Binding Url4Command}">Json.NET</Hyperlink>
-            </TextBlock>
-
-            <TextBlock Grid.Row="4" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource GitHubLabel}"/>
-            <TextBlock Grid.Row="4" Grid.Column="1">
-                <Hyperlink Command="{Binding Url5Command}">Octokit</Hyperlink>
-            </TextBlock>
-
-            <TextBlock Grid.Row="5" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource ZlibLabel}"/>
-            <TextBlock Grid.Row="5" Grid.Column="1">
-                <Hyperlink Command="{Binding Url6Command}">zlib</Hyperlink>
-            </TextBlock>
-
-            <TextBlock Grid.Row="6" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource XdeltaLabel}"/>
-            <TextBlock Grid.Row="6" Grid.Column="1">
-                <Hyperlink Command="{Binding Url7Command}">Xdelta-sharp</Hyperlink>
-            </TextBlock>
-
-            <TextBlock Grid.Row="7" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource INIparserLabel}"/>
-            <TextBlock Grid.Row="7" Grid.Column="1">
-                <Hyperlink Command="{Binding Url8Command}">INI-parser</Hyperlink>
-            </TextBlock>
-        </Grid>
+        <Button Grid.Row="5" Grid.Column="0" Margin="2" HorizontalAlignment="Left" Command="{Binding SwitchPageCommand}">
+            <Button.Content>
+                <Grid>
+                    <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource ChangelogButton}" HorizontalAlignment="Center"
+                               Visibility="{Binding PageState, Converter={StaticResource AdvancedVisibilityConverter}, ConverterParameter={StaticResource True}}"/>
+                    <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource CloseChangelogButton}" HorizontalAlignment="Center"
+                               Visibility="{Binding PageState, Converter={StaticResource AdvancedVisibilityConverter}, ConverterParameter={StaticResource False}}"/>
+                </Grid>
+            </Button.Content>
+        </Button>
         
-        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="20,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            
-            <Rectangle Grid.Row="0" Margin="0,10" Height="1" Fill="{StaticResource BorderBrush}"/>
-            <TextBlock Grid.Row="1" Text="{DynamicResource ContributorsHeader}"/>
-            <WrapPanel Grid.Row="2" Margin="-4,2" Orientation="Horizontal">
-                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor1Command}">plague006</Hyperlink></TextBlock>
-                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor2Command}">jodli</Hyperlink></TextBlock>
-                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor3Command}">mpwoz</Hyperlink></TextBlock>
-                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor4Command}">Credomane Evonguard</Hyperlink></TextBlock>
-                <TextBlock Margin="4,0"><Hyperlink Command="{Binding Contributor5Command}">distantcam</Hyperlink></TextBlock>
-            </WrapPanel>
-        </Grid>
-
-        <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="20,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-
-            <Rectangle Grid.Row="0" Margin="0,10" Height="1" Fill="{StaticResource BorderBrush}"/>
-            <TextBlock Grid.Row="1" Text="{DynamicResource TranslatorsHeader}"/>
-            <WrapPanel Grid.Row="2" Margin="-6,2" Orientation="Horizontal">
-                <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator1Command}">Averssem</Hyperlink>,
-                    <Hyperlink Command="{Binding Translator3Command}">Corwin616</Hyperlink> (Russian)</TextBlock>
-                <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator2Command}">blackbat24</Hyperlink> (Portuguese)</TextBlock>
-                <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator4Command}">James Y.</Hyperlink> (Chinese)</TextBlock>
-                <TextBlock Margin="6,0"><Hyperlink Command="{Binding Translator5Command}">Xagros</Hyperlink> (Korean)</TextBlock>
-            </WrapPanel>
-        </Grid>
-
-        <Button Grid.Row="7" Grid.Column="2" Margin="2" HorizontalAlignment="Right" IsDefault="True" IsCancel="True">
+        <Button Grid.Row="5" Grid.Column="2" Margin="2" HorizontalAlignment="Right" IsDefault="True" IsCancel="True">
             <Button.Content>
                 <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource CloseButton}"/>
             </Button.Content>

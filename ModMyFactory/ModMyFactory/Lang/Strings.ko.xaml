@@ -105,12 +105,32 @@
     
     <sys:String x:Key="Question.DeleteModpacks.Message">선택한 모든 모드팩을 정말로 삭제 하시겠습니까?</sys:String>
     <sys:String x:Key="Question.DeleteModpacks.Title">확인</sys:String>
+    
+    <sys:String x:Key="Error.InvalidModpack.Message">모드팩 가져오기 실패: 파일이 잘못되었거나 손상되었습니다.</sys:String>
+    <sys:String x:Key="Error.InvalidModpack.Title">모드팩 파일이 잘못되었습니다!</sys:String>
+    
+    <sys:String x:Key="Question.SteamCustomArgs.Message">세이브 게임을 로드하거나 사용자 정의 인수를 사용하여 팩토리오 스팀 버전을 사용하면 시작할 때마다 스팀 알림이 표시됩니다. 계속하시겠습니까?</sys:String>
+    <sys:String x:Key="Question.SteamCustomArgs.Title">팩토리오 스팀 버전을 사용한 사용자 정의 인수</sys:String>
+    
+    <sys:String x:Key="Information.FMPv1.Message">이 모드팩 파일은 ModMyFactory 1.5 이전 버전에서 작성되었습니다. ModMyFactory 1.7 버전에서 이전 파일 지원이 중단되었습니다. &#x0a;ModMyFactory 1.6에서 파일을 가져온 다음 새 형식으로 다시 내보낼 수 있습니다.</sys:String>
+    <sys:String x:Key="Information.FMPv1.Title">가져오기 불가</sys:String>
+    
+    <sys:String x:Key="Information.DependencyUnavailable.Message">의존성 {0} 버전 {1}이 모드 포럼에서 발견되지 않습니다.&#x0a;의존성을 얻는 방법에 대한 정보는 모드 작성자에게 문의하십시오.	</sys:String>
+    <sys:String x:Key="Information.DependencyUnavailable.Title">의존성을 사용할 수 없음</sys:String>
+    
+    <sys:String x:Key="Question.Dependencies.Message">일부 활성화된 모드는 의존성이 활성화되지 않은 모드가 필요합니다. 그래도 게임을 시작하시겠습니까?</sys:String>
+    <sys:String x:Key="Question.Dependencies.Title">필수 의존성이 활성화 상태 아님</sys:String>
+    
+    <sys:String x:Key="Information.NoSteam.Message">컴퓨터에서 팩토리오 스팀 버전을 찾을 수 없습니다.</sys:String>
+    <sys:String x:Key="Information.NoSteam.Title">스팀 버전을 찾을 수 없음</sys:String>
 
     
     <!-- file type descriptions -->
     <sys:String x:Key="ZipDescription">ZIP 파일</sys:String>
     <sys:String x:Key="LnkDescription">단축아이콘</sys:String>
+    <sys:String x:Key="AllCompatibleDescription">모든 호환 파일</sys:String>
     <sys:String x:Key="FmpDescription">팩토리오 모드팩</sys:String>
+    <sys:String x:Key="FmpaDescription">모드팩 아카이브</sys:String>
     
     
     <!-- progress dialogs -->
@@ -130,14 +150,14 @@
     
     <sys:String x:Key="MovingDirectoriesAction">디렉토리 이동</sys:String>
 
+    <sys:String x:Key="FetchingVersionsAction">사용 가능한 버전을 가져오는 중</sys:String>
     <sys:String x:Key="DownloadingAction">다운로드</sys:String>
-    <sys:String x:Key="DownloadingDescription">다운로드중... {0}</sys:String>
+    <sys:String x:Key="DownloadingDescription">다운로드중 {0}</sys:String>
 
     <sys:String x:Key="AddingFromZipAction">ZIP 파일 추가</sys:String>
     <sys:String x:Key="CheckingValidityDescription">유효성 검사중...</sys:String>
     
     <sys:String x:Key="AddingLocalInstallationAction">클라이언트 위치 추가</sys:String>
-    
     <sys:String x:Key="AddingSteamVersionAction">스팀 버전 추가</sys:String>
 
     <sys:String x:Key="RemovingFactorioVersionAction">팩토리오 버전 삭제</sys:String>
@@ -146,8 +166,12 @@
     <sys:String x:Key="UpdatingAction">업데이트</sys:String>
     
     <sys:String x:Key="UpdatingFactorioAction">팩토리오 업데이트</sys:String>
-    <sys:String x:Key="UpdatingFactorioStage1Description">업데이트 패키지 다운로드중...</sys:String>
-    <sys:String x:Key="UpdatingFactorioStage2Description">업데이트 적용중..</sys:String>
+    <sys:String x:Key="UpdatingFactorioStage1Description">업데이트 패키지 다운로드중</sys:String>
+    <sys:String x:Key="UpdatingFactorioStage2Description">업데이트 적용중</sys:String>
+
+    <sys:String x:Key="ExportingAction">모드팩 내보내기</sys:String>
+    <sys:String x:Key="ImportingAction">모드팩 가져오기</sys:String>
+    <sys:String x:Key="ImportingDownloadingDescription">모드 다운로드</sys:String>
 
     
     
@@ -186,6 +210,7 @@
     <!-- 'Edit' menu -->
     <sys:String x:Key="EditMenuItem">_편집</sys:String>
     <sys:String x:Key="UpdateModsMenuItem">모드 업데이트</sys:String>
+    <sys:String x:Key="DependenciesMenuItem">모드 의존성</sys:String>
     <sys:String x:Key="VersionManagerMenuItem">클라이언트 관리</sys:String>
     <sys:String x:Key="SettingsMenuItem">설정</sys:String>
     
@@ -195,6 +220,9 @@
     <sys:String x:Key="OpenModFolderMenuItem">모드 폴더 열기</sys:String>
     <sys:String x:Key="OpenSavegameFolderMenuItem">세이브 폴더 열기</sys:String>
     <sys:String x:Key="OpenScenarioFolderMenuItem">시나리오 폴더 열기</sys:String>
+    <sys:String x:Key="ThemeMenuItem">색 테마</sys:String>
+    <sys:String x:Key="__theme__light">밝은 테마</sys:String>
+    <sys:String x:Key="__theme__dark">어두운 테마</sys:String>
     <sys:String x:Key="RefreshMenuItem">새로고침</sys:String>
     
     <!-- 'Language' menu -->
@@ -210,7 +238,12 @@
     <sys:String x:Key="HelpMenuItem">도움말</sys:String>
     
     <!-- context menu -->
+    <sys:String x:Key="DownloadModsContextMenuItem">모드 다운로드</sys:String>
+    <sys:String x:Key="AddModFilesContextMenuItem">모드 추가</sys:String>
     <sys:String x:Key="DeleteSelectedModsMenuItem">선택된 모드 제거</sys:String>
+    <sys:String x:Key="BrowseModsOnlineMenuItem">온라인 모드 보기</sys:String>
+    <sys:String x:Key="ActivateDependenciesMenuItem">의존성 활성화</sys:String>
+    <sys:String x:Key="ActivateOptionalDependenciesMenuItem">선택적 의존성 활성화</sys:String>
     <sys:String x:Key="ActivateSelectedModsMenuItem">선택된 모드 활성화</sys:String>
     <sys:String x:Key="DeactivateSelectedModsMenuItem">선택된 모드 비활성화</sys:String>
     <sys:String x:Key="SelectActiveModsMenuItem">활성화된 모드 전체 선택</sys:String>
@@ -233,6 +266,7 @@
     <sys:String x:Key="StartGameHotkey">F6</sys:String>
     <sys:String x:Key="CloseHotkey">Alt+F4</sys:String>
     <sys:String x:Key="UpdateModsHotkey">Ctrl+U</sys:String>
+    <sys:String x:Key="DependenciesHotkey">Ctrl+D</sys:String>
     <sys:String x:Key="VersionManagerHotkey">F10</sys:String>
     <sys:String x:Key="SettingsHotkey">F12</sys:String>
     <sys:String x:Key="RefreshHotkey">F5</sys:String>
@@ -247,12 +281,16 @@
     
     <!-- tooltips -->
     <sys:String x:Key="RenameToolTip">이름 변경</sys:String>
+    <sys:String x:Key="LockToolTip">모드팩 잠금</sys:String>
     <sys:String x:Key="DeleteToolTip">삭제</sys:String>
     <sys:String x:Key="RemoveToolTip">모드팩에서 제거</sys:String>
     <sys:String x:Key="SetActiveToolTip">활성화</sys:String>
     <sys:String x:Key="SetInactiveToolTip">비활성화</sys:String>
     <sys:String x:Key="SetAllActiveToolTip">모두 활성화</sys:String>
     <sys:String x:Key="SetAllInactiveToolTip">모두 비활성화</sys:String>
+    <sys:String x:Key="MissingDependenciesModToolTip">이 모드의 의존성이 누락되었습니다.</sys:String>
+    <sys:String x:Key="MissingDependenciesModpackToolTip">이 모드팩에서 모드의 의존성이 누락되었습니다.</sys:String>
+    <sys:String x:Key="ModSettingsToolTip">모드 설정</sys:String>
     
     
     <!--
@@ -295,6 +333,9 @@
     <!-- group headers -->
     <sys:String x:Key="ManagerModeGroupHeader">관리자 모드</sys:String>
     <sys:String x:Key="MiscGroupHeader">기타</sys:String>
+    <sys:String x:Key="UpdateGroupHeader">업데이트</sys:String>
+    <sys:String x:Key="ModUpdateGroupHeader">모드 업데이트</sys:String>
+    <sys:String x:Key="DependenciesGroupHeader">모드 의존성</sys:String>
     <sys:String x:Key="CredentialsGroupHeader">계정 관리</sys:String>
     
     <sys:String x:Key="FactorioDirectoryGroupHeader">클라이언트 위치</sys:String>
@@ -312,6 +353,8 @@
     <sys:String x:Key="KeepZippedModVersionsGroupItem">압축 된 모드(ZIP 파일 형식)의 이전 버전 유지</sys:String>
     <sys:String x:Key="KeepOldWhenNewFactorioGroupItem">팩토리오 클라이언트 업데이트 시 기존 모드 버전 유지</sys:String>
     <sys:String x:Key="UpdateIntermediateGroupItem">이전 팩토리오 클라이언트 버전에 맞는 모드 다운로드</sys:String>
+    <sys:String x:Key="ActivateDependenciesGroupItem">모드를 활성화할 때 의존성을 활성화합니다.</sys:String>
+    <sys:String x:Key="ActivateOptionalDependenciesGroupItem">선택적 의존성을 활성화합니다.</sys:String>
     <sys:String x:Key="GlobalGroupItem">전체</sys:String>
     <sys:String x:Key="AppDataGroupItem">AppData</sys:String>
     <sys:String x:Key="AppDirectoryGroupItem">Application directory</sys:String>
@@ -353,6 +396,8 @@
     
     <!-- checkboxes -->
     <sys:String x:Key="UseExactVersionCheckBox">정확한 버전 사용</sys:String>
+    <sys:String x:Key="LoadGameCheckBox">세이브 불러오기</sys:String>
+    <sys:String x:Key="UseArgumentsCheckBox">사용자 정의 인수 추가</sys:String>
 
 
     <!--
@@ -371,6 +416,7 @@
     <sys:String x:Key="GitHubLabel">GitHub API:</sys:String>
     <sys:String x:Key="ZlibLabel">CRC32 implementation:</sys:String>
     <sys:String x:Key="XdeltaLabel">VCDIFF implementation:</sys:String>
+    <sys:String x:Key="INIparserLabel">INI parser:</sys:String>
     
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">기여자</sys:String>
@@ -385,11 +431,13 @@
     
     <!-- format strings -->
     <sys:String x:Key="ByFormat">by {0}</sys:String>
+    <sys:String x:Key="EmptyVersionFormat">모든 버전</sys:String>
     
     <!-- tooltips -->
     <sys:String x:Key="ViewsToolTip">보기</sys:String>
     <sys:String x:Key="DownloadsToolTip">다운로드</sys:String>
     <sys:String x:Key="InstalledToolTip">설치됨</sys:String>
+    <sys:String x:Key="FactorioFilterToolTip">최신 버전으로 선별</sys:String>
     
     <!-- labels -->
     <sys:String x:Key="LicenseLabel">라이센스:</sys:String>
@@ -398,10 +446,15 @@
     
     <!-- headers -->
     <sys:String x:Key="ReleasesHeader">공개 버전</sys:String>
+    <sys:String x:Key="DescriptionHeader">서술</sys:String>
+    <sys:String x:Key="ChangelogHeader">변경사항</sys:String>
+    <sys:String x:Key="FaqHeader">FAQ</sys:String>
     
     <!-- buttons -->
     <sys:String x:Key="DeleteButton">삭제</sys:String>
     <sys:String x:Key="RefreshButton">새로고침</sys:String>
+    <sys:String x:Key="ViewOnlineButton">온라인 보기</sys:String>
+    <sys:String x:Key="ViewAuthorButton">제작자 보기</sys:String>
 
 
     <!--
@@ -410,9 +463,13 @@
     
     <sys:String x:Key="ModUpdateWindowTitle">업데이트 할 모드 선택</sys:String>
     
+    <!-- headers -->
+    <sys:String x:Key="SelectUpdateVersionsHeader">교체할 설치된 버전 선택:</sys:String>
+    
     <!-- format strings -->
     <sys:String x:Key="CurrentVersionFormat">현재 버전: {0}</sys:String>
     <sys:String x:Key="NewestVersionFormat">최신 버전: {0}</sys:String>
+    <sys:String x:Key="ModpackCountFormat">모드팩:</sys:String>
     
     
     <!--
@@ -422,9 +479,21 @@
     <sys:String x:Key="ModpackExportWindowTitle">내보낼 모드팩 선택</sys:String>
     
     <!-- options -->
+    <sys:String x:Key="DownloadNewerOption">포함된 모드의 최신 버전 다운로드</sys:String>
     <sys:String x:Key="IncludeVersionInfoOption">버전 정보 포함</sys:String>
     
     <!-- tooltips -->
+    <sys:String x:Key="ExportToolTip">내보내기</sys:String>
+    <sys:String x:Key="NoExportToolTip">내보내지 않기</sys:String>
+    <sys:String x:Key="NewestToolTip">가능한 최신 버전 사용</sys:String>
+    <sys:String x:Key="SpecificToolTip">현재 설치된 버전 사용</sys:String>
+    <sys:String x:Key="FactorioVersionToolTip">동일한 팩토리오 버전의 최신 버전 사용</sys:String>
+    <sys:String x:Key="IncludeToolTip">내보낸 파일에 포함</sys:String>
+    <sys:String x:Key="AllNewestToolTip">모든 모드에 최신 버전을 사용</sys:String>
+    <sys:String x:Key="AllSpecificToolTip">모든 모드에 현재 설치된 버전 사용</sys:String>
+    <sys:String x:Key="AllFactorioVersionToolTip">모든 모드에 동일한 팩토리오 버전의 최신 버전 사용</sys:String>
+    <sys:String x:Key="AllIncludeToolTip">내보낸 파일에 모든 모드 포함</sys:String>
+    <sys:String x:Key="DownloadNewerToolTip">이 설정을 사용하면 최신 버전을 사용할 수 있는 경우 사용된 &#x0a;옵션에 따라 &#x0a;내보낸 파일에 포함된 모드가 다시 다운로드됩니다.</sys:String>
     <sys:String x:Key="IncludeVersionsToolTip">내보낸 모드의 버전이 내보낸 파일에 저장됩니다.&#x0a;가져올 때 ModMyFactory는 이 정보를 사용하여 지정된 버전의 모드를 다운로드합니다.</sys:String>
     
     <!-- buttons -->
@@ -452,5 +521,29 @@
     <!-- buttons -->
     <sys:String x:Key="CopyButton">복사</sys:String>
     <sys:String x:Key="MoveButton">이동</sys:String>
+    
+    
+    <!--
+    ____________________ DependencyDownloadWindow ____________________
+    -->
+    
+    <sys:String x:Key="DependencyDownloadWindowTitle">다운로드할 의존성 선택</sys:String>
+    
+    <!-- checkboxes -->
+    <sys:String x:Key="ShowOptionalCheckBox">선택적 의존성 보기</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="IsOptionalToolTip">선택적</sys:String>
+    
+    
+    <!--
+    ____________________ ModSettingsWindow ____________________
+    -->
+    
+    <sys:String x:Key="ModSettingsWindowTitle">모드 의존성 편집</sys:String>
+    
+    <!-- checkboxes -->
+    <sys:String x:Key="OverrideCheckBox">재정의 설정</sys:String>
 
 </ResourceDictionary>
+
