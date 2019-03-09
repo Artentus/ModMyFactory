@@ -222,7 +222,7 @@
                      ItemsSource="{Binding SelectedReleasesView}" SelectedItem="{Binding SelectedRelease, Mode=TwoWay}">
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type modApi:ModRelease}">
-                        <Grid>
+                        <Grid Margin="1,0,5,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
