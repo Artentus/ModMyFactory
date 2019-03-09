@@ -9,6 +9,7 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:convert="clr-namespace:ModMyFactory.MVVM.Converters"
         xmlns:selector="clr-namespace:ModMyFactory.MVVM.Selectors"
+        xmlns:sorter="clr-namespace:ModMyFactory.MVVM.Sorters"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="{DynamicResource OnlineModsWindowTitle}"
@@ -29,6 +30,12 @@
         <sys:Boolean x:Key="True">True</sys:Boolean>
 
         <convert:AdvancedVisibilityConverter x:Key="AdvancedVisibilityConverter"/>
+
+        <ObjectDataProvider x:Key="SortingModes" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="sorter:ModInfoSorterMode"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </Window.Resources>
     
     <Grid Margin="4">
@@ -74,18 +81,28 @@
         <Grid Grid.Column="0" Grid.Row="1" Margin="0,4,0,0">
             <Grid.Resources>
                 <convert:FactorioVersionConverter x:Key="FactorioVersionConverter"/>
-                <DataTemplate x:Key="SelectedItemTemplate" DataType="{x:Type system:Version}">
+                <DataTemplate x:Key="SelectedItemTemplate1" DataType="{x:Type system:Version}">
                     <TextBlock Margin="4,1" VerticalAlignment="Center" Text="{Binding Converter={StaticResource FactorioVersionConverter}}" Style="{StaticResource TextBlockButtonStyle}"/>
                 </DataTemplate>
-                <DataTemplate x:Key="ListItemTemplate" DataType="{x:Type system:Version}">
+                <DataTemplate x:Key="ListItemTemplate1" DataType="{x:Type system:Version}">
                     <TextBlock Margin="4,1" VerticalAlignment="Center" Text="{Binding Converter={StaticResource FactorioVersionConverter}}"/>
                 </DataTemplate>
-                <selector:ComboBoxTemplateSelector x:Key="TemplateSelector" SelectedItemTemplate="{StaticResource SelectedItemTemplate}" ListItemTemplate="{StaticResource ListItemTemplate}"/>
+                <selector:ComboBoxTemplateSelector x:Key="TemplateSelector1" SelectedItemTemplate="{StaticResource SelectedItemTemplate1}" ListItemTemplate="{StaticResource ListItemTemplate1}"/>
+
+                <convert:ModInfoSorterModeConverter x:Key="ModInfoSorterModeConverter"/>
+                <DataTemplate x:Key="SelectedItemTemplate2" DataType="{x:Type sorter:ModInfoSorterMode}">
+                    <TextBlock Margin="4,1" VerticalAlignment="Center" Text="{Binding Converter={StaticResource ModInfoSorterModeConverter}}" Style="{StaticResource TextBlockButtonStyle}"/>
+                </DataTemplate>
+                <DataTemplate x:Key="ListItemTemplate2" DataType="{x:Type sorter:ModInfoSorterMode}">
+                    <TextBlock Margin="4,1" VerticalAlignment="Center" Text="{Binding Converter={StaticResource ModInfoSorterModeConverter}}"/>
+                </DataTemplate>
+                <selector:ComboBoxTemplateSelector x:Key="TemplateSelector2" SelectedItemTemplate="{StaticResource SelectedItemTemplate2}" ListItemTemplate="{StaticResource ListItemTemplate2}"/>
             </Grid.Resources>
             
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
@@ -105,8 +122,10 @@
                 </Grid>
             </Border>
             <ComboBox Grid.Column="2" Margin="4,0" ItemsSource="{Binding VersionFilterView}" SelectedItem="{Binding SelectedVersionFilter, Mode=TwoWay}"
-                      MinWidth="120" ToolTip="{DynamicResource FactorioFilterToolTip}" ItemTemplateSelector="{StaticResource TemplateSelector}"/>
-            <Button Grid.Column="3" MinWidth="0" MinHeight="0" Height="24" Command="{Binding RefreshCommand}">
+                      MinWidth="120" ToolTip="{DynamicResource FactorioFilterToolTip}" ItemTemplateSelector="{StaticResource TemplateSelector1}"/>
+            <ComboBox Grid.Column="3" Margin="0,0,4,0" ItemsSource="{Binding Source={StaticResource SortingModes}}" SelectedItem="{Binding SortingMode, Mode=TwoWay}"
+                      MinWidth="150" ToolTip="{DynamicResource SortingModeToolTip}" ItemTemplateSelector="{StaticResource TemplateSelector2}"/>
+            <Button Grid.Column="4" MinWidth="0" MinHeight="0" Height="24" Command="{Binding RefreshCommand}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" MinWidth="16"/>

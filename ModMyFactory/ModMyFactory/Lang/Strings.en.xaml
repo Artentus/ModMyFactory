@@ -448,6 +448,7 @@
     <sys:String x:Key="DownloadsToolTip">Downloads</sys:String>
     <sys:String x:Key="InstalledToolTip">Installed</sys:String>
     <sys:String x:Key="FactorioFilterToolTip">Filter by latest release</sys:String>
+    <sys:String x:Key="SortingModeToolTip">Sorting</sys:String>
     
     <!-- labels -->
     <sys:String x:Key="LicenseLabel">License:</sys:String>
@@ -465,6 +466,12 @@
     <sys:String x:Key="RefreshButton">Refresh</sys:String>
     <sys:String x:Key="ViewOnlineButton">View online</sys:String>
     <sys:String x:Key="ViewAuthorButton">View author</sys:String>
+    
+    <!-- Sorting Modes -->
+    <sys:String x:Key="AlphabeticalSortingMode">Alphabetical</sys:String>
+    <sys:String x:Key="DownloadCountSortingMode">Most downloaded</sys:String>
+    <sys:String x:Key="ScoreSortingMode">Trending</sys:String>
+    <sys:String x:Key="LastUpdateSortingMode">Recently updated</sys:String>
 
 
     <!--

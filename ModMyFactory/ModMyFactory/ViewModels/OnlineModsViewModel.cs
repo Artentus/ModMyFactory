@@ -39,6 +39,8 @@ namespace ModMyFactory.ViewModels
         Version selectedVersionFilter;
         List<ModInfo> mods;
         string filter;
+        readonly ModInfoSorter sorter;
+        ModInfoSorterMode sortingMode;
         ModRelease selectedRelease;
         ListCollectionView selectedReleasesView;
         ModRelease[] selectedReleases; 
@@ -103,7 +105,7 @@ namespace ModMyFactory.ViewModels
 
                     ModsView = (ListCollectionView)(new CollectionViewSource() { Source = mods }).View;
                     ModsView.Filter = ModFilter;
-                    ModsView.CustomSort = new ModInfoSorter();
+                    ModsView.CustomSort = sorter;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(ModsView)));
 
                     var versions = new List<Version>() { EmptyVersion };
@@ -170,6 +172,25 @@ namespace ModMyFactory.ViewModels
                     filter = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Filter)));
 
+                    ModsView.Refresh();
+                }
+            }
+        }
+
+        public ModInfoSorterMode SortingMode
+        {
+            get => sortingMode;
+            set
+            {
+                if (value != sortingMode)
+                {
+                    sortingMode = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SortingMode)));
+
+                    App.Instance.Settings.OnlineModListSorting = sortingMode;
+                    App.Instance.Settings.Save();
+
+                    sorter.Mode = sortingMode;
                     ModsView.Refresh();
                 }
             }
@@ -406,7 +427,7 @@ namespace ModMyFactory.ViewModels
         {
             if (string.IsNullOrWhiteSpace(filter)) return true;
 
-            return StringHelper.FilterIsContained(filter, $"{mod.Title} {mod.Author}");
+            return StringHelper.FilterIsContained(filter, $"{mod.Title} {mod.Author} {mod.Name}");
         }
 
         private bool FilterVersion(ModInfo mod)
@@ -432,6 +453,9 @@ namespace ModMyFactory.ViewModels
             InstalledModpacks = MainViewModel.Instance.Modpacks;
 
             asyncFetchExtendedInfoIndex = -1;
+
+            sortingMode = App.IsInDesignMode ? ModInfoSorterMode.Score : App.Instance.Settings.OnlineModListSorting;
+            sorter = new ModInfoSorter() { Mode = sortingMode };
 
             DownloadCommand = new RelayCommand(async () => await DownloadSelectedModRelease(), () => SelectedRelease != null && !SelectedRelease.IsInstalled);
             DeleteCommand = new RelayCommand(DeleteSelectedModRelease, () => SelectedRelease != null && SelectedRelease.IsInstalled);

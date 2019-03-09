@@ -20,6 +20,9 @@ namespace ModMyFactory.Web.ModApi
         [JsonProperty("owner")]
         public string Author { get; set; }
 
+        [JsonProperty("score")]
+        public double Score { get; set; }
+
         [JsonProperty("latest_release")]
         public virtual ModRelease LatestRelease { get; set; }
     }
