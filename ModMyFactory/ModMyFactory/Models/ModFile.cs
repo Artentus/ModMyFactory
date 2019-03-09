@@ -177,6 +177,7 @@ namespace ModMyFactory.Models
         /// </summary>
         public void Enable()
         {
+            if (InfoFile.FactorioVersion >= FactorioVersion.DisableBehaviourSwitch) return; // Do not disable on file level for Factorio 0.17 and later.
             if (Enabled) return;
 
             if (isFile)
@@ -201,6 +202,7 @@ namespace ModMyFactory.Models
         /// </summary>
         public void Disable()
         {
+            if (InfoFile.FactorioVersion >= FactorioVersion.DisableBehaviourSwitch) return; // Do not disable on file level for Factorio 0.17 and later.
             if (!Enabled) return;
 
             if (isFile)

@@ -39,37 +39,37 @@ namespace ModMyFactory
             return list != null;
         }
 
-        public static bool GetActive(string name, Version version)
+        public static bool GetActive(string name, GameCompatibleVersion version, Version factorioVersion)
         {
             ModTemplateList list;
-            if (Contains(version, out list))
+            if (Contains(factorioVersion, out list))
             {
-                return list.GetActive(name);
+                return list.GetActive(name, version, factorioVersion);
             }
             else
             {
-                list = ModTemplateList.Load(Path.Combine(App.Instance.Settings.GetModDirectory(version).FullName, "mod-list.json"));
-                list.Version = version;
+                list = ModTemplateList.Load(Path.Combine(App.Instance.Settings.GetModDirectory(factorioVersion).FullName, "mod-list.json"));
+                list.Version = factorioVersion;
                 TemplateLists.Add(list);
 
-                return list.GetActive(name);
+                return list.GetActive(name, version, factorioVersion);
             }
         }
 
-        public static void SetActive(string name, Version version, bool value)
+        public static void SetActive(string name, GameCompatibleVersion version, Version factorioVersion, bool value)
         {
-            if (Contains(version, out var list))
+            if (Contains(factorioVersion, out var list))
             {
-                list.SetActive(name, value);
+                list.SetActive(name, value, version, factorioVersion);
                 list.Save();
             }
             else
             {
-                list = ModTemplateList.Load(Path.Combine(App.Instance.Settings.GetModDirectory(version).FullName, "mod-list.json"));
-                list.Version = version;
+                list = ModTemplateList.Load(Path.Combine(App.Instance.Settings.GetModDirectory(factorioVersion).FullName, "mod-list.json"));
+                list.Version = factorioVersion;
                 TemplateLists.Add(list);
 
-                list.SetActive(name, value);
+                list.SetActive(name, value, version, factorioVersion);
                 list.Save();
             }
         }

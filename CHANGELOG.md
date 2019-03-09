@@ -1,5 +1,6 @@
 #### 1.10.0
-* Added support for multiple versions of the same mod.
+* Added support for multiple versions of the same mod (Factorio 0.16).
+* Added support for the new native multi-version feature for mods in Factorio 0.17.
 * Added option to lock modpacks.
 * Added support for mod thumbnails.
 * Added changelog to About section.

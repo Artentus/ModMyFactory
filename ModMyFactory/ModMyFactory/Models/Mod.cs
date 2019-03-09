@@ -59,7 +59,7 @@ namespace ModMyFactory.Models
                     active = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
 
-                    ModManager.SetActive(Name, FactorioVersion, value);
+                    ModManager.SetActive(Name, Version, FactorioVersion, value);
 
                     if (active)
                     {
@@ -290,7 +290,7 @@ namespace ModMyFactory.Models
             oldVersions = files;
 
             if (!File.Enabled) active = false;
-            else active = ModManager.GetActive(Name, FactorioVersion); // ToDo: check if old versions are active
+            else active = ModManager.GetActive(Name, Version, FactorioVersion); // ToDo: check if old versions are active
             if (active)
             {
                 File.Enable();
@@ -315,7 +315,7 @@ namespace ModMyFactory.Models
             oldVersions = new ModFileCollection();
 
             if (!File.Enabled) active = false;
-            else active = ModManager.GetActive(Name, FactorioVersion);
+            else active = ModManager.GetActive(Name, Version, FactorioVersion);
             if (active)
             {
                 File.Enable();
