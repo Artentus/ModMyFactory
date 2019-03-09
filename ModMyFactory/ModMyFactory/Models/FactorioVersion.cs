@@ -17,6 +17,8 @@ namespace ModMyFactory.Models
     /// </summary>
     class FactorioVersion : NotifyPropertyChangedBase, IEditableObject
     {
+        public static readonly Version DisableBehaviourSwitch = new Version(0, 17);
+
         protected static List<string> uniqueNames;
 
         static FactorioVersion()

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Newtonsoft.Json;
 using ModMyFactory.Helpers;
+using ModMyFactory.Models;
 
 namespace ModMyFactory
 {
@@ -26,11 +26,16 @@ namespace ModMyFactory
             [JsonConverter(typeof(BooleanToStringJsonConverter))]
             public bool Enabled;
 
+            [JsonProperty(PropertyName = "version", DefaultValueHandling = DefaultValueHandling.Ignore)]
+            [JsonConverter(typeof(GameVersionConverter))]
+            public GameCompatibleVersion Version;
+
             [JsonConstructor]
-            public ModTemplate(string name, bool enabled)
+            public ModTemplate(string name, bool enabled, GameCompatibleVersion version)
             {
                 Name = name;
                 Enabled = enabled;
+                Version = version;
             }
         }
 
@@ -75,12 +80,25 @@ namespace ModMyFactory
             this.file = file;
 
             Mods = new List<ModTemplate>();
-            Mods.Add(new ModTemplate("base", true));
+            Mods.Add(new ModTemplate("base", true, null));
         }
 
-        private bool Contains(string name)
+        private ModTemplate CreateTemplate(string name, bool enabled, GameCompatibleVersion version, Version factorioVersion)
         {
-            return Mods.Exists(mod => mod.Name == name);
+            if (factorioVersion >= FactorioVersion.DisableBehaviourSwitch)
+            {
+                return new ModTemplate(name, DefaultActiveState, version);
+            }
+            else
+            {
+                return new ModTemplate(name, enabled, null);
+            }
+        }
+        
+        private bool TryGetMod(string name, out ModTemplate mod)
+        {
+            mod = Mods.Find(item => item.Name == name);
+            return mod != default(ModTemplate);
         }
 
         /// <summary>
@@ -88,17 +106,25 @@ namespace ModMyFactory
         /// </summary>
         /// <param name="name">The mods name.</param>
         /// <returns>Returns if the specified mod is active.</returns>
-        public bool GetActive(string name)
+        public bool GetActive(string name, GameCompatibleVersion version, Version factorioVersion)
         {
-            if (Contains(name))
+            if (TryGetMod(name, out var mod))
             {
-                return Mods.First(mod => mod.Name == name).Enabled;
+                if (factorioVersion >= FactorioVersion.DisableBehaviourSwitch)
+                {
+                    return mod.Enabled && (mod.Version == version);
+                }
+                else
+                {
+                    return mod.Enabled;
+                }
             }
             else
             {
-                Mods.Add(new ModTemplate(name, DefaultActiveState));
+                mod = CreateTemplate(name, DefaultActiveState, version, factorioVersion);
+                Mods.Add(mod);
                 Save();
-                return DefaultActiveState;
+                return mod.Enabled;
             }
         }
 
@@ -107,18 +133,30 @@ namespace ModMyFactory
         /// </summary>
         /// <param name="name">The mods name.</param>
         /// <param name="value">The new active state of the mod.</param>
-        public void SetActive(string name, bool value)
+        public void SetActive(string name, bool value, GameCompatibleVersion version, Version factorioVersion)
         {
-            if (Contains(name))
+            if (TryGetMod(name, out var mod))
             {
-                Mods.First(mod => mod.Name == name).Enabled = value;
-                Save();
+                if (factorioVersion >= FactorioVersion.DisableBehaviourSwitch)
+                {
+                    if (value || (mod.Version == version))
+                    {
+                        mod.Enabled = value;
+                        mod.Version = version;
+                    }
+                }
+                else
+                {
+                    mod.Enabled = value;
+                }
             }
             else
             {
-                Mods.Add(new ModTemplate(name, value));
-                Save();
+                mod = CreateTemplate(name, value, version, factorioVersion);
+                Mods.Add(mod);
             }
+
+            Save();
         }
 
         /// <summary>
@@ -127,10 +165,9 @@ namespace ModMyFactory
         /// <param name="name">The mods name.</param>
         public void Remove(string name)
         {
-            ModTemplate template = Mods.Find(item => item.Name == name);
-            if (template != null)
+            if (TryGetMod(name, out var mod))
             {
-                Mods.Remove(template);
+                Mods.Remove(mod);
                 Save();
             }
         }

@@ -18,7 +18,6 @@ namespace ModMyFactory.Models
     sealed class ModFile : IComparable<ModFile>
     {
         private const string DefaultLocaleString = "en";
-        private const string DisabledNameSuffix = "___disabled";
 
         private readonly bool isFile;
         private FileSystemInfo file;
@@ -74,9 +73,11 @@ namespace ModMyFactory.Models
             sb.Append('_');
             sb.Append(Version);
 
-            if (!enabled) sb.Append(DisabledNameSuffix);
-
-            if (isFile) sb.Append(".zip");
+            if (isFile)
+            {
+                if (enabled) sb.Append(".zip");
+                else sb.Append(".disabled");
+            }
 
             return sb.ToString();
         }
@@ -176,13 +177,23 @@ namespace ModMyFactory.Models
         /// </summary>
         public void Enable()
         {
+            if (InfoFile.FactorioVersion >= FactorioVersion.DisableBehaviourSwitch) return; // Do not disable on file level for Factorio 0.17 and later.
             if (Enabled) return;
 
-            string newName = BuildNewFileName(-1, true);
-            string newPath = Path.Combine(file.ParentDirectory().FullName, newName);
-            file.MoveTo(newPath);
+            if (isFile)
+            {
+                string newName = BuildNewFileName(-1, true);
+                string newPath = Path.Combine(file.ParentDirectory().FullName, newName);
+                file.MoveTo(newPath);
+                file = GetNewFile(newPath);
+            }
+            else
+            {
+                string infoPath = Path.Combine(file.FullName, "info.disabled");
+                var infoFile = new FileInfo(infoPath);
+                if (infoFile.Exists) infoFile.MoveTo(Path.Combine(file.FullName, "info.json"));
+            }
 
-            file = GetNewFile(newPath);
             Enabled = true;
         }
 
@@ -191,13 +202,23 @@ namespace ModMyFactory.Models
         /// </summary>
         public void Disable()
         {
+            if (InfoFile.FactorioVersion >= FactorioVersion.DisableBehaviourSwitch) return; // Do not disable on file level for Factorio 0.17 and later.
             if (!Enabled) return;
 
-            string newName = BuildNewFileName(-1, false);
-            string newPath = Path.Combine(file.ParentDirectory().FullName, newName);
-            file.MoveTo(newPath);
+            if (isFile)
+            {
+                string newName = BuildNewFileName(-1, false);
+                string newPath = Path.Combine(file.ParentDirectory().FullName, newName);
+                file.MoveTo(newPath);
+                file = GetNewFile(newPath);
+            }
+            else
+            {
+                string infoPath = Path.Combine(file.FullName, "info.json");
+                var infoFile = new FileInfo(infoPath);
+                if (infoFile.Exists) infoFile.MoveTo(Path.Combine(file.FullName, "info.disabled"));
+            }
 
-            file = GetNewFile(newPath);
             Enabled = false;
         }
 
@@ -470,18 +491,18 @@ namespace ModMyFactory.Models
         /// The file name can not contain an extension.
         /// </summary>
         /// <param name="fileName">The file name to parse.</param>
+        /// <param name="extension">The files extension or null.</param>
         /// <param name="name">Out. The parsed mod name.</param>
         /// <param name="version">Out. The parsed mod version.</param>
         /// <param name="enabled">Out. Indicates if the mod file is enabled.</param>
         /// <param name="hasUid">Specifies if the file name contains a UID.</param>
         /// <returns>Returns true if the file name was a valid mod file name, otherwise false.</returns>
-        private static bool TryParseModName(string fileName, out string name, out GameCompatibleVersion version, out bool enabled, bool hasUid)
+        private static bool TryParseModName(string fileName, string extension, out string name, out GameCompatibleVersion version, out bool enabled, bool hasUid)
         {
             name = null;
             version = null;
 
-            enabled = !fileName.EndsWith(DisabledNameSuffix);
-            if (!enabled) fileName = fileName.Substring(0, fileName.Length - DisabledNameSuffix.Length);
+            enabled = (extension != ".disabled");
             
             int index = fileName.LastIndexOf('_');
             if ((index < 1) || (index >= fileName.Length - 1)) return false;
@@ -548,14 +569,23 @@ namespace ModMyFactory.Models
         /// <param name="directory">The directory to read fromn.</param>
         /// <param name="infoFile">Out. The info file that has been read.</param>
         /// <returns>Returns true if an info file could be read from the directory, otherwise false.</returns>
-        private static bool TryReadInfoFileFromDirectory(DirectoryInfo directory, out InfoFile infoFile)
+        private static bool TryReadInfoFileFromDirectory(DirectoryInfo directory, out InfoFile infoFile, out bool enabled)
         {
             infoFile = null;
+            enabled = true;
 
             try
             {
-                var file = directory.EnumerateFiles("info.json").FirstOrDefault();
-                if (file == null) return false;
+                string enabledPath = Path.Combine(directory.FullName, "info.json");
+                string disabledPath = Path.Combine(directory.FullName, "info.disabled");
+
+                var file = new FileInfo(enabledPath);
+                if (!file.Exists)
+                {
+                    enabled = false;
+                    file = new FileInfo(disabledPath);
+                    if (!file.Exists) return false;
+                }
 
                 using (var stream = file.OpenRead())
                     return TryDeserializeInfoFileFromStream(stream, out infoFile) && infoFile.IsValid;
@@ -580,7 +610,7 @@ namespace ModMyFactory.Models
 
             string fileName;
             GameCompatibleVersion fileVersion;
-            if (!TryParseModName(archiveFile.NameWithoutExtension(), out fileName, out fileVersion, out enabled, hasUid)) return false;
+            if (!TryParseModName(archiveFile.NameWithoutExtension(), archiveFile.Extension, out fileName, out fileVersion, out enabled, hasUid)) return false;
 
             if (TryReadInfoFileFromArchive(archiveFile, out infoFile))
             {
@@ -606,15 +636,15 @@ namespace ModMyFactory.Models
             if (directory.Name == "base")
             {
                 enabled = true;
-                return TryReadInfoFileFromDirectory(directory, out infoFile);
+                return TryReadInfoFileFromDirectory(directory, out infoFile, out enabled);
             }
             else
             {
                 string fileName;
                 GameCompatibleVersion fileVersion;
-                if (!TryParseModName(directory.Name, out fileName, out fileVersion, out enabled, hasUid)) return false;
+                if (!TryParseModName(directory.Name, string.Empty, out fileName, out fileVersion, out enabled, hasUid)) return false;
 
-                if (TryReadInfoFileFromDirectory(directory, out infoFile))
+                if (TryReadInfoFileFromDirectory(directory, out infoFile, out enabled))
                 {
                     return (infoFile.Name == fileName) && (infoFile.Version == fileVersion);
                 }
