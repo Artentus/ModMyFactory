@@ -199,6 +199,7 @@
     <Compile Include="MVVM\Converters\AdvancedVisibilityConverter.cs" />
     <Compile Include="MVVM\Converters\FactorioVersionConverter.cs" />
     <Compile Include="MVVM\Converters\LocalizedNameConverter.cs" />
+    <Compile Include="MVVM\Converters\ModInfoSorterModeConverter.cs" />
     <Compile Include="MVVM\Converters\RemoveFileExtensionConverter.cs" />
     <Compile Include="MVVM\Converters\SystemIconConverter.cs" />
     <Compile Include="Controls\DefaultExpandedExpander.cs" />
@@ -212,6 +213,7 @@
     <Compile Include="MVVM\Sorters\FactorioOnlineVersionSorter.cs" />
     <Compile Include="MVVM\Sorters\ModDependencySorter.cs" />
     <Compile Include="MVVM\Sorters\ModInfoSorter.cs" />
+    <Compile Include="MVVM\Sorters\ModInfoSorterMode.cs" />
     <Compile Include="MVVM\Sorters\ModReleaseSorter.cs" />
     <Compile Include="MVVM\Sorters\ModSettingSorter.cs" />
     <Compile Include="MVVM\Sorters\ModUpdateInfoSorter.cs" />

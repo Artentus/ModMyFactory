@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using Newtonsoft.Json;
 using ModMyFactory.Helpers;
+using ModMyFactory.MVVM.Sorters;
 
 namespace ModMyFactory
 {
@@ -33,6 +34,7 @@ namespace ModMyFactory
                 SaveCredentials = false,
                 WarningShown = false,
                 ShowExperimentalDownloads = false,
+                OnlineModListSorting = ModInfoSorterMode.Score,
 
                 UpdateSearchOnStartup = true,
                 IncludePreReleasesForUpdate = false,
@@ -96,6 +98,10 @@ namespace ModMyFactory
         public bool WarningShown;
 
         public bool ShowExperimentalDownloads;
+
+        [DefaultValue(ModInfoSorterMode.Score)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        public ModInfoSorterMode OnlineModListSorting;
 
         [DefaultValue(true)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]

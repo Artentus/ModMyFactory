@@ -3,6 +3,7 @@
 * Added support for the new native multi-version feature for mods in Factorio 0.17.
 * Added option to lock modpacks.
 * Added support for mod thumbnails.
+* Added sorting options to online mod list.
 * Added changelog to About section.
 * Fixed crash when selecting certain online mods.
 * Fixed rare crash when adding Steam installation.
