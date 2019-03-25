@@ -1116,6 +1116,7 @@ namespace ModMyFactory.ViewModels
             settings.PreSelectModVersions = settingsViewModel.PreSelectModVersions;
             settings.AlwaysUpdateZipped = settingsViewModel.AlwaysUpdateZipped;
             settings.KeepOldModVersions = settingsViewModel.KeepOldModVersions;
+            settings.ActivateNewMods = settingsViewModel.ActivateNewMods;
 
             // Mod dependencies
             settings.ActivateDependencies = settingsViewModel.ActivateDependencies;

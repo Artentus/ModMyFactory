@@ -21,6 +21,7 @@ namespace ModMyFactory.ViewModels
         bool preSelectModVersions;
         bool alwaysUpdateZipped;
         bool keepOldModVersions;
+        bool activateNewMods;
 
         public bool UpdateSearchOnStartup
         {
@@ -83,6 +84,19 @@ namespace ModMyFactory.ViewModels
                 {
                     keepOldModVersions = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(KeepOldModVersions)));
+                }
+            }
+        }
+
+        public bool ActivateNewMods
+        {
+            get => activateNewMods;
+            set
+            {
+                if (value != activateNewMods)
+                {
+                    activateNewMods = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActivateNewMods)));
                 }
             }
         }
@@ -478,6 +492,7 @@ namespace ModMyFactory.ViewModels
             PreSelectModVersions = settings.PreSelectModVersions;
             AlwaysUpdateZipped = settings.AlwaysUpdateZipped;
             KeepOldModVersions = settings.KeepOldModVersions;
+            ActivateNewMods = settings.ActivateNewMods;
 
             ActivateOptionalDependencies = settings.ActivateOptionalDependencies;
             ActivateDependencies = settings.ActivateDependencies;
