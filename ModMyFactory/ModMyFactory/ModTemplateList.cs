@@ -60,8 +60,7 @@ namespace ModMyFactory
                 return templateList;
             }
         }
-
-        const bool DefaultActiveState = true;
+        
         FileInfo file;
         bool updating;
         int updateCount;
@@ -87,7 +86,7 @@ namespace ModMyFactory
         {
             if (factorioVersion >= FactorioVersion.DisableBehaviourSwitch)
             {
-                return new ModTemplate(name, DefaultActiveState, version);
+                return new ModTemplate(name, enabled, version);
             }
             else
             {
@@ -121,7 +120,7 @@ namespace ModMyFactory
             }
             else
             {
-                mod = CreateTemplate(name, DefaultActiveState, version, factorioVersion);
+                mod = CreateTemplate(name, App.Instance.Settings.ActivateNewMods, version, factorioVersion);
                 Mods.Add(mod);
                 Save();
                 return mod.Enabled;
