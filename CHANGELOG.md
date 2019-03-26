@@ -1,3 +1,7 @@
+#### 1.10.1
+* Added a setting for activating newly installed mods.
+* Restructured settings window.
+
 #### 1.10.0
 * Added support for multiple versions of the same mod (Factorio 0.16).
 * Added support for the new native multi-version feature for mods in Factorio 0.17.

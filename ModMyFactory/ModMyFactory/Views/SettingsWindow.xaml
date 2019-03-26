@@ -31,12 +31,10 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <GroupBox Grid.Row="1" Margin="0,0,0,2" Header="{DynamicResource UpdateGroupHeader}">
+                        <GroupBox Grid.Row="0" Margin="0,0,0,2" Header="{DynamicResource UpdateGroupHeader}">
                             <Grid Margin="4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -48,9 +46,12 @@
                             </Grid>
                         </GroupBox>
 
-                        <GroupBox Grid.Row="2" Margin="0,2" Header="{DynamicResource ModUpdateGroupHeader}">
+                        <GroupBox Grid.Row="1" Margin="0,2" Header="{DynamicResource ModsHeader}">
                             <Grid Margin="4">
                                 <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -59,22 +60,13 @@
                                 <CheckBox Grid.Row="0" Margin="2" IsChecked="{Binding PreSelectModVersions}" Content="{DynamicResource PreSelectModVersionsGroupItem}"/>
                                 <CheckBox Grid.Row="1" Margin="2" IsChecked="{Binding AlwaysUpdateZipped}" Content="{DynamicResource UpdateZippedGroupItem}"/>
                                 <CheckBox Grid.Row="2" Margin="2" IsChecked="{Binding KeepOldModVersions}" Content="{DynamicResource KeepOldModVersionsGroupItem}"/>
+                                <CheckBox Grid.Row="3" Margin="2" IsChecked="{Binding ActivateDependencies}" Content="{DynamicResource ActivateDependenciesGroupItem}"/>
+                                <CheckBox Grid.Row="4" Margin="20,2" IsChecked="{Binding ActivateOptionalDependencies}" Content="{DynamicResource ActivateOptionalDependenciesGroupItem}" IsEnabled="{Binding ActivateDependencies}"/>
+                                <CheckBox Grid.Row="5" Margin="2" IsChecked="{Binding ActivateNewMods}" Content="{DynamicResource ActivateNewModsGroupItem}"/>
                             </Grid>
                         </GroupBox>
 
-                        <GroupBox Grid.Row="3" Margin="0,2" Header="{DynamicResource DependenciesGroupHeader}">
-                            <Grid Margin="4">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <CheckBox Grid.Row="0" Margin="2" IsChecked="{Binding ActivateDependencies}" Content="{DynamicResource ActivateDependenciesGroupItem}"/>
-                                <CheckBox Grid.Row="1" Margin="20,2" IsChecked="{Binding ActivateOptionalDependencies}" Content="{DynamicResource ActivateOptionalDependenciesGroupItem}" IsEnabled="{Binding ActivateDependencies}"/>
-                            </Grid>
-                        </GroupBox>
-
-                        <GroupBox Grid.Row="4" Margin="0,2,0,0" Header="{DynamicResource CredentialsGroupHeader}">
+                        <GroupBox Grid.Row="2" Margin="0,2,0,0" Header="{DynamicResource CredentialsGroupHeader}">
                             <Grid Margin="4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>

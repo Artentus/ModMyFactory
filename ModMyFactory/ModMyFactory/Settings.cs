@@ -42,6 +42,7 @@ namespace ModMyFactory
                 PreSelectModVersions = true,
                 AlwaysUpdateZipped = true,
                 KeepOldModVersions = false,
+                ActivateNewMods = true,
 
                 ShowOptionalDependencies = false,
                 ActivateDependencies = true,
@@ -118,6 +119,10 @@ namespace ModMyFactory
         public bool AlwaysUpdateZipped;
 
         public bool KeepOldModVersions;
+
+        [DefaultValue(true)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        public bool ActivateNewMods;
         
         public bool ShowOptionalDependencies;
 

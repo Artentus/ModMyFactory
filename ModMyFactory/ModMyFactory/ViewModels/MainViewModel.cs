@@ -632,10 +632,15 @@ namespace ModMyFactory.ViewModels
         private void Refresh()
         {
             ModManager.LoadTemplates();
+            ModManager.BeginUpdateTemplates();
+
             LoadFactorioVersions();
             //ModSettingsManager.LoadSettings();
             LoadModsAndModpacks();
             //ModSettingsManager.SaveSettings(Mods);
+
+            ModManager.EndUpdateTemplates(true);
+            ModManager.SaveTemplates();
         }
 
         private bool ModsSelected() => Mods.Any(mod => mod.IsSelected);
@@ -992,6 +997,7 @@ namespace ModMyFactory.ViewModels
             settings.PreSelectModVersions = settingsViewModel.PreSelectModVersions;
             settings.AlwaysUpdateZipped = settingsViewModel.AlwaysUpdateZipped;
             settings.KeepOldModVersions = settingsViewModel.KeepOldModVersions;
+            settings.ActivateNewMods = settingsViewModel.ActivateNewMods;
 
             // Mod dependencies
             settings.ActivateDependencies = settingsViewModel.ActivateDependencies;
