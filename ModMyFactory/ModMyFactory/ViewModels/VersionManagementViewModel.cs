@@ -439,6 +439,7 @@ namespace ModMyFactory.ViewModels
                 {
                     backupDir = new DirectoryInfo(Path.Combine(appDataDir.Parent.FullName, backupDirName));
                     backupDirName = appDataDir.Name + "-old-" + backupDirCounter;
+                    backupDirCounter++;
                 } while (backupDir.Exists);
                 backupDir.Create();
 

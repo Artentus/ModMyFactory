@@ -171,7 +171,7 @@ namespace ModMyFactory.Views
                 return;
 
             ListBoxItem item = GetItem(listBox, e.GetPosition);
-            if (item != null && item.IsMouseOver)
+            if (item != null)
             {
                 dragStartPoint = e.GetPosition(null);
                 dragging = true;
@@ -244,7 +244,7 @@ namespace ModMyFactory.Views
                 return;
 
             ListBoxItem item = GetItem(listBox, e.GetPosition);
-            if (item != null && item.IsMouseOver)
+            if (item != null)
             {
                 dragStartPoint = e.GetPosition(null);
                 dragging = true;

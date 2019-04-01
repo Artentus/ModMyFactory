@@ -105,11 +105,14 @@ namespace ModMyFactory
         /// </summary>
         /// <param name="name">The mods name.</param>
         /// <returns>Returns if the specified mod is active.</returns>
-        public bool GetActive(string name, GameCompatibleVersion version, Version factorioVersion)
+        public bool GetActive(string name, GameCompatibleVersion version, Version factorioVersion, bool isOnly)
         {
+            if (name == "angelsinfiniteores")
+            { }
+
             if (TryGetMod(name, out var mod))
             {
-                if (factorioVersion >= FactorioVersion.DisableBehaviourSwitch)
+                if ((factorioVersion >= FactorioVersion.DisableBehaviourSwitch) && !isOnly)
                 {
                     return mod.Enabled && (mod.Version == version);
                 }
@@ -132,11 +135,11 @@ namespace ModMyFactory
         /// </summary>
         /// <param name="name">The mods name.</param>
         /// <param name="value">The new active state of the mod.</param>
-        public void SetActive(string name, bool value, GameCompatibleVersion version, Version factorioVersion)
+        public void SetActive(string name, bool value, GameCompatibleVersion version, Version factorioVersion, bool isOnly)
         {
             if (TryGetMod(name, out var mod))
             {
-                if (factorioVersion >= FactorioVersion.DisableBehaviourSwitch)
+                if ((factorioVersion >= FactorioVersion.DisableBehaviourSwitch) && !isOnly)
                 {
                     if (value || (mod.Version == version))
                     {
@@ -147,6 +150,7 @@ namespace ModMyFactory
                 else
                 {
                     mod.Enabled = value;
+                    mod.Version = null;
                 }
             }
             else

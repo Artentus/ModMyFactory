@@ -1,3 +1,8 @@
+#### 1.10.2
+* Fixed mods not properly (de-)activating in Factorio.
+* Fixed drag & drop for mods not working in some cases.
+* Fixed possible freeze when adding Factorio Steam version.
+
 #### 1.10.1
 * Added a setting for activating newly installed mods.
 * Restructured settings window.
