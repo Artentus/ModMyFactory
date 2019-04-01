@@ -46,6 +46,8 @@ namespace ModMyFactory.Models
             foreach (var oldFile in oldVersions) oldFile.Disable();
         }
 
+        private bool IsOnly => !parentCollection.Find(Name, FactorioVersion).Where(mod => mod != this).Any();
+
         /// <summary>
         /// Indicates whether the mod is currently active.
         /// </summary>
@@ -59,7 +61,7 @@ namespace ModMyFactory.Models
                     active = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
 
-                    ModManager.SetActive(Name, Version, FactorioVersion, value);
+                    ModManager.SetActive(Name, Version, FactorioVersion, value, IsOnly);
 
                     if (active)
                     {
@@ -290,7 +292,7 @@ namespace ModMyFactory.Models
             oldVersions = files;
 
             if (!File.Enabled) active = false;
-            else active = ModManager.GetActive(Name, Version, FactorioVersion); // ToDo: check if old versions are active
+            else active = ModManager.GetActive(Name, Version, FactorioVersion, IsOnly); // ToDo: check if old versions are active
             if (active)
             {
                 File.Enable();
@@ -315,7 +317,7 @@ namespace ModMyFactory.Models
             oldVersions = new ModFileCollection();
 
             if (!File.Enabled) active = false;
-            else active = ModManager.GetActive(Name, Version, FactorioVersion);
+            else active = ModManager.GetActive(Name, Version, FactorioVersion, IsOnly);
             if (active)
             {
                 File.Enable();
