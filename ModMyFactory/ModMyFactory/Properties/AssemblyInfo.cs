@@ -11,7 +11,7 @@ using System.Windows;
 [assembly: AssemblyDescription("Factorio mod manager")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ModMyFactory")]
+[assembly: AssemblyProduct("ModMyFactory Portable")]
 [assembly: AssemblyCopyright("Copyright © 2016-2019 Mathis Rech")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
