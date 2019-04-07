@@ -1,3 +1,6 @@
+#### 1.10.3
+* Fixed possible crash when creating links.
+
 #### 1.10.2
 * Fixed mods not properly (de-)activating in Factorio.
 * Fixed drag & drop for mods not working in some cases.

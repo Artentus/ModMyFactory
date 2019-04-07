@@ -159,7 +159,8 @@ namespace ModMyFactory.ViewModels
                 ModpacksView = (ListCollectionView)(new CollectionViewSource() { Source = Modpacks }).View;
                 ModpacksView.CustomSort = new ModpackSorter();
 
-                Savegames = App.Instance.Settings.GetSavegameDirectory().EnumerateFiles().Where(file => !file.Name.StartsWith("_autosave")).ToArray();
+                var saveDir = App.Instance.Settings.GetSavegameDirectory();
+                Savegames = saveDir.Exists ? saveDir.EnumerateFiles().Where(file => !file.Name.StartsWith("_autosave")).ToArray() : new FileInfo[0];
                 SavegameView = (ListCollectionView)(new CollectionViewSource() { Source = Savegames }).View;
             }
         }
