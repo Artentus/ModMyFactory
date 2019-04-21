@@ -14,6 +14,8 @@ using Application = System.Windows.Application;
 using ModMyFactory.Models;
 using FileMode = System.IO.FileMode;
 using System.Net;
+using System.Linq;
+using System.Text;
 
 namespace ModMyFactory
 {
@@ -259,6 +261,19 @@ namespace ModMyFactory
             return GetLocalizedResourceString(string.Join(".", messageType.ToString("g"), key, "Title"));
         }
 
+        private string GetAssetName(ExtendedVersion version)
+        {
+            var sb = new StringBuilder();
+            sb.Append("ModMyFactory_");
+            sb.Append(version);
+
+            #if PORTABLE
+            sb.Append("_portable");
+            #endif
+
+            return sb.ToString();
+        }
+
         /// <summary>
         /// Searches for available updates on GitHub.
         /// </summary>
@@ -275,7 +290,11 @@ namespace ModMyFactory
                 var version = new ExtendedVersion(latestRelease.TagName);
                 bool updateAvailable = version > App.Version;
                 string updateUrl = latestRelease.HtmlUrl;
-                searchResult = new UpdateSearchResult(updateAvailable, updateUrl, version);
+
+                string assetName = GetAssetName(version);
+                string assetUrl = latestRelease.Assets.FirstOrDefault(asset => asset.Name == assetName)?.BrowserDownloadUrl;
+
+                searchResult = new UpdateSearchResult(updateAvailable, updateUrl, assetUrl, version);
             }
 
             return searchResult;
