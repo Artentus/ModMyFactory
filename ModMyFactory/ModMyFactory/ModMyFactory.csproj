@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -82,9 +82,8 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="wpfcore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Artentus.WPFCore.1.0.0\lib\net452\wpfcore.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="WPFCore, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Artentus.WPFCore.1.0.0.1\lib\net452\WPFCore.dll</HintPath>
     </Reference>
     <Reference Include="xdelta, Version=1.0.6168.31138, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
