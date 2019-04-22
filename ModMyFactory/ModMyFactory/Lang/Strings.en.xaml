@@ -562,5 +562,19 @@
     
     <!-- checkboxes -->
     <sys:String x:Key="OverrideCheckBox">Override settings</sys:String>
+    
+    
+    <!--
+    ____________________ UpdateNotificationWindow ____________________
+    -->
+    
+    <sys:String x:Key="UpdateNotificationWindowTitle">Update available</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="ManualUpdateButton">Manual update</sys:String>
+    <sys:String x:Key="AutoUpdateButton">Install</sys:String>
+    
+    <!-- format strings -->
+    <sys:String x:Key="UpdateLabel">ModMyFactory will be updated to version {0}.</sys:String>
 
 </ResourceDictionary>

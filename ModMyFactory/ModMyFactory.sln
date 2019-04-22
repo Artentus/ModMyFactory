@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.25428.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModMyFactory", "ModMyFactory\ModMyFactory.csproj", "{216F1F9C-696E-4238-AA75-0DDDED89342C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Updater\Updater.csproj", "{B7018FDD-C8E7-41AE-B84F-CCBA7ED61620}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,8 +17,15 @@ Global
 		{216F1F9C-696E-4238-AA75-0DDDED89342C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{216F1F9C-696E-4238-AA75-0DDDED89342C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{216F1F9C-696E-4238-AA75-0DDDED89342C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7018FDD-C8E7-41AE-B84F-CCBA7ED61620}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7018FDD-C8E7-41AE-B84F-CCBA7ED61620}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7018FDD-C8E7-41AE-B84F-CCBA7ED61620}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7018FDD-C8E7-41AE-B84F-CCBA7ED61620}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9723E86A-9EFF-498A-A6F8-F5D4D6BBC5B3}
 	EndGlobalSection
 EndGlobal
