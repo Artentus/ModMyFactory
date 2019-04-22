@@ -1,4 +1,5 @@
 #### 1.10.3
+* Added auto-updater
 * Fixed possible crash when creating links.
 
 #### 1.10.2

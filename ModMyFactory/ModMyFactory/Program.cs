@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using ModMyFactory.Helpers;
 using ModMyFactory.Win32;
+using System.Diagnostics;
 
 namespace ModMyFactory
 {
@@ -379,6 +380,21 @@ namespace ModMyFactory
             {
                 Program.DisplayHelp();
                 return 0;
+            }
+
+            // Wait for updater to exit.
+            if (commandLine.TryGetArgument(null, "update-complete", out string pidStr))
+            {
+                if (int.TryParse(pidStr, out int pid))
+                {
+                    try
+                    {
+                        var updaterProcess = Process.GetProcessById(pid);
+                        updaterProcess.WaitForExit();
+                    }
+                    catch
+                    { }
+                }
             }
 
 

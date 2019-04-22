@@ -1040,6 +1040,60 @@ namespace ModMyFactory.ViewModels
 
         #endregion
 
+        private async Task<bool> DownloadUpdate(Uri url, FileInfo file)
+        {
+            var progressWindow = new ProgressWindow { Owner = Window };
+            var progressViewModel = (ProgressViewModel)progressWindow.ViewModel;
+            progressViewModel.ActionName = App.Instance.GetLocalizedResourceString("DownloadingAction");
+
+            progressViewModel.CanCancel = true;
+            var cancellationSource = new CancellationTokenSource();
+            progressViewModel.CancelRequested += (sender, e) => cancellationSource.Cancel();
+
+            var progress = new Progress<double>(p => progressViewModel.Progress = p);
+            
+            try
+            {
+                Task closeWindowTask = null;
+                try
+                {
+                    var downloadTask = WebHelper.DownloadFileAsync(url, file, progress, cancellationSource.Token);
+
+                    closeWindowTask = downloadTask.ContinueWith(t => progressWindow.Dispatcher.Invoke(progressWindow.Close));
+                    progressWindow.ShowDialog();
+
+                    await downloadTask;
+                }
+                finally
+                {
+                    if (closeWindowTask != null) await closeWindowTask;
+                }
+            }
+            catch (HttpRequestException)
+            {
+                MessageBox.Show(Window,
+                    App.Instance.GetLocalizedMessage("InternetConnection", MessageType.Error),
+                    App.Instance.GetLocalizedMessageTitle("InternetConnection", MessageType.Error),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            return !cancellationSource.IsCancellationRequested;
+        }
+
+        private void ApplyUpdate()
+        {
+            var updaterFile = new FileInfo(Path.Combine(App.Instance.TempPath, "updater.exe"));
+            if (updaterFile.Exists) updaterFile.Delete();
+
+            File.WriteAllBytes(updaterFile.FullName, Properties.Resources.updater);
+            var startInfo = new ProcessStartInfo(updaterFile.FullName, Process.GetCurrentProcess().Id.ToString());
+            startInfo.WorkingDirectory = updaterFile.Directory.FullName;
+            Process.Start(startInfo);
+
+            Window.Close();
+        }
+
         private async Task Update(bool silent)
         {
             updating = true;
@@ -1069,11 +1123,24 @@ namespace ModMyFactory.ViewModels
                 {
                     if (result.UpdateAvailable)
                     {
-                        var notificationWindow = new UpdateNotificationWindow() { Owner = Window };
+                        var notificationWindow = new UpdateNotificationWindow(result.Version, !string.IsNullOrWhiteSpace(result.AssetUrl)) { Owner = Window };
                         var dialogResult = notificationWindow.ShowDialog();
                         if (dialogResult == true)
                         {
-                            Process.Start(result.UpdateUrl);
+                            if (notificationWindow.Auto)
+                            {
+                                var url = new Uri(result.AssetUrl);
+                                var file = new FileInfo(Path.Combine(App.Instance.TempPath, "update.zip"));
+                                if (file.Exists) file.Delete();
+                                if (await DownloadUpdate(url, file))
+                                {
+                                    ApplyUpdate();
+                                }
+                            }
+                            else
+                            {
+                                Process.Start(result.UpdateUrl);
+                            }
                         }
                     }
                     else if (!silent)

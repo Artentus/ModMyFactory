@@ -265,6 +265,8 @@ namespace ModMyFactory
             sb.Append("_portable");
             #endif
 
+            sb.Append(".zip");
+
             return sb.ToString();
         }
 

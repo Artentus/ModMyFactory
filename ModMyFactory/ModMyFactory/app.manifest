@@ -4,10 +4,6 @@
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
     <security>
       <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
-        <!-- UAC-Manifestoptionen
-             Wenn Sie die Ebene der Benutzerkontensteuerung für Windows ändern möchten, ersetzen Sie den 
-             Knoten "requestedExecutionLevel" wie folgt. -->
-
         <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
         <!--<requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />-->
         <!--<requestedExecutionLevel  level="highestAvailable" uiAccess="false" />-->
@@ -17,10 +13,7 @@
 
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
     <application>
-      <!-- Eine Liste der Windows-Versionen, unter denen diese Anwendung getestet
-           und für die sie entwickelt wurde. Wenn Sie die Auskommentierung der entsprechenden Elemente aufheben, 
-           wird von Windows automatisch die kompatibelste Umgebung ausgewählt. -->
-
+      
       <!-- Windows Vista -->
       <!--<supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}" />-->
 
@@ -52,7 +45,6 @@
   </application>
   
 
-  <!-- Designs für allgemeine Windows-Steuerelemente und -Dialogfelder (Windows XP und höher) aktivieren -->
   <dependency>
     <dependentAssembly>
       <assemblyIdentity
