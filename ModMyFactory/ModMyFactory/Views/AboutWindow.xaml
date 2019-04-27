@@ -13,7 +13,7 @@
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Icon="..\Images\MMF_Icon.ico"
         Style="{StaticResource WindowStyle}"
-        Width="560" Height="540">
+        Width="560" Height="560">
     
     <Window.DataContext>
         <vm:AboutViewModel/>

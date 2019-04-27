@@ -423,6 +423,7 @@
     <sys:String x:Key="ZlibLabel">CRC32 implementation:</sys:String>
     <sys:String x:Key="XdeltaLabel">VCDIFF implementation:</sys:String>
     <sys:String x:Key="INIparserLabel">INI parser:</sys:String>
+    <sys:String x:Key="LUAInterpreterLabel">LUA interpreter:</sys:String>
     
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Contributors</sys:String>

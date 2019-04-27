@@ -35,6 +35,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -80,6 +81,11 @@
             <TextBlock Grid.Row="7" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource INIparserLabel}"/>
             <TextBlock Grid.Row="7" Grid.Column="1">
                         <Hyperlink Command="{Binding Url8Command}">INI-parser</Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="8" Grid.Column="0" Margin="20,2,10,2" Text="{DynamicResource LUAInterpreterLabel}"/>
+            <TextBlock Grid.Row="8" Grid.Column="1">
+                        <Hyperlink Command="{Binding Url9Command}">MoonSharp</Hyperlink>
             </TextBlock>
         </Grid>
 
