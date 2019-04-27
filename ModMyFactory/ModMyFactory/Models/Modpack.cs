@@ -272,7 +272,7 @@ namespace ModMyFactory.Models
             settingsViewModel.SetMods(proxyList);
             settingsWindow.ShowDialog();
 
-            //ModSettingsManager.SaveSettings(proxyList);
+            ModSettingsManager.SaveSettings(proxyList);
         }
 
         /// <summary>

@@ -626,6 +626,9 @@ namespace ModMyFactory.ViewModels
             Mod.LoadMods(Mods, Modpacks);
             ModpackTemplateList.Instance.PopulateModpackList(Mods, Modpacks, ModpacksView);
 
+            foreach (var mod in Mods)
+                mod.LoadSettings();
+
             modpacksLoading = false;
         }
 
@@ -635,9 +638,9 @@ namespace ModMyFactory.ViewModels
             ModManager.BeginUpdateTemplates();
 
             LoadFactorioVersions();
-            //ModSettingsManager.LoadSettings();
+            ModSettingsManager.LoadSettings();
             LoadModsAndModpacks();
-            //ModSettingsManager.SaveSettings(Mods);
+            ModSettingsManager.SaveSettings(Mods);
 
             ModManager.EndUpdateTemplates(true);
             ModManager.SaveTemplates();

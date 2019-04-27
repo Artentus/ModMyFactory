@@ -9,7 +9,6 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using ModMyFactory.Helpers;
 using ModMyFactory.Models.ModSettings;
 using ModMyFactory.ModSettings;
 using ModMyFactory.MVVM.Sorters;
@@ -132,14 +131,6 @@ namespace ModMyFactory.Models
                     dependenciesView.Filter = (item) => !((ModDependency)item).IsHidden;
                     DependenciesView = dependenciesView;
 
-                    //var settings = file.GetSettings().Select(info => info.ToSetting(this)).ToList();
-                    //Settings = new ReadOnlyCollection<IModSetting>(settings);
-                    //source = new CollectionViewSource() { Source = Settings };
-                    //var settingsView = (ListCollectionView)source.View;
-                    //settingsView.CustomSort = new ModSettingSorter();
-                    //settingsView.GroupDescriptions.Add(new PropertyGroupDescription("LoadTime"));
-                    //SettingsView = settingsView;
-
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Version)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(FactorioVersion)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(FriendlyName)));
@@ -148,9 +139,6 @@ namespace ModMyFactory.Models
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Dependencies)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DependenciesView)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasVisibleDependencies)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Settings)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SettingsView)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasSettings)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Thumbnail)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasThumbnail)));
                 }
@@ -292,7 +280,7 @@ namespace ModMyFactory.Models
             oldVersions = files;
 
             if (!File.Enabled) active = false;
-            else active = ModManager.GetActive(Name, Version, FactorioVersion, IsOnly); // ToDo: check if old versions are active
+            else active = ModManager.GetActive(Name, Version, FactorioVersion, IsOnly);
             if (active)
             {
                 File.Enable();
@@ -330,6 +318,21 @@ namespace ModMyFactory.Models
                         mod.SetInactiveFileDisabled();
                 }
             }
+        }
+
+        public void LoadSettings()
+        {
+            var settings = file.GetSettings(parentCollection, this);
+            Settings = new ReadOnlyCollection<IModSetting>(settings);
+            var source = new CollectionViewSource() { Source = Settings };
+            var settingsView = (ListCollectionView)source.View;
+            settingsView.CustomSort = new ModSettingSorter();
+            settingsView.GroupDescriptions.Add(new PropertyGroupDescription("LoadTime"));
+            SettingsView = settingsView;
+
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Settings)));
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(SettingsView)));
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasSettings)));
         }
         
         public ILocale GetLocale(CultureInfo culture)
@@ -387,7 +390,7 @@ namespace ModMyFactory.Models
             settingsViewModel.SetMod(this);
             settingsWindow.ShowDialog();
 
-            //ModSettingsManager.SaveSettings(this);
+            ModSettingsManager.SaveSettings(this);
         }
         
         private void DeleteOldVersions()
