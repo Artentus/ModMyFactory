@@ -26,7 +26,13 @@ namespace ModMyFactory.ModSettings.Serialization
         }
 
         static readonly BinaryVersion OldestSupportedVersion = new BinaryVersion(0, 16, 0, 0);
-        static readonly BinaryVersion DefaultWriteVersion = new BinaryVersion(0, 16, 36, 2);
+        static readonly BinaryVersion DefaultWriteVersion = new BinaryVersion(0, 17, 9, 1);
+        static readonly Dictionary<Version, BinaryVersion> DefaultWriteVersions = new Dictionary<Version, BinaryVersion>()
+        {
+            { new Version(0, 16), new BinaryVersion(0, 16, 36, 2) },
+            { new Version(0, 17), new BinaryVersion(0, 17, 9, 1) },
+        };
+        static readonly BinaryVersion BehaviourSwitch = new BinaryVersion(0, 17, 0, 0); // Starting with 0.17 there is an additional byte in the file.
 
         public BinaryVersion Version { get; }
 
@@ -132,6 +138,7 @@ namespace ModMyFactory.ModSettings.Serialization
                         var fileVersion = reader.ReadBinaryVersion();
                         if (!FileVersionSupported(fileVersion, out var writeVersion)) throw new ArgumentException("The file version is not supported.", nameof(file));
                         Version = writeVersion;
+                        if (Version >= BehaviourSwitch) reader.ReadBoolean();
 
                         var sb = new StringBuilder();
                         var sw = new StringWriter(sb);
@@ -149,9 +156,15 @@ namespace ModMyFactory.ModSettings.Serialization
             }
         }
 
-        public BinaryFile(string jsonString = null)
+        private BinaryVersion GetDefaultWriteVersion(Version factorioVersion)
         {
-            Version = DefaultWriteVersion;
+            if (DefaultWriteVersions.TryGetValue(factorioVersion, out var result)) return result;
+            return DefaultWriteVersion;
+        }
+
+        public BinaryFile(Version factorioVersion, string jsonString = null)
+        {
+            Version = GetDefaultWriteVersion(factorioVersion);
             JsonString = jsonString;
         }
 
@@ -250,6 +263,7 @@ namespace ModMyFactory.ModSettings.Serialization
                 using (var writer = new BinaryWriter(stream))
                 {
                     writer.Write(Version);
+                    if (Version >= BehaviourSwitch) writer.Write(false);
 
                     if (string.IsNullOrWhiteSpace(JsonString))
                     {
@@ -264,7 +278,7 @@ namespace ModMyFactory.ModSettings.Serialization
                     }
                     catch (Exception ex) when (ex is InvalidEnumArgumentException || ex is JsonException)
                     {
-                        throw new ArgumentException("The JSOn string does not represent a valid settings file.", nameof(file), ex);
+                        throw new ArgumentException("The JSON string does not represent a valid settings file.", nameof(file), ex);
                     }
                 }
             }

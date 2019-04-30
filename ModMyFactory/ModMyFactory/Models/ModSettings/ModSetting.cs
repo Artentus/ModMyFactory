@@ -40,7 +40,7 @@ namespace ModMyFactory.Models.ModSettings
 
         private T GetStartValue()
         {
-            //if (ModSettingsManager.TryGetSavedValue(Owner, this, out T value)) return value;
+            if (ModSettingsManager.TryGetSavedValue(Owner, this, out T value)) return value;
             return DefaultValue;
         }
 
