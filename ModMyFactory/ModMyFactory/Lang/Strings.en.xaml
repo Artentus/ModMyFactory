@@ -559,7 +559,7 @@
     ____________________ ModSettingsWindow ____________________
     -->
     
-    <sys:String x:Key="ModSettingsWindowTitle">Edit mod dependencies</sys:String>
+    <sys:String x:Key="ModSettingsWindowTitle">Edit mod settings</sys:String>
     
     <!-- checkboxes -->
     <sys:String x:Key="OverrideCheckBox">Override settings</sys:String>

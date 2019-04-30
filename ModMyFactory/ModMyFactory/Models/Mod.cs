@@ -424,9 +424,6 @@ namespace ModMyFactory.Models
                 ModManager.RemoveTemplate(Name, FactorioVersion);
                 ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
                 ModpackTemplateList.Instance.Save();
-
-                if (showPrompt)
-                    parentCollection.EvaluateDependencies();
             }
         }
         

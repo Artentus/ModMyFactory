@@ -102,6 +102,8 @@ namespace ModMyFactory.ViewModels
 
         private async Task DownloadDependenciesInternal(ICollection<ModDependencyInfo> dependencies, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken, string token)
         {
+            Mods.BeginUpdate();
+
             int dependencyCount = dependencies.Count;
             double baseProgress = 0;
             foreach (var dependency in dependencies)
@@ -119,6 +121,8 @@ namespace ModMyFactory.ViewModels
 
                 baseProgress += dependencyProgress;
             }
+
+            Mods.EndUpdate();
         }
 
         private async Task DownloadDependencies()
@@ -203,8 +207,6 @@ namespace ModMyFactory.ViewModels
                             {
                                 if (closeWindowTask != null) await closeWindowTask;
                             }
-
-                            Mods.EvaluateDependencies();
                         }
                         catch (Exception ex) when ((ex is WebException) || (ex is HttpRequestException))
                         {

@@ -53,6 +53,8 @@ namespace ModMyFactory.Models
         /// <param name="modpackCollection">The collection containing all modpacks.</param>
         public static void LoadMods(ModCollection parentCollection, ModpackCollection modpackCollection)
         {
+            parentCollection.BeginUpdate();
+
             var modDirectory = App.Instance.Settings.GetModDirectory();
             if (!modDirectory.Exists) modDirectory.Create();
 
@@ -66,7 +68,7 @@ namespace ModMyFactory.Models
             var fileDictionary = CreateFileDictionary(selectedDirectories);
             LoadModsFromFileDictionary(fileDictionary, parentCollection, modpackCollection);
 
-            parentCollection.EvaluateDependencies();
+            parentCollection.EndUpdate();
         }
     }
 }

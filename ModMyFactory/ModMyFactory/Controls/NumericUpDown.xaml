@@ -19,9 +19,21 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" BorderThickness="0" Padding="2" MaxLines="1" VerticalAlignment="Center"/>
-            <Button Grid.Row="0" Grid.Column="1" MinWidth="0" MinHeight="0" Width="16" Height="9" Margin="1,1,1,0"/>
-            <Button Grid.Row="2" Grid.Column="1" MinWidth="0" MinHeight="0" Width="16" Height="9" Margin="1,0,1,1"/>
+            <TextBox x:Name="TextBox" Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" BorderThickness="0" Padding="2" MaxLines="1" VerticalAlignment="Center" LostFocus="TextBoxLostFocusHandler"/>
+            <Button Grid.Row="0" Grid.Column="1" MinWidth="0" MinHeight="0" Width="16" Height="9" Margin="1,1,1,0" Padding="0" Click="UpButtonClickHandler">
+                <Path Margin="-2" Data="M -4 2, 0 -1.5, 4 2" Stroke="{DynamicResource MutedForegroundBrush}" StrokeThickness="2">
+                    <Path.RenderTransform>
+                        <TranslateTransform X="1.9" Y="2.2"/>
+                    </Path.RenderTransform>
+                </Path>
+            </Button>
+            <Button Grid.Row="2" Grid.Column="1" MinWidth="0" MinHeight="0" Width="16" Height="9" Margin="1,0,1,1" Padding="0" Click="DownButtonClickHandler">
+                <Path Margin="-2" Data="M -4 -1.5, 0 2, 4 -1.5" Stroke="{DynamicResource MutedForegroundBrush}" StrokeThickness="2">
+                    <Path.RenderTransform>
+                        <TranslateTransform X="1.9" Y="2"/>
+                    </Path.RenderTransform>
+                </Path>
+            </Button>
         </Grid>
     </Border>
 </UserControl>
