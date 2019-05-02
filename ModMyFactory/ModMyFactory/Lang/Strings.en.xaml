@@ -564,6 +564,19 @@
     <!-- checkboxes -->
     <sys:String x:Key="OverrideCheckBox">Override settings</sys:String>
     
+    <!-- buttons -->
+    <sys:String x:Key="DefaultValueButton">Default</sys:String>
+    <sys:String x:Key="DefaultValueAllButton">Restore defaults</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="DefaultValueToolTip">Restores this setting to its default value.</sys:String>
+    <sys:String x:Key="DefaultValueAllToolTip">Restores all of this mods settings to their default values.</sys:String>
+    
+    <!-- Load Times -->
+    <sys:String x:Key="StartupLoadTime">Startup</sys:String>
+    <sys:String x:Key="RuntimeGlobalLoadTime">Map</sys:String>
+    <sys:String x:Key="RuntimeUserLoadTime">Per Player</sys:String>
+    
     
     <!--
     ____________________ UpdateNotificationWindow ____________________

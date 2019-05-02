@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Input;
 using WPFCore;
+using WPFCore.Commands;
 
 namespace ModMyFactory.Models.ModSettings
 {
@@ -19,6 +21,8 @@ namespace ModMyFactory.Models.ModSettings
         public LoadTime LoadTime { get; }
 
         public string Ordering { get; }
+
+        public ICommand ResetCommand { get; }
 
         public virtual T Value
         {
@@ -50,12 +54,13 @@ namespace ModMyFactory.Models.ModSettings
             Name = name;
             LoadTime = loadTime;
             Ordering = ordering;
+            ResetCommand = new RelayCommand(Reset);
 
             DefaultValue = defaultValue;
             value = GetStartValue();
         }
         
-        public virtual void ResetToDefault()
+        public virtual void Reset()
         {
             Value = DefaultValue;
         }

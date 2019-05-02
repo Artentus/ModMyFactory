@@ -6,7 +6,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
+using System.Windows.Input;
 using WPFCore;
+using WPFCore.Commands;
 
 namespace ModMyFactory.ViewModels
 {
@@ -67,7 +69,14 @@ namespace ModMyFactory.ViewModels
 
         public ReadOnlyObservableCollection<object> SelectedModSettingGroups => SelectedModSettingsView?.Groups;
 
-        public object SelectedModSettingGroupIndex { get; set; }
+        public int SelectedModSettingGroupIndex { get; set; }
+
+        public ICommand ResetAllCommand { get; }
+
+        public ModSettingsViewModel()
+        {
+            ResetAllCommand = new RelayCommand(ResetAll, () => (SelectedMod != null) && SelectedMod.HasSettings && SelectedMod.Override);
+        }
 
         public void SetMod(IHasModSettings mod)
         {
@@ -103,6 +112,15 @@ namespace ModMyFactory.ViewModels
             var mod = item as IHasModSettings;
             if (mod == null) return false;
             return mod.HasSettings;
+        }
+
+        private void ResetAll()
+        {
+            if ((SelectedMod != null) && SelectedMod.HasSettings && SelectedMod.Override)
+            {
+                foreach (var setting in SelectedMod.Settings)
+                    setting.Reset();
+            }
         }
     }
 }

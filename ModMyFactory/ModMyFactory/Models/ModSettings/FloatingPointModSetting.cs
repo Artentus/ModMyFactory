@@ -3,9 +3,9 @@ using System.Windows;
 
 namespace ModMyFactory.Models.ModSettings
 {
-    sealed class FloatingPointModSetting : LimitedModSetting<double>
+    sealed class FloatingPointModSetting : LimitedModSetting<decimal>
     {
-        sealed class FloatingPointModSettingProxy : LimitedModSettingProxy<double>
+        sealed class FloatingPointModSettingProxy : LimitedModSettingProxy<decimal>
         {
             public FloatingPointModSettingProxy(FloatingPointModSetting baseSetting)
                 : base(baseSetting)
@@ -23,7 +23,7 @@ namespace ModMyFactory.Models.ModSettings
 
         public override DataTemplate Template => (DataTemplate)App.Instance.Resources["FloatingPointModSettingTemplate"];
 
-        public FloatingPointModSetting(IHasModSettings owner, string name, LoadTime loadTime, string ordering, double defaultValue, double minValue, double maxValue)
+        public FloatingPointModSetting(IHasModSettings owner, string name, LoadTime loadTime, string ordering, decimal defaultValue, decimal minValue, decimal maxValue)
             : base(owner, name, loadTime, ordering, defaultValue, minValue, maxValue)
         { }
 

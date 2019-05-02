@@ -84,7 +84,7 @@ namespace ModMyFactory.ModSettings
                         return new IntegerListModSetting(owner, Name, LoadTime, Ordering, DefaultValue.GetInteger(), AllowedValues.Select(value => value.GetInteger()));
                 case SettingType.FloatingPoint:
                     if ((AllowedValues == null) || (AllowedValues.Length == 0))
-                        return new FloatingPointModSetting(owner, Name, LoadTime, Ordering, DefaultValue.GetFloatingPoint(), MinValue?.GetFloatingPoint() ?? double.NegativeInfinity, MaxValue?.GetFloatingPoint() ?? double.PositiveInfinity);
+                        return new FloatingPointModSetting(owner, Name, LoadTime, Ordering, DefaultValue.GetFloatingPoint(), MinValue?.GetFloatingPoint() ?? decimal.MinValue, MaxValue?.GetFloatingPoint() ?? decimal.MaxValue);
                     else
                         return new FloatingPointListModSetting(owner, Name, LoadTime, Ordering, DefaultValue.GetFloatingPoint(), AllowedValues.Select(value => value.GetFloatingPoint()));
                 case SettingType.String:

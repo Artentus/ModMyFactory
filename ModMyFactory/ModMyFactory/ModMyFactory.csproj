@@ -202,6 +202,7 @@
     <Compile Include="ModSettings\SettingValueJsonConverter.cs" />
     <Compile Include="MVVM\Converters\AdvancedVisibilityConverter.cs" />
     <Compile Include="MVVM\Converters\FactorioVersionConverter.cs" />
+    <Compile Include="MVVM\Converters\LoadTimeConverter.cs" />
     <Compile Include="MVVM\Converters\LocalizedNameConverter.cs" />
     <Compile Include="MVVM\Converters\ModInfoSorterModeConverter.cs" />
     <Compile Include="MVVM\Converters\RemoveFileExtensionConverter.cs" />

@@ -22,7 +22,7 @@ namespace ModMyFactory.ModSettings
                 case JTokenType.Integer:
                     return new SettingValue(token.Value<long>());
                 case JTokenType.Float:
-                    return new SettingValue(token.Value<double>());
+                    return new SettingValue(token.Value<decimal>());
                 case JTokenType.String:
                     return new SettingValue(token.Value<string>());
                 default:

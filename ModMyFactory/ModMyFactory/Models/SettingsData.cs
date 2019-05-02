@@ -48,14 +48,14 @@ namespace ModMyFactory.Models
                 return settingTypeMapping.TryGetValue(value, out result);
             }
 
-            private bool TryConvertNumberTable(IEnumerable<DynValue> table, out IEnumerable<double> result)
+            private bool TryConvertNumberTable(IEnumerable<DynValue> table, out IEnumerable<decimal> result)
             {
-                var list = new List<double>();
+                var list = new List<decimal>();
                 result = list;
 
                 foreach (var dyn in table)
                 {
-                    if (dyn.Type == DataType.Number) list.Add(dyn.Number);
+                    if (dyn.Type == DataType.Number) list.Add((decimal)dyn.Number);
                     else return false;
                 }
 
@@ -115,7 +115,7 @@ namespace ModMyFactory.Models
                         case SettingType.FloatingPoint:
                             if (hasDefaultValue && (defaultValueDyn.Type != DataType.Number)) return false;
                             if (!TryConvertNumberTable(allowedValuesListDyn, out var allowedFloatValues)) return false;
-                            result = new FloatingPointListModSetting(owner, name, loadTime, ordering, hasDefaultValue ? defaultValueDyn.Number : 0, allowedFloatValues);
+                            result = new FloatingPointListModSetting(owner, name, loadTime, ordering, hasDefaultValue ? (decimal)defaultValueDyn.Number : 0, allowedFloatValues);
                             break;
                         case SettingType.String:
                             if (hasDefaultValue && (defaultValueDyn.Type != DataType.String)) return false;
@@ -144,7 +144,7 @@ namespace ModMyFactory.Models
                             break;
                         case SettingType.FloatingPoint:
                             if (hasDefaultValue && (defaultValueDyn.Type != DataType.Number)) return false;
-                            result = new FloatingPointModSetting(owner, name, loadTime, ordering, hasDefaultValue ? defaultValueDyn.Number : 0, hasMinValue ? minValueDyn.Number : double.MinValue, hasMaxValue ? maxValueDyn.Number : double.MaxValue);
+                            result = new FloatingPointModSetting(owner, name, loadTime, ordering, hasDefaultValue ? (decimal)defaultValueDyn.Number : 0, hasMinValue ? (decimal)minValueDyn.Number : decimal.MinValue, hasMaxValue ? (decimal)maxValueDyn.Number : decimal.MaxValue);
                             break;
                         case SettingType.String:
                             if (hasDefaultValue && (defaultValueDyn.Type != DataType.String)) return false;
