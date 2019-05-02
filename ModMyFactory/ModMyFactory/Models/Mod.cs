@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using ModMyFactory.Helpers;
 using ModMyFactory.Models.ModSettings;
 using ModMyFactory.ModSettings;
 using ModMyFactory.MVVM.Sorters;
@@ -47,6 +48,18 @@ namespace ModMyFactory.Models
 
         private bool IsOnly => !parentCollection.Find(Name, FactorioVersion).Where(mod => mod != this).Any();
 
+        private bool IsDefault
+        {
+            get
+            {
+                if (IsOnly) return true;
+
+                var candidates = parentCollection.Find(Name, FactorioVersion);
+                var max = candidates.MaxBy(mod => mod.Version, new VersionComparer());
+                return max == this;
+            }
+        }
+
         /// <summary>
         /// Indicates whether the mod is currently active.
         /// </summary>
@@ -60,7 +73,7 @@ namespace ModMyFactory.Models
                     active = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
 
-                    ModManager.SetActive(Name, Version, FactorioVersion, value, IsOnly);
+                    ModManager.SetActive(Name, Version, FactorioVersion, value, IsOnly, IsDefault);
 
                     if (active)
                     {

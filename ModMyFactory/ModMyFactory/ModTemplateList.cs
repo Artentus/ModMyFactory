@@ -23,7 +23,7 @@ namespace ModMyFactory
             public readonly string Name;
 
             [JsonProperty(PropertyName = "enabled")]
-            [JsonConverter(typeof(BooleanToStringJsonConverter))]
+            //[JsonConverter(typeof(BooleanToStringJsonConverter))] //Redundant
             public bool Enabled;
 
             [JsonProperty(PropertyName = "version", DefaultValueHandling = DefaultValueHandling.Ignore)]
@@ -107,9 +107,6 @@ namespace ModMyFactory
         /// <returns>Returns if the specified mod is active.</returns>
         public bool GetActive(string name, GameCompatibleVersion version, Version factorioVersion, bool isOnly)
         {
-            if (name == "angelsinfiniteores")
-            { }
-
             if (TryGetMod(name, out var mod))
             {
                 if ((factorioVersion >= FactorioVersion.DisableBehaviourSwitch) && !isOnly)
@@ -118,6 +115,7 @@ namespace ModMyFactory
                 }
                 else
                 {
+                    mod.Version = null;
                     return mod.Enabled;
                 }
             }
@@ -135,16 +133,16 @@ namespace ModMyFactory
         /// </summary>
         /// <param name="name">The mods name.</param>
         /// <param name="value">The new active state of the mod.</param>
-        public void SetActive(string name, bool value, GameCompatibleVersion version, Version factorioVersion, bool isOnly)
+        public void SetActive(string name, bool value, GameCompatibleVersion version, Version factorioVersion, bool isOnly, bool isDefault)
         {
             if (TryGetMod(name, out var mod))
             {
-                if ((factorioVersion >= FactorioVersion.DisableBehaviourSwitch) && !isOnly)
+                if ((factorioVersion >= FactorioVersion.DisableBehaviourSwitch) && !isOnly && !isDefault)
                 {
                     if (value || (mod.Version == version))
                     {
                         mod.Enabled = value;
-                        mod.Version = version;
+                        mod.Version = value ? version : null;
                     }
                 }
                 else
