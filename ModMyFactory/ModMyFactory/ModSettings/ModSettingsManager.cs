@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace ModMyFactory.ModSettings
 {
@@ -19,6 +20,11 @@ namespace ModMyFactory.ModSettings
         static ModSettingsManager()
         {
             settingsFile = new FileInfo(Path.Combine(App.Instance.AppDataPath, "mod-settings.json"));
+        }
+        
+        public static void SaveSettings(ModCollection mods, Modpack modpack)
+        {
+            
         }
         
         public static void LoadSettings()
