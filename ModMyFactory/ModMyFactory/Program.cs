@@ -76,9 +76,10 @@ namespace ModMyFactory
             Console.WriteLine(@"Options:");
             Console.WriteLine(@"  -h, --help                                 Display this help message.");
             Console.WriteLine(@"  MODPACK-FILE                               Imports the specified modpack file.");
-            Console.WriteLine(@"  -l, --no-logs                              Don't create crash logs.");
             Console.WriteLine(@"  -a PATH, --appdata-path=PATH               Override the default application data path.");
+            Console.WriteLine(@"  -l, --no-logs                              Don't create crash logs.");
             Console.WriteLine(@"  -u, --no-update                            Don't search for update on startup.");
+            Console.WriteLine(@"  -t, --no-register-filetype                 Don't register file types on startup.");
             Console.WriteLine(@"  -n NAME, --factorio-name=NAME              Start the specified Factorio installation.");
             Console.WriteLine(@"  -f VERSION, --factorio-version=VERSION     Start a Factorio installation that matches this version.");
             Console.WriteLine(@"  -p NAME, --modpack=NAME                    Enable the specified modpack.");
@@ -107,15 +108,18 @@ namespace ModMyFactory
             // Do not create crash logs when debugging.
             bool createCrashLog = !commandLine.IsSet('l', "no-logs");
 
+            // Do not register fily type associations when debugging.
+            bool registerFileTypes = !commandLine.IsSet('t', "no-register-filetype");
+
             // Custom AppData path for debugging purposes only.
             string appDataPath;
             bool hasCustomAppDataPath = commandLine.TryGetArgument('a', "appdata-path", out appDataPath);
 
 
             if (hasCustomAppDataPath)
-                return new App(createCrashLog, appDataPath);
+                return new App(createCrashLog, registerFileTypes, appDataPath);
             else
-                return new App(createCrashLog);
+                return new App(createCrashLog, registerFileTypes);
         }
 
         private static bool TryGetFactorioVersion(string name, bool isVersion, out FactorioVersion factorioVersion)

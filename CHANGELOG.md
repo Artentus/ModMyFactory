@@ -1,6 +1,7 @@
 #### 1.11.0
+* Added tools to edit mod settings.
 * Fixed possible crash when selecting certain mods in the online list.
-
+* Fixed a problem that caused mod dependencies to not be activated in some situations.
 
 #### 1.10.3
 * Added auto-updater
