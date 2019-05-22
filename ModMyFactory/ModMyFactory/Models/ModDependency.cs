@@ -324,7 +324,7 @@ namespace ModMyFactory.Models
             }
             else
             {
-                if (!candidates.Any(candidate => candidate.Active))
+                if (!candidates.Any(candidate => candidate.Active, true))
                 {
                     var max = candidates.MaxBy(candidate => candidate.Version, new VersionComparer());
                     max.Active = true;

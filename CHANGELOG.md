@@ -1,3 +1,7 @@
+#### 1.11.0
+* Fixed possible crash when selecting certain mods in the online list.
+
+
 #### 1.10.3
 * Added auto-updater
 * Fixed possible crash when creating links.

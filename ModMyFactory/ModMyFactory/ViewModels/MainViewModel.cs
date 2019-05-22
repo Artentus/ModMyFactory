@@ -182,12 +182,12 @@ namespace ModMyFactory.ViewModels
                                 mod.Active = allModsActive.Value;
                         }
 
-                        ModManager.EndUpdateTemplates();
+                        ModManager.EndUpdateTemplates(true);
                         ModManager.SaveTemplates();
                     }
 
                     allModsSelectedChanging = false;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModsActive)));
+                    SetAllModsActive();
                 }
             }
         }
@@ -344,12 +344,12 @@ namespace ModMyFactory.ViewModels
                                 modpack.Active = allModpacksActive.Value;
                         }
 
-                        ModManager.EndUpdateTemplates();
+                        ModManager.EndUpdateTemplates(true);
                         ModManager.SaveTemplates();
                     }
 
                     allModpacksSelectedChanging = false;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModpacksActive)));
+                    SetAllModpacksActive();
                 }
             }
         }
