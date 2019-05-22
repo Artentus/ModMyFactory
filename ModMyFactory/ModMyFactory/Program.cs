@@ -76,7 +76,6 @@ namespace ModMyFactory
             Console.WriteLine(@"Options:");
             Console.WriteLine(@"  -h, --help                                 Display this help message.");
             Console.WriteLine(@"  MODPACK-FILE                               Imports the specified modpack file.");
-            Console.WriteLine(@"  -a PATH, --appdata-path=PATH               Override the default application data path.");
             Console.WriteLine(@"  -l, --no-logs                              Don't create crash logs.");
             Console.WriteLine(@"  -u, --no-update                            Don't search for update on startup.");
             Console.WriteLine(@"  -t, --no-register-filetype                 Don't register file types on startup.");
@@ -110,16 +109,8 @@ namespace ModMyFactory
 
             // Do not register fily type associations when debugging.
             bool registerFileTypes = !commandLine.IsSet('t', "no-register-filetype");
-
-            // Custom AppData path for debugging purposes only.
-            string appDataPath;
-            bool hasCustomAppDataPath = commandLine.TryGetArgument('a', "appdata-path", out appDataPath);
-
-
-            if (hasCustomAppDataPath)
-                return new App(createCrashLog, registerFileTypes, appDataPath);
-            else
-                return new App(createCrashLog, registerFileTypes);
+            
+            return new App(createCrashLog, registerFileTypes);
         }
 
         private static bool TryGetFactorioVersion(string name, bool isVersion, out FactorioVersion factorioVersion)
@@ -386,7 +377,7 @@ namespace ModMyFactory
         [STAThread]
         public static int Main(string[] args)
         {
-            var commandLine = new CommandLine(args, 'a', 'n', 'f', 'p', 's', 'c');
+            var commandLine = new CommandLine(args, 'n', 'f', 'p', 's', 'c');
 
             // Only display help.
             if (commandLine.IsSet('h', "help"))
