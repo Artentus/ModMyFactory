@@ -75,6 +75,8 @@ namespace ModMyFactory.Models
 
                     ModManager.SetActive(Name, Version, FactorioVersion, value, IsOnly, IsDefault);
 
+                    ModSettingsManager.BeginUpdate();
+
                     if (active)
                     {
                         File.Enable();
@@ -90,6 +92,9 @@ namespace ModMyFactory.Models
                     
                     if (active && App.Instance.Settings.ActivateDependencies)
                         ActivateDependencies(App.Instance.Settings.ActivateOptionalDependencies);
+
+                    ModSettingsManager.EndUpdate();
+                    ModSettingsManager.SaveBinarySettings(parentCollection);
                 }
             }
         }
@@ -404,6 +409,7 @@ namespace ModMyFactory.Models
             settingsWindow.ShowDialog();
 
             ModSettingsManager.SaveSettings(this);
+            if (Active) ModSettingsManager.SaveBinarySettings(parentCollection);
         }
         
         private void DeleteOldVersions()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ModMyFactory.Models;
+using ModMyFactory.ModSettings;
 
 namespace ModMyFactory
 {
@@ -123,26 +124,45 @@ namespace ModMyFactory
             updating = false;
             EvaluateDependencies();
             LoadSettings();
+            ModSettingsManager.SaveBinarySettings(this);
         }
 
         protected override void RemoveItem(int index)
         {
+            var item = this[index];
+            bool active = item.Active;
+
             base.RemoveItem(index);
-            EvaluateDependencies();
+
+            if (!updating)
+            {
+                EvaluateDependencies();
+                if (active) ModSettingsManager.SaveBinarySettings(this);
+            }
         }
 
         protected override void InsertItem(int index, Mod item)
         {
             base.InsertItem(index, item);
-            EvaluateDependencies();
-            LoadSettings();
+
+            if (!updating)
+            {
+                EvaluateDependencies();
+                LoadSettings();
+                if (item.Active) ModSettingsManager.SaveBinarySettings(this);
+            }
         }
 
         protected override void SetItem(int index, Mod item)
         {
             base.SetItem(index, item);
-            EvaluateDependencies();
-            LoadSettings();
+
+            if (!updating)
+            {
+                EvaluateDependencies();
+                LoadSettings();
+                if (item.Active) ModSettingsManager.SaveBinarySettings(this);
+            }
         }
     }
 }

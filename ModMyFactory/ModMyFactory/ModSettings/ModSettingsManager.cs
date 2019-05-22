@@ -6,12 +6,14 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace ModMyFactory.ModSettings
 {
     static class ModSettingsManager
     {
+        static readonly Version BehaviourSwitch = new Version(0, 16); // 0.15 uses json format while 0.16 onwards use binary format.
+
+        static int updateCount = 0;
         static readonly FileInfo settingsFile;
         static Dictionary<string, ModSettingsExportTemplate> modSettings;
         static Dictionary<Version, BinaryFile> binaryFiles;
@@ -21,12 +23,79 @@ namespace ModMyFactory.ModSettings
         {
             settingsFile = new FileInfo(Path.Combine(App.Instance.AppDataPath, "mod-settings.json"));
         }
-        
-        public static void SaveSettings(ModCollection mods, Modpack modpack)
+
+        private static ModSettingsExportTemplate GetTemplate(Version version)
         {
-            
+            if (!deserializedBinary.TryGetValue(version, out var result))
+            {
+                result = new ModSettingsExportTemplate();
+                deserializedBinary.Add(version, result);
+            }
+            return result;
+        }
+
+        public static void BeginUpdate()
+        {
+            updateCount++;
+        }
+
+        public static void EndUpdate(bool force = false)
+        {
+            if (force) updateCount = 0;
+            else updateCount--;
         }
         
+        public static void SaveBinarySettings(ModCollection mods)
+        {
+            if (updateCount > 0) return;
+
+            binaryFiles.Clear();
+            deserializedBinary.Clear();
+
+            foreach (var mod in mods)
+            {
+                if (mod.Active)
+                {
+                    var binary = GetTemplate(mod.FactorioVersion);
+                    binary.AddMod(mod);
+                }
+            }
+
+            var modDir = App.Instance.Settings.GetModDirectory();
+            foreach (var subDir in modDir.EnumerateDirectories())
+            {
+                if (Version.TryParse(subDir.Name, out var version))
+                    GetTemplate(version);
+            }
+
+            foreach (var kvp in deserializedBinary)
+            {
+                var version = kvp.Key;
+                var template = kvp.Value;
+                
+                if (version >= BehaviourSwitch)
+                {
+                    string json = JsonHelper.Serialize(template);
+
+                    var file = new BinaryFile(version, json);
+                    var dir = App.Instance.Settings.GetModDirectory(version);
+                    if (!dir.Exists) dir.Create();
+                    file.Save(new FileInfo(Path.Combine(dir.FullName, "mod-settings.dat")));
+                }
+                else
+                {
+                    var dir = App.Instance.Settings.GetModDirectory(version);
+                    if (!dir.Exists) dir.Create();
+                    JsonHelper.Serialize(template, new FileInfo(Path.Combine(dir.FullName, "mod-settings.json")));
+                }
+            }
+        }
+
+        public static void SaveBinarySettings(Modpack modpack)
+        {
+            if (updateCount > 0) return;
+        }
+
         public static void LoadSettings()
         {
             if (settingsFile.Exists)
@@ -54,20 +123,39 @@ namespace ModMyFactory.ModSettings
             {
                 if (Version.TryParse(subDir.Name, out var version))
                 {
-                    var file = new FileInfo(Path.Combine(subDir.FullName, "mod-settings.dat"));
-                    if (file.Exists)
+                    if (version >= BehaviourSwitch)
                     {
-                        try
+                        var file = new FileInfo(Path.Combine(subDir.FullName, "mod-settings.dat"));
+                        if (file.Exists)
                         {
-                            var binFile = new BinaryFile(file);
-                            binaryFiles.Add(version, binFile);
+                            try
+                            {
+                                var binFile = new BinaryFile(file);
+                                binaryFiles.Add(version, binFile);
 
-                            var template = JsonHelper.Deserialize<ModSettingsExportTemplate>(binFile.JsonString);
-                            deserializedBinary.Add(version, template);
+                                var template = JsonHelper.Deserialize<ModSettingsExportTemplate>(binFile.JsonString);
+                                deserializedBinary.Add(version, template);
+                            }
+                            catch (Exception ex) when (ex is ArgumentException || ex is JsonSerializationException)
+                            {
+                                App.Instance.WriteExceptionLog(ex);
+                            }
                         }
-                        catch (Exception ex) when (ex is ArgumentException || ex is JsonSerializationException)
+                    }
+                    else
+                    {
+                        var file = new FileInfo(Path.Combine(subDir.FullName, "mod-settings.json"));
+                        if (file.Exists)
                         {
-                            App.Instance.WriteExceptionLog(ex);
+                            try
+                            {
+                                var template = JsonHelper.Deserialize<ModSettingsExportTemplate>(file);
+                                deserializedBinary.Add(version, template);
+                            }
+                            catch (Exception ex) when (ex is ArgumentException || ex is JsonSerializationException)
+                            {
+                                App.Instance.WriteExceptionLog(ex);
+                            }
                         }
                     }
                 }

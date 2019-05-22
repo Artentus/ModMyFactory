@@ -29,8 +29,8 @@ namespace ModMyFactory.ModSettings.Serialization
         static readonly BinaryVersion DefaultWriteVersion = new BinaryVersion(0, 17, 9, 1);
         static readonly Dictionary<Version, BinaryVersion> DefaultWriteVersions = new Dictionary<Version, BinaryVersion>()
         {
-            { new Version(0, 16), new BinaryVersion(0, 16, 36, 2) },
-            { new Version(0, 17), new BinaryVersion(0, 17, 9, 1) },
+            { new Version(0, 16), new BinaryVersion(0, 16, 51, 0) },
+            { new Version(0, 17), new BinaryVersion(0, 17, 42, 4) },
         };
         static readonly BinaryVersion BehaviourSwitch = new BinaryVersion(0, 17, 0, 0); // Starting with 0.17 there is an additional byte in the file.
 

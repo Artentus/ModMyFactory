@@ -175,6 +175,7 @@ namespace ModMyFactory.ViewModels
                     if (allModsActive.HasValue)
                     {
                         ModManager.BeginUpdateTemplates();
+                        ModSettingsManager.BeginUpdate();
 
                         foreach (var mod in Mods)
                         {
@@ -184,6 +185,8 @@ namespace ModMyFactory.ViewModels
 
                         ModManager.EndUpdateTemplates(true);
                         ModManager.SaveTemplates();
+                        ModSettingsManager.EndUpdate(true);
+                        ModSettingsManager.SaveBinarySettings(Mods);
                     }
 
                     allModsSelectedChanging = false;
@@ -337,6 +340,7 @@ namespace ModMyFactory.ViewModels
                     if (allModpacksActive.HasValue)
                     {
                         ModManager.BeginUpdateTemplates();
+                        ModSettingsManager.BeginUpdate();
 
                         foreach (var modpack in Modpacks)
                         {
@@ -346,6 +350,8 @@ namespace ModMyFactory.ViewModels
 
                         ModManager.EndUpdateTemplates(true);
                         ModManager.SaveTemplates();
+                        ModSettingsManager.EndUpdate(true);
+                        ModSettingsManager.SaveBinarySettings(Mods);
                     }
 
                     allModpacksSelectedChanging = false;
@@ -639,6 +645,7 @@ namespace ModMyFactory.ViewModels
             ModSettingsManager.LoadSettings();
             LoadModsAndModpacks();
             ModSettingsManager.SaveSettings(Mods);
+            ModSettingsManager.SaveBinarySettings(Mods);
 
             ModManager.EndUpdateTemplates(true);
             ModManager.SaveTemplates();
