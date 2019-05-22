@@ -28,11 +28,9 @@ namespace ModMyFactory.MVVM.Sorters
                 return 1;
             }
 
-            int result = x.IsOptional.CompareTo(y.IsOptional);
-
-            if (result == 0)
-                result = x.ModName.CompareTo(y.ModName);
-
+            int result = x.IsInverted.CompareTo(y.IsInverted);
+            if (result == 0) result = x.IsOptional.CompareTo(y.IsOptional);
+            if (result == 0) result = x.ModName.CompareTo(y.ModName);
             return result;
         }
 

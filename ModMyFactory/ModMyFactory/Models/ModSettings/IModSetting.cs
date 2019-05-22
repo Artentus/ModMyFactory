@@ -1,6 +1,7 @@
 ﻿using ModMyFactory.ModSettings;
 using ModMyFactory.ModSettings.Serialization;
 using System.Windows;
+using System.Windows.Input;
 
 namespace ModMyFactory.Models.ModSettings
 {
@@ -19,6 +20,10 @@ namespace ModMyFactory.Models.ModSettings
         IModSettingProxy CreateProxy();
 
         ModSettingValueTemplate CreateValueTemplate();
+
+        ICommand ResetCommand { get; }
+
+        void Reset();
     }
 
     interface IModSetting<T> : IModSetting

@@ -31,7 +31,7 @@ namespace ModMyFactory.ModSettings
                         case JTokenType.Integer:
                             return new SettingValue(child.Value<long>());
                         case JTokenType.Float:
-                            return new SettingValue(child.Value<double>());
+                            return new SettingValue(child.Value<decimal>());
                         case JTokenType.String:
                             return new SettingValue(child.Value<string>());
                         default:

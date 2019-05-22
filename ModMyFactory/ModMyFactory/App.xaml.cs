@@ -21,7 +21,7 @@ namespace ModMyFactory
 {
     public partial class App : Application
     {
-        private const int PreReleaseVersion = -1;
+        private const int PreReleaseVersion = 1;
 
         /// <summary>
         /// The current application instance.
@@ -70,11 +70,13 @@ namespace ModMyFactory
         /// </summary>
         internal string ApplicationDirectoryPath { get; }
 
-        public App(bool createCrashLog = false)
+        public App(bool createCrashLog, bool registerFileTypes, string appDataPath)
         {
+            AppDataPath = appDataPath;
             ApplicationDirectoryPath = Path.GetFullPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-            AppDataPath = ApplicationDirectoryPath;
+
             var appDataDirectory = new DirectoryInfo(AppDataPath);
+            if (!appDataDirectory.Exists) appDataDirectory.Create();
 
             CleanUpTempDir();
 
@@ -82,10 +84,13 @@ namespace ModMyFactory
             Settings = Settings.Load(settingsFile, true);
 
             // Create file type association
-            string iconPath = Path.Combine(ApplicationDirectoryPath, "Factorio_Modpack_Icon.ico");
-            string handlerName = RegistryHelper.RegisterHandler("FactorioModpack", 1, "Factorio modpack", $"\"{iconPath}\"");
-            RegistryHelper.RegisterFileType(".fmp", handlerName, "application/json", PercievedFileType.Text);
-            RegistryHelper.RegisterFileType(".fmpa", handlerName, "application/x-zip-compressed", PercievedFileType.Text);
+            if (registerFileTypes)
+            {
+                string iconPath = Path.Combine(ApplicationDirectoryPath, "Factorio_Modpack_Icon.ico");
+                string handlerName = RegistryHelper.RegisterHandler("FactorioModpack", 1, "Factorio modpack", $"\"{iconPath}\"");
+                RegistryHelper.RegisterFileType(".fmp", handlerName, "application/json", PercievedFileType.Text);
+                RegistryHelper.RegisterFileType(".fmpa", handlerName, "application/x-zip-compressed", PercievedFileType.Text);
+            }
 
             // Reset log
             ResetExceptionLog();
@@ -111,7 +116,15 @@ namespace ModMyFactory
             ServicePointManager.CheckCertificateRevocationList = false;
             ServicePointManager.UseNagleAlgorithm = false;
         }
-        
+
+        public App(bool createCrashLog, bool registerFileTypes)
+            : this(createCrashLog, registerFileTypes, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ModMyFactory"))
+        { }
+
+        public App()
+            : this(false, false)
+        { }
+
         /// <summary>
         /// Cleans up the apps temporary directory.
         /// </summary>

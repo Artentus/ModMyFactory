@@ -297,17 +297,13 @@ namespace ModMyFactory.Controls
                             {
                                 index++;
 
-                                string url = text.Substring(index, endIndex - index).SplitOnWhitespace()[0];
-                                try
+                                int diff = endIndex - index;
+                                if (diff > 0)
                                 {
-                                    if (!string.IsNullOrWhiteSpace(url))
-                                    {
-                                        var uri = new Uri(url);
+                                    string url = text.Substring(index, diff).SplitOnWhitespace()[0];
+                                    if (!string.IsNullOrWhiteSpace(url) && Uri.TryCreate(url, UriKind.Absolute, out var uri))
                                         link.NavigateUri = uri;
-                                    }
                                 }
-                                catch (UriFormatException)
-                                { }
 
                                 index = endIndex + 1;
                             }
@@ -335,16 +331,8 @@ namespace ModMyFactory.Controls
                         string url = text.Substring(index, endIndex - index);
 
                         var link = new Hyperlink(new Run(url));
-                        try
-                        {
-                            if (!string.IsNullOrWhiteSpace(url))
-                            {
-                                var uri = new Uri(url);
-                                link.NavigateUri = uri;
-                            }
-                        }
-                        catch (UriFormatException)
-                        { }
+                        if (!string.IsNullOrWhiteSpace(url) && Uri.TryCreate(url, UriKind.Absolute, out var uri))
+                            link.NavigateUri = uri;
                         link.RequestNavigate += LinkOnRequestNavigate;
                         inlines.Add(link);
 

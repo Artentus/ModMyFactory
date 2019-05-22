@@ -87,7 +87,7 @@ namespace ModMyFactory.Models
             if (!string.IsNullOrEmpty(section))
                 completeKey = string.Concat(section, data.SectionKeySeparator, key);
 
-            return data.TryGetKey(completeKey, out string result) ? result : null;
+            return data.TryGetKey(completeKey, out string result) ? result : key;
         }
         
         public string GetValue(string key, LocaleType type)

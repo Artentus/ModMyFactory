@@ -177,6 +177,8 @@ namespace ModMyFactory.ViewModels
 
         private async Task UpdateModsAsyncInner(List<ModUpdateInfo> modUpdates, string token, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
+            Mods.BeginUpdate();
+
             int modCount = modUpdates.Count(item => item.IsSelected);
             double baseProgressValue = 0;
             foreach (var modUpdate in modUpdates)
@@ -211,7 +213,7 @@ namespace ModMyFactory.ViewModels
 
             ModpackTemplateList.Instance.Update(Modpacks);
             ModpackTemplateList.Instance.Save();
-            Mods.EvaluateDependencies();
+            Mods.EndUpdate();
         }
 
         private async Task UpdateMods()

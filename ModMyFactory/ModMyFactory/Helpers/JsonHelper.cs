@@ -27,6 +27,11 @@ namespace ModMyFactory.Helpers
             }
         }
 
+        public static string Serialize<T>(T value)
+        {
+            return JsonConvert.SerializeObject(value, Formatting.Indented, DefaultSettings);
+        }
+
         public static T Deserialize<T>(FileInfo file)
         {
             using (var reader = file.OpenText())

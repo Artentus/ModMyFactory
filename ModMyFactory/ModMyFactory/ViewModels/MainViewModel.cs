@@ -175,6 +175,7 @@ namespace ModMyFactory.ViewModels
                     if (allModsActive.HasValue)
                     {
                         ModManager.BeginUpdateTemplates();
+                        ModSettingsManager.BeginUpdate();
 
                         foreach (var mod in Mods)
                         {
@@ -182,12 +183,14 @@ namespace ModMyFactory.ViewModels
                                 mod.Active = allModsActive.Value;
                         }
 
-                        ModManager.EndUpdateTemplates();
+                        ModManager.EndUpdateTemplates(true);
                         ModManager.SaveTemplates();
+                        ModSettingsManager.EndUpdate(true);
+                        ModSettingsManager.SaveBinarySettings(Mods);
                     }
 
                     allModsSelectedChanging = false;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModsActive)));
+                    SetAllModsActive();
                 }
             }
         }
@@ -337,6 +340,7 @@ namespace ModMyFactory.ViewModels
                     if (allModpacksActive.HasValue)
                     {
                         ModManager.BeginUpdateTemplates();
+                        ModSettingsManager.BeginUpdate();
 
                         foreach (var modpack in Modpacks)
                         {
@@ -344,12 +348,14 @@ namespace ModMyFactory.ViewModels
                                 modpack.Active = allModpacksActive.Value;
                         }
 
-                        ModManager.EndUpdateTemplates();
+                        ModManager.EndUpdateTemplates(true);
                         ModManager.SaveTemplates();
+                        ModSettingsManager.EndUpdate(true);
+                        ModSettingsManager.SaveBinarySettings(Mods);
                     }
 
                     allModpacksSelectedChanging = false;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(AllModpacksActive)));
+                    SetAllModpacksActive();
                 }
             }
         }
@@ -625,6 +631,7 @@ namespace ModMyFactory.ViewModels
             
             Mod.LoadMods(Mods, Modpacks);
             ModpackTemplateList.Instance.PopulateModpackList(Mods, Modpacks, ModpacksView);
+            
 
             modpacksLoading = false;
         }
@@ -635,9 +642,10 @@ namespace ModMyFactory.ViewModels
             ModManager.BeginUpdateTemplates();
 
             LoadFactorioVersions();
-            //ModSettingsManager.LoadSettings();
+            ModSettingsManager.LoadSettings();
             LoadModsAndModpacks();
-            //ModSettingsManager.SaveSettings(Mods);
+            ModSettingsManager.SaveSettings(Mods);
+            ModSettingsManager.SaveBinarySettings(Mods);
 
             ModManager.EndUpdateTemplates(true);
             ModManager.SaveTemplates();
@@ -776,6 +784,8 @@ namespace ModMyFactory.ViewModels
 
         private async Task DownloadMods()
         {
+            Mods.BeginUpdate();
+
             if (OnlineModsViewModel.Instance.Mods != null)
             {
                 var modsWindow = new OnlineModsWindow() { Owner = Window };
@@ -809,11 +819,13 @@ namespace ModMyFactory.ViewModels
                 }
             }
 
-            Mods.EvaluateDependencies();
+            Mods.EndUpdate();
         }
         
         private async Task AddModsFromFilesInner(string[] fileNames, bool copy, IProgress<Tuple<double, string>> progress, CancellationToken cancellationToken)
         {
+            Mods.BeginUpdate();
+
             int fileCount = fileNames.Length;
             int counter = 0;
             foreach (string fileName in fileNames)
@@ -834,7 +846,7 @@ namespace ModMyFactory.ViewModels
 
             progress.Report(new Tuple<double, string>(1, string.Empty));
 
-            Mods.EvaluateDependencies();
+            Mods.EndUpdate();
         }
 
         public async Task AddModsFromFiles(string[] fileNames, bool copy)
@@ -1204,10 +1216,15 @@ namespace ModMyFactory.ViewModels
                 App.Instance.GetLocalizedMessageTitle("DeleteMods", MessageType.Question),
                 MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
+                ModManager.BeginUpdateTemplates();
+                Mods.BeginUpdate();
+
                 foreach (Mod mod in deletionList)
                     mod.Delete(false);
-
-                Mods.EvaluateDependencies();
+                
+                Mods.EndUpdate();
+                ModManager.EndUpdateTemplates(true);
+                ModManager.SaveTemplates();
             }
         }
 

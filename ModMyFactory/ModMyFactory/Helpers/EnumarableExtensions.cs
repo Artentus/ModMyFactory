@@ -104,5 +104,37 @@ namespace ModMyFactory.Helpers
         {
             yield return value;
         }
+
+        public static bool Any<T>(this IEnumerable<T> source, Func<T, bool> predicate, bool ifEmpty)
+        {
+            using (var enumerator = source.GetEnumerator())
+            {
+                if (!enumerator.MoveNext()) return ifEmpty;
+
+                do
+                {
+                    T element = enumerator.Current;
+                    if (predicate(element)) return true;
+                } while (enumerator.MoveNext());
+
+                return false;
+            }
+        }
+
+        public static bool All<T>(this IEnumerable<T> source, Func<T, bool> predicate, bool ifEmpty)
+        {
+            using (var enumerator = source.GetEnumerator())
+            {
+                if (!enumerator.MoveNext()) return ifEmpty;
+
+                do
+                {
+                    T element = enumerator.Current;
+                    if (!predicate(element)) return false;
+                } while (enumerator.MoveNext());
+
+                return true;
+            }
+        }
     }
 }

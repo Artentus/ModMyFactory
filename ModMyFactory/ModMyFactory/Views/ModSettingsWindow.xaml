@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:ModMyFactory.ViewModels"
         xmlns:controls="clr-namespace:ModMyFactory.Controls"
+        xmlns:converter="clr-namespace:ModMyFactory.MVVM.Converters"
         xmlns:selector="clr-namespace:ModMyFactory.MVVM.Selectors"
         xmlns:model="clr-namespace:ModMyFactory.Models"
         mc:Ignorable="d"
@@ -28,6 +29,8 @@
             <TextBlock Margin="4,2" VerticalAlignment="Center" Text="{Binding DisplayName}"/>
         </DataTemplate>
         <selector:ComboBoxTemplateSelector x:Key="ModTemplateSelector" SelectedItemTemplate="{StaticResource SelectedModTemplate}" ListItemTemplate="{StaticResource ListModTemplate}"/>
+
+        <converter:LoadTimeConverter x:Key="LoadTimeConverter"/>
     </Window.Resources>
 
     <Grid Margin="4">
@@ -35,12 +38,26 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ComboBox Margin="2" Grid.Row="0" ItemsSource="{Binding ModsView}" SelectedItem="{Binding SelectedMod, Mode=TwoWay}" Visibility="{Binding MultiSelect, Converter={StaticResource VisibilityConverter}}" ItemTemplateSelector="{StaticResource ModTemplateSelector}"/>
-        <CheckBox x:Name="OverrideCheckBox" Margin="2,4,2,2" Grid.Row="1" IsChecked="{Binding SelectedModOverride, Mode=TwoWay}" Visibility="{Binding MultiSelect, Converter={StaticResource VisibilityConverter}}" Content="{DynamicResource OverrideCheckBox}"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
-        <TabControl Margin="2" Grid.Row="2" ItemsSource="{Binding SelectedModSettingGroups}" SelectedIndex="{Binding SelectedModSettingGroupIndex, Mode=TwoWay}">
+        <ComboBox Margin="2" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                  ItemsSource="{Binding ModsView}" SelectedItem="{Binding SelectedMod, Mode=TwoWay}" Visibility="{Binding MultiSelect, Converter={StaticResource VisibilityConverter}}" ItemTemplateSelector="{StaticResource ModTemplateSelector}"/>
+        <CheckBox x:Name="OverrideCheckBox" Margin="2,4,2,2" Grid.Row="1" Grid.ColumnSpan="3"
+                  IsChecked="{Binding SelectedModOverride, Mode=TwoWay}" Visibility="{Binding MultiSelect, Converter={StaticResource VisibilityConverter}}" Content="{DynamicResource OverrideCheckBox}"/>
+
+        <TabControl Margin="2" Grid.Row="2" Grid.ColumnSpan="3" ItemsSource="{Binding SelectedModSettingGroups}" SelectedIndex="{Binding SelectedModSettingGroupIndex, Mode=TwoWay}">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name, Converter={StaticResource LoadTimeConverter}}"/>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
             <TabControl.ContentTemplate>
                 <DataTemplate>
                     <ScrollViewer>
@@ -49,5 +66,16 @@
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
+
+        <Button Grid.Row="3" Grid.Column="0" Margin="2" Command="{Binding ResetAllCommand}" ToolTip="{DynamicResource DefaultValueAllToolTip}">
+            <Button.Content>
+                <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource DefaultValueAllButton}"/>
+            </Button.Content>
+        </Button>
+        <Button Grid.Row="3" Grid.Column="2" Margin="2" IsCancel="True">
+            <Button.Content>
+                <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource CloseButton}"/>
+            </Button.Content>
+        </Button>
     </Grid>
 </controls:LayoutRoundingWindow>

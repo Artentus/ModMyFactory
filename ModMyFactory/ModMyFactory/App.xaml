@@ -32,19 +32,27 @@
             <converter:LocalizedNameConverter x:Key="StringSettingConverter" LocaleType="{x:Static model:LocaleType.StringSetting}"/>
 
             <DataTemplate x:Key="BooleanModSettingTemplate" DataType="{x:Type modsettings:IModSetting}">
-                <CheckBox Margin="4" IsChecked="{Binding Value, Mode=TwoWay}">
-                    <CheckBox.Content>
-                        <MultiBinding Converter="{StaticResource SettingNameConverter}">
-                            <Binding Path="Name"/>
-                            <Binding Path="Owner"/>
-                        </MultiBinding>
-                    </CheckBox.Content>
-                </CheckBox>
+                <StackPanel Margin="4" Orientation="Horizontal" FlowDirection="LeftToRight">
+                    <CheckBox IsChecked="{Binding Value, Mode=TwoWay}" HorizontalAlignment="Left">
+                        <CheckBox.Content>
+                            <MultiBinding Converter="{StaticResource SettingNameConverter}">
+                                <Binding Path="Name"/>
+                                <Binding Path="Owner"/>
+                            </MultiBinding>
+                        </CheckBox.Content>
+                    </CheckBox>
+                    <!-- Do we want a reset button for bool settings? -->
+                    <!--<Button Margin="2,0,0,0" MinWidth="30" MinHeight="0" Height="23" Command="{Binding ResetCommand}" ToolTip="{DynamicResource DefaultValueToolTip}">
+                        <Button.Content>
+                            <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource DefaultValueButton}"/>
+                        </Button.Content>
+                    </Button>-->
+                </StackPanel>
             </DataTemplate>
 
             <DataTemplate x:Key="IntegerModSettingTemplate" DataType="{x:Type modsettings:IModSetting}">
                 <StackPanel Margin="4" Orientation="Horizontal" FlowDirection="LeftToRight">
-                    <TextBlock Margin="0,0,4,0" VerticalAlignment="Center">
+                    <TextBlock Margin="2,0,4,0" VerticalAlignment="Center">
                         <TextBlock.Text>
                             <MultiBinding Converter="{StaticResource SettingNameConverter}">
                                 <Binding Path="Name"/>
@@ -52,13 +60,18 @@
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
-                    <controls:NumericUpDown/>
+                    <controls:NumericUpDown Minimum="{Binding MinValue}" Maximum="{Binding MaxValue}" Value="{Binding Value, Mode=TwoWay}"/>
+                    <Button Margin="2,0,0,0" MinWidth="30" MinHeight="0" Height="23" Command="{Binding ResetCommand}" ToolTip="{DynamicResource DefaultValueToolTip}">
+                        <Button.Content>
+                            <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource DefaultValueButton}"/>
+                        </Button.Content>
+                    </Button>
                 </StackPanel>
             </DataTemplate>
 
             <DataTemplate x:Key="IntegerListModSettingTemplate" DataType="{x:Type modsettings:IModSetting}">
                 <StackPanel Margin="4" Orientation="Horizontal" FlowDirection="LeftToRight">
-                    <TextBlock Margin="0,0,4,0" VerticalAlignment="Center">
+                    <TextBlock Margin="2,0,4,0" VerticalAlignment="Center">
                         <TextBlock.Text>
                             <MultiBinding Converter="{StaticResource SettingNameConverter}">
                                 <Binding Path="Name"/>
@@ -66,16 +79,43 @@
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
-                    <ComboBox ItemsSource="{Binding AllowedValues}" SelectedItem="{Binding Value, Mode=TwoWay}"/>
+                    <ComboBox ItemsSource="{Binding AllowedValues}" SelectedItem="{Binding Value, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Margin="2,0" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Margin="2,0,0,0" MinWidth="30" MinHeight="0" Height="23" Command="{Binding ResetCommand}" ToolTip="{DynamicResource DefaultValueToolTip}">
+                        <Button.Content>
+                            <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource DefaultValueButton}"/>
+                        </Button.Content>
+                    </Button>
                 </StackPanel>
             </DataTemplate>
 
             <DataTemplate x:Key="FloatingPointModSettingTemplate" DataType="{x:Type modsettings:IModSetting}">
+                <StackPanel Margin="4" Orientation="Horizontal" FlowDirection="LeftToRight">
+                    <TextBlock Margin="2,0,4,0" VerticalAlignment="Center">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource SettingNameConverter}">
+                                <Binding Path="Name"/>
+                                <Binding Path="Owner"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <controls:NumericUpDown Minimum="{Binding MinValue}" Maximum="{Binding MaxValue}" Step="0.1" Value="{Binding Value, Mode=TwoWay}"/>
+                    <Button Margin="2,0,0,0" MinWidth="30" MinHeight="0" Height="23" Command="{Binding ResetCommand}" ToolTip="{DynamicResource DefaultValueToolTip}">
+                        <Button.Content>
+                            <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource DefaultValueButton}"/>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
             </DataTemplate>
 
             <DataTemplate x:Key="FloatingPointListModSettingTemplate" DataType="{x:Type modsettings:IModSetting}">
                 <StackPanel Margin="4" Orientation="Horizontal" FlowDirection="LeftToRight">
-                    <TextBlock Margin="0,0,4,0" VerticalAlignment="Center">
+                    <TextBlock Margin="2,0,4,0" VerticalAlignment="Center">
                         <TextBlock.Text>
                             <MultiBinding Converter="{StaticResource SettingNameConverter}">
                                 <Binding Path="Name"/>
@@ -83,16 +123,24 @@
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
-                    <ComboBox ItemsSource="{Binding AllowedValues}" SelectedItem="{Binding Value, Mode=TwoWay}"/>
+                    <ComboBox ItemsSource="{Binding AllowedValues}" SelectedItem="{Binding Value, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Margin="2,0" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Margin="2,0,0,0" MinWidth="30" MinHeight="0" Height="23" Command="{Binding ResetCommand}" ToolTip="{DynamicResource DefaultValueToolTip}">
+                        <Button.Content>
+                            <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource DefaultValueButton}"/>
+                        </Button.Content>
+                    </Button>
                 </StackPanel>
             </DataTemplate>
 
             <DataTemplate x:Key="StringModSettingTemplate" DataType="{x:Type modsettings:IModSetting}">
-            </DataTemplate>
-
-            <DataTemplate x:Key="StringListModSettingTemplate" DataType="{x:Type modsettings:IModSetting}">
                 <StackPanel Margin="4" Orientation="Horizontal" FlowDirection="LeftToRight">
-                    <TextBlock Margin="0,0,4,0" VerticalAlignment="Center">
+                    <TextBlock Margin="2,0,4,0" VerticalAlignment="Center">
                         <TextBlock.Text>
                             <MultiBinding Converter="{StaticResource SettingNameConverter}">
                                 <Binding Path="Name"/>
@@ -100,7 +148,37 @@
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
-                    <ComboBox ItemsSource="{Binding AllowedValues}" SelectedItem="{Binding Value, Mode=TwoWay}"/>
+                    <controls:ExtendedTextBox Text="{Binding Value, Mode=TwoWay}" DefaultText="{Binding DefaultValue}" AllowEmptyText="{Binding AllowEmptyValue}" Width="200" Padding="2"/>
+                    <Button Margin="2,0,0,0" MinWidth="30" MinHeight="0" Height="23" Command="{Binding ResetCommand}" ToolTip="{DynamicResource DefaultValueToolTip}">
+                        <Button.Content>
+                            <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource DefaultValueButton}"/>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+            </DataTemplate>
+
+            <DataTemplate x:Key="StringListModSettingTemplate" DataType="{x:Type modsettings:IModSetting}">
+                <StackPanel Margin="4" Orientation="Horizontal" FlowDirection="LeftToRight">
+                    <TextBlock Margin="2,0,4,0" VerticalAlignment="Center">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource SettingNameConverter}">
+                                <Binding Path="Name"/>
+                                <Binding Path="Owner"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <ComboBox ItemsSource="{Binding AllowedValues}" SelectedItem="{Binding Value, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Margin="2,0" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Margin="2,0,0,0" MinWidth="30" MinHeight="0" Height="23" Command="{Binding ResetCommand}" ToolTip="{DynamicResource DefaultValueToolTip}">
+                        <Button.Content>
+                            <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource DefaultValueButton}"/>
+                        </Button.Content>
+                    </Button>
                 </StackPanel>
             </DataTemplate>
 
@@ -143,6 +221,13 @@
             <Style x:Key="TextBlockDefaultStyle" TargetType="{x:Type TextBlock}"/>
 
             <Style x:Key="{x:Type TextBox}" TargetType="{x:Type TextBox}">
+                <Style.Setters>
+                    <Setter Property="Background" Value="{DynamicResource MutedBackgroundBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+                </Style.Setters>
+            </Style>
+
+            <Style x:Key="{x:Type controls:ExtendedTextBox}" TargetType="{x:Type controls:ExtendedTextBox}">
                 <Style.Setters>
                     <Setter Property="Background" Value="{DynamicResource MutedBackgroundBrush}"/>
                     <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>

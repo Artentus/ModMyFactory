@@ -339,6 +339,8 @@ namespace ModMyFactory.ViewModels
 
         private async Task ImportModpacksInner(IEnumerable<FileInfo> modpackFiles)
         {
+            Mods.BeginUpdate();
+
             foreach (FileInfo file in modpackFiles)
             {
                 if (file.Exists)
@@ -388,7 +390,7 @@ namespace ModMyFactory.ViewModels
                 ModpackTemplateList.Instance.Save();
             }
 
-            Mods.EvaluateDependencies();
+            Mods.EndUpdate();
         }
 
         private async Task ImportModpacks()

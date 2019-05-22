@@ -414,6 +414,7 @@
     <sys:String x:Key="ZlibLabel">CRC32-Implementierung:</sys:String>
     <sys:String x:Key="XdeltaLabel">VCDIFF-Implementierung:</sys:String>
     <sys:String x:Key="INIparserLabel">INI-Parser:</sys:String>
+    <sys:String x:Key="LUAInterpreterLabel">LUA-Interpreter:</sys:String>
 
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Mitwirkende</sys:String>
@@ -551,6 +552,19 @@
     
     <!-- checkboxes -->
     <sys:String x:Key="OverrideCheckBox">Einstellungen überschreiben</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="DefaultValueButton">Staandard</sys:String>
+    <sys:String x:Key="DefaultValueAllButton">Standards zurücksetzen</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="DefaultValueToolTip">Setzt diese Einstellung auf ihre Voreinstellung zurück.</sys:String>
+    <sys:String x:Key="DefaultValueAllToolTip">Setzt alle Einstellungen dieser Mod auf ihre Voreinstellungen zurück.</sys:String>
+    
+    <!-- Load Times -->
+    <sys:String x:Key="StartupLoadTime">Spielstart</sys:String>
+    <sys:String x:Key="RuntimeGlobalLoadTime">Karte</sys:String>
+    <sys:String x:Key="RuntimeUserLoadTime">Pro Spieler</sys:String>
     
     
     <!--

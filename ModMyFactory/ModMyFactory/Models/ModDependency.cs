@@ -122,6 +122,36 @@ namespace ModMyFactory.Models
         }
 
         /// <summary>
+        /// Checks if a collection of mods contains a mod that satisfies this dependency.
+        /// </summary>
+        public bool IsPresent(ModCollection mods, Version factorioVersion, out Mod mod)
+        {
+            bool result = false;
+            mod = null;
+
+            if (IsBase || IsInverted)
+            {
+                result = true;
+            }
+            else if (HasRestriction)
+            {
+                var comparison = comparisonFunctions[RestrictionComparison];
+
+                var candidates = mods.Find(ModName, factorioVersion).Where(item => comparison(item.Version, RestrictionVersion));
+                mod = candidates.MaxBy(candidate => candidate.Version, new VersionComparer());
+                result = mod != null;
+            }
+            else
+            {
+                var candidates = mods.Find(ModName, factorioVersion);
+                mod = candidates.MaxBy(candidate => candidate.Version, new VersionComparer());
+                result = mod != null;
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Checks if a dependency is present on the mod portal.
         /// </summary>
         public bool IsPresent(ExtendedModInfo modInfo, Version factorioVersion, out ModRelease release)
@@ -294,7 +324,7 @@ namespace ModMyFactory.Models
             }
             else
             {
-                if (!candidates.Any(candidate => candidate.Active))
+                if (!candidates.Any(candidate => candidate.Active, true))
                 {
                     var max = candidates.MaxBy(candidate => candidate.Version, new VersionComparer());
                     max.Active = true;

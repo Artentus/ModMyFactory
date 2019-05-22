@@ -26,7 +26,7 @@ namespace ModMyFactory.ModSettings
                                 this.value = (long)value;
                                 break;
                             case SettingType.FloatingPoint:
-                                this.value = (double)value;
+                                this.value = (decimal)value;
                                 break;
                             case SettingType.String:
                                 this.value = (string)value;
@@ -53,12 +53,12 @@ namespace ModMyFactory.ModSettings
             return (long)Value;
         }
 
-        public double GetFloatingPoint()
+        public decimal GetFloatingPoint()
         {
             if (Type == SettingType.FloatingPoint)
-                return (double)Value;
+                return (decimal)Value;
             else if (Type == SettingType.Integer)
-                return (double)(long)Value;
+                return (decimal)(long)Value;
             else
                 throw new InvalidOperationException("Wrong value type.");
         }
@@ -81,7 +81,7 @@ namespace ModMyFactory.ModSettings
             this.value = value;
         }
 
-        public void Set(double value)
+        public void Set(decimal value)
         {
             if (Type != SettingType.FloatingPoint) throw new InvalidOperationException("Wrong value type.");
             this.value = value;
@@ -111,7 +111,7 @@ namespace ModMyFactory.ModSettings
             this.value = value;
         }
 
-        public SettingValue(double value)
+        public SettingValue(decimal value)
         {
             Type = SettingType.FloatingPoint;
             this.value = value;

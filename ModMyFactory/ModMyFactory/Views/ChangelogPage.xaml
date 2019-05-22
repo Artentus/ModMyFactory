@@ -9,7 +9,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ChangelogPage" UseLayoutRounding="True"
       DataContext="{x:Static vm:ChangelogPageViewModel.Instance}"
-      Width="538" Height="350">
+      Width="538" Height="370">
 
     <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Margin="20,5">
         <ScrollViewer>

@@ -423,6 +423,7 @@
     <sys:String x:Key="ZlibLabel">CRC32 implementation:</sys:String>
     <sys:String x:Key="XdeltaLabel">VCDIFF implementation:</sys:String>
     <sys:String x:Key="INIparserLabel">INI parser:</sys:String>
+    <sys:String x:Key="LUAInterpreterLabel">LUA interpreter:</sys:String>
     
     <!-- headers -->
     <sys:String x:Key="ContributorsHeader">Contributors</sys:String>
@@ -558,10 +559,23 @@
     ____________________ ModSettingsWindow ____________________
     -->
     
-    <sys:String x:Key="ModSettingsWindowTitle">Edit mod dependencies</sys:String>
+    <sys:String x:Key="ModSettingsWindowTitle">Edit mod settings</sys:String>
     
     <!-- checkboxes -->
     <sys:String x:Key="OverrideCheckBox">Override settings</sys:String>
+    
+    <!-- buttons -->
+    <sys:String x:Key="DefaultValueButton">Default</sys:String>
+    <sys:String x:Key="DefaultValueAllButton">Restore defaults</sys:String>
+    
+    <!-- tooltips -->
+    <sys:String x:Key="DefaultValueToolTip">Restores this setting to its default value.</sys:String>
+    <sys:String x:Key="DefaultValueAllToolTip">Restores all of this mods settings to their default values.</sys:String>
+    
+    <!-- Load Times -->
+    <sys:String x:Key="StartupLoadTime">Startup</sys:String>
+    <sys:String x:Key="RuntimeGlobalLoadTime">Map</sys:String>
+    <sys:String x:Key="RuntimeUserLoadTime">Per Player</sys:String>
     
     
     <!--

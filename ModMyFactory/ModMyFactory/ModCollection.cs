@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ModMyFactory.Models;
+using ModMyFactory.ModSettings;
 
 namespace ModMyFactory
 {
     class ModCollection : ObservableCollection<Mod>
     {
+        private bool updating;
+
         /// <summary>
         /// Checks if the collection contains a mod.
         /// </summary>
@@ -90,10 +93,76 @@ namespace ModMyFactory
         /// <summary>
         /// Evaluates the dependencies of all mods in the collection.
         /// </summary>
-        public void EvaluateDependencies()
+        private void EvaluateDependencies()
         {
-            foreach (var mod in this)
-                mod.EvaluateDependencies();
+            if (!updating)
+            {
+                foreach (var mod in this)
+                    mod.EvaluateDependencies();
+            }
+        }
+
+        private void LoadSettings()
+        {
+            if (!updating)
+            {
+                foreach (var mod in this)
+                {
+                    if (!mod.HasUnsatisfiedDependencies)
+                        mod.LoadSettings();
+                }
+            }
+        }
+
+        public void BeginUpdate()
+        {
+            updating = true;
+        }
+
+        public void EndUpdate()
+        {
+            updating = false;
+            EvaluateDependencies();
+            LoadSettings();
+            ModSettingsManager.SaveBinarySettings(this);
+        }
+
+        protected override void RemoveItem(int index)
+        {
+            var item = this[index];
+            bool active = item.Active;
+
+            base.RemoveItem(index);
+
+            if (!updating)
+            {
+                EvaluateDependencies();
+                if (active) ModSettingsManager.SaveBinarySettings(this);
+            }
+        }
+
+        protected override void InsertItem(int index, Mod item)
+        {
+            base.InsertItem(index, item);
+
+            if (!updating)
+            {
+                EvaluateDependencies();
+                LoadSettings();
+                if (item.Active) ModSettingsManager.SaveBinarySettings(this);
+            }
+        }
+
+        protected override void SetItem(int index, Mod item)
+        {
+            base.SetItem(index, item);
+
+            if (!updating)
+            {
+                EvaluateDependencies();
+                LoadSettings();
+                if (item.Active) ModSettingsManager.SaveBinarySettings(this);
+            }
         }
     }
 }

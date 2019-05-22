@@ -1,5 +1,4 @@
 ﻿using ModMyFactory.Helpers;
-using ModMyFactory.ModSettings;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,20 +8,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using MoonSharp.Interpreter;
+using ModMyFactory.Models.ModSettings;
 
 namespace ModMyFactory.Models
 {
     /// <summary>
     /// Represents a mod file or directory.
     /// </summary>
-    sealed class ModFile : IComparable<ModFile>
+    sealed partial class ModFile : IComparable<ModFile>
     {
+        static ModFile()
+        {
+            UserData.RegisterType<SettingsData>();
+        }
+
+
         private const string DefaultLocaleString = "en";
 
         private readonly bool isFile;
         private FileSystemInfo file;
         private Dictionary<string, ModLocale> locales;
-        private ModSettingInfo[] settings;
+        private IList<IModSetting> settings;
         
         /// <summary>
         /// The mods info file.
@@ -230,12 +237,78 @@ namespace ModMyFactory.Models
             if (value) Enable();
             else Disable();
         }
-        
-        public ModSettingInfo[] GetSettings()
-        {
-            // ToDo: read settings using Lua interpreter
 
-            if (settings == null) settings = new ModSettingInfo[0];
+        private string LoadSettingsFileFromArchive(ZipArchive archive, string filePath)
+        {
+            if (!filePath.EndsWith(".lua")) filePath = filePath + ".lua";
+            filePath = file.NameWithoutExtension() + "/" + filePath;
+
+            var fileEntry = archive.Entries.FirstOrDefault(entry => entry.FullName.Equals(filePath, StringComparison.InvariantCultureIgnoreCase));
+            if (fileEntry == null) return string.Empty;
+
+            using (var stream = fileEntry.Open())
+            {
+                using (var reader = new StreamReader(stream))
+                    return reader.ReadToEnd();
+            }
+        }
+
+        private string LoadSettingsFileFromDirectory(string filePath)
+        {
+            string fullPath = Path.Combine(file.FullName, filePath);
+            var settingsFile = new FileInfo(fullPath);
+            if (!settingsFile.Exists) return string.Empty;
+
+            using (var reader = settingsFile.OpenText())
+                return reader.ReadToEnd();
+        }
+
+        // Internal use
+        private string LoadSettingsFile(string filePath)
+        {
+            if (isFile)
+            {
+                using (var archive = ZipFile.OpenRead(file.FullName))
+                {
+                    return LoadSettingsFileFromArchive(archive, filePath);
+                }
+            }
+            else
+            {
+                return LoadSettingsFileFromDirectory(filePath);
+            }
+        }
+        
+        public IList<IModSetting> GetSettings(ModCollection parentCollection, IHasModSettings owner)
+        {
+            const string mainFileName = "settings.lua";
+            
+            if (settings == null)
+            {
+                var script = new Script();
+                var data = new SettingsData();
+                var luaData = UserData.Create(data);
+                script.Globals.Set("data", luaData);
+
+                if (isFile)
+                {
+                    using (var archive = ZipFile.OpenRead(file.FullName))
+                    {
+                        script.Options.ScriptLoader = new ArchiveSettingsScriptLoader(LoadSettingsFileFromArchive, archive, parentCollection, InfoFile) { ModulePaths = new[] { "?.lua" } };
+                        string mainFile = LoadSettingsFileFromArchive(archive, mainFileName);
+                        script.DoString(mainFile);
+                    }
+                }
+                else
+                {
+                    script.Options.ScriptLoader = new DirectorySettingsScriptLoader(LoadSettingsFileFromDirectory, parentCollection, InfoFile) { ModulePaths = new[] { "?.lua" } };
+                    string mainFile = LoadSettingsFileFromDirectory(mainFileName);
+                    script.DoString(mainFile);
+                }
+
+                settings = data.ToSettings(owner);
+            }
+            
             return settings;
         }
 

@@ -56,11 +56,11 @@ namespace ModMyFactory
             }
         }
 
-        public static void SetActive(string name, GameCompatibleVersion version, Version factorioVersion, bool value, bool isOnly)
+        public static void SetActive(string name, GameCompatibleVersion version, Version factorioVersion, bool value, bool isOnly, bool isDefault)
         {
             if (Contains(factorioVersion, out var list))
             {
-                list.SetActive(name, value, version, factorioVersion, isOnly);
+                list.SetActive(name, value, version, factorioVersion, isOnly, isDefault);
                 list.Save();
             }
             else
@@ -69,7 +69,7 @@ namespace ModMyFactory
                 list.Version = factorioVersion;
                 TemplateLists.Add(list);
 
-                list.SetActive(name, value, version, factorioVersion, isOnly);
+                list.SetActive(name, value, version, factorioVersion, isOnly, isDefault);
                 list.Save();
             }
         }

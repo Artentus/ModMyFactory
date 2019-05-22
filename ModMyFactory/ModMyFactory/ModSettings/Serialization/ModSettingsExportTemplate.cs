@@ -27,22 +27,7 @@ namespace ModMyFactory.ModSettings.Serialization
         public ModSettingsExportTemplate(IHasModSettings mod)
             : this()
         {
-            foreach (var setting in mod.Settings)
-            {
-                var template = setting.CreateValueTemplate();
-                switch (setting.LoadTime)
-                {
-                    case LoadTime.Startup:
-                        StartupTemplates[setting.Name] = template;
-                        break;
-                    case LoadTime.RuntimeGlobal:
-                        RuntimeGlobalTemplates[setting.Name] = template;
-                        break;
-                    case LoadTime.RuntimeUser:
-                        RuntimeUserTemplates[setting.Name] = template;
-                        break;
-                }
-            }
+            AddMod(mod);
         }
 
         [JsonConstructor]
@@ -53,9 +38,9 @@ namespace ModMyFactory.ModSettings.Serialization
             RuntimeUserTemplates = runtimeUserTemplates;
         }
 
-        public void AddSetting<T>(IModSetting<T> setting) where T : IEquatable<T>
+        public void AddSetting(IModSetting setting)
         {
-            var template = new ModSettingValueTemplate(setting.Value);
+            var template = setting.CreateValueTemplate();
 
             switch (setting.LoadTime)
             {
@@ -69,6 +54,12 @@ namespace ModMyFactory.ModSettings.Serialization
                     RuntimeUserTemplates[setting.Name] = template;
                     break;
             }
+        }
+
+        public void AddMod(IHasModSettings mod)
+        {
+            foreach (var setting in mod.Settings)
+                AddSetting(setting);
         }
 
         public bool TryGetValue<T>(IModSetting<T> setting, out T value) where T : IEquatable<T>

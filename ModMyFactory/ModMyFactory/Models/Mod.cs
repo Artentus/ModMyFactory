@@ -48,6 +48,18 @@ namespace ModMyFactory.Models
 
         private bool IsOnly => !parentCollection.Find(Name, FactorioVersion).Where(mod => mod != this).Any();
 
+        private bool IsDefault
+        {
+            get
+            {
+                if (IsOnly) return true;
+
+                var candidates = parentCollection.Find(Name, FactorioVersion);
+                var max = candidates.MaxBy(mod => mod.Version, new VersionComparer());
+                return max == this;
+            }
+        }
+
         /// <summary>
         /// Indicates whether the mod is currently active.
         /// </summary>
@@ -61,7 +73,9 @@ namespace ModMyFactory.Models
                     active = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Active)));
 
-                    ModManager.SetActive(Name, Version, FactorioVersion, value, IsOnly);
+                    ModManager.SetActive(Name, Version, FactorioVersion, value, IsOnly, IsDefault);
+
+                    ModSettingsManager.BeginUpdate();
 
                     if (active)
                     {
@@ -78,6 +92,9 @@ namespace ModMyFactory.Models
                     
                     if (active && App.Instance.Settings.ActivateDependencies)
                         ActivateDependencies(App.Instance.Settings.ActivateOptionalDependencies);
+
+                    ModSettingsManager.EndUpdate();
+                    ModSettingsManager.SaveBinarySettings(parentCollection);
                 }
             }
         }
@@ -132,14 +149,6 @@ namespace ModMyFactory.Models
                     dependenciesView.Filter = (item) => !((ModDependency)item).IsHidden;
                     DependenciesView = dependenciesView;
 
-                    //var settings = file.GetSettings().Select(info => info.ToSetting(this)).ToList();
-                    //Settings = new ReadOnlyCollection<IModSetting>(settings);
-                    //source = new CollectionViewSource() { Source = Settings };
-                    //var settingsView = (ListCollectionView)source.View;
-                    //settingsView.CustomSort = new ModSettingSorter();
-                    //settingsView.GroupDescriptions.Add(new PropertyGroupDescription("LoadTime"));
-                    //SettingsView = settingsView;
-
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Version)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(FactorioVersion)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(FriendlyName)));
@@ -148,9 +157,6 @@ namespace ModMyFactory.Models
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Dependencies)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DependenciesView)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasVisibleDependencies)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Settings)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SettingsView)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasSettings)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Thumbnail)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasThumbnail)));
                 }
@@ -292,7 +298,7 @@ namespace ModMyFactory.Models
             oldVersions = files;
 
             if (!File.Enabled) active = false;
-            else active = ModManager.GetActive(Name, Version, FactorioVersion, IsOnly); // ToDo: check if old versions are active
+            else active = ModManager.GetActive(Name, Version, FactorioVersion, IsOnly);
             if (active)
             {
                 File.Enable();
@@ -330,6 +336,21 @@ namespace ModMyFactory.Models
                         mod.SetInactiveFileDisabled();
                 }
             }
+        }
+
+        public void LoadSettings()
+        {
+            var settings = file.GetSettings(parentCollection, this);
+            Settings = new ReadOnlyCollection<IModSetting>(settings);
+            var source = new CollectionViewSource() { Source = Settings };
+            var settingsView = (ListCollectionView)source.View;
+            settingsView.CustomSort = new ModSettingSorter();
+            settingsView.GroupDescriptions.Add(new PropertyGroupDescription("LoadTime"));
+            SettingsView = settingsView;
+
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Settings)));
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(SettingsView)));
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasSettings)));
         }
         
         public ILocale GetLocale(CultureInfo culture)
@@ -387,7 +408,8 @@ namespace ModMyFactory.Models
             settingsViewModel.SetMod(this);
             settingsWindow.ShowDialog();
 
-            //ModSettingsManager.SaveSettings(this);
+            ModSettingsManager.SaveSettings(this);
+            if (Active) ModSettingsManager.SaveBinarySettings(parentCollection);
         }
         
         private void DeleteOldVersions()
@@ -421,9 +443,6 @@ namespace ModMyFactory.Models
                 ModManager.RemoveTemplate(Name, FactorioVersion);
                 ModpackTemplateList.Instance.Update(MainViewModel.Instance.Modpacks);
                 ModpackTemplateList.Instance.Save();
-
-                if (showPrompt)
-                    parentCollection.EvaluateDependencies();
             }
         }
         

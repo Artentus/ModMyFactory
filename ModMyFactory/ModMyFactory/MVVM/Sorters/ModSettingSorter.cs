@@ -9,7 +9,8 @@ namespace ModMyFactory.MVVM.Sorters
     {
         public int Compare(IModSetting x, IModSetting y)
         {
-            int result = string.Compare(x.Ordering, y.Ordering, StringComparison.InvariantCulture);
+            int result = x.LoadTime - y.LoadTime;
+            if (result == 0) result = string.Compare(x.Ordering, y.Ordering, StringComparison.InvariantCulture);
             if (result == 0) result = x.Name.CompareTo(y.Name);
             return result;
         }
