@@ -139,6 +139,22 @@
             </DataTemplate>
 
             <DataTemplate x:Key="StringModSettingTemplate" DataType="{x:Type modsettings:IModSetting}">
+                <StackPanel Margin="4" Orientation="Horizontal" FlowDirection="LeftToRight">
+                    <TextBlock Margin="2,0,4,0" VerticalAlignment="Center">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource SettingNameConverter}">
+                                <Binding Path="Name"/>
+                                <Binding Path="Owner"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <controls:ExtendedTextBox Text="{Binding Value, Mode=TwoWay}" DefaultText="{Binding DefaultValue}" AllowEmptyText="{Binding AllowEmptyValue}" Width="200" Padding="2"/>
+                    <Button Margin="2,0,0,0" MinWidth="30" MinHeight="0" Height="23" Command="{Binding ResetCommand}" ToolTip="{DynamicResource DefaultValueToolTip}">
+                        <Button.Content>
+                            <TextBlock Style="{StaticResource TextBlockButtonStyle}" Text="{DynamicResource DefaultValueButton}"/>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
             </DataTemplate>
 
             <DataTemplate x:Key="StringListModSettingTemplate" DataType="{x:Type modsettings:IModSetting}">
@@ -205,6 +221,13 @@
             <Style x:Key="TextBlockDefaultStyle" TargetType="{x:Type TextBlock}"/>
 
             <Style x:Key="{x:Type TextBox}" TargetType="{x:Type TextBox}">
+                <Style.Setters>
+                    <Setter Property="Background" Value="{DynamicResource MutedBackgroundBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+                </Style.Setters>
+            </Style>
+
+            <Style x:Key="{x:Type controls:ExtendedTextBox}" TargetType="{x:Type controls:ExtendedTextBox}">
                 <Style.Setters>
                     <Setter Property="Background" Value="{DynamicResource MutedBackgroundBrush}"/>
                     <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
