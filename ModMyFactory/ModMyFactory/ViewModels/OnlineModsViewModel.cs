@@ -25,6 +25,7 @@ namespace ModMyFactory.ViewModels
     {
         const int ModTitleMinLength = 2;
         static readonly string[] ModBlacklist = { "[Abandoned]", "[Deprecated]", "[Discontinued]", "[Outdated]" };
+        static readonly Uri EmptyThumbnailUri = new Uri("../Images/Empty_Thumbnail.png", UriKind.Relative);
 
         static OnlineModsViewModel instance;
         static Version emptyVersion;
@@ -244,7 +245,6 @@ namespace ModMyFactory.ViewModels
                 extendedInfo = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(ExtendedInfo)));
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(ThumbnailUri)));
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasThumbnail)));
 
                 if (extendedInfo != null)
                 {
@@ -279,9 +279,7 @@ namespace ModMyFactory.ViewModels
             }
         }
 
-        public Uri ThumbnailUri => ExtendedInfo?.GetFullThumbnailUri();
-
-        public bool HasThumbnail => ThumbnailUri != null;
+        public Uri ThumbnailUri => ExtendedInfo?.GetFullThumbnailUri() ?? EmptyThumbnailUri;
 
         public string SelectedModName
         {

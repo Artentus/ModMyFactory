@@ -24,12 +24,8 @@
         <BitmapImage x:Key="SearchIcon" UriSource="../Images/Search.png"/>
         <BitmapImage x:Key="RefreshIcon" UriSource="../Images/Refresh.png"/>
 
-        <BitmapImage x:Key="EmptyThumbnail" UriSource="../Images/Empty_Thumbnail.png"/>
-
         <sys:Boolean x:Key="False">False</sys:Boolean>
         <sys:Boolean x:Key="True">True</sys:Boolean>
-
-        <convert:AdvancedVisibilityConverter x:Key="AdvancedVisibilityConverter"/>
 
         <ObjectDataProvider x:Key="SortingModes" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
             <ObjectDataProvider.MethodParameters>
@@ -161,12 +157,7 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="0">
-                <Grid>
-                    <Image Margin="2" Width="80" Height="80" Source="{StaticResource EmptyThumbnail}"
-                           Visibility="{Binding HasThumbnail, Converter={StaticResource AdvancedVisibilityConverter}, ConverterParameter={StaticResource True}}"/>
-                    <Image Margin="2" Width="80" Height="80" Source="{Binding ThumbnailUri}"
-                           Visibility="{Binding HasThumbnail, Converter={StaticResource AdvancedVisibilityConverter}, ConverterParameter={StaticResource False}}"/>
-                </Grid>
+                <Image Margin="2" Width="80" Height="80" Source="{Binding ThumbnailUri}"/>
             </Border>
             <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Margin="6,0,0,2" TextWrapping="Wrap" Text="{Binding SelectedModName}" FontSize="22"/>
             <Rectangle Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="1" Margin="6,0,0,0" Height="4" VerticalAlignment="Top" Fill="{StaticResource SelectionBrush}"/>

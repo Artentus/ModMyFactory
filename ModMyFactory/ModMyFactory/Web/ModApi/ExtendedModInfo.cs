@@ -54,6 +54,7 @@ namespace ModMyFactory.Web.ModApi
         public Uri GetFullThumbnailUri()
         {
             if (string.IsNullOrEmpty(ThumbnailUrl)) return null;
+            if (ThumbnailUrl.EndsWith("/.thumb.png")) return null;
             return new Uri(BaseDataUri, ThumbnailUrl);
         }
     }
