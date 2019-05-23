@@ -1,5 +1,9 @@
+#### 1.11.0pre3
+* Fixed links not working.
+* Fixed some issues with thumbnail loading in the online list.
+
 #### 1.11.0pre2
-* FIxed a crash when loading certain mods.
+* Fixed a crash when loading certain mods.
 
 #### 1.11.0pre1
 * Added tools to edit mod settings.
