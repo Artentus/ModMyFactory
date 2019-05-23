@@ -13,6 +13,7 @@ using System.Windows;
 using ModMyFactory.Helpers;
 using ModMyFactory.Win32;
 using System.Diagnostics;
+using ModMyFactory.ModSettings;
 
 namespace ModMyFactory
 {
@@ -138,6 +139,9 @@ namespace ModMyFactory
             var modpacks = new ModpackCollection();
 
             ModManager.BeginUpdateTemplates();
+            ModSettingsManager.LoadSettings();
+            ModSettingsManager.BeginUpdate();
+
             Mod.LoadMods(mods, modpacks);
             ModpackTemplateList.Instance.PopulateModpackList(mods, modpacks, null);
 
@@ -161,6 +165,8 @@ namespace ModMyFactory
 
             ModManager.EndUpdateTemplates(true);
             ModManager.SaveTemplates();
+            ModSettingsManager.EndUpdate(true);
+            ModSettingsManager.SaveBinarySettings(mods);
         }
 
         private static string BuildArguments(CommandLine commandLine)
