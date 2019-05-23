@@ -286,9 +286,15 @@ namespace ModMyFactory.Models
             if (settings == null)
             {
                 var script = new Script();
+
                 var data = new SettingsData();
                 var luaData = UserData.Create(data);
                 script.Globals.Set("data", luaData);
+
+                var modsTable = new Table(script);
+                foreach (var mod in parentCollection.Where(m => m.FactorioVersion == InfoFile.FactorioVersion))
+                    modsTable.Set(DynValue.NewString(mod.Name), DynValue.True);
+                script.Globals.Set("mods", DynValue.NewTable(modsTable));
 
                 if (isFile)
                 {
