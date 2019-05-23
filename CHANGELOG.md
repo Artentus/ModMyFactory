@@ -1,4 +1,7 @@
-#### 1.11.0
+#### 1.11.0pre2
+* FIxed a crash when loading certain mods.
+
+#### 1.11.0pre1
 * Added tools to edit mod settings.
 * Fixed possible crash when selecting certain mods in the online list.
 * Fixed a problem that caused mod dependencies to not be activated in some situations.
