@@ -643,7 +643,9 @@ namespace ModMyFactory.ViewModels
 
             LoadFactorioVersions();
             ModSettingsManager.LoadSettings();
+            ModSettingsManager.BeginUpdate();
             LoadModsAndModpacks();
+            ModSettingsManager.EndUpdate(true);
             ModSettingsManager.SaveSettings(Mods);
             ModSettingsManager.SaveBinarySettings(Mods);
 
