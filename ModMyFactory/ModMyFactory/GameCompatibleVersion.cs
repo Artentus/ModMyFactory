@@ -9,61 +9,56 @@ namespace ModMyFactory
     sealed class GameCompatibleVersion : IComparable, IComparable<GameCompatibleVersion>, IEquatable<GameCompatibleVersion>
     {
         private readonly Version baseVersion;
-        private readonly Version compareVersion;
 
-        public int Major => compareVersion.Major;
-        public int Minor => compareVersion.Minor;
-        public int Build => compareVersion.Build;
-        public int Revision => compareVersion.Revision;
-        public short MinorRevision => compareVersion.MinorRevision;
-        public short MajorRevision => compareVersion.MajorRevision;
+        public int Major => Math.Max(baseVersion.Major, 0);
+        public int Minor => Math.Max(baseVersion.Minor, 0);
+        public int Build => Math.Max(baseVersion.Build, 0);
+        public int Revision => Math.Max(baseVersion.Revision, 0);
 
         public GameCompatibleVersion()
         {
             baseVersion = new Version();
-            compareVersion = new Version(0, 0, 0, 0);
         }
 
         public GameCompatibleVersion(int major, int minor)
         {
             baseVersion = new Version(major, minor);
-            compareVersion = new Version(major, minor, 0, 0);
         }
 
         public GameCompatibleVersion(int major, int minor, int build)
         {
             baseVersion = new Version(major, minor, build);
-            compareVersion = new Version(major, minor, build, 0);
         }
 
         public GameCompatibleVersion(int major, int minor, int build, int revision)
         {
             baseVersion = new Version(major, minor, build, revision);
-            compareVersion = baseVersion; // Can use same object as all 4 components are populated anyway.
         }
 
         public GameCompatibleVersion(string version)
         {
             baseVersion = new Version(version);
-            compareVersion = new Version(baseVersion.Major, baseVersion.Minor,
-                Math.Max(baseVersion.Build, 0), Math.Max(baseVersion.Revision, 0));
         }
 
         public GameCompatibleVersion(Version version)
         {
             baseVersion = version;
-            compareVersion = new Version(baseVersion.Major, baseVersion.Minor,
-                Math.Max(baseVersion.Build, 0), Math.Max(baseVersion.Revision, 0));
         }
 
         public int CompareTo(GameCompatibleVersion other)
         {
-            return this.compareVersion.CompareTo(other?.compareVersion);
+            if (ReferenceEquals(other, null)) return 1;
+
+            int result = Major.CompareTo(other.Major);
+            if (result == 0) result = Minor.CompareTo(other.Minor);
+            if (result == 0) result = Build.CompareTo(other.Build);
+            if (result == 0) result = Revision.CompareTo(other.Revision);
+            return result;
         }
 
         public int CompareTo(object obj)
         {
-            if ((obj != null) && !(obj is GameCompatibleVersion))
+            if (!(ReferenceEquals(obj, null) || (obj is GameCompatibleVersion)))
                 throw new ArgumentException("Object must be of type GameCompatibleVersion.", nameof(obj));
 
             var other = obj as GameCompatibleVersion;
@@ -72,7 +67,12 @@ namespace ModMyFactory
 
         public bool Equals(GameCompatibleVersion other)
         {
-            return this.compareVersion.Equals(other?.compareVersion);
+            if (ReferenceEquals(other, null)) return false;
+
+            return (this.Major == other.Major)
+                && (this.Minor == other.Minor)
+                && (this.Build == other.Build)
+                && (this.Revision == other.Revision);
         }
 
         public override bool Equals(object obj)
@@ -83,7 +83,7 @@ namespace ModMyFactory
 
         public override int GetHashCode()
         {
-            return compareVersion.GetHashCode();
+            return Major.GetHashCode() ^ Minor.GetHashCode() ^ Build.GetHashCode() ^ Revision.GetHashCode();
         }
 
         public override string ToString()
@@ -113,32 +113,38 @@ namespace ModMyFactory
 
         public static bool operator ==(GameCompatibleVersion v1, GameCompatibleVersion v2)
         {
-            return v1?.compareVersion == v2?.compareVersion;
+            if (ReferenceEquals(v1, null)) return ReferenceEquals(v2, null);
+            else return v1.Equals(v2);
         }
 
         public static bool operator !=(GameCompatibleVersion v1, GameCompatibleVersion v2)
         {
-            return v1?.compareVersion != v2?.compareVersion;
+            if (ReferenceEquals(v1, null)) return !ReferenceEquals(v2, null);
+            else return !v1.Equals(v2);
         }
 
         public static bool operator <=(GameCompatibleVersion v1, GameCompatibleVersion v2)
         {
-            return v1?.compareVersion <= v2?.compareVersion;
+            if (ReferenceEquals(v1, null)) return true;
+            else return v1.CompareTo(v2) <= 0;
         }
 
         public static bool operator >=(GameCompatibleVersion v1, GameCompatibleVersion v2)
         {
-            return v1?.compareVersion >= v2?.compareVersion;
+            if (ReferenceEquals(v1, null)) return ReferenceEquals(v2, null);
+            else return v1.CompareTo(v2) >= 0;
         }
 
         public static bool operator <(GameCompatibleVersion v1, GameCompatibleVersion v2)
         {
-            return v1?.compareVersion < v2?.compareVersion;
+            if (ReferenceEquals(v1, null)) return !ReferenceEquals(v2, null);
+            else return v1.CompareTo(v2) < 0;
         }
 
         public static bool operator >(GameCompatibleVersion v1, GameCompatibleVersion v2)
         {
-            return v1?.compareVersion > v2?.compareVersion;
+            if (ReferenceEquals(v1, null)) return false;
+            else return v1.CompareTo(v2) > 0;
         }
 
         public static implicit operator Version(GameCompatibleVersion version)
@@ -148,7 +154,8 @@ namespace ModMyFactory
 
         public static implicit operator GameCompatibleVersion(Version version)
         {
-            return new GameCompatibleVersion(version);
+            if (ReferenceEquals(version, null)) return null;
+            else return new GameCompatibleVersion(version);
         }
     }
 }

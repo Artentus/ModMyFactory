@@ -9,10 +9,10 @@ namespace ModMyFactory.MVVM.Sorters
     {
         public int Compare(Mod x, Mod y)
         {
-            int versionOrder = y.FactorioVersion.CompareTo(x.FactorioVersion);
-            if (versionOrder != 0) return versionOrder;
-
-            return string.Compare(x.FriendlyName, y.FriendlyName, StringComparison.InvariantCultureIgnoreCase);
+            int result = y.FactorioVersion.CompareTo(x.FactorioVersion);
+            if (result == 0) result = string.Compare(x.FriendlyName, y.FriendlyName, StringComparison.InvariantCultureIgnoreCase);
+            if (result == 0) result = y.Version.CompareTo(x.Version);
+            return result;
         }
 
         public int Compare(ModTemplate x, ModTemplate y)
