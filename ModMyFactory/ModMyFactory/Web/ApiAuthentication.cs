@@ -1,6 +1,8 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Security;
 using System.Text;
+using System.Web;
 using ModMyFactory.Helpers;
 using ModMyFactory.Web.AuthenticationApi;
 
@@ -23,11 +25,13 @@ namespace ModMyFactory.Web
 
             string part1 = $"api_version=2&require_game_ownership=true&username={username}&password=";
             int part1Length = Encoding.UTF8.GetByteCount(part1);
-            int part2Length = SecureStringHelper.GetSecureStringByteCount(password);
 
-            byte[] content = new byte[part1Length + part2Length];
+            byte[] passwordBytes = SecureStringHelper.SecureStringToBytes(password);
+            string part2 = HttpUtility.UrlEncode(passwordBytes);
+
+            byte[] content = new byte[part1Length + part2.Length];
             Encoding.UTF8.GetBytes(part1, 0, part1.Length, content, 0);
-            SecureStringHelper.SecureStringToBytes(password, content, part1Length);
+            Encoding.UTF8.GetBytes(part2, 0, part2.Length, content, part1Length);
 
             try
             {
