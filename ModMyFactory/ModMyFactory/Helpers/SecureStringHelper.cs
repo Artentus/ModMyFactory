@@ -129,9 +129,9 @@ namespace ModMyFactory.Helpers
         /// This method does not create any managed string objects.
         /// </summary>
         /// <param name="secureString">The SecureString object to fill the byte array from.</param>
-        public static void SecureStringToBytes(SecureString secureString)
+        public static byte[] SecureStringToBytes(SecureString secureString)
         {
-            SecureStringToBytes(secureString, Encoding.UTF8);
+            return SecureStringToBytes(secureString, Encoding.UTF8);
         }
 
         /// <summary>
