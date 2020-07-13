@@ -23,6 +23,9 @@ namespace ModMyFactory.Helpers
             FileInfo fileInfo = file as FileInfo;
             if (fileInfo != null)
             {
+                if (fileInfo.IsReadOnly)
+                    File.SetAttributes(fileInfo.FullName, FileAttributes.Normal);
+
                 fileInfo.Delete();
                 return;
             }
