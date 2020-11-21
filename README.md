@@ -1,3 +1,11 @@
+## Future development
+
+ModMyFactory has been rewritten from the ground up to be more stable, more compatible to Factorio 1.0 and more user friendly.  
+As a result this repository will no longer receive any updates and be put in read-only.
+
+You can find the new repository here:  
+https://github.com/Artentus/ModMyFactory2
+
 ## ModMyFactory
 
 ![alt tag](https://i.imgur.com/DyKg7m7.png)
